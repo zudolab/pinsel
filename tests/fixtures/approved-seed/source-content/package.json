@@ -1,0 +1,62 @@
+{
+  "name": "pinsel-site",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.30.1",
+  "scripts": {
+    "// ── Core ─────────────────────────────────────────": "",
+    "dev": "lsof -ti:26236 | xargs kill -9 2>/dev/null; astro dev --host pinsel.localhost --port 26236",
+    "dev:doc": "pnpm --filter pinsel-doc dev",
+    "build": "astro build",
+    "start": "astro preview",
+    "clean": "rm -rf dist .astro",
+    "// ── Code quality ────────────────────────────────": "",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx,.mjs",
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx,mjs,json,css,md}'",
+    "typecheck": "tsc --noEmit",
+    "check": "pnpm lint && pnpm typecheck",
+    "b4push": "bash b4push.sh",
+    "b4push:quick": "bash b4push.sh --quick",
+    "// ── Internal ────────────────────────────────────": "",
+    "prepare": "lefthook install"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^5.0.2",
+    "@astrojs/react": "^5.0.1",
+    "@astrojs/sitemap": "^3.7.1",
+    "@tailwindcss/vite": "^4.2.1",
+    "astro": "^6.0.8",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1"
+  },
+  "devDependencies": {
+    "@takazudo/mdx-formatter": "^1.0.3",
+    "@types/mdx": "^2.0.13",
+    "@types/node": "^25.3.0",
+    "@types/react": "^19.2.14",
+    "@typescript-eslint/eslint-plugin": "^8.56.0",
+    "@typescript-eslint/parser": "^8.56.0",
+    "eslint": "^8.57.1",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "lefthook": "^2.1.4",
+    "prettier": "^3.8.1",
+    "tailwindcss": "^4.2.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  }
+}

@@ -1,0 +1,109 @@
+/**
+ * Pinsel Design System - CSS Tokens
+ *
+ * All design tokens are defined as CSS custom properties with --pd-* prefix.
+ * These are the source of truth for the design system.
+ */
+
+:root {
+  /* ========================================
+   * Tier 1: Palette — abstract color slots
+   * Names are abstract (p0-p9) because actual
+   * colors may change across themes.
+   * ======================================== */
+  --pd-p0: #1f1f1f;
+  --pd-p1: #fafafa;
+  --pd-p2: #c85080;
+  --pd-p3: #2f9d92;
+  --pd-p4: #ddb830;
+  --pd-p5: #575757;
+  --pd-p6: #8a8a8a;
+  --pd-p7: #f0ebe4;
+  --pd-p8: #dc2626;
+  --pd-p9: #22c55e;
+
+  /* ========================================
+   * Tier 2: Theme — semantic role mapping
+   * Each theme token references a palette slot.
+   * ======================================== */
+  --pd-theme-fg: var(--pd-p0);
+  --pd-theme-bg: var(--pd-p1);
+  --pd-theme-accent: var(--pd-p2);
+  --pd-theme-link: var(--pd-p3);
+  --pd-theme-highlight: var(--pd-p4);
+  --pd-theme-muted: var(--pd-p5);
+  --pd-theme-border: var(--pd-p6);
+  --pd-theme-surface: var(--pd-p7);
+  --pd-theme-error: var(--pd-p8);
+  --pd-theme-success: var(--pd-p9);
+
+  /* Background pattern — subtle gradient blobs behind content */
+  --pd-theme-bg-pattern-a: var(--pd-p7);
+  --pd-theme-bg-pattern-b: var(--pd-p4);
+  --pd-theme-bg-pattern-c: var(--pd-p1);
+  --pd-theme-bg-pattern-d: var(--pd-p8);
+
+  /* ========================================
+   * Shadows
+   * ======================================== */
+  --pd-text-shadow-md: 0.05em 0.05em 0 rgba(0,0,0,0.1);
+
+  /* ========================================
+   * Line Heights
+   * ======================================== */
+  --pd-lineHeight-none: 1;
+  --pd-lineHeight-tight: 1.4;
+  --pd-lineHeight-snug: 1.6;
+  --pd-lineHeight-normal: 1.8;
+  --pd-lineHeight-relaxed: 2;
+  --pd-lineHeight-loose: 2.3;
+
+  /* ========================================
+   * Typography - Font Size / Line Height Pairs
+   * ======================================== */
+  --pd-font-2xs-size: 0.7rem;
+  --pd-font-2xs-lineHeight: 1.6;
+  --pd-font-xs-size: 0.9rem;
+  --pd-font-xs-lineHeight: 1.65;
+  --pd-font-sm-size: 1rem;
+  --pd-font-sm-lineHeight: 1.65;
+  --pd-font-base-size: 1.2rem;
+  --pd-font-base-lineHeight: 1.7;
+  --pd-font-lg-size: 1.8rem;
+  --pd-font-lg-lineHeight: 1.5;
+  --pd-font-xl-size: 2.1rem;
+  --pd-font-xl-lineHeight: 1.4;
+  --pd-font-2xl-size: 2.95rem;
+  --pd-font-2xl-lineHeight: 1.35;
+  --pd-font-3xl-size: 3.35rem;
+  --pd-font-3xl-lineHeight: 1.3;
+  --pd-font-4xl-size: 4.25rem;
+  --pd-font-4xl-lineHeight: 1.3;
+  --pd-font-5xl-size: 5.15rem;
+  --pd-font-5xl-lineHeight: 1.3;
+
+  /* ========================================
+   * Spacing - Horizontal Gaps
+   * ======================================== */
+  --pd-spacing-1px: 1px;
+  --pd-spacing-hgap-2xs: 5px;
+  --pd-spacing-hgap-xs: 12px;
+  --pd-spacing-hgap-sm: 20px;
+  --pd-spacing-hgap-md: 40px;
+  --pd-spacing-hgap-md-x2: 80px;
+  --pd-spacing-hgap-lg: 60px;
+  --pd-spacing-hgap-lg-x2: 120px;
+  --pd-spacing-hgap-xl: 100px;
+  --pd-spacing-hgap-2xl: 250px;
+
+  /* ========================================
+   * Spacing - Vertical Gaps
+   * ======================================== */
+  --pd-spacing-vgap-2xs: 4px;
+  --pd-spacing-vgap-xs: 8px;
+  --pd-spacing-vgap-sm: 20px;
+  --pd-spacing-vgap-md: 35px;
+  --pd-spacing-vgap-lg: 50px;
+  --pd-spacing-vgap-xl: 65px;
+  --pd-spacing-vgap-2xl: 80px;
+}

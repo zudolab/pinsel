@@ -1,0 +1,12 @@
+---
+import NoteHeading from './note-heading.astro';
+
+interface Props {
+  id?: string;
+}
+
+const { id } = Astro.props;
+---
+<NoteHeading as="h3" id={id} class="text-base text-pd-fg pt-vgap-md pb-vgap-xs">
+  <slot />
+</NoteHeading>

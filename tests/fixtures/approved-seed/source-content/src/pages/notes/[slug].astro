@@ -1,0 +1,412 @@
+---
+import { getCollection, render } from 'astro:content';
+import BaseLayout from '../../layouts/base-layout.astro';
+import Breadcrumb from '@components/breadcrumb/breadcrumb.astro';
+
+export async function getStaticPaths() {
+  const notes = await getCollection('notes');
+  return notes.map((note) => ({
+    params: { slug: note.id },
+    props: { note },
+  }));
+}
+
+const { note } = Astro.props;
+const { Content, headings } = await render(note);
+
+const allNotes = await getCollection('notes');
+allNotes.sort((a, b) => a.data.title.localeCompare(b.data.title));
+
+const tocHeadings = headings.filter((h) => h.depth >= 2);
+---
+
+<BaseLayout
+  title={`${note.data.title} - Pinsel Notes`}
+  description={note.data.description}
+>
+  <div class="mx-auto max-w-5xl py-vgap-lg">
+    <Breadcrumb
+      items={[
+        { label: '', href: '/' },
+        { label: 'Notes', href: '/notes/' },
+        { label: note.data.title },
+      ]}
+    />
+    <h1 class="text-2xl text-pd-fg">{note.data.title}</h1>
+    <p class="mt-vgap-xs text-sm text-pd-muted">{note.data.description}</p>
+
+    <div class="mt-vgap-lg lg:flex lg:gap-hgap-md">
+      <article class="note-content min-w-0 lg:flex-1">
+        <Content />
+
+        {
+          allNotes.length > 0 && (
+            <section class="mt-vgap-xl border-t border-pd-border pt-vgap-lg">
+              <p class="mb-vgap-sm text-sm uppercase tracking-[2px] text-pd-muted">All Notes</p>
+              <ul class="m-0 flex list-none flex-col gap-vgap-xs p-0">
+                {allNotes.map((n) => (
+                  <li>
+                    {n.id === note.id ? (
+                      <span class="text-sm font-medium text-pd-accent no-underline">
+                        {n.data.title}
+                      </span>
+                    ) : (
+                      <a
+                        href={`/notes/${n.id}/`}
+                        class="text-sm text-pd-link no-underline hover:underline"
+                      >
+                        {n.data.title}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )
+        }
+      </article>
+
+      {
+        tocHeadings.length > 0 && (
+          <nav
+            aria-label="目次"
+            class="sticky top-[100px] hidden max-h-[calc(100vh-120px)] w-[280px] shrink-0 self-start overflow-y-auto border-l border-pd-border pl-hgap-sm lg:block"
+            id="toc-nav"
+          >
+            <p class="mb-vgap-xs text-sm uppercase tracking-[2px] text-pd-muted">Contents</p>
+            <ul class="m-0 flex list-none flex-col gap-vgap-2xs p-0">
+              {tocHeadings.map((heading) => (
+                <li
+                  class={
+                    heading.depth === 3
+                      ? 'ml-[16px]'
+                      : heading.depth === 4
+                        ? 'ml-[32px]'
+                        : heading.depth >= 5
+                          ? 'ml-[48px]'
+                          : ''
+                  }
+                >
+                  <a
+                    href={`#${heading.slug}`}
+                    class="toc-link block py-vgap-2xs text-sm text-pd-muted no-underline transition-colors hover:text-pd-link"
+                    data-heading-id={heading.slug}
+                  >
+                    {heading.text}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        )
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  /* MDX content styling */
+  .note-content :global(h2) {
+    font-size: var(--pd-font-lg-size, 1.125rem);
+    color: var(--pd-theme-fg);
+    padding-top: var(--pd-spacing-vgap-lg);
+    padding-bottom: var(--pd-spacing-vgap-sm);
+    margin-bottom: var(--pd-spacing-vgap-md);
+    border-bottom: 1px solid var(--pd-theme-border);
+  }
+
+  .note-content :global(h3) {
+    font-size: var(--pd-font-base-size, 1rem);
+    color: var(--pd-theme-fg);
+    padding-top: var(--pd-spacing-vgap-md);
+    padding-bottom: var(--pd-spacing-vgap-xs);
+  }
+
+  .note-content :global(h4) {
+    font-size: var(--pd-font-sm-size, 0.875rem);
+    color: var(--pd-theme-fg);
+    padding-top: var(--pd-spacing-vgap-sm);
+    padding-bottom: var(--pd-spacing-vgap-2xs);
+  }
+
+  .note-content :global(h5) {
+    font-size: var(--pd-font-sm-size, 0.875rem);
+    color: var(--pd-theme-muted);
+    padding-top: var(--pd-spacing-vgap-sm);
+    padding-bottom: var(--pd-spacing-vgap-2xs);
+  }
+
+  .note-content :global(h6) {
+    font-size: var(--pd-font-xs-size, 0.75rem);
+    color: var(--pd-theme-muted);
+    padding-top: var(--pd-spacing-vgap-xs);
+    padding-bottom: var(--pd-spacing-vgap-2xs);
+  }
+
+  .note-content :global(p) {
+    font-size: var(--pd-font-sm-size, 0.875rem);
+    padding-bottom: var(--pd-spacing-vgap-sm);
+    line-height: 1.75;
+  }
+
+  @media (min-width: 768px) {
+    .note-content :global(p) {
+      font-size: var(--pd-font-base-size, 1rem);
+    }
+
+    .note-content :global(ul),
+    .note-content :global(ol) {
+      font-size: var(--pd-font-base-size, 1rem);
+    }
+  }
+
+  .note-content :global(ul) {
+    font-size: var(--pd-font-sm-size, 0.875rem);
+    list-style: disc;
+    padding-left: var(--pd-spacing-hgap-md);
+    padding-bottom: var(--pd-spacing-vgap-sm);
+  }
+
+  .note-content :global(ul > * + *) {
+    margin-top: var(--pd-spacing-vgap-xs);
+  }
+
+  .note-content :global(ul ul) {
+    margin-top: var(--pd-spacing-vgap-xs);
+    padding-bottom: var(--pd-spacing-vgap-2xs);
+  }
+
+  .note-content :global(ol) {
+    font-size: var(--pd-font-sm-size, 0.875rem);
+    list-style: decimal;
+    padding-left: var(--pd-spacing-hgap-md);
+    padding-bottom: var(--pd-spacing-vgap-sm);
+  }
+
+  .note-content :global(ol > * + *) {
+    margin-top: var(--pd-spacing-vgap-xs);
+  }
+
+  .note-content :global(ol ol) {
+    margin-top: var(--pd-spacing-vgap-xs);
+    padding-bottom: var(--pd-spacing-vgap-2xs);
+  }
+
+  .note-content :global(blockquote) {
+    font-size: var(--pd-font-sm-size, 0.875rem);
+    border-left: 3px solid var(--pd-theme-border);
+    background-color: var(--pd-theme-surface);
+    padding: var(--pd-spacing-vgap-sm) var(--pd-spacing-hgap-sm);
+    margin-bottom: var(--pd-spacing-vgap-sm);
+  }
+
+  .note-content :global(blockquote > p) {
+    padding-bottom: var(--pd-spacing-vgap-xs);
+  }
+
+  .note-content :global(blockquote > p:last-child) {
+    padding-bottom: 0;
+  }
+
+  .note-content :global(code) {
+    background-color: var(--pd-theme-surface);
+    color: var(--pd-theme-muted);
+    font-family: monospace;
+    font-size: 0.75rem;
+    padding: 2px 5px;
+    border-radius: 2px;
+  }
+
+  .note-content :global(pre) {
+    background-color: var(--pd-theme-surface);
+    font-size: var(--pd-font-sm-size, 0.875rem);
+    overflow-x: auto;
+    padding: var(--pd-spacing-vgap-sm) var(--pd-spacing-hgap-sm);
+    margin-bottom: var(--pd-spacing-vgap-sm);
+    border-radius: 2px;
+    font-family: monospace;
+    line-height: 1.375;
+  }
+
+  .note-content :global(pre code) {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
+
+  .note-content :global(hr) {
+    border: none;
+    border-top: 1px solid var(--pd-theme-border);
+    margin: var(--pd-spacing-vgap-md) 0;
+  }
+
+  .note-content :global(strong) {
+    font-weight: 700;
+  }
+
+  .note-content :global(a) {
+    color: var(--pd-theme-link);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 1px;
+  }
+
+  .note-content :global(a:hover) {
+    color: var(--pd-theme-accent);
+  }
+
+  .note-content :global(table) {
+    width: 100%;
+    font-size: var(--pd-font-sm-size, 0.875rem);
+    border-collapse: collapse;
+    margin-bottom: var(--pd-spacing-vgap-sm);
+  }
+
+  .note-content :global(th) {
+    border: 1px solid var(--pd-theme-border);
+    padding: var(--pd-spacing-vgap-2xs) var(--pd-spacing-hgap-xs);
+    background-color: var(--pd-theme-surface);
+    font-weight: 700;
+    text-align: left;
+  }
+
+  .note-content :global(td) {
+    border: 1px solid var(--pd-theme-border);
+    padding: var(--pd-spacing-vgap-2xs) var(--pd-spacing-hgap-xs);
+  }
+
+  .note-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    margin: var(--pd-spacing-vgap-sm) 0;
+  }
+
+  /* Heading anchor links */
+  .note-content :global(h2),
+  .note-content :global(h3),
+  .note-content :global(h4),
+  .note-content :global(h5),
+  .note-content :global(h6) {
+    position: relative;
+  }
+
+  .note-content :global(h2 > a[aria-hidden]),
+  .note-content :global(h3 > a[aria-hidden]),
+  .note-content :global(h4 > a[aria-hidden]),
+  .note-content :global(h5 > a[aria-hidden]),
+  .note-content :global(h6 > a[aria-hidden]) {
+    margin-left: 0.3em;
+    text-decoration: none;
+    color: var(--pd-theme-border);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .note-content :global(h2:hover > a[aria-hidden]),
+  .note-content :global(h3:hover > a[aria-hidden]),
+  .note-content :global(h4:hover > a[aria-hidden]),
+  .note-content :global(h5:hover > a[aria-hidden]),
+  .note-content :global(h6:hover > a[aria-hidden]) {
+    opacity: 1;
+  }
+
+  /* Active TOC link */
+  :global(.toc-link.is-active) {
+    color: var(--pd-theme-accent);
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  // Active TOC heading tracker
+  const SCROLL_MARGIN_TOP = 30;
+  const DEBOUNCE_MS = 200;
+
+  function initToc() {
+    const tocNav = document.getElementById('toc-nav');
+    if (!tocNav) return;
+
+    const tocLinks = tocNav.querySelectorAll<HTMLAnchorElement>('.toc-link');
+    if (tocLinks.length === 0) return;
+
+    const headingIds = Array.from(tocLinks)
+      .map((link) => link.dataset.headingId)
+      .filter((id): id is string => id != null);
+    const elementMap = new Map<string, HTMLElement>();
+
+    for (const id of headingIds) {
+      const el = document.getElementById(id);
+      if (el) elementMap.set(id, el);
+    }
+
+    function getActiveHeadingId(): string | null {
+      if (headingIds.length === 0) return null;
+
+      const viewportHeight = window.innerHeight;
+      let firstVisibleIndex = -1;
+
+      for (let i = 0; i < headingIds.length; i++) {
+        const el = elementMap.get(headingIds[i]);
+        if (!el) continue;
+        const { top } = el.getBoundingClientRect();
+        if (top >= SCROLL_MARGIN_TOP) {
+          firstVisibleIndex = i;
+          break;
+        }
+      }
+
+      if (firstVisibleIndex === -1) {
+        return headingIds[headingIds.length - 1];
+      }
+
+      if (firstVisibleIndex === 0) {
+        const el = elementMap.get(headingIds[0]);
+        if (el) {
+          const { top } = el.getBoundingClientRect();
+          if (top < viewportHeight / 2) return headingIds[0];
+        }
+        return null;
+      }
+
+      const el = elementMap.get(headingIds[firstVisibleIndex]);
+      if (el) {
+        const { top } = el.getBoundingClientRect();
+        if (top < viewportHeight / 2) return headingIds[firstVisibleIndex];
+      }
+
+      return headingIds[firstVisibleIndex - 1];
+    }
+
+    let timerId: ReturnType<typeof setTimeout> | null = null;
+
+    function update() {
+      timerId = null;
+      const activeId = getActiveHeadingId();
+      tocLinks.forEach((link) => {
+        link.classList.toggle('is-active', link.dataset.headingId === activeId);
+      });
+    }
+
+    function onScroll() {
+      if (timerId !== null) clearTimeout(timerId);
+      timerId = setTimeout(update, DEBOUNCE_MS);
+    }
+
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (timerId !== null) clearTimeout(timerId);
+    };
+  }
+
+  let tocCleanup: (() => void) | null = null;
+
+  document.addEventListener('astro:page-load', () => {
+    if (tocCleanup) tocCleanup();
+    tocCleanup = initToc() ?? null;
+  });
+</script>

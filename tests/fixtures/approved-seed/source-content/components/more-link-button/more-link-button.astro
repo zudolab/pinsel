@@ -1,0 +1,18 @@
+---
+import NavArrowIcon from '@components/nav-arrow-icon/nav-arrow-icon.astro';
+
+interface Props {
+  text: string;
+  href: string;
+}
+
+const { text, href } = Astro.props;
+---
+
+<a
+  href={href}
+  class="inline-block rounded-[3px] bg-pd-link px-[28px] py-vgap-xs font-extralight text-pd-bg no-underline transition-opacity hover:opacity-85"
+>
+  <span class="align-middle inline-block nowrap pb-[.2em]">{text}</span>
+  <span class="align-middle relative top-[-3px] ml-[4px]"><NavArrowIcon /></span>
+</a>

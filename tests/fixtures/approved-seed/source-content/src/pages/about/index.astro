@@ -1,0 +1,164 @@
+---
+import BaseLayout from '../../layouts/base-layout.astro';
+import Section from '@components/section/section.astro';
+import CtaSection from '@components/cta-section/cta-section.astro';
+import PageHeader from '@components/page-header/page-header.astro';
+import Breadcrumb from '@components/breadcrumb/breadcrumb.astro';
+import FeatureCard from '@components/feature-card/feature-card.astro';
+import InstagramIcon from '@components/instagram-icon/instagram-icon.astro';
+
+const title = '講師紹介 - Pinsel';
+const description = '東京芸大卒・ミュンヘン芸術アカデミー修了の講師が指導。';
+
+const education = [
+  '2006〜2010　東京芸術大学 美術学部 絵画科 油画専攻 卒業',
+  '2010〜2016　ミュンヘン芸術アカデミー 自由芸術科 マイスターシューラーとして卒業',
+];
+
+const career = [
+  '2010〜2014　ミュンヘン滞在',
+  '2014〜2020　ベルリン滞在',
+  '2014〜2020　ベルリンアートスクール Atelier HY+ 経営',
+  '2020　日本に帰国',
+  '2020〜2023　創形美術学校 海外美術留学準備コース ドイツ対策クラス担当',
+  '2020〜現在　Pinsel ドイツ美大受験オンラインクラス 主宰',
+];
+
+const features = [
+  {
+    title: '完全マンツーマン',
+    description:
+      'お一人おひとりに合わせた個別カリキュラムで、きめ細やかな指導を行います。作品制作だけでなく、進路相談やドイツでの生活、卒業後のキャリアについても、マンツーマンだからこそじっくりお話しできます。',
+  },
+  {
+    title: 'オンライン完結',
+    description:
+      'すべてのレッスンをオンラインで実施。日本全国・海外からも受講可能です。コロナ以降、多くの大学がオンラインでの受験に対応しており、日本にいながら出願から合格まで完結できるケースも増えています。お仕事をされている方のために19時以降のレッスンにも対応しています。',
+  },
+  {
+    title: '実体験に基づく指導',
+    description:
+      'ドイツでの10年以上の留学・制作・アートスクール経営の経験をもとにした実践的なアドバイスを提供します。ベルリンで6年間Atelier HY+を運営し、多国籍の学生をサポートしてきた経験が指導の土台です。',
+  },
+  {
+    title: '最新情報の共有',
+    description:
+      'ドイツ美大受験の最新の動向や、各大学の特徴、入試の傾向などを常にアップデートしてお伝えします。受講生にはGoogleスプレッドシートで各大学の受験情報をまとめた資料を共有しており、志望校選びの参考にしていただけます。',
+  },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <Section>
+    <Breadcrumb items={[{ label: '', href: '/' }, { label: '講師紹介' }]} />
+    <PageHeader title="講師紹介" />
+  </Section>
+
+  <Section>
+    <div class="flex flex-col gap-hgap-md items-center md:flex-row">
+      <div class="mx-auto h-[160px] w-[160px] shrink-0 overflow-hidden rounded-full border border-pd-border bg-pd-border md:mx-0">
+        <img
+          src="/images/instructor-yuko.jpg"
+          alt="高津戸 優子"
+          width="160"
+          height="160"
+          class="h-full w-full object-cover"
+        />
+      </div>
+      <div class="flex-1">
+        <p class="text-xl text-pd-fg">高津戸 優子</p>
+        <p class="mt-vgap-2xs text-pd-muted">Yuko Takatsudo</p>
+        <p class="mt-vgap-2xs text-pd-muted">1987年 埼玉県生まれ</p>
+        <a
+          href="https://www.instagram.com/yuko_takatsudo"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+          class="mt-vgap-xs inline-block text-pd-muted hover:text-pd-fg transition-colors"
+        >
+          <InstagramIcon />
+        </a>
+      </div>
+    </div>
+  </Section>
+
+  <Section>
+    <div class="grid grid-cols-1 gap-vgap-xl lg:grid-cols-2 lg:gap-hgap-lg">
+      <div>
+        <h2 class="text-lg text-pd-fg">経歴</h2>
+        <ul class="mt-vgap-sm list-none p-0 m-0 flex flex-col gap-vgap-xs">
+          {career.map((item) => (
+            <li class="text-sm text-pd-fg">
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <h2 class="text-lg text-pd-fg">学歴</h2>
+        <ul class="mt-vgap-sm list-none p-0 m-0 flex flex-col gap-vgap-xs">
+          {education.map((item) => (
+            <li class="text-sm text-pd-fg">
+              {item}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </Section>
+
+  <Section>
+    <div class="relative -mx-hgap-sm px-hgap-sm md:-mx-hgap-md md:px-hgap-md lg:-mx-hgap-lg lg:px-hgap-lg xl:-mx-hgap-xl xl:px-hgap-xl 2xl:-mx-hgap-2xl 2xl:px-hgap-2xl py-vgap-xl bg-pd-surface bg-[url('/images/beige-paper.png')]">
+      <!-- Top edge line only -->
+      <span class="pointer-events-none absolute top-0 left-0 right-0 h-[1px] bg-pd-fg/10"></span>
+      <!-- Bottom shadow — lit from above -->
+      <span class="pointer-events-none absolute bottom-0 left-0 right-0 h-[1px] bg-pd-fg/25"></span>
+      <span class="pointer-events-none absolute bottom-[-6px] left-[3%] right-[3%] h-[6px] rounded-[50%] bg-pd-fg/30 blur-[6px]"></span>
+      <span class="pointer-events-none absolute bottom-[-18px] left-[5%] right-[5%] h-[12px] rounded-[50%] bg-pd-fg/20 blur-[16px]"></span>
+      <h2 class="text-lg text-pd-fg">メッセージ</h2>
+      <div class="mt-vgap-sm flex flex-col gap-vgap-sm leading-relaxed text-pd-fg">
+        <p>
+          ドイツの美術大学は、日本の美大とは入試の仕組みも評価基準も大きく異なります。しかし日本にはまだまだ情報が少なく、何から始めればいいかわからないという方が多いのが現状です。
+        </p>
+        <p>
+          私自身、東京芸術大学を卒業後、ドイツに渡り、ミュンヘン芸術アカデミーでマイスターシューラーとして学びました。ドイツでの10年以上にわたる経験の中で、現地の美術教育の考え方や、受験で求められるものを肌で感じてきました。
+        </p>
+        <p>
+          また、ベルリンでアートスクールを経営していた時期には、多くの日本人受験生の相談に乗り、合格までサポートしてきました。その中で、受験生一人ひとりの個性や作品に合わせたアドバイスの大切さを実感しています。
+        </p>
+        <p>
+          2014年から2020年までベルリンで運営していたAtelier HY+では、日本人だけでなく多国籍の学生たちと向き合い、それぞれの文化的背景や個性に合わせた指導を行ってきました。その経験は、現在のレッスンにも大きく活かされています。
+        </p>
+        <p>
+          2020年に日本に帰国してからは、Pinselとしてオンラインでの指導に専念しています。オンラインのみで受講された生徒さんも多数合格されており、対面と変わらない質の指導が可能です。
+        </p>
+        <p>
+          ドイツの美術大学が求めるのは、画力やテクニックだけではありません。創造性、興味関心、制作への姿勢——そうした本人の内面にあるものを大切にしています。レッスンでは対話を重視し、受講生の方が自分自身の表現を見つけていけるようサポートしています。
+        </p>
+        <p>
+          Pinselでは、その経験を活かし、受講生の皆さんが自分の力を最大限に発揮できるよう、全力でサポートいたします。ドイツ美大受験に興味をお持ちの方は、まずはお気軽にご相談ください。
+        </p>
+      </div>
+    </div>
+  </Section>
+
+  <Section>
+    <h2 class="mb-vgap-md text-center text-lg text-pd-fg">レッスンの特長</h2>
+    <div class="grid grid-cols-1 gap-hgap-sm md:grid-cols-2">
+      {features.map((feature) => (
+        <FeatureCard
+          title={feature.title}
+          description={feature.description}
+        />
+      ))}
+    </div>
+  </Section>
+
+  <div class="mt-vgap-xl">
+    <CtaSection
+      text="お問い合わせ"
+      href="/contact/"
+      subCopy="ドイツ・オーストリアの美大受験について"
+    />
+  </div>
+</BaseLayout>

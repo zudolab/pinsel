@@ -1,0 +1,27 @@
+---
+interface Props {
+  name: string;
+  price: string;
+  unit: string;
+  description: string;
+  featured?: boolean;
+}
+
+const { name, price, unit, description, featured = false } = Astro.props;
+---
+<div
+  class:list={[
+    'relative rounded-md border bg-pd-bg px-hgap-sm py-vgap-md text-center',
+    featured ? 'border-pd-link border-2' : 'border-pd-border',
+  ]}
+>
+  {featured && (
+    <span class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-sm bg-pd-link px-hgap-xs py-vgap-2xs text-sm font-bold tracking-[2px] text-pd-bg">
+      POPULAR
+    </span>
+  )}
+  <p class="text-sm font-bold tracking-[1px] text-pd-muted">{name}</p>
+  <p class="mt-vgap-xs text-2xl font-bold text-pd-fg">{price}</p>
+  <p class="mt-vgap-xs text-sm text-pd-muted">{unit}</p>
+  <p class="mt-vgap-sm text-sm text-pd-muted">{description}</p>
+</div>

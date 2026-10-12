@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../../layouts/base-layout.astro';
+import Section from '@components/section/section.astro';
+import PageHeader from '@components/page-header/page-header.astro';
+import Breadcrumb from '@components/breadcrumb/breadcrumb.astro';
+import { ContactForm } from '@components/contact-form/contact-form';
+import StepFlow from '@components/step-flow/step-flow.astro';
+
+const title = 'お問い合わせ - Pinsel';
+const description =
+  'ドイツ美大受験オンラインクラスPinselへのお問い合わせ。まずはお気軽にご相談ください。';
+
+const steps = [
+  { number: 1, title: 'お問い合わせ', description: 'フォームからご連絡ください' },
+  { number: 2, title: 'ご返信', description: '通常2〜3営業日以内にメールにてご返信' },
+  { number: 3, title: 'コース選択', description: 'ご希望に応じてコースをお選びいただけます' },
+  { number: 4, title: 'お支払い', description: 'お申し込み確定後、請求書をお送りします' },
+  { number: 5, title: 'レッスン開始', description: '日程を調整し、レッスンスタートです' },
+];
+
+const tokushoho = [
+  { key: '名称', value: 'ドイツ美大受験準備オンラインクラス Pinsel' },
+  { key: 'URL', value: 'https://pinsel-germany.com' },
+  { key: '代表者名', value: '高津戸 優子' },
+  { key: '所在地', value: '〒150-0043 東京都渋谷区道玄坂1丁目10番8号 渋谷道玄坂東急ビル2F-C' },
+  { key: '電話番号', value: '050-6863-1645' },
+  { key: '価格', value: 'HP記載の税込価格' },
+  { key: 'お支払方法', value: '銀行振り込み' },
+  { key: 'キャンセル', value: '契約成立日から2週間後まで返金受付' },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <Section>
+    <Breadcrumb items={[{ label: '', href: '/' }, { label: 'お問い合わせ' }]} />
+    <PageHeader
+      title="お問い合わせ"
+      description="クラス受講をご検討中の方、ドイツ美大受験に関するご質問がおありの方は、ささいなことでも是非お気軽にお問い合わせください。"
+    />
+  </Section>
+
+  <Section class="pt-0">
+    <!-- Hidden static form for Netlify Forms build-time detection -->
+    <form name="contact" data-netlify="true" hidden>
+      <input type="hidden" name="form-name" value="contact" />
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <select name="course"></select>
+      <textarea name="message"></textarea>
+    </form>
+    <ContactForm client:load />
+  </Section>
+
+  <Section>
+    <div class="rounded-[16px] bg-pd-surface px-hgap-md lg:px-hgap-lg py-vgap-md lg:py-vgap-lg lg:pb-vgap-xl shadow-md">
+      <h2 class="text-lg text-pd-fg text-center pt-vgap-xs mb-vgap-sm lg:mb-vgap-md">
+        お申し込みの流れ
+      </h2>
+      <StepFlow steps={steps} />
+    </div>
+  </Section>
+
+  <Section>
+    <details class="group">
+      <summary class="cursor-pointer font-medium text-pd-muted hover:text-pd-fg transition-colors list-none">
+        <span class="group-open:hidden">▶</span>
+        <span class="hidden group-open:inline">▼</span> 特定商取引法に基づく表記
+      </summary>
+      <div class="mt-vgap-sm">
+        <table class="w-full text-sm">
+          <tbody>
+            {tokushoho.map((row) => (
+              <tr class="border-b border-pd-border">
+                <th class="py-vgap-xs px-hgap-xs text-left font-medium text-pd-muted whitespace-nowrap align-top">
+                  {row.key}
+                </th>
+                <td class="py-vgap-xs px-hgap-xs text-pd-fg">{row.value}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </details>
+  </Section>
+</BaseLayout>

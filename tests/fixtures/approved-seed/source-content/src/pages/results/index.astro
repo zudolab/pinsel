@@ -1,0 +1,73 @@
+---
+import BaseLayout from '../../layouts/base-layout.astro';
+import Section from '@components/section/section.astro';
+import CtaSection from '@components/cta-section/cta-section.astro';
+import PageHeader from '@components/page-header/page-header.astro';
+import Breadcrumb from '@components/breadcrumb/breadcrumb.astro';
+import NavArrowIcon from '@components/nav-arrow-icon/nav-arrow-icon.astro';
+import StatsBar from '@components/stats-bar/stats-bar.astro';
+import { resultsData, schoolUrls } from '@/data/results-data';
+
+const title = '合格実績 - Pinsel';
+const description = '2015年から11年間のドイツ美大合格実績。30校以上に合格者を輩出。';
+
+const stats = [
+  { number: '123+', label: '合格実績' },
+  { number: '30+', label: '合格校数' },
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <Section>
+    <Breadcrumb
+      items={[{ label: '', href: '/' }, { label: 'ドイツ美大合格実績' }]}
+    />
+    <PageHeader
+      title="ドイツ美大合格実績"
+      description="Pinselの受講生の合格実績です。2015年から11年間、ドイツ・オーストリアの美術大学へ多数の合格者を送り出しています。"
+    />
+    <StatsBar stats={stats} />
+  </Section>
+
+  {resultsData.map((yearData) => (
+    <Section>
+      <h2 class="text-lg text-pd-fg">
+        {yearData.year}
+        <span class="text-base font-normal text-pd-muted">
+          （{yearData.count}件）
+        </span>
+      </h2>
+      <ul class="mt-vgap-sm list-none p-0 m-0 grid grid-cols-1 lg:grid-cols-2 gap-vgap-xs lg:gap-hgap-xs">
+        {yearData.entries.map((entry, i) => (
+          <li class="rounded-md border border-pd-border bg-pd-bg px-hgap-sm py-vgap-xs">
+            {schoolUrls[entry.school] ? (
+              <a
+                href={schoolUrls[entry.school]}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="no-underline flex items-center gap-hgap-xs"
+              >
+                <div class="flex-1 min-w-0">
+                  <p class="font-medium text-pd-link">{entry.school}</p>
+                  <p class="mt-vgap-2xs text-sm text-pd-muted">{entry.department}</p>
+                </div>
+                <NavArrowIcon class="shrink-0 text-pd-link" />
+              </a>
+            ) : (
+              <>
+                <p class="font-medium text-pd-fg">{entry.school}</p>
+                <p class="mt-vgap-2xs text-sm text-pd-muted">{entry.department}</p>
+              </>
+            )}
+          </li>
+        ))}
+      </ul>
+    </Section>
+  ))}
+
+  <CtaSection
+    text="お問い合わせ"
+    href="/contact/"
+    subCopy="ドイツ美大受験に興味がある方、まずはお気軽にご相談ください。"
+  />
+</BaseLayout>

@@ -1,0 +1,19 @@
+---
+interface Props {
+  quote: string;
+  author: string;
+  school: string;
+}
+
+const { quote, author, school } = Astro.props;
+---
+<div class="h-full rounded-md border border-pd-border bg-pd-bg px-hgap-sm py-vgap-sm">
+  <p class="indent-hgap-2xs text-sm italic text-pd-fg">
+    <span class="text-lg font-bold text-pd-accent">&ldquo;</span>
+    {quote}
+  </p>
+  <div class="mt-vgap-sm">
+    <p class="text-sm text-pd-muted">{author}</p>
+    <p class="mt-vgap-2xs text-sm font-bold text-pd-link">{school}</p>
+  </div>
+</div>

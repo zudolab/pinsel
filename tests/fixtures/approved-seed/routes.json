@@ -1,0 +1,86 @@
+[
+  {
+    "url": "/",
+    "title": "Pinsel - ドイツ美大受験オンラインクラス",
+    "previewFile": "prototype/dist/index.html",
+    "sourceFixture": "prototype/src/source-content/src/pages/index.astro"
+  },
+  {
+    "url": "/lessons/",
+    "title": "オンラインクラス - Pinsel",
+    "previewFile": "prototype/dist/lessons/index.html",
+    "sourceFixture": "prototype/src/source-content/src/pages/lessons/index.astro"
+  },
+  {
+    "url": "/about/",
+    "title": "講師紹介 - Pinsel",
+    "previewFile": "prototype/dist/about/index.html",
+    "sourceFixture": "prototype/src/source-content/src/pages/about/index.astro"
+  },
+  {
+    "url": "/results/",
+    "title": "合格実績 - Pinsel",
+    "previewFile": "prototype/dist/results/index.html",
+    "sourceFixture": "prototype/src/source-content/src/pages/results/index.astro"
+  },
+  {
+    "url": "/voices/",
+    "title": "生徒の声 - Pinsel",
+    "previewFile": "prototype/dist/voices/index.html",
+    "sourceFixture": "prototype/src/source-content/src/pages/voices/index.astro"
+  },
+  {
+    "url": "/faq/",
+    "title": "よくある質問 - Pinsel",
+    "previewFile": "prototype/dist/faq/index.html",
+    "sourceFixture": "prototype/src/source-content/src/pages/faq/index.astro"
+  },
+  {
+    "url": "/notes/",
+    "title": "Notes - Pinsel",
+    "previewFile": "prototype/dist/notes/index.html",
+    "sourceFixture": null
+  },
+  {
+    "url": "/notes/exam-schedule/",
+    "title": "ドイツ美大受験の時期 - Pinsel Notes",
+    "previewFile": "prototype/dist/notes/exam-schedule/index.html",
+    "sourceFixture": "prototype/src/source-content/src/notes/exam-schedule.mdx"
+  },
+  {
+    "url": "/notes/free-tuition/",
+    "title": "ドイツの美大は学費が無料 - Pinsel Notes",
+    "previewFile": "prototype/dist/notes/free-tuition/index.html",
+    "sourceFixture": "prototype/src/source-content/src/notes/free-tuition.mdx"
+  },
+  {
+    "url": "/notes/german-language/",
+    "title": "ドイツ語学習について - Pinsel Notes",
+    "previewFile": "prototype/dist/notes/german-language/index.html",
+    "sourceFixture": "prototype/src/source-content/src/notes/german-language.mdx"
+  },
+  {
+    "url": "/notes/online-exam/",
+    "title": "オンラインでのドイツ美大受験 - Pinsel Notes",
+    "previewFile": "prototype/dist/notes/online-exam/index.html",
+    "sourceFixture": "prototype/src/source-content/src/notes/online-exam.mdx"
+  },
+  {
+    "url": "/notes/what-is-mappe/",
+    "title": "マッペ（ポートフォリオ）とは - Pinsel Notes",
+    "previewFile": "prototype/dist/notes/what-is-mappe/index.html",
+    "sourceFixture": "prototype/src/source-content/src/notes/what-is-mappe.mdx"
+  },
+  {
+    "url": "/contact/",
+    "title": "お問い合わせ - Pinsel",
+    "previewFile": "prototype/dist/contact/index.html",
+    "sourceFixture": "prototype/src/source-content/src/pages/contact/index.astro"
+  },
+  {
+    "url": "/404.html",
+    "title": "ページが見つかりません - Pinsel",
+    "previewFile": "prototype/dist/404.html",
+    "sourceFixture": null
+  }
+]

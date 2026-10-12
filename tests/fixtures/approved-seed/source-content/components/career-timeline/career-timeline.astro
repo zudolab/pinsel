@@ -1,0 +1,20 @@
+---
+export type CareerTimelineItem = {
+  year: string;
+  text: string;
+};
+
+interface Props {
+  items: CareerTimelineItem[];
+}
+
+const { items } = Astro.props;
+---
+<ul class="flex flex-col gap-vgap-xs">
+  {items.map((item) => (
+    <li class="flex gap-hgap-xs text-sm text-pd-fg">
+      <span class="shrink-0 font-medium text-pd-link">{item.year}</span>
+      <span>{item.text}</span>
+    </li>
+  ))}
+</ul>

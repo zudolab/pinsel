@@ -1,0 +1,18 @@
+---
+interface Props {
+  year: string;
+  school: string;
+  detail: string;
+  url?: string;
+}
+
+const { year, school, detail, url } = Astro.props;
+---
+<div class="h-full rounded-md border border-pd-border bg-pd-bg px-hgap-sm py-vgap-sm">
+  <p class="text-sm font-bold tracking-[2px] text-pd-link">{year}</p>
+  {url
+    ? <a href={url} target="_blank" rel="noopener noreferrer" class="mt-vgap-2xs block font-bold text-pd-fg hover:underline">{school}</a>
+    : <p class="mt-vgap-2xs font-bold text-pd-fg">{school}</p>
+  }
+  <p class="mt-vgap-2xs text-sm text-pd-muted">{detail}</p>
+</div>

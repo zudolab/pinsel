@@ -1,0 +1,23 @@
+---
+interface Props {
+  class?: string;
+  gap?: 'xs' | 'sm' | 'md';
+}
+
+const gapStyles = {
+  xs: 'gap-vgap-xs lg:gap-y-vgap-xs',
+  sm: 'gap-vgap-sm lg:gap-y-vgap-sm',
+  md: 'gap-vgap-md lg:gap-y-vgap-md',
+};
+
+const { class: className = '', gap = 'md' } = Astro.props;
+---
+<div
+  class:list={[
+    'flex flex-col lg:grid lg:grid-cols-2 lg:gap-x-hgap-lg',
+    gapStyles[gap],
+    className,
+  ]}
+>
+  <slot />
+</div>
