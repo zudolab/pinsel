@@ -7,13 +7,14 @@ import { canonicalStringifyJson, compileSiteProjectPlan, serializeSiteProject } 
 
 import { PINSEL_ROUTES, ROUTE_FRAGMENTS, planPathname } from "../invariants";
 import { assembleProjectText } from "../site/assemble";
-import { GOLDEN_PATH, goldenText } from "../site/check";
+import { GOLDEN_PATH, goldenText, planStructure } from "../site/check";
 import { PINSEL_COMPONENT_CONTRACT } from "../site/component-contract";
 import { checkPackAgainstContract, contractPack } from "../site/contract-pack";
 import { readContentEntries } from "../site/entries";
 import { routeFacts } from "../site/plan-facts";
 import { projectSite } from "../site/project";
 import { buildPinselSite } from "../site/structure";
+import { MIGRATION_BASELINE } from "./content-state";
 import { checkLinks, validateContent } from "../site/validate";
 
 const pack = contractPack();
@@ -41,7 +42,10 @@ describe("site structure (against the component contract)", () => {
     expect(portable.status).toBe("ready");
     if (portable.status !== "ready") return;
     expect(canonical(portable.plan.routes)).toBe(canonical(node.plan.routes));
-    expect(goldenText(node.plan)).toBe(await readFile(GOLDEN_PATH, "utf8"));
+    const golden = await readFile(GOLDEN_PATH, "utf8");
+    expect(canonical(planStructure(node.plan))).toBe(canonical(planStructure(JSON.parse(golden))));
+    // Byte for byte, values included, only while the content is the migration baseline.
+    if (MIGRATION_BASELINE) expect(goldenText(node.plan)).toBe(golden);
   });
 
   it("carries the prototype's fragments, links and art windows", async () => {

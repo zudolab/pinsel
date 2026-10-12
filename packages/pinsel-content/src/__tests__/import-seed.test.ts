@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { CONTENT_BASELINE_PATH, entryFilePath, type ContentBaseline } from "../import-rules";
 import { DEFAULT_IMPORT_ROOT, importSeed, valuesDigest } from "../import/import-seed";
 import { SEED_ENTRY_COUNTS } from "../models";
+import { MIGRATION_BASELINE } from "./content-state";
 
 const roots: string[] = [];
 afterEach(async () => {
@@ -38,7 +39,8 @@ describe("import-seed", () => {
     expect(second.baseline.importedAt).toBe(first.baseline.importedAt);
   });
 
-  it("reproduces the committed content/entries and content/baseline.json digests byte for byte", async () => {
+  // After a publication the committed entries are CMS-edited by design; the baseline record is still checked by check-publication.
+  it.runIf(MIGRATION_BASELINE)("reproduces the committed content/entries and content/baseline.json digests byte for byte", async () => {
     const root = await freshRoot();
     const result = await importSeed({ root, now });
     const committed = JSON.parse(await readFile(join(DEFAULT_IMPORT_ROOT, CONTENT_BASELINE_PATH), "utf8")) as ContentBaseline;

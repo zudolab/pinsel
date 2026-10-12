@@ -6,6 +6,7 @@ import { readFixture } from "../import/seed-entries";
 import { PINSEL_MODELS, SEED_DECLARED_RESULT_COUNT, SEED_ENTRY_COUNTS, fieldId } from "../models";
 import { PUBLICATION_MAP, UNRENDERED_FIELDS } from "../publication-map";
 import { readContentEntries } from "../site/entries";
+import { MIGRATION_BASELINE } from "./content-state";
 import { resolvePageMeta } from "../site/page-meta";
 
 // Record integrity of the committed content/entries against the approved seed.
@@ -62,14 +63,19 @@ describe("migrated content/entries", () => {
     expect(sortedByOrder("note").map((entry) => entry.id)).toEqual(["free-tuition", "what-is-mappe", "exam-schedule", "online-exam", "german-language"]);
   });
 
-  it("keeps both course wordings and the ?course= order", () => {
+  it("keeps the ?course= order and every course's home description", () => {
+    expect(sortedByOrder("course").map((entry) => entry.id)).toEqual(["consultation", "two-month", "four-month"]);
+    expect(of("course").map((entry) => get(entry, "homeDescription"))).not.toContain(undefined);
+    expect(of("legal-row")).toHaveLength(8);
+  });
+
+  // The migrated wording; a published price edit legitimately changes it.
+  it.runIf(MIGRATION_BASELINE)("keeps both course wordings", () => {
     expect(sortedByOrder("course").map((entry) => [entry.id, get(entry, "price"), get(entry, "lessonsNote")])).toEqual([
       ["consultation", "¥10,000", "税込 / 1時間半〜2時間のオンライン通話"],
       ["two-month", "¥50,000", "税込 / 1ヶ月あたり25,000円"],
       ["four-month", "¥92,000", "税込 / 1ヶ月あたり23,000円"],
     ]);
-    expect(of("course").map((entry) => get(entry, "homeDescription"))).not.toContain(undefined);
-    expect(of("legal-row")).toHaveLength(8);
   });
 
   it("keeps the home excerpts distinct from the detail records", () => {

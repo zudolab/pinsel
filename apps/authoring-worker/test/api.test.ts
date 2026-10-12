@@ -62,7 +62,9 @@ describe("authoring API", () => {
     const handler = app();
     const before = await readDraft(handler);
     expect(before.baselineRevision).toBe(BASELINE.baselineRevision);
-    expect(before.snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe("¥50,000");
+    // The committed price: the migrated ¥50,000 until a publication changed it.
+    const committed = BASELINE.project.providers.content[0]!.entries.find((entry) => entry.id === "two-month")!.values[PRICE];
+    expect(before.snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe(committed);
     const saved = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-1", request: putPrice(before.draftRevision, "¥55,000"), expectedBaselineRevision: before.baselineRevision } });
     expect(saved.status).toBe(200);
     expect(saved.body.status).toBe("ok");

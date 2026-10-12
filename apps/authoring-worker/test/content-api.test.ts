@@ -4,7 +4,7 @@ import { PINSEL_CONTENT_POLICY, fieldId } from "@pinsel/content";
 import { CONTENT_STORAGE_CONFORMANCE_POLICY, createContentStorageConformanceBaseline } from "zudo-composer/host-storage";
 
 import { localSeedHandler } from "../src/admin/seed";
-import type { AuthoringSite } from "../src/site/baseline";
+import { BASELINE, type AuthoringSite } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
 import { app, call, priceOf, putPrice, readDraft, savePrice } from "./helpers";
 
@@ -26,7 +26,7 @@ describe("permitted records", () => {
     for (const entry of course.entries) expect(Object.keys(entry.values).every((field) => permitted.includes(field))).toBe(true);
     expect(course.entries.map((entry: { id: string }) => entry.id).sort()).toEqual(["consultation", "four-month", "two-month"]);
     const one = await call(handler, "/api/v1/content/course/two-month");
-    expect(one.body.value.entry.values[fieldId("course", "price")]).toBe("¥50,000");
+    expect(one.body.value.entry.values[fieldId("course", "price")]).toBe(BASELINE.project.providers.content[0]!.entries.find((entry) => entry.id === "two-month")!.values[fieldId("course", "price")]);
     expect((await call(handler, "/api/v1/content/course/nope")).status).toBe(404);
     expect((await call(handler, "/api/v1/content/no-such-model")).status).toBe(404);
   });

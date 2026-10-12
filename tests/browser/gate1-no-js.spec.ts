@@ -6,6 +6,11 @@ import { expect, test } from "@playwright/test";
 // three prices, their labels, the contact links and the header/footer, and
 // the document carries no <script> at all.
 const dist = path.resolve(import.meta.dirname, "../../apps/site/dist/index.html");
+// The committed course prices in ?course= order: the migrated ¥10,000 / ¥50,000 / ¥92,000 until a publication edits them.
+const prices = ["consultation", "two-month", "four-month"].map((id) => {
+  const entry = JSON.parse(readFileSync(path.resolve(import.meta.dirname, `../../content/entries/course/${id}.json`), "utf8")) as { values: Record<string, string> };
+  return new RegExp(entry.values["course-price"]!.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+});
 
 test.use({ javaScriptEnabled: false });
 
@@ -16,7 +21,7 @@ test("home page renders the pricing record without JavaScript", async ({ page })
   await expect(page.locator("script")).toHaveCount(0);
   const cards = page.locator("article.pricing-card");
   await expect(cards).toHaveCount(3);
-  await expect(cards.locator(".price")).toHaveText([/¥10,000/, /¥50,000/, /¥92,000/]);
+  await expect(cards.locator(".price")).toHaveText(prices);
   await expect(cards.locator("h3")).toHaveText(["進路相談", "2ヶ月コース", "4ヶ月コース"]);
   await expect(cards.locator(".pricing-card__popular")).toHaveText(["POPULAR"]);
   for (const index of [1, 2, 3]) await expect(page.locator(`a.text-link[href="/contact/?course=${index}"]`)).toHaveCount(1);
