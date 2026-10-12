@@ -1,6 +1,6 @@
 import type { ContentExportState } from "zudo-composer/export";
 import type { AdminHandler } from "../app";
-import { json } from "../api/handlers";
+import { json, readJson } from "../api/handlers";
 import type { PublicationEvidence } from "../publish/port";
 import type { FakeOutcome, FakePublicationProvider } from "../publish/fake-provider";
 
@@ -14,22 +14,13 @@ const STATES: readonly ContentExportState[] = ["submitted", "building", "verifie
 const METHODS = ["submit", "status", "lookupExisting", "promote"] as const;
 const OUTCOMES: readonly FakeOutcome[] = ["timeout", "unavailable", "lost-ack", "rejected"];
 
-async function body(request: Request): Promise<Record<string, unknown> | null> {
-  try {
-    const value: unknown = await request.json();
-    return typeof value === "object" && value !== null && !Array.isArray(value) ? (value as Record<string, unknown>) : null;
-  } catch {
-    return null;
-  }
-}
-
 export function fakePublisherHandler(fake: FakePublicationProvider): AdminHandler {
   return async (request, url) => {
     if (url.pathname === "/admin/fake-publisher" && request.method === "GET") {
       return json({ status: "ok", value: { calls: fake.calls, submissions: fake.submissions.map(({ operationId, submission, files }) => ({ operationId, snapshotId: submission.snapshotId, baselineRevision: submission.baselineRevision, idempotencyKey: submission.idempotencyKey, files })) } });
     }
     if (url.pathname === "/admin/fake-publisher/script" && request.method === "POST") {
-      const input = await body(request);
+      const input = await readJson(request);
       const method = METHODS.find((candidate) => candidate === input?.method);
       const outcome = OUTCOMES.find((candidate) => candidate === input?.outcome);
       if (!method || !outcome) return json({ status: "rejected", message: `method must be one of ${METHODS.join(", ")} and outcome one of ${OUTCOMES.join(", ")}.` }, 422);
@@ -37,7 +28,7 @@ export function fakePublisherHandler(fake: FakePublicationProvider): AdminHandle
       return json({ status: "ok", value: { method, outcome } });
     }
     if (url.pathname === "/admin/fake-publisher/advance" && request.method === "POST") {
-      const input = await body(request);
+      const input = await readJson(request);
       const state = STATES.find((candidate) => candidate === input?.state);
       if (typeof input?.operationId !== "string" || !state) return json({ status: "rejected", message: `operationId and a state (${STATES.join(", ")}) are required.` }, 422);
       try {

@@ -40,7 +40,7 @@ export function statusCodeFor(result: { status: string }): number {
   }
 }
 
-async function readJson(request: Request): Promise<Record<string, unknown> | null> {
+export async function readJson(request: Request): Promise<Record<string, unknown> | null> {
   try {
     const value: unknown = await request.json();
     return typeof value === "object" && value !== null && !Array.isArray(value) ? (value as Record<string, unknown>) : null;

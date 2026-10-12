@@ -411,7 +411,6 @@ test("3. concurrent saves: one ok, one conflict; idempotent replays; aborted req
     await route.continue();
   });
   await setField(third, PRICE, "¥98,000");
-  await expect(third.getByTestId("save-status")).not.toHaveText(/保存済み（改訂 \d+）/, { timeout: 2_000 }).catch(() => undefined);
   const truth = await draft();
   expect(valueOf(truth, "course", "four-month", "course-price")).toBe("¥98,000");
   await expect(third.getByTestId("save-status")).toHaveText(/保存済み（改訂 \d+）|保存を確認中|保存に失敗/, { timeout: 30_000 });
