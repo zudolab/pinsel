@@ -2,7 +2,7 @@
 
 One realistic record — the `course` collection rendered as the home `PricingCards` (3 entries, `price`/`unit`/`homeDescription`/`featured`, `/contact/?course=N` links), inside the `#pricing` section and the global frame template — proven across every surface with production code paths. All proofs ran on this machine (Linux WSL2, Node 24.13.1, pnpm 11.5.2) at the commit recorded below.
 
-- Pinsel: branch `pinsel-site-cms/gate1`, commit `GATE1_PINSEL_COMMIT` (base `base/pinsel-site-cms` @ `9ab6d86`).
+- Pinsel: branch `pinsel-site-cms/gate1`, commit `489953dd5afd7a9d7bb72d75a9dd96cf9040c266` (base `base/pinsel-site-cms` @ `9ab6d86`).
 - Composer: `zudo-composer@git+https://github.com/Takazudo/zudo-composer.git#7ca114a3ed7dcef10f5420dcc1894ea7125e4da6` (#903 milestone 2, draft PR Takazudo/zudo-composer#904, **no upstream change was needed**), `@zudo-composer/component-contract@…#c0b452da075b66757c60bd0d721a47062d4354d0`.
 
 ## Verdict per leg
