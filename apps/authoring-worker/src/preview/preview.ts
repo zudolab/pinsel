@@ -2,7 +2,7 @@ import { h, type Child } from "@takazudo/zfb/zudo-react";
 import { renderToString } from "@takazudo/zfb/zudo-react/server";
 import { DocumentShell, PINSEL_PACK_ID, PINSEL_PACK_VERSION, pinselPack, pinselRegistry, renderRouteDocument } from "@pinsel/ui";
 import { compileSiteProjectPlan } from "zudo-composer/content";
-import type { ContentSnapshotRecord } from "zudo-composer/host-storage";
+import type { ContentBaseline, ContentSnapshotRecord } from "zudo-composer/host-storage";
 import { previewClientScript, type PreviewIdentity } from "./preview-client";
 import { PREVIEW_STYLES } from "./styles.generated";
 
@@ -56,6 +56,22 @@ export async function renderPreviewDocument(snapshot: ContentSnapshotRecord, rou
   }
   const body = renderRouteDocument(routeDocument, pinselRegistry);
   return { status: "ok", identity, html: document({ pathname: route, title: `Pinsel preview ${route}`, body, self: identity, error: null }) };
+}
+
+const routeCache = new Map<string, Promise<string[]>>();
+
+/** Routes the baseline's structure declares, in approved order; cached per baseline revision. */
+export function previewRoutesOf(baseline: ContentBaseline, approved: readonly string[]): Promise<string[]> {
+  let routes = routeCache.get(baseline.baselineRevision);
+  if (!routes) {
+    routes = compileSiteProjectPlan(baseline.project, pinselPack.manifest).then((compiled) => {
+      const declared = new Set(compiled.status === "ready" ? compiled.plan.routes.map((route) => route.pathname) : []);
+      return approved.filter((route) => declared.has(route));
+    });
+    routes.catch(() => routeCache.delete(baseline.baselineRevision));
+    routeCache.set(baseline.baselineRevision, routes);
+  }
+  return routes;
 }
 
 /** Body markup of a route exactly as the public build emits it: the parity target. */

@@ -39,7 +39,8 @@ export function createAccessIdentity(config: AccessIdentityConfig): IdentityReso
     const token = request.headers.get(ACCESS_ASSERTION_HEADER);
     if (!token) return { ok: false, status: 401, code: "missing-assertion", message: "Cloudflare Access assertion is required." };
     try {
-      const { payload } = await jwtVerify(token, jwks, { issuer: config.teamDomain, audience: config.audience });
+      // jose checks the signature, `iss`, `aud`, `exp` and `nbf`; `exp` must be present, not merely valid when present.
+      const { payload } = await jwtVerify(token, jwks, { issuer: config.teamDomain, audience: config.audience, requiredClaims: ["exp"] });
       const email = typeof payload.email === "string" ? payload.email.toLowerCase() : "";
       if (!email || !allowlist.has(email)) return { ok: false, status: 403, code: "not-allowed", message: "This identity may not edit Pinsel content." };
       return { ok: true, actor: { subject: email } };
