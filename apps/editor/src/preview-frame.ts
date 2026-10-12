@@ -1,3 +1,5 @@
+import { createHostPreviewBridge, type HostPreviewBridge, type HostPreviewPackIdentity, type HostPreviewState } from "zudo-composer/preview-protocol";
+
 // Preview iframe lifecycle around the mount. The editor's own frame and bridge
 // are created by `mountContentEditor` (sandboxed through `preview.sandbox`).
 // Reload = navigate the frame back to the shell: the shell announces `ready`
