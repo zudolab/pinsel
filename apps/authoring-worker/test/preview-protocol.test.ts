@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { hostRenderMessage, readPreviewToHost } from "zudo-composer/preview-protocol";
 
-import { previewClientMain, previewClientScript, type PreviewMessageEvent } from "../src/preview/preview-client";
+import { INLINE_NAME_PRELUDE, inlineFunctionScript, previewClientMain, previewClientScript, type PreviewMessageEvent } from "../src/preview/preview-client";
 import { PREVIEW_PACK } from "../src/preview/preview";
 
 const ORIGIN = "https://authoring.example";
@@ -58,9 +58,25 @@ describe("preview protocol client", () => {
 
   it("serialises to a self-contained inline script", () => {
     const script = previewClientScript(PREVIEW_PACK, null, null);
-    expect(script.startsWith("(function previewClientMain(") || script.startsWith("(")).toBe(true);
+    expect(script.startsWith(`(() => { ${INLINE_NAME_PRELUDE}`)).toBe(true);
     expect(script).toContain("zudo-composer-host-preview");
     expect(script).not.toContain("import ");
     expect(script).not.toContain("require(");
+  });
+
+  it("runs as the served inline script in a bare context and announces ready", () => {
+    const frame = fakeWindow();
+    // `window` is the only binding the document gives the script; no `__name` exists in the frame.
+    new Function("window", previewClientScript(PREVIEW_PACK, null, null))(frame.window);
+    expect(frame.received().map((result) => (result.ok ? result.message.type : result.reason))).toEqual(["ready"]);
+  });
+
+  it("survives a bundler's keep-names rewrite, which calls __name inside the inlined body", () => {
+    // What wrangler's esbuild emits for `const post = (message) => …` under keep-names.
+    const rewritten = `function main(window) { const post = /* @__PURE__ */ __name((message) => window.parent.postMessage(message, "*"), "post"); post({ type: "ready" }); }`;
+    const frame = fakeWindow();
+    expect(() => new Function("window", `(${rewritten})(window);`)(frame.window)).toThrow(/__name/);
+    new Function("window", inlineFunctionScript(rewritten, ["window"]))(frame.window);
+    expect(frame.posted.map(({ message }) => message)).toEqual([{ type: "ready" }]);
   });
 });
