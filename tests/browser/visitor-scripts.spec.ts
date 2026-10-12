@@ -1,50 +1,9 @@
-import { readFileSync, readdirSync } from "node:fs";
-import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
+import { ORIGIN, serve } from "./serve-dist";
 
-// zudolab/pinsel#10: the three visitor client-script entries on the built
-// home page frame. Until the routes sub-issue renders the script tags from the
-// layout, this spec injects them in load order; `/fixture/` swaps <main> for
-// tests/browser/fixtures/visitor-main.html (art window, TOC rail, contact form).
-const dist = path.resolve(import.meta.dirname, "../../apps/site/dist");
-const ORIGIN = "http://pinsel.test";
-const SCRIPT_NAMES = ["art-clock", "motion", "site"];
-
-function hashed(dir: string, prefix: string, ext: string): string {
-  const file = readdirSync(path.join(dist, dir)).find((name) => name.startsWith(`${prefix}-`) && name.endsWith(ext));
-  if (!file) throw new Error(`apps/site/dist/${dir} has no ${prefix}-*${ext}; run pnpm build:site`);
-  return `/${dir}/${file}`;
-}
-
-function documentHtml(withFixture: boolean): string {
-  let html = readFileSync(path.join(dist, "index.html"), "utf8");
-  if (!html.includes("/assets/client/")) {
-    const tags = SCRIPT_NAMES.map((name) => `<script type="module" src="${hashed("assets/client", name, ".js")}"></script>`).join("");
-    html = html.replace("</head>", `${tags}</head>`);
-  }
-  if (withFixture) {
-    const main = readFileSync(path.resolve(import.meta.dirname, "fixtures/visitor-main.html"), "utf8");
-    html = html.replace(/(<main id="main" tabindex="-1">)[\s\S]*(<\/main>)/, (_all, open: string, close: string) => `${open}${main}${close}`);
-  }
-  return html;
-}
-
-const TYPES: Record<string, string> = { ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".html": "text/html" };
-
-async function serve(page: Page): Promise<void> {
-  await page.route(`${ORIGIN}/**`, async (route) => {
-    const url = new URL(route.request().url());
-    if (url.pathname === "/") return route.fulfill({ contentType: "text/html", body: documentHtml(false) });
-    if (url.pathname === "/fixture/") return route.fulfill({ contentType: "text/html", body: documentHtml(true) });
-    const file = path.join(dist, decodeURIComponent(url.pathname));
-    if (!file.startsWith(dist)) return route.fulfill({ status: 404 });
-    try {
-      return await route.fulfill({ contentType: TYPES[path.extname(file)] ?? "application/octet-stream", body: readFileSync(file) });
-    } catch {
-      return route.fulfill({ status: 404 });
-    }
-  });
-}
+// zudolab/pinsel#10: the three visitor client-script entries, loaded by the
+// site layout, on the real built routes: the menu on /, the TOC rail and art
+// window on /faq/, the contact form on /contact/.
 
 function trackErrors(page: Page): string[] {
   const errors: string[] = [];
@@ -88,7 +47,7 @@ test.describe("page TOC", () => {
   test("aria-current follows the reading line scrolling down and back up", async ({ page }) => {
     const errors = trackErrors(page);
     await serve(page);
-    await page.goto(`${ORIGIN}/fixture/`);
+    await page.goto(`${ORIGIN}/faq/`);
     const current = page.locator('.page-toc a[aria-current="location"]');
     await expect(current).toHaveCount(1);
     await expect(current).toHaveAttribute("href", "#faq-1");
@@ -120,7 +79,7 @@ test.describe("motion and pigment clock", () => {
     // 1.5 minutes into the cycle: mid-segment, so a live clock changes visibly every second.
     await page.clock.install({ time: new Date("2026-10-13T00:01:30Z") });
     await serve(page);
-    await page.goto(`${ORIGIN}/fixture/`);
+    await page.goto(`${ORIGIN}/faq/`);
     const root = page.locator("html");
     await expect(root).toHaveAttribute("data-reduced-motion", "true");
     await expect(root).toHaveAttribute("data-motion", "off");
@@ -140,7 +99,7 @@ test.describe("motion and pigment clock", () => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.clock.install({ time: new Date("2026-10-13T00:01:30Z") });
     await serve(page);
-    await page.goto(`${ORIGIN}/fixture/`);
+    await page.goto(`${ORIGIN}/faq/`);
     const root = page.locator("html");
     await expect(root).toHaveAttribute("data-motion", "on");
     await expect(root).toHaveAttribute("data-art-mode", "live");
@@ -151,7 +110,7 @@ test.describe("motion and pigment clock", () => {
 
     await scrollToY(page, 300);
     await page.clock.runFor(100);
-    await expect.poll(() => page.locator('.art-window [data-depth="0.85"]').evaluate((node) => (node as SVGElement).style.transform)).toMatch(/^translate\(/);
+    await expect.poll(() => page.locator('.art-window [data-depth="0.85"]').first().evaluate((node) => (node as SVGElement).style.transform)).toMatch(/^translate\(/);
 
     const toggle = page.locator("[data-motion-toggle]");
     await expect(toggle).toHaveAttribute("aria-pressed", "true");
@@ -176,7 +135,7 @@ test.describe("contact form", () => {
   test("?course=N preselects, validates, and simulates the submit without any request", async ({ page }) => {
     const errors = trackErrors(page);
     await serve(page);
-    await page.goto(`${ORIGIN}/fixture/?course=2`);
+    await page.goto(`${ORIGIN}/contact/?course=2`);
     await expect(page.locator("#course")).toHaveValue("2ヶ月コース");
     // Font subsets (unicode-range) may load lazily as new glyphs render; anything else would be a submission.
     const requests: string[] = [];
@@ -216,10 +175,10 @@ test.describe("contact form", () => {
 
   test("ignores the removed ?state= review switch", async ({ page }) => {
     await serve(page);
-    await page.goto(`${ORIGIN}/fixture/?state=success`);
+    await page.goto(`${ORIGIN}/contact/?state=success`);
     await expect(page.locator("#contact-form")).toBeVisible();
     await expect(page.locator(".form-success")).toBeHidden();
-    await page.goto(`${ORIGIN}/fixture/?state=error`);
+    await page.goto(`${ORIGIN}/contact/?state=error`);
     await expect(page.locator("[data-form-error]")).toBeHidden();
   });
 });
@@ -227,15 +186,16 @@ test.describe("contact form", () => {
 test.describe("without JavaScript", () => {
   test.use({ javaScriptEnabled: false });
 
-  test("the page stays usable: content, TOC links, form and frame render", async ({ page }) => {
+  test("the pages stay usable: content, TOC links, form and frame render", async ({ page }) => {
     await serve(page);
-    await page.goto(`${ORIGIN}/fixture/`);
+    await page.goto(`${ORIGIN}/faq/`);
     await expect(page.locator("html")).toHaveAttribute("data-motion", "off");
     await expect(page.locator(".page-toc a")).toHaveCount(4);
     await expect(page.locator(".page-toc a[aria-current]")).toHaveCount(0);
     await expect(page.locator("#faq-4 h2")).toHaveText("費用・申し込みについて");
+    await expect(page.locator("#site-navigation a.site-nav__item")).toHaveCount(6);
+    await page.goto(`${ORIGIN}/contact/`);
     await expect(page.locator("#contact-form")).toBeVisible();
     await expect(page.locator(".form-success")).toBeHidden();
-    await expect(page.locator("#site-navigation a.site-nav__item")).toHaveCount(6);
   });
 });

@@ -1,0 +1,15 @@
+{
+  "$schema": "../authoring-worker/node_modules/wrangler/config-schema.json",
+  // The public site: static assets only (no `main`, no runtime adapter).
+  "name": "pinsel-site",
+  "compatibility_date": "2026-10-12",
+  // Never deployed from this repository; local checks use `wrangler dev`.
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    // `zfb build` output.
+    "directory": "./dist",
+    "not_found_handling": "404-page",
+    "html_handling": "auto-trailing-slash"
+  }
+}
