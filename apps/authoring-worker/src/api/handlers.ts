@@ -1,6 +1,7 @@
 import type { HostContentActor } from "zudo-composer/content";
 import { applyHostContentRequest, isHostContentOperationId, readHostContentReceipt, type ContentDraftState, type ContentDraftStorageAdapter, type HostContentApplyResult } from "zudo-composer/host-storage";
 import { advanceFromPublication } from "../baseline/advance";
+import { ensureBaselinePreview } from "../baseline/preview-snapshot";
 import { reconcileCanonical } from "../baseline/reconcile-canonical";
 import { PREVIEW_PACK, previewRoutesOf, previewShellDocument, renderPreviewDocument } from "../preview/preview";
 import { requestPublication, type PublicationContext } from "../publish/jobs";
@@ -129,6 +130,7 @@ export async function handleApi(request: Request, url: URL, context: ApiContext)
       policy: site.editorPolicy,
       routes,
       preview: { url: `${context.origin}/preview/`, origin: context.origin, route: routes[0] ?? "/" },
+      baselinePreview: await ensureBaselinePreview(context.db, site.projectId, baseline.value),
       publication: context.publisher.ok ? { providerId: context.publisher.port.providerId, promotionPolicy: context.publisher.config.promotionPolicy } : { state: "configuration-required", message: context.publisher.message },
       actor: context.actor,
     });
