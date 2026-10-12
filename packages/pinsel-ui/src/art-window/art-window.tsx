@@ -1,5 +1,5 @@
 import type { Child } from "@takazudo/zfb/zudo-react";
-import { ART_SOURCES } from "./art-sources.generated";
+import { ART_SOURCES } from "./art-sources";
 
 export const ART_SLOTS = ["hero", "middle", "closing"] as const;
 export const ART_SIZES = ["hero", "large", "closing", "medium", "small", "ribbon"] as const;

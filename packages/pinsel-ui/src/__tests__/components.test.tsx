@@ -7,7 +7,7 @@ import { renderToString } from "@takazudo/zfb/zudo-react/server";
 import { ArchiveLayout } from "../archive-layout/archive-layout";
 import { ArticleHeading } from "../article-heading/article-heading";
 import { ArticleLayout, RelatedNote } from "../article-layout/article-layout";
-import { ART_SOURCES } from "../art-window/art-sources.generated";
+import { ART_SOURCES } from "../art-window/art-sources";
 import { ArtWindow } from "../art-window/art-window";
 import { Breadcrumb } from "../breadcrumb/breadcrumb";
 import { ContactForm, CourseOption } from "../contact-form/contact-form";
