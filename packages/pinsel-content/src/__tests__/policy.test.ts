@@ -1,139 +1,127 @@
 import { describe, expect, it } from "vitest";
+import type { ContentSnapshot } from "zudo-composer/content";
 
-import { PINSEL_MODELS, fieldId } from "../models";
-import { EVERY_OPERATION, PINSEL_CONTENT_POLICY, authorizeContentMutation, isValueValidForSchema, readOnlyFields } from "../policy";
+import { PINSEL_CONTENT_PROVIDER_ID, PINSEL_MODELS, fieldId } from "../models";
+import { EVERY_OPERATION, PINSEL_CONTENT_POLICY, PINSEL_EDITABLE_FIELDS, PINSEL_EDITOR_POLICY, authorizePinselMutation, readOnlyFields, refusePinselRequest } from "../policy";
 import { buildSeedEntries, ref } from "./seed-entries";
 
 const seedEntries = buildSeedEntries(PINSEL_MODELS);
+const snapshot: ContentSnapshot = { providerId: PINSEL_CONTENT_PROVIDER_ID, mutationToken: 7, models: PINSEL_MODELS, entries: seedEntries };
+const actor = { subject: "client@example.test" };
 const idsOf = (modelId: string) => seedEntries.filter((entry) => entry.modelId === modelId).map((entry) => entry.id);
 
-function codes(result: ReturnType<typeof authorizeContentMutation>): string[] {
-  return result.ok ? [] : result.issues.map((issue) => issue.code);
+function values(modelId: string, byKey: Record<string, unknown>): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(byKey).map(([key, value]) => [fieldId(modelId, key), value]));
+}
+
+function put(modelId: string, entryId: string, byKey: Record<string, unknown>, expectedRevision = snapshot.mutationToken) {
+  return { kind: "put-entry-values", projectId: "pinsel", providerId: PINSEL_CONTENT_PROVIDER_ID, modelId, entryId, expectedRevision, values: values(modelId, byKey) };
+}
+
+function code(request: unknown): string | "ok" {
+  const decision = authorizePinselMutation(actor, request, snapshot);
+  return decision.ok ? "ok" : decision.code;
 }
 
 describe("PINSEL_CONTENT_POLICY", () => {
-  it("covers every model and names only real field keys", () => {
+  it("covers every model with Composer field ids and the upstream operation vocabulary", () => {
     for (const model of PINSEL_MODELS) {
+      const spec = PINSEL_EDITABLE_FIELDS[model.id]!;
       const policy = PINSEL_CONTENT_POLICY.models[model.id];
       expect(policy, model.id).toBeDefined();
-      const keys = model.document.fields.map((field) => field.key);
-      for (const key of policy!.fields) expect(keys, `${model.id}.${key}`).toContain(key);
-      if (model.document.kind === "single") expect(policy!.operations).toEqual(["update"]);
-      if (model.document.kind === "collection") expect(policy!.fields, `${model.id} order is reorder-only`).not.toContain("order");
+      const ids = model.document.fields.map((field) => field.id);
+      for (const id of policy!.fields) expect(ids, `${model.id}.${id}`).toContain(id);
+      const order = fieldId(model.id, "order");
+      expect(policy!.fields.filter((id) => id !== order)).toEqual(spec.fields.map((key) => fieldId(model.id, key)));
+      expect(policy!.fields.includes(order), `${model.id} lists order iff it can reorder`).toBe(spec.operations.includes("reorder"));
+      expect(PINSEL_EDITOR_POLICY.models[model.id]!.fields, `${model.id} editor never edits order`).not.toContain(order);
+      if (model.document.kind === "single") expect(policy!.operations).toEqual(["put-entry-values"]);
     }
+    expect(PINSEL_CONTENT_POLICY.projectId).toBe("pinsel");
+    expect(PINSEL_CONTENT_POLICY.providerId).toBe(PINSEL_CONTENT_PROVIDER_ID);
   });
 
   it("keeps slugs, routes, hrefs and the course list read-only", () => {
-    expect(readOnlyFields(PINSEL_CONTENT_POLICY, PINSEL_MODELS.find((model) => model.id === "note")!)).toEqual(["slug", "order"]);
-    expect(readOnlyFields(PINSEL_CONTENT_POLICY, PINSEL_MODELS.find((model) => model.id === "page-copy")!)).toEqual(["route", "order"]);
-    expect(readOnlyFields(PINSEL_CONTENT_POLICY, PINSEL_MODELS.find((model) => model.id === "nav-link")!)).toEqual(["href", "order"]);
-    expect(PINSEL_CONTENT_POLICY.models.course!.operations).toEqual(["update"]);
-    expect(PINSEL_CONTENT_POLICY.models.note!.operations).toEqual(["update", "reorder"]);
+    expect(readOnlyFields(PINSEL_EDITOR_POLICY, PINSEL_MODELS.find((model) => model.id === "note")!)).toEqual(["slug", "order"]);
+    expect(readOnlyFields(PINSEL_EDITOR_POLICY, PINSEL_MODELS.find((model) => model.id === "page-copy")!)).toEqual(["route", "order"]);
+    expect(readOnlyFields(PINSEL_EDITOR_POLICY, PINSEL_MODELS.find((model) => model.id === "nav-link")!)).toEqual(["href", "order"]);
+    expect(readOnlyFields(PINSEL_CONTENT_POLICY, PINSEL_MODELS.find((model) => model.id === "course")!)).toEqual(["order"]);
+    expect(PINSEL_CONTENT_POLICY.models.course!.operations).toEqual(["put-entry-values"]);
+    expect(PINSEL_CONTENT_POLICY.models.note!.operations).toEqual(["put-entry-values", "reorder"]);
     expect(PINSEL_CONTENT_POLICY.models.testimonial!.operations).toEqual(EVERY_OPERATION);
   });
 });
 
-describe("authorizeContentMutation", () => {
-  it("accepts a copy edit on an editable field", () => {
-    const result = authorizeContentMutation({ kind: "update-entry", modelId: "course", entryId: "two-month", values: { price: "¥55,000" } });
-    expect(result.ok).toBe(true);
+describe("authorizePinselMutation (Composer policy + Pinsel rules)", () => {
+  it("accepts a copy edit on an editable field and derives one put-entry operation", () => {
+    const decision = authorizePinselMutation(actor, put("course", "two-month", { price: "¥55,000" }), snapshot);
+    expect(decision.ok).toBe(true);
+    if (decision.ok) {
+      expect(decision.affectedEntryIds).toEqual(["two-month"]);
+      expect(decision.mutation.operations).toHaveLength(1);
+      expect(decision.mutation.expectedMutationToken).toBe(snapshot.mutationToken);
+    }
   });
 
-  it("rejects an unknown model", () => {
-    expect(codes(authorizeContentMutation({ kind: "update-entry", modelId: "secrets", entryId: "x", values: {} }))).toEqual(["unknown-model"]);
+  it("refuses models outside the policy, protected fields, unknown fields and structure-bound operations", () => {
+    expect(code(put("secrets", "x", {}))).toBe("forbidden");
+    expect(code({ ...put("note", "free-tuition", {}), values: { [fieldId("note", "slug")]: "cheap" } })).toBe("forbidden");
+    expect(code({ ...put("note", "free-tuition", {}), values: { "note-nope": "x" } })).toBe("unknown-field");
+    expect(code(put("faq-item", "faq-exam-01", { order: 9 }))).toBe("forbidden");
+    expect(code({ ...put("course", "six-month", { name: "x" }), kind: "create-entry" })).toBe("forbidden");
+    expect(code({ kind: "delete-entry", projectId: "pinsel", providerId: PINSEL_CONTENT_PROVIDER_ID, modelId: "note", entryId: "free-tuition", expectedRevision: snapshot.mutationToken })).toBe("forbidden");
+    expect(code({ kind: "reorder", projectId: "pinsel", providerId: PINSEL_CONTENT_PROVIDER_ID, modelId: "course", fieldId: fieldId("course", "order"), entryIds: ["two-month", "consultation", "four-month"], expectedRevision: snapshot.mutationToken })).toBe("forbidden");
   });
 
-  it("rejects an unknown field and a forbidden field separately", () => {
-    const result = authorizeContentMutation({ kind: "update-entry", modelId: "note", entryId: "free-tuition", values: { slug: "cheap", nope: "x" } });
-    expect(codes(result)).toEqual(["forbidden-field", "unknown-field"]);
+  it("refuses a stale revision, a wrong project and extra keys", () => {
+    expect(code(put("course", "two-month", { price: "¥1" }, snapshot.mutationToken - 1))).toBe("stale");
+    expect(code({ ...put("course", "two-month", { price: "¥1" }), projectId: "other" })).toBe("wrong-project");
+    expect(code({ ...put("course", "two-month", { price: "¥1" }), role: "admin" })).toBe("malformed-request");
   });
 
-  it("rejects editing order directly and structure-bound operations", () => {
-    expect(codes(authorizeContentMutation({ kind: "update-entry", modelId: "faq-item", entryId: "faq-exam-01", values: { order: 9 } }))).toEqual(["forbidden-field"]);
-    expect(codes(authorizeContentMutation({ kind: "create-entry", modelId: "course", entryId: "six-month", values: {} }))).toEqual(["forbidden-operation"]);
-    expect(codes(authorizeContentMutation({ kind: "delete-entry", modelId: "note", entryId: "free-tuition" }))).toEqual(["forbidden-operation"]);
-    expect(codes(authorizeContentMutation({ kind: "create-entry", modelId: "site-copy", entryId: "site-copy-2", values: {} }))).toEqual(["forbidden-operation"]);
-    expect(codes(authorizeContentMutation({ kind: "update-entry", modelId: "site-copy", entryId: "other", values: {} }))).toEqual(["unsafe-id"]);
+  it("refuses values of the wrong kind through Composer's typed check", () => {
+    expect(code(put("result-year", "year-2025", { declaredCount: "9" }))).toBe("invalid-value");
+    expect(code(put("target-item", "home-01", { page: "about" }))).toBe("invalid-value");
+    expect(code(put("faq-item", "faq-exam-01", { group: ref("faq-item", "faq-exam") }))).toBe("invalid-value");
+    expect(code(put("faq-item", "faq-exam-01", { group: ref("faq-group", "nope") }))).toBe("unsafe-reference");
   });
 
-  it("rejects values of the wrong kind and empty required values", () => {
-    expect(codes(authorizeContentMutation({ kind: "update-entry", modelId: "result-year", entryId: "year-2025", values: { declaredCount: "9" } }))).toEqual(["invalid-value"]);
-    expect(codes(authorizeContentMutation({ kind: "update-entry", modelId: "result-year", entryId: "year-2025", values: { label: "" } }))).toEqual(["missing-required"]);
-    expect(codes(authorizeContentMutation({ kind: "update-entry", modelId: "target-item", entryId: "home-01", values: { page: "about" } }))).toEqual(["invalid-value"]);
+  it("narrows url fields to internal paths, https and allowlisted school URLs", () => {
+    expect(code(put("result-entry", "year-2025-01", { url: "javascript:alert(1)" }))).toBe("invalid-value");
+    expect(code(put("result-entry", "year-2025-01", { url: "mailto:a@b.c" }))).toBe("unsafe-reference");
+    expect(code(put("result-entry", "year-2025-01", { url: "http://www.udk-berlin.de/" }))).toBe("unsafe-reference");
+    expect(code(put("result-entry", "year-2025-01", { url: "https://example.com/" }))).toBe("unsafe-reference");
+    expect(code(put("result-entry", "year-2025-01", { url: "https://www.udk-berlin.de/" }))).toBe("ok");
+    expect(code(put("result-entry", "year-2025-01", { url: "" }))).toBe("ok");
   });
 
-  it("rejects unsafe links in url fields and non-allowlisted school URLs", () => {
-    const base = { kind: "update-entry" as const, modelId: "result-entry", entryId: "year-2025-01" };
-    // `javascript:` fails Composer's own url kind; the host rules narrow http/non-allowlisted https.
-    expect(codes(authorizeContentMutation({ ...base, values: { url: "javascript:alert(1)" } }))).toEqual(["invalid-value"]);
-    expect(codes(authorizeContentMutation({ ...base, values: { url: "mailto:a@b.c" } }))).toEqual(["unsafe-link"]);
-    expect(codes(authorizeContentMutation({ ...base, values: { url: "http://www.udk-berlin.de/" } }))).toEqual(["unsafe-link"]);
-    expect(codes(authorizeContentMutation({ ...base, values: { url: "https://example.com/" } }))).toEqual(["unsafe-link"]);
-    expect(authorizeContentMutation({ ...base, values: { url: "https://www.udk-berlin.de/" } }).ok).toBe(true);
-    expect(authorizeContentMutation({ ...base, values: { url: "" } }).ok).toBe(true);
+  it("refuses raw HTML, images and unsafe links in note markdown but accepts the allowed subset", () => {
+    expect(code(put("note", "free-tuition", { body: "段落\n\n<script>alert(1)</script>" }))).toBe("invalid-value");
+    expect(code(put("note", "free-tuition", { body: "![x](/a.png)" }))).toBe("invalid-value");
+    expect(code(put("note", "free-tuition", { body: "[x](http://example.com)" }))).toBe("unsafe-reference");
+    expect(code(put("note", "free-tuition", { body: "## 見出し\n\n本文 **強調** [お問い合わせ](/contact/)\n\n- 項目" }))).toBe("ok");
+    const refused = refusePinselRequest(put("note", "free-tuition", { body: "<b>x</b>" }));
+    expect(refused?.path).toBe("values.note-body");
   });
 
-  it("rejects raw HTML and images in note markdown but accepts the allowed subset", () => {
-    const base = { kind: "update-entry" as const, modelId: "note", entryId: "free-tuition" };
-    expect(codes(authorizeContentMutation({ ...base, values: { body: "段落\n\n<script>alert(1)</script>" } }))).toEqual(["unsafe-markdown"]);
-    expect(codes(authorizeContentMutation({ ...base, values: { body: "![x](/a.png)" } }))).toEqual(["unsafe-markdown"]);
-    expect(codes(authorizeContentMutation({ ...base, values: { body: "[x](http://example.com)" } }))).toEqual(["unsafe-link"]);
-    expect(authorizeContentMutation({ ...base, values: { body: "## 見出し\n\n本文 **強調** [お問い合わせ](/contact/)\n\n- 項目" } }).ok).toBe(true);
-  });
-
-  it("requires every required editable field on create and checks reference targets", () => {
-    const create = { kind: "create-entry" as const, modelId: "faq-item", entryId: "faq-exam-99" };
-    expect(codes(authorizeContentMutation({ ...create, values: { question: "Q" } }))).toEqual(["missing-required", "missing-required"]);
-    expect(codes(authorizeContentMutation({ ...create, values: { group: ref("faq-item", "faq-exam"), question: "Q", answer: "A" } }))).toEqual(["invalid-value"]);
-    expect(authorizeContentMutation({ ...create, values: { group: ref("faq-group", "faq-exam"), question: "Q", answer: "A" } }).ok).toBe(true);
-    expect(codes(authorizeContentMutation({ ...create, entryId: "Bad Id", values: {} }))).toEqual(["unsafe-id"]);
-    expect(codes(authorizeContentMutation({ ...create, entryId: "faq-exam-01", values: {} }, { existingEntryIds: idsOf("faq-item") }))).toEqual(["unsafe-id"]);
-  });
-
-  it("authorizes reorder only as a permutation of the existing ids", () => {
+  it("authorizes creation and reorder where the policy allows them", () => {
+    // A created entry may carry its position; afterwards `order` changes only through `reorder`.
+    const create = { ...put("faq-item", "faq-exam-99", { group: ref("faq-group", "faq-exam"), question: "Q", answer: "A", order: 99 }), kind: "create-entry" };
+    expect(code(create)).toBe("ok");
+    expect(code(put("faq-item", "faq-exam-01", { order: 9 }))).toBe("forbidden");
+    expect(refusePinselRequest(put("faq-item", "faq-exam-01", { order: 9 }))?.path).toBe("values.faq-item-order");
     const existing = idsOf("testimonial");
-    const reversed = [...existing].reverse();
-    expect(authorizeContentMutation({ kind: "reorder-entries", modelId: "testimonial", entryIds: reversed }, { existingEntryIds: existing }).ok).toBe(true);
-    expect(codes(authorizeContentMutation({ kind: "reorder-entries", modelId: "testimonial", entryIds: reversed }))).toEqual(["invalid-request"]);
-    expect(codes(authorizeContentMutation({ kind: "reorder-entries", modelId: "testimonial", entryIds: reversed.slice(1) }, { existingEntryIds: existing }))).toEqual(["invalid-request"]);
-    expect(codes(authorizeContentMutation({ kind: "reorder-entries", modelId: "testimonial", entryIds: [...existing, existing[0]!] }, { existingEntryIds: existing }))).toEqual(["invalid-request"]);
-    expect(codes(authorizeContentMutation({ kind: "reorder-entries", modelId: "course", entryIds: ["two-month", "consultation", "four-month"] }, { existingEntryIds: idsOf("course") }))).toEqual(["forbidden-operation"]);
-  });
-
-  it("updates only existing entries when the current ids are known", () => {
-    expect(authorizeContentMutation({ kind: "update-entry", modelId: "legal-row", entryId: "legal-row-01", values: { value: "x" } }, { existingEntryIds: idsOf("legal-row") }).ok).toBe(true);
-    expect(codes(authorizeContentMutation({ kind: "update-entry", modelId: "legal-row", entryId: "legal-row-99", values: { value: "x" } }, { existingEntryIds: idsOf("legal-row") }))).toEqual(["invalid-request"]);
-  });
-
-  it("deletes only existing entries of deletable collections", () => {
-    expect(authorizeContentMutation({ kind: "delete-entry", modelId: "legal-row", entryId: "legal-row-08" }, { existingEntryIds: idsOf("legal-row") }).ok).toBe(true);
-    expect(codes(authorizeContentMutation({ kind: "delete-entry", modelId: "legal-row", entryId: "legal-row-99" }, { existingEntryIds: idsOf("legal-row") }))).toEqual(["invalid-request"]);
+    expect(code({ kind: "reorder", projectId: "pinsel", providerId: PINSEL_CONTENT_PROVIDER_ID, modelId: "testimonial", fieldId: fieldId("testimonial", "order"), entryIds: [...existing].reverse(), expectedRevision: snapshot.mutationToken })).toBe("ok");
+    expect(code({ kind: "delete-entry", projectId: "pinsel", providerId: PINSEL_CONTENT_PROVIDER_ID, modelId: "legal-row", entryId: "legal-row-08", expectedRevision: snapshot.mutationToken })).toBe("ok");
+    expect(code({ kind: "delete-entry", projectId: "pinsel", providerId: PINSEL_CONTENT_PROVIDER_ID, modelId: "legal-row", entryId: "legal-row-99", expectedRevision: snapshot.mutationToken })).toBe("not-found");
   });
 
   it("accepts every seed entry's editable values as an update", () => {
     for (const entry of seedEntries) {
-      const model = PINSEL_MODELS.find((candidate) => candidate.id === entry.modelId)!;
-      const editable = PINSEL_CONTENT_POLICY.models[model.id]!.fields;
-      const values = Object.fromEntries(
-        model.document.fields.filter((field) => editable.includes(field.key) && entry.values[field.id] !== undefined).map((field) => [field.key, entry.values[field.id]!]),
-      );
-      const result = authorizeContentMutation({ kind: "update-entry", modelId: model.id, entryId: entry.id, values });
-      expect(result.ok, `${entry.modelId}/${entry.id} ${JSON.stringify(codes(result))}`).toBe(true);
+      const editable = PINSEL_EDITOR_POLICY.models[entry.modelId]!.fields;
+      const subset = Object.fromEntries(Object.entries(entry.values).filter(([id]) => editable.includes(id)));
+      const request = { kind: "put-entry-values", projectId: "pinsel", providerId: PINSEL_CONTENT_PROVIDER_ID, modelId: entry.modelId, entryId: entry.id, expectedRevision: snapshot.mutationToken, values: subset };
+      expect(code(request), `${entry.modelId}/${entry.id}`).toBe("ok");
     }
-  });
-});
-
-describe("isValueValidForSchema", () => {
-  it("mirrors Composer's typed checks for the kinds in use", () => {
-    expect(isValueValidForSchema({ kind: "slug" }, "free-tuition")).toBe(true);
-    expect(isValueValidForSchema({ kind: "slug" }, "Free Tuition")).toBe(false);
-    expect(isValueValidForSchema({ kind: "url" }, "/notes/x/")).toBe(true);
-    expect(isValueValidForSchema({ kind: "url" }, "//evil.example")).toBe(false);
-    expect(isValueValidForSchema({ kind: "number" }, Number.NaN)).toBe(false);
-    expect(isValueValidForSchema({ kind: "list", item: { kind: "text" } }, ["a", 1])).toBe(false);
-    const target = { providerId: "content-filesystem", recordId: "note" };
-    expect(isValueValidForSchema({ kind: "reference-list", target, ordered: true }, [ref("note", "a"), ref("note", "a")])).toBe(false);
-    expect(isValueValidForSchema({ kind: "reference-list", target, ordered: true }, [ref("note", "a"), ref("note", "b")])).toBe(true);
-    expect(fieldId("note", "body")).toBe("note-body");
   });
 });

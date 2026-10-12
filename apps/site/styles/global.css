@@ -1,0 +1,4 @@
+/* Authored CSS only (`wind: false`): the approved tokens, colors and component rules from pinsel-ui. */
+@import "@pinsel/ui/styles/tokens.css";
+@import "@pinsel/ui/styles/colors.css";
+@import "@pinsel/ui/styles/components.css";

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "consultation",
+  "modelId": "course",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "course-name": "進路相談",
+    "course-price": "¥10,000",
+    "course-unit": "1回",
+    "course-home-description": "有料面談 / 1.5〜2時間",
+    "course-lessons-note": "税込 / 1時間半〜2時間のオンライン通話",
+    "course-contact-option-label": "有料進路相談",
+    "course-featured": false,
+    "course-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}
