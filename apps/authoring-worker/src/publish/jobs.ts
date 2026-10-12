@@ -138,6 +138,12 @@ async function deliver(context: PublicationContext, port: PublicationProviderPor
   if (snapshot.status !== "ok") return { status: "unavailable", message: `Snapshot ${job.snapshot_id} could not be read (${snapshot.status}).` };
   const attempts = job.attempts + 1;
   const record = async (patch: JobPatch): Promise<JobRow> => (await casJob(context.db, context.projectId, job, { attempts, ...patch }, now)).row;
+  const baseline = await context.adapter.readBaseline();
+  if (baseline.status === "ok" && baseline.value.baselineRevision !== job.baseline_revision) {
+    // A retry after the base moved would submit a stale snapshot.
+    const row = (await casJob(context.db, context.projectId, job, { state: "conflict", message: `The integrated baseline moved to ${baseline.value.baselineRevision} before the provider acknowledged this publication.` }, now)).row;
+    return { status: "conflict", reason: "baseline-revision", current: { baselineRevision: baseline.value.baselineRevision }, message: row.message ?? "", value: view(row) };
+  }
 
   if (job.attempts > 0) {
     const existing = await port.lookupExisting(job.snapshot_id);

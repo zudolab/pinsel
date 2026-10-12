@@ -6,7 +6,7 @@ import type { ContentEntryRecord } from "zudo-composer/site-project";
 // rebase, in ONE `db.batch()`. The first statement inserts the advance token
 // only while the draft is still exactly at `expectedDraftRevision` on
 // `fromBaseline`; every later statement is gated on that token, so a save,
-// snapshot-free advance or second reconcile that landed first leaves this
+// publication advance or second reconcile that landed first leaves this
 // batch writing nothing. The outcome is read back from the token row.
 
 export interface RebaseWrite {
