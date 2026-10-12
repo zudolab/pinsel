@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2017-01",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2017"
+    },
+    "result-entry-school": "ベルリン芸術大学",
+    "result-entry-department": "Kunst und Medien、Lehramt Bildende Kunst",
+    "result-entry-url": "https://www.udk-berlin.de/",
+    "result-entry-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

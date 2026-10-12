@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "home-faq-04",
+  "modelId": "home-faq",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "home-faq-question": "準備期間はどのくらい必要ですか？",
+    "home-faq-answer": "初心者の方や高校卒業直後の方は1年〜、美大卒の方は半年〜を目安にお考えください。",
+    "home-faq-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

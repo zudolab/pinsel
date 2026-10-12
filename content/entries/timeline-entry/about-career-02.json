@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "about-career-02",
+  "modelId": "timeline-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "timeline-entry-timeline": "about-career",
+    "timeline-entry-year": "2014〜2020",
+    "timeline-entry-text": "ベルリン滞在",
+    "timeline-entry-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

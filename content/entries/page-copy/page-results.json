@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "page-results",
+  "modelId": "page-copy",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "page-copy-route": "/results/",
+    "page-copy-meta-title": "合格実績 - Pinsel",
+    "page-copy-meta-description": "2015年から11年間のドイツ美大合格実績。30校以上に合格者を輩出。",
+    "page-copy-header-title": "ドイツ美大合格実績",
+    "page-copy-header-description": "Pinselの受講生の合格実績です。2015年から11年間、ドイツ・オーストリアの美術大学へ多数の合格者を送り出しています。",
+    "page-copy-aside-label": "年度から見る",
+    "page-copy-cta-sub-copy": "ドイツ美大受験に興味がある方、まずはお気軽にご相談ください。",
+    "page-copy-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

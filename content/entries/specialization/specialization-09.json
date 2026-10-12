@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "specialization-09",
+  "modelId": "specialization",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "specialization-de": "Textil und Flächendesign",
+    "specialization-ja": "テキスタイル・平面デザイン",
+    "specialization-order": 9
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

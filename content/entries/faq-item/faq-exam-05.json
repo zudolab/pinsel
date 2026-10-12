@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-exam-05",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-exam"
+    },
+    "faq-item-question": "受験にはどのくらいの準備期間が必要ですか？",
+    "faq-item-answer": "一般的には6ヶ月〜1年程度の準備期間を推奨しています。ただし、既にある程度の作品制作経験がある方は、より短い期間でも準備が可能な場合があります。マッペの完成度に加え、ドイツ語の習得にも時間がかかるため、早めに準備を始めることをお勧めします。",
+    "faq-item-order": 5
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

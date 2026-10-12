@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "home-04",
+  "modelId": "target-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "target-item-page": "home",
+    "target-item-text": "美大卒で、ドイツ美大への進学を検討している方",
+    "target-item-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

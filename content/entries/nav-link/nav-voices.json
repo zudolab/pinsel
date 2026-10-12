@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "nav-voices",
+  "modelId": "nav-link",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "nav-link-href": "/voices/",
+    "nav-link-label": "Voices",
+    "nav-link-header-label": "生徒の声",
+    "nav-link-footer-title": "生徒の声",
+    "nav-link-footer-description": "受講生の合格体験談をご紹介",
+    "nav-link-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

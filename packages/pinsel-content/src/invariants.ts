@@ -46,6 +46,16 @@ export const PINSEL_ROUTES: readonly PinselRoute[] = [
   NOT_FOUND_ROUTE,
 ];
 
+/** The compiled plan's pathname for an output route: Composer's sitemap paths carry no trailing slash. */
+export function planPathname(route: PinselRoute): string {
+  return route === "/" || route === NOT_FOUND_ROUTE ? route : route.replace(/\/$/, "");
+}
+
+/** Inverse of `planPathname`; `undefined` for a pathname that is not one of the 14 outputs. */
+export function routeForPlanPathname(pathname: string): PinselRoute | undefined {
+  return PINSEL_ROUTES.find((route) => planPathname(route) === pathname);
+}
+
 export function outputFileForRoute(route: PinselRoute): string {
   return route === NOT_FOUND_ROUTE ? "404.html" : `${route.slice(1)}index.html`;
 }
@@ -149,7 +159,8 @@ export function contactHrefForCourse(courseId: (typeof COURSE_IDS)[number]): str
 
 /** Header (6) and footer (7) navigation targets; `nav-link` entries keep exactly these hrefs. */
 export const NAV_HREFS = ["/lessons/", "/notes/", "/results/", "/voices/", "/about/", "/faq/", "/contact/"] as const;
-export const HEADER_NAV_HREFS = NAV_HREFS.filter((href) => href !== "/contact/");
+/** Header targets in the prototype order (`ui.py NAV`), which differs from the footer's `nav-link.order`; the contact button follows. */
+export const HEADER_NAV_HREFS = ["/lessons/", "/about/", "/results/", "/voices/", "/notes/", "/faq/"] as const;
 export const HERO_PRICING_HREF = "/#pricing";
 export const CONTACT_HREF = "/contact/";
 

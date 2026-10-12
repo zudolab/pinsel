@@ -10,8 +10,9 @@ import { NOTE_INDEX_ORDER, NOTE_SLUGS, PAGE_COPY_IDS, navLinkId, resultYearId } 
 import { MODEL_TIMESTAMP, PINSEL_CONTENT_PROVIDER_ID, fieldId } from "../models/define";
 
 // Builds one Content entry per approved record straight from the immutable
-// seed fixture, so the model/policy tests exercise real data. The migration
-// sub-issue's importer follows the same id scheme (see import-rules.ts).
+// seed fixture (content.json) plus the copy the approved prototype hard-codes
+// in build.py / ui.py. `scripts/content/import-seed.mjs` writes these to
+// content/entries; the tests use them as the reference data.
 
 const here = dirname(fileURLToPath(import.meta.url));
 export const FIXTURE_DIR = resolve(here, "../../../../tests/fixtures/approved-seed");
@@ -49,11 +50,13 @@ export function ref(modelId: string, recordId: string): JsonValue {
 }
 
 export function makeEntry(model: ContentModelRecord, id: string, valuesByKey: Record<string, JsonValue>): ContentEntryRecord {
+  for (const key of Object.keys(valuesByKey)) {
+    if (!model.document.fields.some((candidate) => candidate.key === key)) throw new Error(`${model.id} has no field "${key}"`);
+  }
+  // Canonical key order: the model's field order, so every entry file is byte-stable.
   const values: Record<string, JsonValue> = {};
-  for (const [key, value] of Object.entries(valuesByKey)) {
-    const field = model.document.fields.find((candidate) => candidate.key === key);
-    if (!field) throw new Error(`${model.id} has no field "${key}"`);
-    values[fieldId(model.id, key)] = value;
+  for (const field of model.document.fields) {
+    if (field.key in valuesByKey) values[fieldId(model.id, field.key)] = valuesByKey[field.key]!;
   }
   return {
     schemaVersion: 1,
@@ -65,6 +68,12 @@ export function makeEntry(model: ContentModelRecord, id: string, valuesByKey: Re
     lifecycle: "published",
     generation: 0,
   };
+}
+
+/** List copy is stored one item per line; an item that itself contains a newline would be split, so refuse it. */
+export function lines(items: readonly string[]): string {
+  for (const item of items) if (item.includes("\n")) throw new Error(`list item contains a newline: ${item}`);
+  return items.join("\n");
 }
 
 const HOME = "src/pages/index.astro";
@@ -107,7 +116,7 @@ export function buildSeedEntries(models: readonly ContentModelRecord[]): Content
       brandWord: "Pinsel",
       brandSub: "ART STUDY IN GERMANY",
       heroLabel: hero[0]!,
-      heroTitleLines: ["あなただけの", "ドイツ美大受験準備を", "個別指導で。"],
+      heroTitleLines: lines(["あなただけの", "ドイツ美大受験準備を", "個別指導で。"]),
       heroLead: hero[2]!.split("\n").filter(Boolean).join("\n"),
       heroPrimaryLabel: "オンラインクラス",
       heroPricingLabel: "コースと料金",
@@ -117,8 +126,6 @@ export function buildSeedEntries(models: readonly ContentModelRecord[]): Content
       pricingTitle: "コースと料金",
       pricingNote,
       pricingMoreLabel: str(props(HOME, "MoreLinkButton")[0]!.text),
-      popularBadge: "POPULAR",
-      taxLabel: "税込",
       instructorTitle: "講師紹介",
       instructorDetailLabel: plain("components/instructor-profile/instructor-profile.astro", "a")[0]!,
       resultsTitle: "合格実績",
@@ -140,7 +147,7 @@ export function buildSeedEntries(models: readonly ContentModelRecord[]): Content
       notFoundBody: plain(NOT_FOUND, "p")[0]!,
       notFoundLinkLabel: plain(NOT_FOUND, "a")[0]!,
       footerInstagramLabel: "yuko_takatsudo",
-      footerCopyright: "© 2015-{year} Pinsel Germany. All rights reserved.",
+      footerCopyright: "© 2015–2026 Pinsel Germany. All rights reserved.",
       backToTopLabel: "ページの先頭へ",
     }),
   );
@@ -201,15 +208,15 @@ export function buildSeedEntries(models: readonly ContentModelRecord[]): Content
       pricingPaymentNote: txt(LESSONS, "お支払いは"),
       consultationTitle: txt(LESSONS, "オンライン有料進路相談"),
       consultationTopicsTitle: "面談で話す内容",
-      consultationTopics: lists[0]!,
+      consultationTopics: lines(lists[0]!),
       consultationFaqTitle: "よくある質問",
-      consultationFaqTopics: lists[1]!,
+      consultationFaqTopics: lines(lists[1]!),
       instructorTitle: "講師紹介",
       careerTitle: "経歴",
       specializationsTitle: txt(LESSONS, "ドイツ美術大学 専攻"),
       specializationsNote: txt(LESSONS, "どの学科の"),
       graduatesTitle: txt(LESSONS, "美大卒の方へ"),
-      graduatesParagraphs: seed.staticText[LESSONS]!.filter((row) => row.tag === "p" && row.sourceLine >= 280 && !row.hasExpression).map((row) => row.text),
+      graduatesParagraphs: lines(seed.staticText[LESSONS]!.filter((row) => row.tag === "p" && row.sourceLine >= 280 && !row.hasExpression).map((row) => row.text)),
       knowledgeTitle: "ドイツ美大受験について知る",
     }),
     makeEntry(model("about-copy"), "about-copy", {
@@ -227,7 +234,7 @@ export function buildSeedEntries(models: readonly ContentModelRecord[]): Content
       portraitAlt: str(teacher.name),
       homeBio: str(teacher.bio),
       lessonsBio: txt(LESSONS, "ドイツに10年間"),
-      aboutMessage: seed.staticText[ABOUT]!.filter((row) => row.tag === "p" && row.sourceLine >= 120 && !row.hasExpression).map((row) => row.text),
+      aboutMessage: lines(seed.staticText[ABOUT]!.filter((row) => row.tag === "p" && row.sourceLine >= 120 && !row.hasExpression).map((row) => row.text)),
     }),
   );
 

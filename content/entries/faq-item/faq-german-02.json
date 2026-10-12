@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-german-02",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-german"
+    },
+    "faq-item-question": "Pinselでドイツ語のレッスンは受けられますか？",
+    "faq-item-answer": "Pinselは美大受験のための実技（マッペ）指導に特化しています。ドイツ語については、志望大学で必要な語学レベルの情報提供や、語学学校の紹介などは行っていますが、ドイツ語そのもののレッスンは行っておりません。信頼できるドイツ語学校をご紹介することは可能です。",
+    "faq-item-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "course-step-01",
+  "modelId": "course-step",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "course-step-title": "1〜4授業目（2ヶ月・4ヶ月共通）",
+    "course-step-description": "課題の作品制作、受験情報の共有、合格者ポートフォリオの紹介を行います。まず合格した生徒さんのマッペを見せて、基礎的なこと（構図・抽象と具象）を学びます。",
+    "course-step-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

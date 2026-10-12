@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2018-07",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2018"
+    },
+    "result-entry-school": "ミュンスター美術大学",
+    "result-entry-department": "Lehramt Bildende Kunst",
+    "result-entry-url": "https://www.kunstakademie-muenster.de/",
+    "result-entry-order": 7
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

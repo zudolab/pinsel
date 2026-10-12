@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "feature-card-04",
+  "modelId": "feature-card",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "feature-card-title": "最新情報の共有",
+    "feature-card-description": "ドイツ美大受験の最新の動向や、各大学の特徴、入試の傾向などを常にアップデートしてお伝えします。受講生にはGoogleスプレッドシートで各大学の受験情報をまとめた資料を共有しており、志望校選びの参考にしていただけます。",
+    "feature-card-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "about-career-05",
+  "modelId": "timeline-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "timeline-entry-timeline": "about-career",
+    "timeline-entry-year": "2020〜2023",
+    "timeline-entry-text": "創形美術学校 海外美術留学準備コース ドイツ対策クラス担当",
+    "timeline-entry-order": 5
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

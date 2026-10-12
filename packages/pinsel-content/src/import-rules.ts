@@ -25,6 +25,8 @@ export interface ContentBaselineEntry {
   modelId: string;
   entryId: string;
   digest: ValuesDigest;
+  /** Same digest over only the fields the server policy never lets the client write (`page-copy.route`, `nav-link.href`, `note.slug`, `course.order`, …). */
+  protectedDigest: ValuesDigest;
 }
 
 export interface ContentBaseline {
@@ -33,6 +35,8 @@ export interface ContentBaseline {
   source: { repository: string; pr: number; head: string };
   /** sha256 of the seed `content.json` the digests were derived from. */
   seedContentDigest: string;
+  /** sha256 of the canonical `entries` map below: one digest for the whole imported set. */
+  entriesDigest: string;
   /** ISO timestamp of the import run that last advanced this baseline. */
   importedAt: string;
   /** Keyed by `baselineKey(modelId, entryId)`. */

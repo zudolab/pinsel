@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "student-04",
+  "modelId": "testimonial",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "testimonial-author": "Yさん",
+    "testimonial-year-label": "2025年度合格",
+    "testimonial-school": "マインツ美術大学",
+    "testimonial-department": "ファインアート科（絵画）",
+    "testimonial-quote": "ドイツの美大を目指し始めた頃から、レッスンを受けています。作品のフィードバックでは、今の作品をより一層発展させるにはどうしたらよいかを一緒に考えてくださるので、アイデアを豊かに膨らませることができました。一人で制作していると、不安に押しつぶされそうになることもありましたが、レッスン以外にメールでも相談に乗ってくださったので、安心して準備を進めることができました。これからも制作活動を続けていきたいです。本当にお世話になりました！",
+    "testimonial-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

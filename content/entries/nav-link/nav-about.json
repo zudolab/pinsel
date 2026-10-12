@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "nav-about",
+  "modelId": "nav-link",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "nav-link-href": "/about/",
+    "nav-link-label": "About",
+    "nav-link-header-label": "講師紹介",
+    "nav-link-footer-title": "講師紹介",
+    "nav-link-footer-description": "東京芸大卒・ミュンヘン芸術アカデミー修了",
+    "nav-link-order": 5
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

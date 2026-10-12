@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "page-lessons",
+  "modelId": "page-copy",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "page-copy-route": "/lessons/",
+    "page-copy-meta-title": "オンラインクラス - Pinsel",
+    "page-copy-meta-description": "ドイツ美大受験のためのオンラインマンツーマンレッスン。マッペ制作から出願まで完全サポート。",
+    "page-copy-header-title": "ドイツ美大受験オンラインクラス",
+    "page-copy-header-description": "将来的にドイツ美大受験を目指す方や、ドイツの美大に興味があるけれど何から始めたらいいのかわからない！という方を対象とした、マンツーマンレッスンのオンラインクラスです。",
+    "page-copy-cta-sub-copy": "まずはお気軽にご相談ください。ささいなことでも構いません。",
+    "page-copy-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

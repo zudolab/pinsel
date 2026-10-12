@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2025-02",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2025"
+    },
+    "result-entry-school": "ミュンヘン芸術大学",
+    "result-entry-department": "Freie Kunst: Bildhauerei",
+    "result-entry-url": "https://www.adbk.de/",
+    "result-entry-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

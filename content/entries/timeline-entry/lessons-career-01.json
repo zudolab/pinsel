@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "lessons-career-01",
+  "modelId": "timeline-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "timeline-entry-timeline": "lessons-career",
+    "timeline-entry-year": "1987",
+    "timeline-entry-text": "埼玉県生まれ",
+    "timeline-entry-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

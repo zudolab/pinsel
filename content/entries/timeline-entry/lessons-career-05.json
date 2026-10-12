@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "lessons-career-05",
+  "modelId": "timeline-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "timeline-entry-timeline": "lessons-career",
+    "timeline-entry-year": "2014〜2020",
+    "timeline-entry-text": "ベルリン滞在、Atelier HY+ 経営",
+    "timeline-entry-order": 5
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

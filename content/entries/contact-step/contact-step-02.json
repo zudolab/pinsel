@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "contact-step-02",
+  "modelId": "contact-step",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "contact-step-title": "ご返信",
+    "contact-step-description": "通常2〜3営業日以内にメールにてご返信",
+    "contact-step-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

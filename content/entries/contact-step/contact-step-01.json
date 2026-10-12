@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "contact-step-01",
+  "modelId": "contact-step",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "contact-step-title": "お問い合わせ",
+    "contact-step-description": "フォームからご連絡ください",
+    "contact-step-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

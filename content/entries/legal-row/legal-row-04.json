@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "legal-row-04",
+  "modelId": "legal-row",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "legal-row-key": "所在地",
+    "legal-row-value": "〒150-0043 東京都渋谷区道玄坂1丁目10番8号 渋谷道玄坂東急ビル2F-C",
+    "legal-row-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

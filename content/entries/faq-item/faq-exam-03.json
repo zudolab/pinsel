@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-exam-03",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-exam"
+    },
+    "faq-item-question": "日本の美大を出ていなくても受験できますか？",
+    "faq-item-answer": "はい、可能です。ドイツの美術大学の入学審査では、学歴よりもマッペ（ポートフォリオ）や実技試験の結果が重視されます。日本で美術系の教育を受けていない方でも、十分な作品力があれば合格できます。実際にPinselの受講生の中にも、美術系以外の大学出身で合格された方がいらっしゃいます。",
+    "faq-item-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

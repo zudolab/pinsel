@@ -5,10 +5,10 @@ import { canonicalStringifyJson, validateContentEntryRecord, validateContentMode
 import type { JsonValue } from "@zudo-composer/component-contract";
 import type { ContentEntryRecord, ContentModelRecord, Model, SiteProject } from "zudo-composer/site-project";
 
-import { PINSEL_CONTENT_PROVIDER_ID, MODEL_TIMESTAMP, PINSEL_MODELS, SEED_DECLARED_RESULT_COUNT, SEED_ENTRY_COUNTS, fieldId, modelById } from "../models";
+import { PINSEL_CONTENT_PROVIDER_ID, MODEL_TIMESTAMP, PINSEL_MODELS, SEED_DECLARED_RESULT_COUNT, SEED_ENTRY_COUNTS, fieldId, isSingleEntryModel, modelById } from "../models";
 import { modelInput } from "../models/dsl";
 import { RECORD_ID_PATTERN } from "../policy";
-import { buildSeedEntries } from "./seed-entries";
+import { buildSeedEntries } from "../import/seed-entries";
 
 // Records are validated one by one with the `zudo-composer/content` validators
 // and together through `validateSiteProject`, which runs the same validators
@@ -54,7 +54,7 @@ describe("Pinsel content models", () => {
       const keys = model.document.fields.map((field) => field.key);
       expect(new Set(keys).size, model.id).toBe(keys.length);
       for (const field of model.document.fields) expect(field.id).toMatch(RECORD_ID_PATTERN);
-      if (model.document.kind === "collection") expect(keys, `${model.id} needs order`).toContain("order");
+      if (model.document.kind === "collection" && !isSingleEntryModel(model.id)) expect(keys, `${model.id} needs order`).toContain("order");
     }
   });
 
@@ -140,7 +140,7 @@ describe("seed entries", () => {
     for (const entry of seedEntries) {
       expect(entry.id).toMatch(RECORD_ID_PATTERN);
       const model = modelById(entry.modelId)!;
-      if (model.document.kind === "single") expect(entry.id).toBe(model.id);
+      if (isSingleEntryModel(model.id)) expect(entry.id).toBe(model.id);
       for (const field of model.document.fields) {
         const value = entry.values[field.id];
         if (field.required) {
@@ -157,7 +157,7 @@ describe("seed entries", () => {
   it("number each collection 1..n without gaps", () => {
     for (const [modelId, entries] of byModel) {
       const model = modelById(modelId)!;
-      if (model.document.kind !== "collection") continue;
+      if (isSingleEntryModel(modelId)) continue;
       const orders = entries.map((entry) => entry.values[fieldId(modelId, "order")] as number);
       const grouped = new Map<string, number[]>();
       for (const entry of entries) {

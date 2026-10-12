@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "home-voice-01",
+  "modelId": "home-voice",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "home-voice-quote": "知識0の状態から合格をいただけました。クリエイティブ面でのアドバイスも沢山いただけたことは今でも役に立っています。",
+    "home-voice-author": "Rさん",
+    "home-voice-school": "ハンブルク芸術アカデミー 合格",
+    "home-voice-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

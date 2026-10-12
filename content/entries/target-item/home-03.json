@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "home-03",
+  "modelId": "target-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "target-item-page": "home",
+    "target-item-text": "マッペ（ポートフォリオ）制作や受験についてアドバイスが欲しい方",
+    "target-item-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

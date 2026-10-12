@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "about-career-06",
+  "modelId": "timeline-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "timeline-entry-timeline": "about-career",
+    "timeline-entry-year": "2020〜現在",
+    "timeline-entry-text": "Pinsel ドイツ美大受験オンラインクラス 主宰",
+    "timeline-entry-order": 6
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

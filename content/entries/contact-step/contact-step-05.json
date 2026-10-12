@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "contact-step-05",
+  "modelId": "contact-step",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "contact-step-title": "レッスン開始",
+    "contact-step-description": "日程を調整し、レッスンスタートです",
+    "contact-step-order": 5
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

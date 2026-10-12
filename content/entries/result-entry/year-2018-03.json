@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2018-03",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2018"
+    },
+    "result-entry-school": "ベルリン技術経済大学",
+    "result-entry-department": "Modedesign",
+    "result-entry-url": "https://www.htw-berlin.de/",
+    "result-entry-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

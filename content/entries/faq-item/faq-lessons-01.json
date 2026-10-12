@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-lessons-01",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-lessons"
+    },
+    "faq-item-question": "レッスンはどのように行われますか？",
+    "faq-item-answer": "すべてオンライン（Zoom）で行います。完全マンツーマンの個別指導で、お一人おひとりの状況や目標に合わせてカリキュラムを組みます。マッペの添削、コンセプトの相談、志望校選びの相談など、受験に関するあらゆるサポートを行います。",
+    "faq-item-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}
