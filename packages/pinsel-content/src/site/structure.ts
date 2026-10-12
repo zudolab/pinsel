@@ -2,7 +2,7 @@ import type { JsonValue, TrustedComponentPack } from "@zudo-composer/component-c
 import { defineSite, node } from "zudo-composer/authoring";
 import type { BindingInput, ContentEntryRecord, Mapping, Model, NodeInput, Page, SiteProject } from "zudo-composer/site-project";
 
-import { INSTAGRAM_URL, NOT_FOUND_ROUTE, NOTE_SLUGS, PAGE_COPY_IDS, navLinkId } from "../invariants";
+import { HEADER_NAV_HREFS, INSTAGRAM_URL, NOT_FOUND_ROUTE, NOTE_SLUGS, PAGE_COPY_IDS, navLinkId } from "../invariants";
 import { PINSEL_CONTENT_PROVIDER_ID, PINSEL_MODELS, fieldId } from "../models";
 import { modelInput } from "../models/dsl";
 import { PINSEL_PROJECT_ID } from "../policy";
@@ -30,9 +30,6 @@ export const STRUCTURE_LITERALS = {
   notesIndexAriaLabel: "ノート一覧",
   messageEyebrow: "Message",
 } as const;
-
-/** Prototype header order (`ui.py NAV`); the footer follows `nav-link.order`. */
-export const HEADER_NAV_ORDER = ["/lessons/", "/about/", "/results/", "/voices/", "/notes/", "/faq/"] as const;
 
 const art = (slot: "hero" | "middle" | "closing", size: "hero" | "large" | "closing" | "medium" | "small" | "ribbon", drift: 1 | -1 = 1, id?: string): NodeInput =>
   node("pinsel.art-window", { slot, size, drift: String(drift), range: slot === "hero" && size !== "hero" ? 8 : 52 }, {}, id);
@@ -94,10 +91,10 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
   };
 
   // ---------------------------------------------------------------- chrome
-  const navItems = HEADER_NAV_ORDER.map((href) =>
+  const navItems = HEADER_NAV_HREFS.map((href) =>
     fragment(`nav-item-${navLinkId(href)}`, "nav-link", [node("pinsel.nav-item", {}, {}, "item")], [{ field: "href", prop: "href" }, { field: "headerLabel", prop: "label" }], { kind: "pinned", entryId: navLinkId(href) }),
   );
-  const header = fragment("frame-header", "site-copy", [node("pinsel.site-header", {}, { nav: HEADER_NAV_ORDER.map((_, index) => group(`nav-${index + 1}`)) }, "header")], [
+  const header = fragment("frame-header", "site-copy", [node("pinsel.site-header", {}, { nav: HEADER_NAV_HREFS.map((_, index) => group(`nav-${index + 1}`)) }, "header")], [
     { field: "brandWord", prop: "brandWord" },
     { field: "brandSub", prop: "brandSub" },
     { field: "ctaButtonLabel", prop: "contactLabel" },

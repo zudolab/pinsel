@@ -9,13 +9,12 @@ import { stripSiteBuildModules } from "zudo-composer/content";
 import { compileStaticSite } from "zudo-composer/site-build";
 import type { ContentEntryRecord, SiteProject } from "zudo-composer/site-project";
 
-import { NAV_HREFS, PINSEL_ROUTES, outputFileForRoute, planPathname } from "../invariants";
+import { HEADER_NAV_HREFS, NAV_HREFS, PINSEL_ROUTES, outputFileForRoute, planPathname } from "../invariants";
 import { fieldId } from "../models";
 import { PINSEL_CONTENT_PROVIDER_ID } from "../models/define";
 import { REPO_ROOT, SITE_PROJECT_DIR, SITE_PROJECT_PATH } from "./entries";
 import { structurePack } from "./pack";
 import { resolveAllPageMeta } from "./page-meta";
-import { HEADER_NAV_ORDER } from "./structure";
 
 export const ROUTES_OUT = join(REPO_ROOT, "apps/site/data/routes.generated.ts");
 export const NAVIGATION_OUT = join(REPO_ROOT, "apps/site/data/navigation.generated.ts");
@@ -49,7 +48,7 @@ export function navigationFromEntries(entries: readonly ContentEntryRecord[]) {
   const byHref = (href: string) => links.find((entry) => entry.values[fieldId("nav-link", "href")] === href);
   const footer = [...links].sort((left, right) => Number(left.values[fieldId("nav-link", "order")]) - Number(right.values[fieldId("nav-link", "order")]));
   return {
-    header: HEADER_NAV_ORDER.map((href) => ({ href, label: text(byHref(href), "headerLabel") })),
+    header: HEADER_NAV_HREFS.map((href) => ({ href, label: text(byHref(href), "headerLabel") })),
     footer: footer.map((entry) => ({ href: text(entry, "href"), label: text(entry, "label"), title: text(entry, "footerTitle"), description: text(entry, "footerDescription") })),
     hrefs: [...NAV_HREFS],
   };
