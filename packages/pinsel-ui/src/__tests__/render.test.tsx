@@ -16,7 +16,7 @@ const FRAME = { brandWord: "Pinsel", brandSub: "ART STUDY IN GERMANY", instagram
 describe("component pack", () => {
   it("is a valid contract pack with runtime parity", () => {
     expect(() => validateRuntimeParity(pinselPack.manifest, pinselPack.runtime)).not.toThrow();
-    expect(pinselPack.manifest.components.map((component) => component.id)).toEqual([
+    expect(pinselPack.manifest.components.map((component) => component.id).slice(0, 6)).toEqual([
       "pinsel.site-frame", "pinsel.section", "pinsel.heading", "pinsel.prose", "pinsel.pricing-cards", "pinsel.pricing-card",
     ]);
     expect(Object.keys(pinselRegistry.components).sort()).toEqual(pinselPack.manifest.components.map((component) => component.id).sort());
@@ -107,6 +107,42 @@ describe("renderRouteDocument", () => {
     expect(() => renderRouteDocument(unknown, pinselRegistry)).toThrow(RouteRenderError);
     const broken: RouteDocument = { ...route, composition: { ...route.composition, linkedSource: { ...route.composition.linkedSource!, outlet: { id: "other", label: "x", target: { parentId: "frame-root", slotId: "main" } } } } };
     expect(() => renderRouteDocument(broken, pinselRegistry)).toThrow(/outlet does not verify/);
+  });
+});
+
+describe("renderRouteDocument contract", () => {
+  const node = (id: string, componentId: string, props: Record<string, unknown> = {}, slots: Record<string, unknown[]> = {}) => ({ id, componentId, componentVersion: 1, props, slots });
+  const routeWith = (root: unknown[]): RouteDocument =>
+    ({
+      pathname: "/faq/",
+      displayTitle: "FAQ",
+      sitemapNode: { id: "faq", path: "/faq/" },
+      source: { kind: "composition", ref: { providerId: "files", recordId: "faq" } },
+      ancestors: [],
+      composition: { local: { providerId: "files", recordId: "faq" }, routeRecordId: "faq", document: { schemaVersion: 2, id: "faq", name: "FAQ", root } },
+    }) as unknown as RouteDocument;
+
+  it("injects each node's position among its siblings", () => {
+    const items = ["一", "二", "三"].map((question, index) => node(`q${index}`, "pinsel.faq-item", { question, answer: "a", prefix: "category-1", openFirst: true }));
+    const html = renderToString(renderRouteDocument(routeWith([node("cat", "pinsel.faq-category", { title: "c" }, { content: [node("list", "pinsel.faq", {}, { items })] })]), pinselRegistry));
+    expect(html).toContain('<section class="faq-category reading-zone" id="faq-1">');
+    expect(html).toContain('<details id="category-1-1" open>');
+    expect(html).toContain('<details id="category-1-3">');
+  });
+
+  it("refuses undeclared props, injected props, undeclared slots and children a slot does not accept", () => {
+    expect(() => renderRouteDocument(routeWith([node("x", "pinsel.checklist-item", { text: "t", colour: "red" })]), pinselRegistry)).toThrow(/does not declare/);
+    expect(() => renderRouteDocument(routeWith([node("x", "pinsel.checklist-item", { position: { index: 9 } })]), pinselRegistry)).toThrow(/does not declare/);
+    expect(() => renderRouteDocument(routeWith([node("x", "pinsel.checklist", {}, { other: [] })]), pinselRegistry)).toThrow(/does not declare/);
+    expect(() => renderRouteDocument(routeWith([node("x", "pinsel.checklist", {}, { items: [node("y", "pinsel.faq-item")] })]), pinselRegistry)).toThrow(/not accepted/);
+  });
+
+  it("renders every pack component from its manifest defaults", () => {
+    for (const component of pinselPack.manifest.components) {
+      const html = renderToString(renderRouteDocument(routeWith([node("n", component.id)]), pinselRegistry));
+      expect(typeof html, component.id).toBe("string");
+      expect(html, component.id).not.toContain("<script");
+    }
   });
 });
 

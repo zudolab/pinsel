@@ -45,8 +45,6 @@
   .two-column h3 { font: 400 var(--size-subheading)/1.75 var(--font-display); margin-block-end: var(--space-5); }
   .section-after { margin-block-start: var(--space-7); }
   .quiet { color: var(--color-muted); font-size: var(--size-small); }
-  .jump-row { display: flex; flex-wrap: wrap; gap: var(--space-4) var(--space-6); }
-  .jump-row a { display: flex; align-items: center; min-block-size: 2.75rem; border-block-end: 1px solid var(--color-line); font-size: var(--size-small); text-decoration: none; }
 }
 @layer components {
   .ui-icon { inline-size: 1.25rem; block-size: 1.25rem; flex: 0 0 auto; vertical-align: middle; }
@@ -83,7 +81,6 @@
   .site-nav__contact { border: 1px solid var(--color-action); padding: .5rem .875rem; gap: .75rem; font-weight: 700; }
   .site-nav__contact[aria-current]::after { display: none; }
   .motion-toggle { flex: 0 0 auto; display: flex; gap: .4rem; align-items: center; justify-content: center; border: 1px solid var(--color-muted); min-block-size: 2.75rem; padding: .25rem .625rem; font-size: .75rem; }
-  .motion-toggle__mark { font-size: 1.125rem; }
   .motion-toggle:disabled { cursor: default; color: var(--color-muted); }
   .menu-toggle { display: none; }
   .button { min-block-size: 3.5rem; display: inline-flex; gap: var(--space-7); align-items: center; justify-content: space-between; border: 1px solid var(--color-fg); padding: .875rem 1.5rem; font-size: var(--size-small); text-decoration: none; font-weight: 700; }
@@ -367,7 +364,6 @@
     .brand__word { font-size: 2rem; }
     .brand__sub { font-size: .5rem; margin-block-start: .3rem; }
     .motion-toggle { padding-inline: .45rem; gap: .25rem; }
-    .motion-toggle__mark { display: none; }
     .menu-toggle { padding-inline: .6rem; gap: .625rem; }
     .site-header__inner { gap: .625rem; }
     .hero__reading { display: flex; flex-direction: column; gap: var(--space-6); padding-block: var(--space-6) var(--space-7); }

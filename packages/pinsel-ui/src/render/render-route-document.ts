@@ -1,12 +1,14 @@
 import type { Child } from "@takazudo/zfb/zudo-react";
 import type { ComponentManifest } from "@zudo-composer/component-contract";
 import type { SiteProjectPlanRoute } from "zudo-composer/content";
-import type { RenderRegistry, RouteContext } from "./types";
+import type { RenderRegistry, RouteContext, SlotPosition } from "./types";
 
 // The one bridge from a compiled Composer route to Pinsel HTML. It walks
 // `composition.document` (plus `linkedSource` for a global template) and calls
 // zudo-react components by manifest id. Generated `modules[].code` is never
 // read: the portable plan carries none and this renderer has no evaluator.
+// Every node is checked against its manifest before it renders: unknown
+// components, props, slots and children a slot does not accept are refused.
 
 export type RouteDocument = SiteProjectPlanRoute;
 export type RouteCompositionDocument = RouteDocument["composition"]["document"];
@@ -31,15 +33,41 @@ function definition(registry: RenderRegistry, node: RouteCompositionNode): Compo
   return found;
 }
 
-function renderNode(registry: RenderRegistry, node: RouteCompositionNode, route: RouteContext, outlet: Outlet | undefined): Child {
+const INJECTED_PROPS = new Set(["route", "position"]);
+
+function checkNode(manifest: ComponentManifest, node: RouteCompositionNode): void {
+  const declared = new Set([...Object.keys(manifest.defaults), ...manifest.fields.map((field) => field.prop)]);
+  for (const prop of Object.keys(node.props)) {
+    if (INJECTED_PROPS.has(prop) || !declared.has(prop)) {
+      throw new RouteRenderError(`Node ${node.id} sets "${prop}", which ${node.componentId} does not declare.`);
+    }
+  }
+  for (const slotId of Object.keys(node.slots)) {
+    if (!manifest.slots.some((slot) => slot.id === slotId)) {
+      throw new RouteRenderError(`Node ${node.id} fills slot "${slotId}", which ${node.componentId} does not declare.`);
+    }
+  }
+}
+
+function renderChildren(registry: RenderRegistry, nodes: readonly RouteCompositionNode[], route: RouteContext, outlet: Outlet | undefined, accepts?: readonly string[]): Child[] {
+  return nodes.map((child, index) => {
+    if (accepts && !accepts.includes(child.componentId)) {
+      throw new RouteRenderError(`Node ${child.id} (${child.componentId}) is not accepted here; the slot takes ${accepts.join(", ")}.`);
+    }
+    return renderNode(registry, child, route, { index: index + 1, count: nodes.length }, outlet);
+  });
+}
+
+function renderNode(registry: RenderRegistry, node: RouteCompositionNode, route: RouteContext, position: SlotPosition, outlet: Outlet | undefined): Child {
   const manifest = definition(registry, node);
   const component = registry.components[node.componentId];
   if (!component) throw new RouteRenderError(`No renderer registered for "${node.componentId}".`);
-  const props: Record<string, unknown> = { ...manifest.defaults, ...node.props, route };
+  checkNode(manifest, node);
+  const props: Record<string, unknown> = { ...manifest.defaults, ...node.props, route, position };
   for (const slot of manifest.slots) {
     const projected = outlet !== undefined && outlet.parentId === node.id && outlet.slotId === slot.id;
     const children = projected ? outlet.children : (node.slots[slot.id] ?? []);
-    props[slot.prop] = children.map((child) => renderNode(registry, child, route, projected ? undefined : outlet));
+    props[slot.prop] = renderChildren(registry, children, route, projected ? undefined : outlet, projected ? undefined : slot.accepts);
   }
   return component(props);
 }
@@ -80,5 +108,5 @@ function linkedView(routeDocument: RouteDocument, registry: RenderRegistry): { d
 export function renderRouteDocument(routeDocument: RouteDocument, registry: RenderRegistry): Child {
   const view = linkedView(routeDocument, registry);
   const route: RouteContext = { pathname: routeDocument.pathname };
-  return view.document.root.map((node) => renderNode(registry, node, route, view.outlet));
+  return renderChildren(registry, view.document.root, route, view.outlet);
 }

@@ -1,10 +1,17 @@
 import type { Child } from "@takazudo/zfb/zudo-react";
-import { Icon } from "../icon/icon";
+import { FooterLink } from "../footer-link/footer-link";
+import { NavLink } from "../nav-link/nav-link";
 import type { RouteContext } from "../render/types";
+import { SiteFooter } from "../site-footer/site-footer";
+import { SiteHeader } from "../site-header/site-header";
+import { SkipLink } from "../skip-link/skip-link";
 
-// Gate-1 structure literals from the approved prototype (`ui.py` NAV and the
-// footer `navLinks` frontmatter). The content-migration sub-issue replaces
-// them with `nav-link` entries projected through the structure manifest.
+export { INSTAGRAM_URL } from "../site-footer/site-footer";
+
+// The approved navigation (`ui.py` NAV and the footer `navLinks`
+// frontmatter). The structure manifest projects `nav-link` entries into the
+// `headerNav` / `footerNav` slots; these literals render only when a slot is
+// left empty, which keeps the Gate-1 frame (no nav slots) unchanged.
 export const HEADER_NAV: readonly { href: string; label: string }[] = [
   { href: "/lessons/", label: "オンラインクラス" },
   { href: "/about/", label: "講師紹介" },
@@ -24,104 +31,46 @@ export const FOOTER_NAV: readonly { href: string; label: string; title: string; 
   { href: "/contact/", label: "Contact", title: "お問い合わせ", description: "まずはお気軽にご相談ください" },
 ];
 
-export const INSTAGRAM_URL = "https://www.instagram.com/yuko_takatsudo";
-
 export interface SiteFrameProps {
   brandWord: string;
   brandSub: string;
   instagramLabel: string;
+  /** `{year}` is replaced with the current year. */
   copyright: string;
   backToTopLabel: string;
+  contactLabel?: string;
   /** Composer outlet slot: the route's own composition renders here, inside `<main>`. */
   main?: readonly unknown[];
+  /** `pinsel.nav-link` children; empty → the approved literals. */
+  headerNav?: readonly unknown[];
+  /** `pinsel.footer-link` children; empty → the approved literals. */
+  footerNav?: readonly unknown[];
   /** Injected by the renderer; never authored. */
   route?: RouteContext;
 }
 
-function isCurrent(pathname: string | undefined, href: string): boolean {
-  if (!pathname) return false;
-  return pathname === href || (href !== "/" && pathname.startsWith(href));
-}
+const filled = (children: readonly unknown[] | undefined): children is readonly unknown[] => children !== undefined && children.length > 0;
 
-function Brand({ word, sub }: { word: string; sub: string }): Child {
-  return (
-    <a href="/" class="brand" aria-label={`${word} トップページ`}>
-      <span class="brand__word">{word}</span>
-      <span class="brand__sub">{sub}</span>
-    </a>
-  );
-}
-
-/** Prototype `ui.py header()` / `footer()` / `document()` chrome around `<main id="main">`. */
+/** Prototype `ui.py document()` body: skip link, header, `<main id="main">`, footer. */
 export function SiteFrame(props: SiteFrameProps): Child {
   const pathname = props.route?.pathname;
+  const headerNav = filled(props.headerNav) ? (props.headerNav as Child) : HEADER_NAV.map((item) => <NavLink {...item} route={props.route} />);
+  const footerNav = filled(props.footerNav) ? (props.footerNav as Child) : FOOTER_NAV.map((item) => <FooterLink {...item} />);
   return (
     <>
-      <a class="skip-link" href="#main">本文へスキップ</a>
-      <div class="site-header">
-        <header class="container site-header__inner">
-          <Brand word={props.brandWord} sub={props.brandSub} />
-          <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">
-            <span>メニュー</span>
-            <Icon name="menu" class="menu-open-icon" />
-            <Icon name="close" class="menu-close-icon" />
-          </button>
-          <nav id="site-navigation" class="site-nav" aria-label="メインメニュー">
-            {HEADER_NAV.map((item) => (
-              <a class="site-nav__item" href={item.href} aria-current={isCurrent(pathname, item.href) ? "page" : null}>
-                {item.label}
-              </a>
-            ))}
-            <a class="site-nav__contact button--primary" href="/contact/" aria-current={isCurrent(pathname, "/contact/") ? "page" : null}>
-              <Icon name="mail" />
-              <span>お問い合わせ</span>
-            </a>
-          </nav>
-          <button class="motion-toggle" type="button" aria-label="装飾の動きと色の変化" aria-pressed="false" data-motion-toggle="">
-            <Icon name="pause" class="motion-running-icon" />
-            <Icon name="play" class="motion-paused-icon" />
-            <span data-motion-label="">動き OFF</span>
-          </button>
-        </header>
-      </div>
+      <SkipLink />
+      <SiteHeader brandWord={props.brandWord} brandSub={props.brandSub} contactLabel={props.contactLabel ?? "お問い合わせ"} nav={headerNav} pathname={pathname} />
       <main id="main" tabindex={-1}>
         {(props.main ?? []) as Child}
       </main>
-      <footer class="site-footer">
-        <div class="container footer-grid">
-          <div class="footer-identity">
-            <Brand word={props.brandWord} sub={props.brandSub} />
-            <a class="footer-instagram" href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer">
-              <Icon name="instagram" />
-              <span>
-                <span class="footer-instagram__label">Instagram</span>
-                <span>{props.instagramLabel}</span>
-              </span>
-              <Icon name="arrow-up-right" />
-            </a>
-          </div>
-          <nav aria-label="フッターメニュー">
-            <ul class="footer-nav">
-              {FOOTER_NAV.map((item) => (
-                <li>
-                  <a href={item.href}>
-                    <span class="eyebrow">{item.label}</span>
-                    <span class="footer-nav__title">{item.title}</span>
-                    <span class="footer-nav__description">{item.description}</span>
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        </div>
-        <div class="container footer-bottom">
-          <p>{props.copyright}</p>
-          <a href="#top">
-            <span>{props.backToTopLabel}</span>
-            <Icon name="arrow-up" />
-          </a>
-        </div>
-      </footer>
+      <SiteFooter
+        brandWord={props.brandWord}
+        brandSub={props.brandSub}
+        instagramLabel={props.instagramLabel}
+        copyright={props.copyright}
+        backToTopLabel={props.backToTopLabel}
+        nav={footerNav}
+      />
     </>
   );
 }
