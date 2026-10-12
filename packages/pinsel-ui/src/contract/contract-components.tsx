@@ -1,4 +1,5 @@
 import { h, type Child } from "@takazudo/zfb/zudo-react";
+import { TITLE_PHRASES } from "../article-heading/article-heading";
 import { ArtWindow, type ArtSize, type ArtSlot } from "../art-window/art-window";
 import { ContactForm } from "../contact-form/contact-form";
 import { ctaHeadingLines, ctaRemainder } from "../cta/cta";
@@ -10,13 +11,11 @@ import { parseMarkdown } from "../markdown/safe-markdown";
 import { directoryPath } from "../nav-link/nav-link";
 import { PAGE_TITLE_LINES } from "../page-heading/page-heading";
 import type { RouteContext, SlotPosition } from "../render/types";
-import { SiteFooter as SiteFooterView } from "../site-footer/site-footer";
+import { INSTAGRAM_URL, SiteFooter as SiteFooterView } from "../site-footer/site-footer";
 import { SiteHeader as SiteHeaderView } from "../site-header/site-header";
 import { SkipLink } from "../skip-link/skip-link";
 import { ButtonLink, TextLink } from "../text-link/text-link";
 import { TocItem as TocItemView, twoDigits } from "../toc/toc";
-import { TITLE_PHRASES } from "../article-heading/article-heading";
-import { INSTAGRAM_URL } from "../site-footer/site-footer";
 
 // The component pack's renderers, one per entry of the component contract
 // (packages/pinsel-content/src/site/component-contract.ts). Pinned Composer
