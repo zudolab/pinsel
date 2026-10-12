@@ -39,10 +39,11 @@ export function SiteHeader(props: SiteHeaderProps): Child {
             <span>{props.contactLabel}</span>
           </a>
         </nav>
-        <button class="motion-toggle" type="button" aria-label="装飾の動きと色の変化" aria-pressed={props.motionOn ? "true" : "false"} data-motion-toggle="">
+        <button class="motion-toggle" type="button" aria-describedby="motion-toggle-description" aria-pressed={props.motionOn ? "true" : "false"} data-motion-toggle="">
           <Icon name="pause" class="motion-running-icon" />
           <Icon name="play" class="motion-paused-icon" />
           <span data-motion-label="">{props.motionOn ? "動き ON" : "動き OFF"}</span>
+          <span id="motion-toggle-description" hidden>装飾の動きと色の変化</span>
         </button>
       </header>
     </div>
