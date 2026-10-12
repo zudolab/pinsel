@@ -12,8 +12,10 @@ import { contentBranchFor, packageIdentityFromManifest, type PublicationPackageI
 // it replaces, so a one-price edit is a one-line diff. New files use the
 // importer's layout (record keys in schema order, values in model field order).
 
-/** The identity this Worker build declares (its own package.json pins; CI checks the site's match). */
-export const PUBLICATION_PACKAGE_IDENTITY: PublicationPackageIdentity = packageIdentityFromManifest(workerManifest);
+/** The identity this Worker build declares (its own package.json pins; CI checks the site's match). Throws if a pin is not exact. */
+export function publicationPackageIdentity(): PublicationPackageIdentity {
+  return packageIdentityFromManifest(workerManifest);
+}
 
 const RECORD_KEY_ORDER = ["schemaVersion", "id", "modelId", "createdAt", "updatedAt", "values", "lifecycle", "generation"] as const;
 

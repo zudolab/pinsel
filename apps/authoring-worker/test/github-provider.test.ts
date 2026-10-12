@@ -5,10 +5,12 @@ import { contentSnapshotId, type ContentSnapshotRecord } from "zudo-composer/hos
 import { createGitHubPublicationProvider, githubPublisherFactory } from "../src/publish/github-provider";
 import { publicationStateFor, selectPublisher, type ProviderRef } from "../src/publish/port";
 import { IDENTITY_CHECK_NAME, formatIdentityReport, parseSnapshotRecord, serializeSnapshotRecord, type SnapshotRecordFile } from "../src/publish/publication-record";
-import { PUBLICATION_PACKAGE_IDENTITY } from "../src/publish/snapshot-files";
+import { publicationPackageIdentity } from "../src/publish/snapshot-files";
 import { BASELINE } from "../src/site/baseline";
 import { checkRun, checkRuns, createReplay, fixture, type Replay } from "./github-replay";
 import { PRICE } from "./helpers";
+
+const PUBLICATION_PACKAGE_IDENTITY = publicationPackageIdentity();
 
 const DISK = import.meta.glob("../../../content/entries/**/*.json", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
 const diskEntry = (model: string, id: string) => DISK[`../../../content/entries/${model}/${id}.json`]!;

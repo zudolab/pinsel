@@ -5,10 +5,11 @@ import type { ContentSnapshotRecord } from "zudo-composer/host-storage";
 import workerManifest from "../package.json";
 import siteManifest from "../../site/package.json";
 import { formatIdentityReport, packageIdentityFromManifest, parseIdentityReport, parseSnapshotRecord, serializeSnapshotRecord } from "../src/publish/publication-record";
-import { PUBLICATION_PACKAGE_IDENTITY, planPublication, serializeEntryFile } from "../src/publish/snapshot-files";
+import { planPublication, publicationPackageIdentity, serializeEntryFile } from "../src/publish/snapshot-files";
 import { BASELINE } from "../src/site/baseline";
 import { PRICE } from "./helpers";
 
+const PUBLICATION_PACKAGE_IDENTITY = publicationPackageIdentity();
 const DISK = import.meta.glob("../../../content/entries/**/*.json", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
 const BASE = "ba5e".repeat(10);
 

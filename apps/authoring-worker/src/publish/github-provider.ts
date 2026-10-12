@@ -3,7 +3,7 @@ import { validateContentExportSubmission } from "zudo-composer/export";
 import type { ContentExportEvidence } from "zudo-composer/export";
 import type { ProviderLookupResult, ProviderObservation, ProviderPromoteResult, ProviderRef, ProviderStatusResult, ProviderSubmitResult, PromotionPolicy, PublicationProviderPort, PublisherFactory } from "./port";
 import { IDENTITY_CHECK_NAME, contentBranchFor, parseIdentityReport, parseSnapshotRecord, samePackageIdentity, serializeSnapshotRecord, type PublicationPackageIdentity, type SnapshotRecordFile } from "./publication-record";
-import { PUBLICATION_PACKAGE_IDENTITY, commitMessageFor, planPublication, pullRequestBodyFor, pullRequestTitleFor, serializeEntryFile, type PublicationPlan } from "./snapshot-files";
+import { commitMessageFor, planPublication, pullRequestBodyFor, pullRequestTitleFor, publicationPackageIdentity, serializeEntryFile, type PublicationPlan } from "./snapshot-files";
 
 // GitHub REST publisher: one snapshot = one content-only commit on
 // `content/<snapshotId>` whose only parent is the recorded base commit, and one
@@ -115,7 +115,7 @@ export function createGitHubPublicationProvider(options: GitHubProviderOptions):
   const apiBase = (options.apiBase ?? "https://api.github.com").replace(/\/$/, "");
   const baseBranch = options.baseBranch ?? "main";
   const requiredChecks = options.requiredChecks ?? ["content-validate"];
-  const identity = options.packageIdentity ?? PUBLICATION_PACKAGE_IDENTITY;
+  const identity = options.packageIdentity ?? publicationPackageIdentity();
   const timeoutMs = options.timeoutMs ?? 10_000;
   const now = options.now ?? (() => new Date().toISOString());
   const repoPath = `/repos/${encodeURIComponent(options.owner)}/${encodeURIComponent(options.repo)}`;
@@ -390,12 +390,20 @@ export function githubPublisherFactory(overrides: Partial<Pick<GitHubProviderOpt
     if (!token || !repository) return null;
     const baseBranch = stringVar(env, "PUBLISHER_GITHUB_BASE_BRANCH") || "main";
     const required = stringVar(env, "PUBLISHER_GITHUB_REQUIRED_CHECKS");
+    let packageIdentity: PublicationPackageIdentity;
+    try {
+      packageIdentity = overrides.packageIdentity ?? publicationPackageIdentity();
+    } catch {
+      // Unpinned dependencies: no publication can name what it was built for.
+      return null;
+    }
     return createGitHubPublicationProvider({
       owner: repository[1]!,
       repo: repository[2]!,
       token,
       baseBranch,
       promotionPolicy: config.promotionPolicy,
+      packageIdentity,
       ...(required ? { requiredChecks: required.split(",").map((name) => name.trim()).filter(Boolean) } : {}),
       ...overrides,
     });

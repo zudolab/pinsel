@@ -5,11 +5,13 @@ import { createFakePublicationProvider, type FakePublicationProvider } from "../
 import { githubPublisherFactory } from "../src/publish/github-provider";
 import { IDENTITY_CHECK_NAME, formatIdentityReport, serializeSnapshotRecord, type SnapshotRecordFile } from "../src/publish/publication-record";
 import { reconcileScheduled } from "../src/publish/reconcile";
-import { PUBLICATION_PACKAGE_IDENTITY } from "../src/publish/snapshot-files";
+import { publicationPackageIdentity } from "../src/publish/snapshot-files";
 import { BASELINE, PINSEL_SITE } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
 import { checkRun, checkRuns, createReplay, fixture, type Replay } from "./github-replay";
 import { COMMIT_1, COMMIT_2, PRICE, app, call, canonicalWith, priceOf, readDraft, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
+
+const PUBLICATION_PACKAGE_IDENTITY = publicationPackageIdentity();
 
 // The publication scenarios of the publication sub-issue, end to end through
 // the HTTP API on a real local D1: (a)–(f), (h) with the fake provider; (i)–(k)
