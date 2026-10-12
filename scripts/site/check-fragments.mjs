@@ -43,7 +43,7 @@ export async function checkFragments(dist) {
       const url = new URL(href, `${ORIGIN}${route}`);
       if (url.origin !== ORIGIN) continue;
       const pathname = decodeURIComponent(url.pathname);
-      const target = PINSEL_ROUTES.find((candidate) => candidate === pathname);
+      const target = PINSEL_ROUTES.find((/** @type {string} */ candidate) => candidate === pathname);
       if (!target) {
         if (!(await exists(path.join(dist, pathname)))) issues.push(`${route}: link ${href} points at ${pathname}, which is not a built output`);
         continue;
@@ -57,7 +57,7 @@ export async function checkFragments(dist) {
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const flag = process.argv.indexOf("--dist");
-  const dist = path.resolve(flag > 0 ? process.argv[flag + 1] : path.join(repoRoot, "apps/site/dist"));
+  const dist = path.resolve((flag > 0 && process.argv[flag + 1]) || path.join(repoRoot, "apps/site/dist"));
   const issues = await checkFragments(dist);
   if (issues.length > 0) {
     console.error(`check-fragments: ${issues.length} problem(s):\n${issues.map((line) => `  - ${line}`).join("\n")}`);
