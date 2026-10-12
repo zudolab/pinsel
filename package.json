@@ -29,6 +29,7 @@
     "no-deploy:check": "node scripts/no-deploy-check.mjs",
     "check:boundaries": "node scripts/check-boundaries.mjs",
     "worker:bundle:check": "node scripts/check-worker-bundle.mjs",
+    "worker:check-preview": "node scripts/check-worker-bundle-preview.mjs",
     "sg:check": "pnpm --filter @pinsel/styleguide check:generated",
     "verify:external-install": "node scripts/verify/external-install.mjs",
     "gate1:wrangler-dev": "node scripts/gate1/wrangler-dev-proof.mjs",

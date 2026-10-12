@@ -1,6 +1,6 @@
 // Checks every approved asset (and every synced/staged copy of it) byte-for-byte
 // against tests/fixtures/approved-seed/asset-manifest.json.
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { exists, listFiles, paths, repoRoot, sha256File } from "./lib.mjs";
@@ -73,7 +73,9 @@ export async function verify() {
     { root: paths.workerAssets, expected: publicFiles, exact: false, required: false },
   ];
   for (const tree of trees) {
-    if (!(await exists(tree.root))) {
+    // An empty optional tree is a placeholder (the worker vitest config creates
+    // dist-assets so its assets binding can start), not a stale staging copy.
+    if (!(await exists(tree.root)) || (!tree.required && (await readdir(tree.root)).length === 0)) {
       if (tree.required) problems.push(`missing ${path.relative(repoRoot, tree.root)}`);
       continue;
     }

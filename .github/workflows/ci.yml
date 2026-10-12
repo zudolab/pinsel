@@ -49,6 +49,7 @@ jobs:
       - run: pnpm check:boundaries
       - run: pnpm worker:dry-run
       - run: pnpm worker:bundle:check
+      - run: pnpm worker:check-preview
       - run: pnpm worker:types:check
       - name: No-JS home page (Playwright, chromium)
         run: |
