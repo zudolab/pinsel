@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2017-10",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2017"
+    },
+    "result-entry-school": "ブルク・ギービヒェンシュタイン芸術デザイン大学ハレ",
+    "result-entry-department": "Modedesign、Industriedesign（2名）、Kommunikationsdesign",
+    "result-entry-url": "https://www.burg-halle.de/",
+    "result-entry-order": 10
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

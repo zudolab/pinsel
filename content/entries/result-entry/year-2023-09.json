@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2023-09",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2023"
+    },
+    "result-entry-school": "オーストリア・リンツ工科造形芸術大学",
+    "result-entry-department": "Architektur",
+    "result-entry-url": "https://www.kunstuni-linz.at/",
+    "result-entry-order": 9
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

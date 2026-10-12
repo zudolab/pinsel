@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "about-career-04",
+  "modelId": "timeline-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "timeline-entry-timeline": "about-career",
+    "timeline-entry-year": "2020",
+    "timeline-entry-text": "日本に帰国",
+    "timeline-entry-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

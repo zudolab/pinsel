@@ -3,7 +3,7 @@ import type { ContentSnapshot } from "zudo-composer/content";
 
 import { PINSEL_CONTENT_PROVIDER_ID, PINSEL_MODELS, fieldId } from "../models";
 import { EVERY_OPERATION, PINSEL_CONTENT_POLICY, PINSEL_EDITABLE_FIELDS, PINSEL_EDITOR_POLICY, authorizePinselMutation, readOnlyFields, refusePinselRequest } from "../policy";
-import { buildSeedEntries, ref } from "./seed-entries";
+import { buildSeedEntries, ref } from "../import/seed-entries";
 
 const seedEntries = buildSeedEntries(PINSEL_MODELS);
 const snapshot: ContentSnapshot = { providerId: PINSEL_CONTENT_PROVIDER_ID, mutationToken: 7, models: PINSEL_MODELS, entries: seedEntries };

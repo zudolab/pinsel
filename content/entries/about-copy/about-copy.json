@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "about-copy",
+  "modelId": "about-copy",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "about-copy-birth-line": "1987年 埼玉県生まれ",
+    "about-copy-instagram-label": "Instagram",
+    "about-copy-career-title": "経歴",
+    "about-copy-education-title": "学歴",
+    "about-copy-message-title": "メッセージ",
+    "about-copy-features-title": "レッスンの特長"
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

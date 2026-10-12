@@ -3,17 +3,22 @@ import { defineModel } from "./define";
 // Field order inside each model is the editor's display order. Keys name the
 // rendered slot; values come from the approved seed (`content.json` plus the
 // copy the prototype build hard-codes), see docs/content-model.md.
+// These are "singletons" in meaning but `collection` in kind with exactly one
+// entry (no create/delete in the policy): Composer 7ca114a3 only injects
+// collection models through attachments, and every page needs several of
+// them. Multi-item copy is long-text with one item per line because list
+// fields cannot be bound to component props.
 
 export const siteCopyModel = defineModel({
   id: "site-copy",
   name: "サイト共通コピー",
   description: "ヘッダー・フッター・トップページ・ノート一覧・404 の文言（1件のみ）",
-  kind: "single",
+  kind: "collection",
   fields: [
     { key: "brandWord", label: "ブランド名", kind: "text" },
     { key: "brandSub", label: "ブランド副題", kind: "text" },
     { key: "heroLabel", label: "ヒーロー ラベル", kind: "text" },
-    { key: "heroTitleLines", label: "ヒーロー 見出し（行ごと）", kind: "list", item: { kind: "text" } },
+    { key: "heroTitleLines", label: "ヒーロー 見出し（1行ずつ改行）", kind: "long-text" },
     { key: "heroLead", label: "ヒーロー 本文（改行区切り）", kind: "long-text" },
     { key: "heroPrimaryLabel", label: "ヒーロー 主ボタン", kind: "text" },
     { key: "heroPricingLabel", label: "ヒーロー 料金リンク", kind: "text" },
@@ -23,8 +28,6 @@ export const siteCopyModel = defineModel({
     { key: "pricingTitle", label: "トップ 料金 見出し", kind: "text" },
     { key: "pricingNote", label: "トップ 料金 注記", kind: "text" },
     { key: "pricingMoreLabel", label: "トップ 料金 詳細リンク", kind: "text" },
-    { key: "popularBadge", label: "人気バッジ", kind: "text" },
-    { key: "taxLabel", label: "税込表記", kind: "text" },
     { key: "instructorTitle", label: "トップ 講師 見出し", kind: "text" },
     { key: "instructorDetailLabel", label: "講師 詳細リンク", kind: "text" },
     { key: "resultsTitle", label: "トップ 合格実績 見出し", kind: "text" },
@@ -46,7 +49,7 @@ export const siteCopyModel = defineModel({
     { key: "notFoundBody", label: "404 本文", kind: "long-text" },
     { key: "notFoundLinkLabel", label: "404 リンク", kind: "text" },
     { key: "footerInstagramLabel", label: "フッター Instagram 表示名", kind: "text" },
-    { key: "footerCopyright", label: "コピーライト（{year} は現在年）", kind: "text" },
+    { key: "footerCopyright", label: "コピーライト", kind: "text" },
     { key: "backToTopLabel", label: "「ページの先頭へ」", kind: "text" },
   ],
 });
@@ -55,7 +58,7 @@ export const lessonsCopyModel = defineModel({
   id: "lessons-copy",
   name: "オンラインクラス ページ文言",
   description: "/lessons/ の見出し・本文・目次ラベル（1件のみ）",
-  kind: "single",
+  kind: "collection",
   fields: [
     { key: "tocForYou", label: "目次 受講をお勧めする方", kind: "text" },
     { key: "tocCourse", label: "目次 授業内容", kind: "text" },
@@ -74,15 +77,15 @@ export const lessonsCopyModel = defineModel({
     { key: "pricingPaymentNote", label: "お支払い 注記", kind: "long-text" },
     { key: "consultationTitle", label: "有料進路相談 見出し", kind: "text" },
     { key: "consultationTopicsTitle", label: "面談で話す内容 見出し", kind: "text" },
-    { key: "consultationTopics", label: "面談で話す内容", kind: "list", item: { kind: "text" } },
+    { key: "consultationTopics", label: "面談で話す内容（1項目ずつ改行）", kind: "long-text" },
     { key: "consultationFaqTitle", label: "よくある質問 見出し", kind: "text" },
-    { key: "consultationFaqTopics", label: "よくある質問（箇条書き）", kind: "list", item: { kind: "text" } },
+    { key: "consultationFaqTopics", label: "よくある質問（1項目ずつ改行）", kind: "long-text" },
     { key: "instructorTitle", label: "講師紹介 見出し", kind: "text" },
     { key: "careerTitle", label: "経歴 見出し", kind: "text" },
     { key: "specializationsTitle", label: "専攻分野 見出し", kind: "text" },
     { key: "specializationsNote", label: "専攻分野 補足", kind: "long-text" },
     { key: "graduatesTitle", label: "美大卒の方へ 見出し", kind: "text" },
-    { key: "graduatesParagraphs", label: "美大卒の方へ 本文（段落ごと）", kind: "list", item: { kind: "long-text" } },
+    { key: "graduatesParagraphs", label: "美大卒の方へ 本文（1段落ずつ改行）", kind: "long-text" },
     { key: "knowledgeTitle", label: "受験について知る 見出し", kind: "text" },
   ],
 });
@@ -91,7 +94,7 @@ export const aboutCopyModel = defineModel({
   id: "about-copy",
   name: "講師紹介 ページ文言",
   description: "/about/ の見出し（1件のみ）",
-  kind: "single",
+  kind: "collection",
   fields: [
     { key: "birthLine", label: "生年・出身", kind: "text" },
     { key: "instagramLabel", label: "Instagram リンク文言", kind: "text" },
@@ -106,7 +109,7 @@ export const instructorProfileModel = defineModel({
   id: "instructor-profile",
   name: "講師プロフィール",
   description: "講師の名前・肩書・各ページの紹介文（1件のみ）。経歴の年表は「年表」モデル",
-  kind: "single",
+  kind: "collection",
   fields: [
     { key: "name", label: "氏名", kind: "text" },
     { key: "latinName", label: "氏名（ローマ字）", kind: "text" },
@@ -114,7 +117,7 @@ export const instructorProfileModel = defineModel({
     { key: "portraitAlt", label: "写真の代替テキスト", kind: "text" },
     { key: "homeBio", label: "トップ 紹介文", kind: "long-text" },
     { key: "lessonsBio", label: "オンラインクラス 紹介文", kind: "long-text" },
-    { key: "aboutMessage", label: "講師紹介 メッセージ（段落ごと）", kind: "list", item: { kind: "long-text" } },
+    { key: "aboutMessage", label: "講師紹介 メッセージ（1段落ずつ改行）", kind: "long-text" },
   ],
 });
 
@@ -122,7 +125,7 @@ export const contactCopyModel = defineModel({
   id: "contact-copy",
   name: "お問い合わせ ページ文言",
   description: "/contact/ のフォーム文言・流れ・法定表記の見出し（1件のみ）",
-  kind: "single",
+  kind: "collection",
   fields: [
     { key: "stepsTitle", label: "お申し込みの流れ 見出し", kind: "text" },
     { key: "legalSummary", label: "特定商取引法 見出し", kind: "text" },

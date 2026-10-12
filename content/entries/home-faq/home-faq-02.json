@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "home-faq-02",
+  "modelId": "home-faq",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "home-faq-question": "専攻が決まっていなくても大丈夫ですか？",
+    "home-faq-answer": "はい。受講開始時に検討中の方も多くいらっしゃいます。基礎的な授業から始まり、受講中にご検討いただけます。",
+    "home-faq-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

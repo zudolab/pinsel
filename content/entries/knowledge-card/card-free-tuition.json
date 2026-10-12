@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "card-free-tuition",
+  "modelId": "knowledge-card",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "knowledge-card-note": {
+      "providerId": "content-filesystem",
+      "modelId": "note",
+      "recordId": "free-tuition"
+    },
+    "knowledge-card-title": "ドイツの美大は学費が無料",
+    "knowledge-card-description": "ドイツ国立美大の学費無料の仕組みと生活費の目安",
+    "knowledge-card-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

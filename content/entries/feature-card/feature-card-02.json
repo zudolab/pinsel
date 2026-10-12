@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "feature-card-02",
+  "modelId": "feature-card",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "feature-card-title": "オンライン完結",
+    "feature-card-description": "すべてのレッスンをオンラインで実施。日本全国・海外からも受講可能です。コロナ以降、多くの大学がオンラインでの受験に対応しており、日本にいながら出願から合格まで完結できるケースも増えています。お仕事をされている方のために19時以降のレッスンにも対応しています。",
+    "feature-card-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

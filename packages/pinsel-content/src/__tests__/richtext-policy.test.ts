@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { NOTE_SECTION_COUNTS, NOTE_SLUGS } from "../invariants";
 import { checkNoteMarkdown, isAllowedLinkHref, isNoteMarkdownAllowed, noteHeadings } from "../richtext-policy";
-import { readFixture } from "./seed-entries";
+import { readFixture } from "../import/seed-entries";
 
 const notes = readFixture<{ notes: Record<string, { body: string; headings: { depth: number; text: string }[] }> }>("content.json").notes;
 

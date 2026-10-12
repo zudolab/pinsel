@@ -8,7 +8,7 @@ import type { ContentEntryRecord, ContentModelRecord, Model, SiteProject } from 
 import { PINSEL_CONTENT_PROVIDER_ID, MODEL_TIMESTAMP, PINSEL_MODELS, SEED_DECLARED_RESULT_COUNT, SEED_ENTRY_COUNTS, fieldId, modelById } from "../models";
 import { modelInput } from "../models/dsl";
 import { RECORD_ID_PATTERN } from "../policy";
-import { buildSeedEntries } from "./seed-entries";
+import { buildSeedEntries } from "../import/seed-entries";
 
 // Records are validated one by one with the `zudo-composer/content` validators
 // and together through `validateSiteProject`, which runs the same validators

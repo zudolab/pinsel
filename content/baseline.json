@@ -1,0 +1,1489 @@
+{
+  "schemaVersion": 1,
+  "source": {
+    "repository": "Takazudo/yuko-site",
+    "pr": 4,
+    "head": "ce2ec05b9549c8f4b50a9ba01c201d8f88992348"
+  },
+  "seedContentDigest": "013699fa892085253ac59b8ed7a0880a5b032dc2cc2451911cdac64469a79c6a",
+  "entriesDigest": "294f49267dc321f776f03e84b9cdb1777b79ef6bb8894871340cc1d470ac7842",
+  "importedAt": "2026-10-12T15:18:44.852Z",
+  "entries": {
+    "about-copy/about-copy": {
+      "modelId": "about-copy",
+      "entryId": "about-copy",
+      "digest": "85b908d8aa94a1f811f7dc72a48dcc220746eb376725a4f59d2222cabb34e589",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "contact-copy/contact-copy": {
+      "modelId": "contact-copy",
+      "entryId": "contact-copy",
+      "digest": "38203902b4c374f53cd21cad158a64b76db7515c7a4b9a3916521665892d4404",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "contact-step/contact-step-01": {
+      "modelId": "contact-step",
+      "entryId": "contact-step-01",
+      "digest": "722bf12a7caae93793189c9fe6695a745314e0364bdf0be6d6d9f9e7f238c780",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "contact-step/contact-step-02": {
+      "modelId": "contact-step",
+      "entryId": "contact-step-02",
+      "digest": "29a9bb647a1a18cc66f61a2d3ab052ed5b4d641e778700e9c6516c492b93b743",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "contact-step/contact-step-03": {
+      "modelId": "contact-step",
+      "entryId": "contact-step-03",
+      "digest": "bfdd8599cd8ebe6c5ff4bf75ed02bddc861cc2caf149b38747633649b9ab3968",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "contact-step/contact-step-04": {
+      "modelId": "contact-step",
+      "entryId": "contact-step-04",
+      "digest": "b0163e7bb0c534858ec7dfa813a46037439f415e60bd057bab8bb4a372bb1985",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "contact-step/contact-step-05": {
+      "modelId": "contact-step",
+      "entryId": "contact-step-05",
+      "digest": "f2a725c8eeef02396f3341b475228f3e93391ce78e17a1dcd8a98fd322841133",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "course-step/course-step-01": {
+      "modelId": "course-step",
+      "entryId": "course-step-01",
+      "digest": "478ba190b168b7f5358ba06d5060175214160ea1ef5528ed9a0b44c1f483717e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "course-step/course-step-02": {
+      "modelId": "course-step",
+      "entryId": "course-step-02",
+      "digest": "b8a85e40206f3e47cb17e098a6d8a6c22577e7445ed7a8809e30babb7726ed29",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "course-step/course-step-03": {
+      "modelId": "course-step",
+      "entryId": "course-step-03",
+      "digest": "36e53a38352aecc7757a079c52b5ae58996596df4ab1ce6126ac7599e6c4ca6a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "course/consultation": {
+      "modelId": "course",
+      "entryId": "consultation",
+      "digest": "ce33704417735f0ea5f11c039d32436ead4e95755c5834240007c371937f4757",
+      "protectedDigest": "6f82dbcf4318c27501014994a5f6a4cfd6132c48105295538c2d6ae92e73e4e0"
+    },
+    "course/four-month": {
+      "modelId": "course",
+      "entryId": "four-month",
+      "digest": "b4e6d957ef17234594170724f7a92728aea6288223339b3e8f042c35f8996f47",
+      "protectedDigest": "4a435c105be604ce4eed0b4030a735256167dbd47ee9fb85598aff303e882a42"
+    },
+    "course/two-month": {
+      "modelId": "course",
+      "entryId": "two-month",
+      "digest": "1db0069041b71cf93f98752530e8d44df95932084d89e61385baf79b7ba37b61",
+      "protectedDigest": "f5eba4e992ed749e2cf170ccf1ec982ddf76367479a07e70e2bf3909402d8048"
+    },
+    "faq-group/faq-exam": {
+      "modelId": "faq-group",
+      "entryId": "faq-exam",
+      "digest": "51e320a5fed79171f906602bbe35a6a75f111bab35983c999ca02dbf83950392",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-group/faq-fees": {
+      "modelId": "faq-group",
+      "entryId": "faq-fees",
+      "digest": "6222eaaa26bb29bb7fbbd2f0218ef7d111172c3362c03621685bd57e0aa6460a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-group/faq-german": {
+      "modelId": "faq-group",
+      "entryId": "faq-german",
+      "digest": "6a349bb605c1c9bb8826044c4e5b496e79b2fd9817e32e8c7d51b07f5a6fe46d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-group/faq-lessons": {
+      "modelId": "faq-group",
+      "entryId": "faq-lessons",
+      "digest": "fb90ba04eb9811125c1340225859bf13a0d512706895d03dcae3728ad8d5a38f",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-exam-01": {
+      "modelId": "faq-item",
+      "entryId": "faq-exam-01",
+      "digest": "e93fa3e561e44b96f97004c981bd147b02af6a8bc4d32566964cf6d2b843983b",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-exam-02": {
+      "modelId": "faq-item",
+      "entryId": "faq-exam-02",
+      "digest": "060af64b9f7f26a91ab15e5666867a85814e313248f9b6ad98994cae2cdbe715",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-exam-03": {
+      "modelId": "faq-item",
+      "entryId": "faq-exam-03",
+      "digest": "c236cfc634ce2fd8032469a3f8aa01786247a49e9f6383ce320d80ca268ba05d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-exam-04": {
+      "modelId": "faq-item",
+      "entryId": "faq-exam-04",
+      "digest": "6796a1a1207c474943a91416a9dfa69c26ab1d46fcfb4b049876ec5a7d936ca2",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-exam-05": {
+      "modelId": "faq-item",
+      "entryId": "faq-exam-05",
+      "digest": "a7aae8c526d6808255b3d1894c0baae8149069ef834c13545567006ad769ff87",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-exam-06": {
+      "modelId": "faq-item",
+      "entryId": "faq-exam-06",
+      "digest": "a7df6ed0c116668c6d8f2c9187bf899d5447544bff14c33f1ff9f78cb6e81c3a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-exam-07": {
+      "modelId": "faq-item",
+      "entryId": "faq-exam-07",
+      "digest": "f2cc9f874ce3a42bcef52b216fb16ee63fd4a3cfd36505a4529e147c7a829882",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-fees-01": {
+      "modelId": "faq-item",
+      "entryId": "faq-fees-01",
+      "digest": "5a6519eb6bdbe63227e83165b1f09d1910f8e3bed4395954af3ef9c84ba9f955",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-fees-02": {
+      "modelId": "faq-item",
+      "entryId": "faq-fees-02",
+      "digest": "b082617f46742e738e6fe7d3ce516ce0c5cca893a2f3d1403f50497bdf94a1ed",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-fees-03": {
+      "modelId": "faq-item",
+      "entryId": "faq-fees-03",
+      "digest": "56ee21b1e76929eda2b2cc7660292c5756b4157061ddde5aebf13c0df646fe39",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-german-01": {
+      "modelId": "faq-item",
+      "entryId": "faq-german-01",
+      "digest": "5e700615649aaa032a0279e89b0227c2390363173bd2402b15ce656c20d3f7b5",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-german-02": {
+      "modelId": "faq-item",
+      "entryId": "faq-german-02",
+      "digest": "b5d0470b82ea9a2371be390132b4bc21397ce3d01e14dec270646c762ae0edb1",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-german-03": {
+      "modelId": "faq-item",
+      "entryId": "faq-german-03",
+      "digest": "001daa2814021d7f3aa6ca1e17c3b8cd3ca407ea421de133587b524c0eec6637",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-lessons-01": {
+      "modelId": "faq-item",
+      "entryId": "faq-lessons-01",
+      "digest": "e3514d4a5dea6b1559563c90879172c0c4775a53b24b44779c418979abb85724",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-lessons-02": {
+      "modelId": "faq-item",
+      "entryId": "faq-lessons-02",
+      "digest": "4e396365b84786418a078b631f0691617495e452cc5a8b8a432cf3c693e4a06b",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-lessons-03": {
+      "modelId": "faq-item",
+      "entryId": "faq-lessons-03",
+      "digest": "4ddd35c963105d053bac7cabb8b4e5ba1fd7f810571f042f848ecd8437425777",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-lessons-04": {
+      "modelId": "faq-item",
+      "entryId": "faq-lessons-04",
+      "digest": "50509dd5e568ef83ee950314c9940ea995ce84a3eb6707a081390f018162f9b6",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "faq-item/faq-lessons-05": {
+      "modelId": "faq-item",
+      "entryId": "faq-lessons-05",
+      "digest": "c56b37017e1d361a4544f64f17327d9b45e7b561e1e809475a94d2fa0ce184e2",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "feature-card/feature-card-01": {
+      "modelId": "feature-card",
+      "entryId": "feature-card-01",
+      "digest": "1273887502f480a44cbfc9366844bc6a13877bcfa178bae17ecf41462308e144",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "feature-card/feature-card-02": {
+      "modelId": "feature-card",
+      "entryId": "feature-card-02",
+      "digest": "c83616de0d91a7369c0f24583ad4d44d7597091f0a734aa17e2e595f39556453",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "feature-card/feature-card-03": {
+      "modelId": "feature-card",
+      "entryId": "feature-card-03",
+      "digest": "9dbcc8cf77db590204a648fb9680e88980fa3238430c58b40b362b8a2e7e0313",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "feature-card/feature-card-04": {
+      "modelId": "feature-card",
+      "entryId": "feature-card-04",
+      "digest": "5b8aa8c42b1cace5d0a4dec45bd9234496deff8a483553fd4da2d00a26c42537",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-faq/home-faq-01": {
+      "modelId": "home-faq",
+      "entryId": "home-faq-01",
+      "digest": "1529ec38772c409901ba11003c6c23ad45a0f23346b6ece983d6efd014bab921",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-faq/home-faq-02": {
+      "modelId": "home-faq",
+      "entryId": "home-faq-02",
+      "digest": "b6829fde2bbe01a57729671c238de15a9d348f39748fed5c0c520af28ef2e6b7",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-faq/home-faq-03": {
+      "modelId": "home-faq",
+      "entryId": "home-faq-03",
+      "digest": "e0f1c150758e97ecbbdd72474de791646f1e706ecea7eb427e89ea1b897bea91",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-faq/home-faq-04": {
+      "modelId": "home-faq",
+      "entryId": "home-faq-04",
+      "digest": "d010fa47dc0220e44650ba3e2a361c36fc5b7fd9da5d51b23c8ee2950273af8e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-result/home-result-01": {
+      "modelId": "home-result",
+      "entryId": "home-result-01",
+      "digest": "163002cb56c7e4c6649f03c0b760e3a0fac848f09d27e8747ce28cb52eaa7b49",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-result/home-result-02": {
+      "modelId": "home-result",
+      "entryId": "home-result-02",
+      "digest": "ee7e3ab9a5d28225edacbc940baf39b7d93197b8982db1a7e7e9d635b13739cb",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-result/home-result-03": {
+      "modelId": "home-result",
+      "entryId": "home-result-03",
+      "digest": "b1b73777a8eb298fef42ab6957882ad4fd273a37b47e2530e159bd6fc766726a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-result/home-result-04": {
+      "modelId": "home-result",
+      "entryId": "home-result-04",
+      "digest": "a7cfd7944009d916528b3b397c9fb62da37914fb15d1cc6b6f2db465b85897a0",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-result/home-result-05": {
+      "modelId": "home-result",
+      "entryId": "home-result-05",
+      "digest": "0785841144f0bafda7dd998cbd53bae9173f15486d5ad781b36adc0aa23306b7",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-result/home-result-06": {
+      "modelId": "home-result",
+      "entryId": "home-result-06",
+      "digest": "c51e1a8a05e7b3c67cc477d90c955294bad437e6fbbd79cb0c0a486b28846a4d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-voice/home-voice-01": {
+      "modelId": "home-voice",
+      "entryId": "home-voice-01",
+      "digest": "4f11589241d6c1946eab29120e3b6fc7bcef689b02bfc3d7116f506d71482697",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-voice/home-voice-02": {
+      "modelId": "home-voice",
+      "entryId": "home-voice-02",
+      "digest": "e4066f05a655d8437026c15fb8da5af58e34023a33befa8d79b7ac42edbb5585",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "home-voice/home-voice-03": {
+      "modelId": "home-voice",
+      "entryId": "home-voice-03",
+      "digest": "2558d9ca7c7cc1ce06ae157292466fc61c8d1575588b9f85a4d6fd1454402878",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "instructor-profile/instructor-profile": {
+      "modelId": "instructor-profile",
+      "entryId": "instructor-profile",
+      "digest": "a8e0d225d8dc9a2d1683f951bcf60bc597be81a34ac1fa58cac3e39b5a46cde1",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "knowledge-card/card-exam-schedule": {
+      "modelId": "knowledge-card",
+      "entryId": "card-exam-schedule",
+      "digest": "0d20a3b06844a1bf318cde9adc5b6e016e7ede0c63c044f74b608ba51d881669",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "knowledge-card/card-free-tuition": {
+      "modelId": "knowledge-card",
+      "entryId": "card-free-tuition",
+      "digest": "1a96d3c6adc36b487d87709b8d0bed27cec6f12ef6473d4ffd04ecfcda30b8ee",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "knowledge-card/card-german-language": {
+      "modelId": "knowledge-card",
+      "entryId": "card-german-language",
+      "digest": "d86e73f806ca1fbf9f63f96a41713e973d540475e7f1ac22c1bbdf2d143d3c37",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "knowledge-card/card-online-exam": {
+      "modelId": "knowledge-card",
+      "entryId": "card-online-exam",
+      "digest": "a7f864215694c10f8933d238c8337603e2148214c6e409360c53f744d723b4f6",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "knowledge-card/card-what-is-mappe": {
+      "modelId": "knowledge-card",
+      "entryId": "card-what-is-mappe",
+      "digest": "60f9b71cdc779bad662dfe13d5b7f1267e3f0ec3d11325af728af776f4e3ba96",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "legal-row/legal-row-01": {
+      "modelId": "legal-row",
+      "entryId": "legal-row-01",
+      "digest": "f2e2c6507a9557ede8f9ab1dfa416138415f36074e7952d5973c0687cee95a99",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "legal-row/legal-row-02": {
+      "modelId": "legal-row",
+      "entryId": "legal-row-02",
+      "digest": "bc802aa211208df01fe31f92c09f995a666177c72fc25db0aeba9e29794df1d3",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "legal-row/legal-row-03": {
+      "modelId": "legal-row",
+      "entryId": "legal-row-03",
+      "digest": "6cf6704a433d6e65293d10ec1c918694287852ea088079bbede63d6426c6458b",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "legal-row/legal-row-04": {
+      "modelId": "legal-row",
+      "entryId": "legal-row-04",
+      "digest": "4b6b06d7e356643f63ab0e8bc5db1b6705c2536ecb87f0c98f7685c80c9673d0",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "legal-row/legal-row-05": {
+      "modelId": "legal-row",
+      "entryId": "legal-row-05",
+      "digest": "1ceded067ebe16f6047862c7f300e4d1f054a8673e80dc19641bc8d89b9b6854",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "legal-row/legal-row-06": {
+      "modelId": "legal-row",
+      "entryId": "legal-row-06",
+      "digest": "55357d004c636f4e0abf76733afde9554dd97d9416eace5991af3085e0d3502a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "legal-row/legal-row-07": {
+      "modelId": "legal-row",
+      "entryId": "legal-row-07",
+      "digest": "dbc2e34515c261d715333478620ae77c83ab05fc2f0f5e34870717466bab76c3",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "legal-row/legal-row-08": {
+      "modelId": "legal-row",
+      "entryId": "legal-row-08",
+      "digest": "2d6dd798c34a525efa825e6ebdde3a93f79e194c14f143c6890ed93d3ab54042",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "lessons-copy/lessons-copy": {
+      "modelId": "lessons-copy",
+      "entryId": "lessons-copy",
+      "digest": "aa3fb6db08f4a933099b9e12da8523efcd687252a938ecc4ea4d29ee8442ecbe",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "nav-link/nav-about": {
+      "modelId": "nav-link",
+      "entryId": "nav-about",
+      "digest": "86219b555026658be7b06b9022a91ae7fe6f65c19f6694b77f9449eef2d92293",
+      "protectedDigest": "10cd2fbecfd63b50b5dcc05d453fd3782972a9d62bcf77f3c0c6573839adbe12"
+    },
+    "nav-link/nav-contact": {
+      "modelId": "nav-link",
+      "entryId": "nav-contact",
+      "digest": "2c842507d9d17025a53ce9a471c456cd65e8665ba1313c9ba4f5fc6f74627f09",
+      "protectedDigest": "2d4953f496da47ef723fec186dbdf7bd076d7284182afcab9fb6785d8bf417d9"
+    },
+    "nav-link/nav-faq": {
+      "modelId": "nav-link",
+      "entryId": "nav-faq",
+      "digest": "645fccfd4cf29c0ed4c10880629cffb0fd5e95e3d19f9b0df6424f9423977518",
+      "protectedDigest": "05d9d080125777c8aa1c89597bd0e13ee76a47997c6880460a27d0b428e61eaa"
+    },
+    "nav-link/nav-lessons": {
+      "modelId": "nav-link",
+      "entryId": "nav-lessons",
+      "digest": "d84e16ff5767e58d9bc2542413590475dda8181818978237caa0cbd796900854",
+      "protectedDigest": "9ddae1c891fcac7defe884c7d6a755e7c085a8ee439979393d026401eecc15f3"
+    },
+    "nav-link/nav-notes": {
+      "modelId": "nav-link",
+      "entryId": "nav-notes",
+      "digest": "82a833130b6c01861fe0453527eccd8eef45bd55b3d4a11d33c921d055cbcddc",
+      "protectedDigest": "d678004f144d0dd1c3f673747fe60ddee9a5acddf8af1b9c4d5fa69136c4f4eb"
+    },
+    "nav-link/nav-results": {
+      "modelId": "nav-link",
+      "entryId": "nav-results",
+      "digest": "713ce90f3c071888f27ec255d46b32d7f9b7ce2a8a0faee34f70e5584cda0724",
+      "protectedDigest": "d01b3e09ef20019e9b07ca52e2ad46155b5ce64c0eae78edc82d15eb544b7a75"
+    },
+    "nav-link/nav-voices": {
+      "modelId": "nav-link",
+      "entryId": "nav-voices",
+      "digest": "02d9b5201bdafa04f6981e834d71d49d3ad867c4a180d0b1adb7ff851ab31f1c",
+      "protectedDigest": "e11db40b48309c2019284fe3511118a10553a7d3dff3b7d854130944a05e139f"
+    },
+    "note/exam-schedule": {
+      "modelId": "note",
+      "entryId": "exam-schedule",
+      "digest": "35782e78315ded36c1788a36b5e74e2d840c6b8f97423a3294e7a727673efcbe",
+      "protectedDigest": "7632218f119cce189f30866ccb3de559f6b194b878e491f0c6c23c526b84328e"
+    },
+    "note/free-tuition": {
+      "modelId": "note",
+      "entryId": "free-tuition",
+      "digest": "dadf5908892d328f16005729b483fdab7e363e29682347ee8097eee7d34a1c14",
+      "protectedDigest": "3627827a035d0708b67736adc6d461abfe99fb26bd8f8eea522e1ace6238b3d0"
+    },
+    "note/german-language": {
+      "modelId": "note",
+      "entryId": "german-language",
+      "digest": "fec0ad355a8a0e1d4460a99a688881f072210adf33f02c96382ba74b7f260cd0",
+      "protectedDigest": "8faabb2d27ccf3b5d9c75c664a283831d95facae92ea616fcc3de510b0a1d62f"
+    },
+    "note/online-exam": {
+      "modelId": "note",
+      "entryId": "online-exam",
+      "digest": "e1af682941b7d7c9e21eccc6ba86d1af868cc9e2143b672a86d12489ea6c8707",
+      "protectedDigest": "f4dc90917efe7b66f99b5ddc9ebb8c9ade451b1651328b0bde77a48b84c17216"
+    },
+    "note/what-is-mappe": {
+      "modelId": "note",
+      "entryId": "what-is-mappe",
+      "digest": "9467e812b9ebf8b2fd03f5e4e6a9c627061309027b39e68c778b8f72a0b39499",
+      "protectedDigest": "3fa190e277b8ecdf6562d07d1673a335caff85b8b55133462007fc2e075bced8"
+    },
+    "page-copy/page-about": {
+      "modelId": "page-copy",
+      "entryId": "page-about",
+      "digest": "78532a7b5ac69b2586ba1066c3ec743e7fbe7df6af742897e6ed999625de7774",
+      "protectedDigest": "7b749ed73eb0ffcdb11c0731dfaf4e2b20c6cbe4c50b138805bda5418853362d"
+    },
+    "page-copy/page-contact": {
+      "modelId": "page-copy",
+      "entryId": "page-contact",
+      "digest": "cdf5e7b1945831a9fbb0d10c38e035d887e49537b0680dd744756366d7340d80",
+      "protectedDigest": "1827910386234c1bdb02f6a757393f062e41256b268aeff0ac238f356060e1ab"
+    },
+    "page-copy/page-faq": {
+      "modelId": "page-copy",
+      "entryId": "page-faq",
+      "digest": "67d22112c8755dbe46c251ed376ab6896c87fe8649bbe3105de2a6af6f164542",
+      "protectedDigest": "2a7169b76c297953db8049938c407847fbf7dc34fbf8ca9695dba7640ea692d1"
+    },
+    "page-copy/page-home": {
+      "modelId": "page-copy",
+      "entryId": "page-home",
+      "digest": "5ccfb50d12fd53a11ec2257c01f1994796db145f7ade8122cd247d1961d13ac5",
+      "protectedDigest": "f0cb69a697d3962dc9ff9826950bcaa69cb3947715c76d34e307e52969567b6c"
+    },
+    "page-copy/page-lessons": {
+      "modelId": "page-copy",
+      "entryId": "page-lessons",
+      "digest": "1f0db3210b21f3058a4e91845b2ca6efc06e17662f47e0b590a4a9258bbfa157",
+      "protectedDigest": "9a04bc8e1d342dfd76d225ea4f3ef776cc636049fa3fd22bc3f966e27c286272"
+    },
+    "page-copy/page-not-found": {
+      "modelId": "page-copy",
+      "entryId": "page-not-found",
+      "digest": "0fef9a1474033d1c7a5dea3687f1f82b74386e4c7b90f8cec8f725b88ad3c332",
+      "protectedDigest": "37d1a18e79784c14a74706b68dfa0c91c809141c89c3e3001c4b9326b6640cac"
+    },
+    "page-copy/page-notes": {
+      "modelId": "page-copy",
+      "entryId": "page-notes",
+      "digest": "44143bfd3efb29958ecc971dff25a0c1f50cf7365b44d3a78408c503595e4614",
+      "protectedDigest": "c0fe2a546ec54481cd0c48fb2c951b272ea5083e9104b69351d3229f3ed4268e"
+    },
+    "page-copy/page-results": {
+      "modelId": "page-copy",
+      "entryId": "page-results",
+      "digest": "cc7b480547a5d78c7a70907c4d364e5ace41bd3f841aa071f41254170516fc3e",
+      "protectedDigest": "d54deb7b2b57571eb7ed9b6bf4dd841475b839f69697133fe2b7dd81ce565192"
+    },
+    "page-copy/page-voices": {
+      "modelId": "page-copy",
+      "entryId": "page-voices",
+      "digest": "dc62b9c91d1aade1a72358ccc859a3e97f1426d732b305847fde8d3879eaddaa",
+      "protectedDigest": "e5eb2c8005c175b130dfbbf37008936f58b5ca0824c6b3e4be6827a5d67e54c7"
+    },
+    "result-entry/year-2015-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2015-01",
+      "digest": "e6c89b22ae0d3c5d03152a817786a6771c891fb3657455951a58b61db42a9400",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2015-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2015-02",
+      "digest": "911189b674dd36470bbfd0b279f9c2919e03de61319e0d324a72a96a434a7f3e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2015-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2015-03",
+      "digest": "600f08c072837d9b0f857c0dccfadcae386c173ec5fd3676c12c89736703c533",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2015-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2015-04",
+      "digest": "d6c9ec6a45831131147051c3b402597abdd8f86dbcbdcf2908a9c71c84bfff0f",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2016-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2016-01",
+      "digest": "dced8eb82c56d633c4b1d9c997ebe457e8cbedf3ed75c2b6aafb135ed913b5c8",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2016-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2016-02",
+      "digest": "3a24c8a300f445eeca4daed3f4511ab5238dfd03fad8558ca9a39a7dc28d136f",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2016-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2016-03",
+      "digest": "0aad8ee2ee5012e8364da06e80f5e9e808ddb3a1866f738334b8a7b963f5d6fb",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2016-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2016-04",
+      "digest": "b0131b997b8b28e73f31bd515bcbe44ef8edd19daeda88a9336792451e8fe0cc",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2016-05": {
+      "modelId": "result-entry",
+      "entryId": "year-2016-05",
+      "digest": "28cafbf0430b649318694e6b62187b431ccdceff9d8740ebb31529a87e7d4fcb",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2016-06": {
+      "modelId": "result-entry",
+      "entryId": "year-2016-06",
+      "digest": "43c8ca624b6d3f041dd15b06aa1a268d9d915e5737e00b3a59d6513c9cd39c68",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2016-07": {
+      "modelId": "result-entry",
+      "entryId": "year-2016-07",
+      "digest": "9ff50fc81e78b9c04e56c9a830adb8cf258ecbd7a10d8181cd5ce681c2d07294",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2016-08": {
+      "modelId": "result-entry",
+      "entryId": "year-2016-08",
+      "digest": "dfc5a488a1e175a0875296b9dea6138e782808cef85e1edda0ef4f7aac13ea64",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2016-09": {
+      "modelId": "result-entry",
+      "entryId": "year-2016-09",
+      "digest": "b3edf1edb72bdea9e4bd30c36bed0b22fd62aae224a2353c755e26dd1a265aee",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2017-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2017-01",
+      "digest": "f2228cde33f53b08fb81c047a1fa7981035cda993e53a865e84d2567d1267cec",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2017-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2017-02",
+      "digest": "a5b2425f4d393fc9e6d767ff5506955fe0debee3226fb17dbf2979f45dfc1605",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2017-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2017-03",
+      "digest": "f0ed5560af37948e14b654dbb2a1603b5fd1a5406b99fc76fbe1847fbadfa66d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2017-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2017-04",
+      "digest": "a7fd78ee0b06e3dc09e303b0d4aabb410f7ad487ef88872cbf115bc69e150774",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2017-05": {
+      "modelId": "result-entry",
+      "entryId": "year-2017-05",
+      "digest": "c40dad8f7e05a7f2578c010e94a098999b487de2d5ad7b5652b394c5e11f3707",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2017-06": {
+      "modelId": "result-entry",
+      "entryId": "year-2017-06",
+      "digest": "08063d05c6e8be5e30a068bfb2bb4f4ae51088d68183880702173da2d82ce767",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2017-07": {
+      "modelId": "result-entry",
+      "entryId": "year-2017-07",
+      "digest": "d3b8deba08752091f0e0771198319d268a8acda51467eba6827e9e190ab33d9a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2017-08": {
+      "modelId": "result-entry",
+      "entryId": "year-2017-08",
+      "digest": "f22bdd56cd598117499d68b57d29987060fb31378ecbc020e78c2fc89479bc64",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2017-09": {
+      "modelId": "result-entry",
+      "entryId": "year-2017-09",
+      "digest": "cc2e22b401460f105994cc980b470c784cf4bc4351851363e6f4f6a14ed13239",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2017-10": {
+      "modelId": "result-entry",
+      "entryId": "year-2017-10",
+      "digest": "a70f5a8d3e5e9906ec17cefd3f5dc5c52715f7c90eef6e5631ca412505daf65f",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-01",
+      "digest": "8aafea2de87519b829cc3c00b1a78cea05fbf49a5be4d67eed73070e97be8f4d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-02",
+      "digest": "eb6d13d02ef6bcfb48c6d071c1fe5c74dda2d08528dd1ffd807a56db4c65b85f",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-03",
+      "digest": "510b769c23fd0b9fee6941536be21140c7a184f29228ca4e6a6762946d1e001e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-04",
+      "digest": "be2c8d9068343f16715ad433cff2da1c4b3fc9af52194ab8f37880c9b82c6936",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-05": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-05",
+      "digest": "d396e7519b7bb67f0be0744eca4782e1bad5576eae857eef23fdba65c89305ab",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-06": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-06",
+      "digest": "00ed7cd8ecbaf2bc8f238ff2ee16f3b09dfc1d284c506ca14ed610001588c963",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-07": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-07",
+      "digest": "cb6ecdc4c52237b7fa79eb13a735f7ea7bbf38fb9fb55bad37d56626a71b4efb",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-08": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-08",
+      "digest": "1ceb1f5e82a7863305491736708d51091aac3ae9eb5c7cf67b3f7f5f63b1bc02",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-09": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-09",
+      "digest": "fd4c2f307ffa7b05c01d7ece422c19239433d1cca5ddd9107d05116c20923e58",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-10": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-10",
+      "digest": "515de61cb381cbd2dd502930f6f7b3a79b96e0dbf563b909f32c957826695d5e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-11": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-11",
+      "digest": "9d80a9776552af735e338fbd2bdc8e747f9d776d10a6e0acc4cbde1e3e58ec39",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-12": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-12",
+      "digest": "40ac6c665598059c29722b0fc40809c808c590e80cb5510bd91fe11ce14822c1",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2018-13": {
+      "modelId": "result-entry",
+      "entryId": "year-2018-13",
+      "digest": "dd8f343c73ed786c5fb5fddab54cb72524366e60773ee847faef0aa566617f32",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-01",
+      "digest": "c5cdc374a85fed57bdaccec0fad943a6df3e087da47bbce10640ec79a568e5e4",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-02",
+      "digest": "992fb54ae19b1899acf4a5c9ed8f67012057d5b3e30aed1a06a6358be7457850",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-03",
+      "digest": "7ad49cb67c0de90b73ddc94a55314fb4939c8bd0f44f20ec7868f6412c612d64",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-04",
+      "digest": "00ff794a83aac37c9576640e269d6bdc8219f408acc4f53a70203d6e373ec31f",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-05": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-05",
+      "digest": "e9c6aec18667e3e25c94ade3a8fec826f68b87546ed63eb4c41b10771492073a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-06": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-06",
+      "digest": "342a8a650e33c2099afa488201e865385b173b9edbe9e52c2e4f6e5704d0d7d1",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-07": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-07",
+      "digest": "1613844ee658d9139b3cb7162e60f218807dff0324d551d996fe55e38f4cf0d6",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-08": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-08",
+      "digest": "38e87a4a8a400222035e304ef32630bf975b1628a9149fe7d742338497189181",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-09": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-09",
+      "digest": "6699ead321df99c27e8e429cd11349d699e04e364bfb92e67cc5384ebeb64c9b",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-10": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-10",
+      "digest": "88d9e03f7f1895a658b2f6f429b04e7940bd60448469bbf9cfb440cccb1031c6",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-11": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-11",
+      "digest": "370da86615aae8cd52a0f8a64323367406d7585cb78857c0302343025ed8ddab",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-12": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-12",
+      "digest": "1d3045c457ad9b2f5b46edfcbecf0c5ab373aa2245f0c1420c94a180fa75813a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-13": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-13",
+      "digest": "773830a7633c58759dccab1320a1f3f24af3066b0a5963c2b83e81b4792f810c",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2019-14": {
+      "modelId": "result-entry",
+      "entryId": "year-2019-14",
+      "digest": "39dead85611827a1b31b0364867b7d4b21e0715ea8d8b8163579437f98d13a64",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2020-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2020-01",
+      "digest": "9ef9710c9c0e953afa2550b6cdff02ae3a35b6175d3a1f02fd0b0e1737892f0a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2020-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2020-02",
+      "digest": "f5882202d3acf810ee811113135913a0524f79dae9c0ca84715b093072643dd5",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2020-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2020-03",
+      "digest": "c92d7a818a4e787c71567a2556c22e259455a4253d85a39125cc763dc246295f",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2020-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2020-04",
+      "digest": "783e3461882713e7a62188867d9f53eb3623b15f6a2e0862c1c4d8012e55373d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2020-05": {
+      "modelId": "result-entry",
+      "entryId": "year-2020-05",
+      "digest": "ba2ff7ac5d2e4b3b992f83edcd8f202c25b8dfd0144c9124f53ccd2c79268e4a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2020-06": {
+      "modelId": "result-entry",
+      "entryId": "year-2020-06",
+      "digest": "dba7ce7115ae2fc7ec0b8b2f2e487a8f25579c0f33e3abda91791c31444b1081",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2020-07": {
+      "modelId": "result-entry",
+      "entryId": "year-2020-07",
+      "digest": "084aca2aa2ce26060537b7843fac4477345052eac3bbbf2dd64aeb138640a13f",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2020-08": {
+      "modelId": "result-entry",
+      "entryId": "year-2020-08",
+      "digest": "3cda30e0ddf0e7180be12fa38e6d55285ad96a9657b99ace8ae80f5dde4e5a35",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2020-09": {
+      "modelId": "result-entry",
+      "entryId": "year-2020-09",
+      "digest": "da417f683a01af8f0dacbeda3453d9fa6fc6923f54f7dc49d3df802075555465",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2021-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2021-01",
+      "digest": "df171620b91b8b411e0516502a867eae770922deb3fb8be29031ed93c3bcee0c",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2021-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2021-02",
+      "digest": "03fd237f3e37d5045f915a0669efafb1400f6f60595cc56b1e80d9c4fdd77257",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2021-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2021-03",
+      "digest": "0e3a850c49f88fba3a0bfedf64702349e8ed25d54a86d19b90f35096d3021fc7",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2021-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2021-04",
+      "digest": "43d037e25257bb4fc366744772455996a57a7986bd040ab19c3b42588e647674",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2021-05": {
+      "modelId": "result-entry",
+      "entryId": "year-2021-05",
+      "digest": "b269b6bd4b0d4757ea54edd3ee69aac54efa67406af1383660b308e383030d72",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2021-06": {
+      "modelId": "result-entry",
+      "entryId": "year-2021-06",
+      "digest": "e31b8ab56358a711f6be4654df3c919ac31d2ee3de4115834026836b1a8ac00d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2022-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2022-01",
+      "digest": "cbb7d9885be865c3827342ed43c63a23995f94262f7a441b206c4c10da5ebc15",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2022-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2022-02",
+      "digest": "e2913d74a6234709faab2229805bfff74640ab14d63e102d3654baaf91e10cd5",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2022-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2022-03",
+      "digest": "4e50d93fc5592ca57675cb68dd806fed376c308ef946749efcfb2890c70b791f",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2022-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2022-04",
+      "digest": "b9c85bfbb84b738b3521119277cb006eeddbdcc6c85f4ee650700b86402bec1a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2022-05": {
+      "modelId": "result-entry",
+      "entryId": "year-2022-05",
+      "digest": "3f944d368df190aca7781f7595df4cc46268f890bef013f25597c29f5be12675",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2022-06": {
+      "modelId": "result-entry",
+      "entryId": "year-2022-06",
+      "digest": "c289d9836cc74c706b7ec338d2ecc2a75b7cb151c9e882c972443ceb52b0f4e3",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2022-07": {
+      "modelId": "result-entry",
+      "entryId": "year-2022-07",
+      "digest": "7ecc0295741a0c147402e207cd83fa7827593059c76186143f63921d0210a9d3",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2022-08": {
+      "modelId": "result-entry",
+      "entryId": "year-2022-08",
+      "digest": "a7c8767627e764db06220c757b296de98746f7f6092abee7c77e2bd62db8b6fa",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2022-09": {
+      "modelId": "result-entry",
+      "entryId": "year-2022-09",
+      "digest": "f1b18098b571206837f70fcf1d77527209966bccdac87761d33d178805d0f160",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2023-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2023-01",
+      "digest": "91d32c6c52eefa20e0ea71fd956ef76663f43147c0667ab6a1bbe12a57062b32",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2023-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2023-02",
+      "digest": "7b11ad4d27936f47e97b3174cba9b388ed0de6d300b26a97587f21ea86dc40ee",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2023-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2023-03",
+      "digest": "74961e04f3004611fc80522749f0e6a8a86a9618196937063e039b7415690bf6",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2023-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2023-04",
+      "digest": "5e4ba3d9a7a915c34eadf4256b9e67088d174e2df674957c813fe1bb5becdb68",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2023-05": {
+      "modelId": "result-entry",
+      "entryId": "year-2023-05",
+      "digest": "b6a6a290367f72e8f5c2ef7771051838c3ad21356d61367a1061e01791d7f3d7",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2023-06": {
+      "modelId": "result-entry",
+      "entryId": "year-2023-06",
+      "digest": "b35c08dd499037e39099ed9a938c2750833404aeb00ab797f9e1ac80ded344a0",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2023-07": {
+      "modelId": "result-entry",
+      "entryId": "year-2023-07",
+      "digest": "15aa4d4cb8cb1c946c1606e93ba6b60eba008ddc955e9f427408aed70b851139",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2023-08": {
+      "modelId": "result-entry",
+      "entryId": "year-2023-08",
+      "digest": "4109270eb3c8383a2a076fcb5c8c75ee5e92c2f6868211d728bf1b250be2744d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2023-09": {
+      "modelId": "result-entry",
+      "entryId": "year-2023-09",
+      "digest": "8bbc613a00505f4445afa747835c401a4e87c45123cbbc710fc7c04f9971dbe5",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-01",
+      "digest": "cd21c08bfc4588e613d3c0b1b71b2538c136791a2ef98fef68a164ba9b94370d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-02",
+      "digest": "1cc2873fce5dadc682292cfa930ca388e00ae6cb76368bbe79a90d2019dece74",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-03",
+      "digest": "cdcc7075083c2a437f2283ffe5460a87b5857d4434ea33625d60cc919893271e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-04",
+      "digest": "3c03f0a4a0ad84d0b844ceb686d0787ff84c603eab997c8cf5f8a81e6e87ee90",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-05": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-05",
+      "digest": "77f9971cc08ca820cbf84c1238da0dbe80e537a9c257fd9d223b2e88546909bc",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-06": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-06",
+      "digest": "b39dcfdde2fd3a2e2b57301929b738b5930461679729c7c72b4aedb70f38906e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-07": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-07",
+      "digest": "8c256342deab85e6bc3ec8aa62999526cd6e3f8f97ad74a8cea51ac9a175130a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-08": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-08",
+      "digest": "00a53384b92f1a324f7cb65f8edcc67602d895d777f2d896a81182c2aaa9053a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-09": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-09",
+      "digest": "eb011632b839353a9d33c99d8f31cb1180b7de681ccb83bbf690271216078451",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-10": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-10",
+      "digest": "be278a3de357a0d12dd7126b3e9137ae35e422f093aa44f89982098f88cb8ed4",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-11": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-11",
+      "digest": "865c3d0fcfb8a98be7a99b6cbfff2a531d26617edbb87e7fadb41f246bcd27a6",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-12": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-12",
+      "digest": "ebab2fdc06fe0264228526a1061390c249e90f9c278064e45e3d041ed98acde7",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2024-13": {
+      "modelId": "result-entry",
+      "entryId": "year-2024-13",
+      "digest": "a1c7483768b0252644248325c88654037471a9fadbff035b915f9156c8611d21",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2025-01": {
+      "modelId": "result-entry",
+      "entryId": "year-2025-01",
+      "digest": "d0d082dd6c368ebda4f73f6389e892336714b7c5aade51448c29534e97003387",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2025-02": {
+      "modelId": "result-entry",
+      "entryId": "year-2025-02",
+      "digest": "1bc6206bd703623da0583fe9aad463c701dc65bd8e7135a746ef9fe867a8a793",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2025-03": {
+      "modelId": "result-entry",
+      "entryId": "year-2025-03",
+      "digest": "50f7af659155fbdb0617ea4b7f3db71c76bb2096c2a20fb606401021d3dbb9f3",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2025-04": {
+      "modelId": "result-entry",
+      "entryId": "year-2025-04",
+      "digest": "7b396b4562593af985c26154cf7e5d4d719d6a429cd79cc2c33813c02e4cf61e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2025-05": {
+      "modelId": "result-entry",
+      "entryId": "year-2025-05",
+      "digest": "81ad4c3c0cdb1be6289cf283d1884a0384b29fe362d0bb46d993803638274c11",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2025-06": {
+      "modelId": "result-entry",
+      "entryId": "year-2025-06",
+      "digest": "409eb9f000fe14205d984e107561c0294d69a1c5f05938a52bc2f2d057111a56",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2025-07": {
+      "modelId": "result-entry",
+      "entryId": "year-2025-07",
+      "digest": "449b77e722ea1cb9606ee44a39515e8a318dbd11934f416ca048068dcdf99ab5",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2025-08": {
+      "modelId": "result-entry",
+      "entryId": "year-2025-08",
+      "digest": "3b104ebf7ec1c4b436112962efad29052349001681b5930c8c33421650641118",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-entry/year-2025-09": {
+      "modelId": "result-entry",
+      "entryId": "year-2025-09",
+      "digest": "9d40d5931f97bfcbad56bd56429c0338856aeb9f617315b3214bd2c56d404f6c",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2015": {
+      "modelId": "result-year",
+      "entryId": "year-2015",
+      "digest": "6b1142d5b0f3fcfdc90020387fcb045d82bc5c89d3e9a1deab2732196cf44c20",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2016": {
+      "modelId": "result-year",
+      "entryId": "year-2016",
+      "digest": "60646bf4f3f853924cda4b286976492d21fba3b993a739504215f55b19007892",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2017": {
+      "modelId": "result-year",
+      "entryId": "year-2017",
+      "digest": "285a801ecd993b378a3ae76508c9d1bb44275991b22fe30cb6e2c6a7b775c4ad",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2018": {
+      "modelId": "result-year",
+      "entryId": "year-2018",
+      "digest": "aef9edd4a5d35c8c04d1d291e9f7d78c98bb2cf45a2e6b5f0ae1f55e9ea8d8a8",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2019": {
+      "modelId": "result-year",
+      "entryId": "year-2019",
+      "digest": "9e488e41029b862173b512f3c827cb13809124ea62cfc92f3d5525250eec5d2e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2020": {
+      "modelId": "result-year",
+      "entryId": "year-2020",
+      "digest": "802b11db3a8906089496946ec23410bc61ca2e661396ef484c700b5f7fc16c8c",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2021": {
+      "modelId": "result-year",
+      "entryId": "year-2021",
+      "digest": "e1e8e4d69ca8b8fc69600857ae909290453aafc93ad246731d2801a6d926b6f6",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2022": {
+      "modelId": "result-year",
+      "entryId": "year-2022",
+      "digest": "92d5967632866803583526366fa024d618f7f26fc04080d3e67aa4b56def910a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2023": {
+      "modelId": "result-year",
+      "entryId": "year-2023",
+      "digest": "2ac1b5d5b4bfee1aa33decbc12a6272ea3f2de48a653170078a1842cccb2f557",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2024": {
+      "modelId": "result-year",
+      "entryId": "year-2024",
+      "digest": "34285d6141f4d5924059f1424a0c903ca092abf88f2fe9750a685d8c86fd780c",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "result-year/year-2025": {
+      "modelId": "result-year",
+      "entryId": "year-2025",
+      "digest": "7cf1bab4e4630ff1312dc745646d969ee3205904d98987ea527ee19bf0fb6455",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "site-copy/site-copy": {
+      "modelId": "site-copy",
+      "entryId": "site-copy",
+      "digest": "cf6c5b6b78791212006aecdb9c8c33af2fbd187798106480a620cd283f58ebab",
+      "protectedDigest": "7fc46e3f5fedafb3ce3fa4dfd6afb4f5f7974f5c6145aad25e9e0a6267b556e4"
+    },
+    "specialization/specialization-01": {
+      "modelId": "specialization",
+      "entryId": "specialization-01",
+      "digest": "198974f9eb693783daad5b491b4fb4860c6f15f246b70ddb3b97917eb931b3ea",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "specialization/specialization-02": {
+      "modelId": "specialization",
+      "entryId": "specialization-02",
+      "digest": "77de1fd4d19f6fc98c869b46923212863e067a3b83cac3e25bb704cfee1d61e6",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "specialization/specialization-03": {
+      "modelId": "specialization",
+      "entryId": "specialization-03",
+      "digest": "dbe0e2231cf41048b9ce4e8a5380e8d9d080939a0ce26627c80abe2c2499b253",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "specialization/specialization-04": {
+      "modelId": "specialization",
+      "entryId": "specialization-04",
+      "digest": "178f520b65b27d299683289613cab4e1c418ceb7860f4511b806b146c491b8b2",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "specialization/specialization-05": {
+      "modelId": "specialization",
+      "entryId": "specialization-05",
+      "digest": "275dfeecebd5dcdc5a9605f723a2934fa5936a3a3555cbc5ae7eefb017069e10",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "specialization/specialization-06": {
+      "modelId": "specialization",
+      "entryId": "specialization-06",
+      "digest": "3a44bd83bd567084ca535375165395f8571b498f6621b135dc4d4bbe97496852",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "specialization/specialization-07": {
+      "modelId": "specialization",
+      "entryId": "specialization-07",
+      "digest": "fec3f1246f4c23f961bf6968e33b6bca3a3c2b755be21f202b998e08219cf153",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "specialization/specialization-08": {
+      "modelId": "specialization",
+      "entryId": "specialization-08",
+      "digest": "f3afe043a67f344d722d54284da2b3461ae40c0d7ebaa253e4ecad93c56ede75",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "specialization/specialization-09": {
+      "modelId": "specialization",
+      "entryId": "specialization-09",
+      "digest": "de92fcdd5d28277fcc34ff602f8318f42e78173dbc36076b51880b35f4c32ffc",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/home-01": {
+      "modelId": "target-item",
+      "entryId": "home-01",
+      "digest": "c18b3a9641b30a82312ac66d62734ef1c422afd22c1298c0fd4ef0418cfaaa82",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/home-02": {
+      "modelId": "target-item",
+      "entryId": "home-02",
+      "digest": "a260915bdac76628aba9349aa8649a17f2e5470e79d9392907d739d1aa5ed5f7",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/home-03": {
+      "modelId": "target-item",
+      "entryId": "home-03",
+      "digest": "4b22b600e673dd3aebadac2d0d86574d4b2ab886516e9791c0e1d54f2b7375fc",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/home-04": {
+      "modelId": "target-item",
+      "entryId": "home-04",
+      "digest": "6ac0a3094d958dc36a5fa2f268c34c80e014e966d0ca11ff2da3e5a1d7bb76f5",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/home-05": {
+      "modelId": "target-item",
+      "entryId": "home-05",
+      "digest": "1911eecdc47498f6249cd0e6d37a1ed09eaad21c89d055ce395649184008892e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/lessons-01": {
+      "modelId": "target-item",
+      "entryId": "lessons-01",
+      "digest": "c6e89a9faaf5604a13cb80e67227e376bbb2c5eb8de275210b92ce9ed9d1a249",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/lessons-02": {
+      "modelId": "target-item",
+      "entryId": "lessons-02",
+      "digest": "0a08c0cbcd3c90e88508d9bd7d19a1bd47b9276f6b265bfe4df7bc1fa804cc7a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/lessons-03": {
+      "modelId": "target-item",
+      "entryId": "lessons-03",
+      "digest": "fc002676148364737e0dc24bcb6d3dd7558ea710faee8df86055bb5af23199e2",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/lessons-04": {
+      "modelId": "target-item",
+      "entryId": "lessons-04",
+      "digest": "c7803cc73b2a36eb9e414ae3af08e1bf6ca2dd6123eae2efd8a398b89770e6b6",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/lessons-05": {
+      "modelId": "target-item",
+      "entryId": "lessons-05",
+      "digest": "d9556fe983aacb139c847d6f4865414f9b9db94938db2b29400a359245b91196",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/lessons-06": {
+      "modelId": "target-item",
+      "entryId": "lessons-06",
+      "digest": "7b9a1face81690dcf8b914fd9882d2cefeb900ae7309cd33adda7b939a79a722",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "target-item/lessons-07": {
+      "modelId": "target-item",
+      "entryId": "lessons-07",
+      "digest": "862b9e6a1741d13f4e3dbdab83a483e7127e4a30c78e660c4d7500b8c0ef1611",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "testimonial/student-01": {
+      "modelId": "testimonial",
+      "entryId": "student-01",
+      "digest": "2f8f43d8c5fb0a285dddb62be7dcf6a304447c71bb592c55b012e6acaab0801c",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "testimonial/student-02": {
+      "modelId": "testimonial",
+      "entryId": "student-02",
+      "digest": "3058ad8ec6ecacb7d68adb63116492cf13493d24ab7ad2e07d1cadfc495abe1e",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "testimonial/student-03": {
+      "modelId": "testimonial",
+      "entryId": "student-03",
+      "digest": "07fb36d81c7627070aebd691f698f4f2e0f61e7f5bc7cca273be3142722d250f",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "testimonial/student-04": {
+      "modelId": "testimonial",
+      "entryId": "student-04",
+      "digest": "8db6218bab0f429703a7f927ae630d82f05da3d99accdcc6b5ec7076480838c4",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "testimonial/student-05": {
+      "modelId": "testimonial",
+      "entryId": "student-05",
+      "digest": "8c162d1a5b786d644a8ef17dce9dea38210beadc4f989119af8619612a577b7b",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/about-career-01": {
+      "modelId": "timeline-entry",
+      "entryId": "about-career-01",
+      "digest": "6f27b81279e91a587ae9a08e6ec0fa0e3d073c3ebece4f659637e29e341ae77d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/about-career-02": {
+      "modelId": "timeline-entry",
+      "entryId": "about-career-02",
+      "digest": "016126755ce3dbb9fd01479b4a409bae8c0bed2c3b5154363d73a5ae4f915b03",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/about-career-03": {
+      "modelId": "timeline-entry",
+      "entryId": "about-career-03",
+      "digest": "bfea992b158757b160f80d812973a7856ba2764f98d96cfc822053f0e7c6e034",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/about-career-04": {
+      "modelId": "timeline-entry",
+      "entryId": "about-career-04",
+      "digest": "e457eb9f2241166e6fb6054d30b35f9410346175574b3ecc10fa399701a74f0a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/about-career-05": {
+      "modelId": "timeline-entry",
+      "entryId": "about-career-05",
+      "digest": "7856caaf3fa1ff3d9300fd678b8dbcaa7fc6c3aedb3edc843b7a50060d8af212",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/about-career-06": {
+      "modelId": "timeline-entry",
+      "entryId": "about-career-06",
+      "digest": "e5bbae01062da019dcc8847f5806cd97fe1c001d4d72375b4a33261e60d80569",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/about-education-01": {
+      "modelId": "timeline-entry",
+      "entryId": "about-education-01",
+      "digest": "d86a1704efac4fd4a5be133027b30e822f8f3b147357ff85830b2ac3c2f57ea9",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/about-education-02": {
+      "modelId": "timeline-entry",
+      "entryId": "about-education-02",
+      "digest": "b4aa7ab7d08fa159d565874f45211c232af339b9d4855afe10dc04794cf29808",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/lessons-career-01": {
+      "modelId": "timeline-entry",
+      "entryId": "lessons-career-01",
+      "digest": "c817d925791cb491f77c5c514cc802be1dfeed61b1bd0aaf756823b19737507d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/lessons-career-02": {
+      "modelId": "timeline-entry",
+      "entryId": "lessons-career-02",
+      "digest": "409e5dfee7bc8c469e347b318d87fb80dc04c98782a2eb8ee10ec9715aa86199",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/lessons-career-03": {
+      "modelId": "timeline-entry",
+      "entryId": "lessons-career-03",
+      "digest": "8208108d017831696ad55ab13e3b6492c6d852d3b37075c369073642b0c9520a",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/lessons-career-04": {
+      "modelId": "timeline-entry",
+      "entryId": "lessons-career-04",
+      "digest": "dd064447683a6b3ee83ca61aefb314302790736b3c185513e04efecfb7087ed1",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/lessons-career-05": {
+      "modelId": "timeline-entry",
+      "entryId": "lessons-career-05",
+      "digest": "007d40d9f0305950b8161823ce4d2ee8c0b1141f5ee0a2f2136c7bf7e581171d",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/lessons-career-06": {
+      "modelId": "timeline-entry",
+      "entryId": "lessons-career-06",
+      "digest": "990a51e94dbe0aad80da9469de997c49f7319aab9088ea6decedf999d2b13a54",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    },
+    "timeline-entry/lessons-career-07": {
+      "modelId": "timeline-entry",
+      "entryId": "lessons-career-07",
+      "digest": "8ca3c0f6ad0f67924fc226abd16136e80ad0433afb7c96db9a3016d273b25ae1",
+      "protectedDigest": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+    }
+  }
+}

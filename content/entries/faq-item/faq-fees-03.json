@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-fees-03",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-fees"
+    },
+    "faq-item-question": "個人的に受験までのスケジュールを相談をしたい",
+    "faq-item-answer": "興味があるドイツ美大について知りたい・ドイツ美大の学位のシステムなどを知りたい・個人的に疑問点などを相談してみたいという方には有料進路相談のご利用をお勧めいたします。お話を伺いながら、ご自身のお仕事や学業にあった渡独計画のアドバイスをします。",
+    "faq-item-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

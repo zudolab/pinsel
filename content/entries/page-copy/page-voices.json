@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "page-voices",
+  "modelId": "page-copy",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "page-copy-route": "/voices/",
+    "page-copy-meta-title": "生徒の声 - Pinsel",
+    "page-copy-meta-description": "Pinsel受講生の合格体験談。ドイツ美大受験の実体験をご紹介。",
+    "page-copy-header-title": "生徒の声",
+    "page-copy-header-description": "Pinselの受講生の合格体験談です。ドイツ美大受験を経験された生徒さんの声をご紹介します。",
+    "page-copy-cta-sub-copy": "あなたも一緒にドイツ美大合格を目指しませんか？",
+    "page-copy-order": 5
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

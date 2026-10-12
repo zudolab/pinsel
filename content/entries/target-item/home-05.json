@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "home-05",
+  "modelId": "target-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "target-item-page": "home",
+    "target-item-text": "ドイツ美大受験の最中で、まとめとしてのサポートを必要とする方",
+    "target-item-order": 5
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

@@ -21,7 +21,7 @@ import {
   resultYearFragment,
   resultYearId,
 } from "../invariants";
-import { readFixture } from "./seed-entries";
+import { readFixture } from "../import/seed-entries";
 
 interface ExpectedContent {
   shared: { destinations: { href: string }[]; instagram: string };

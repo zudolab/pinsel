@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "legal-row-05",
+  "modelId": "legal-row",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "legal-row-key": "電話番号",
+    "legal-row-value": "050-6863-1645",
+    "legal-row-order": 5
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

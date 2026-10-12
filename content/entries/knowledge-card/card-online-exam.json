@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "card-online-exam",
+  "modelId": "knowledge-card",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "knowledge-card-note": {
+      "providerId": "content-filesystem",
+      "modelId": "note",
+      "recordId": "online-exam"
+    },
+    "knowledge-card-title": "オンラインでのドイツ美大受験について",
+    "knowledge-card-description": "日本にいながらオンラインで受験する方法",
+    "knowledge-card-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

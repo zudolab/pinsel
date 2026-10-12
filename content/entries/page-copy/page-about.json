@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "id": "page-about",
+  "modelId": "page-copy",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "page-copy-route": "/about/",
+    "page-copy-meta-title": "講師紹介 - Pinsel",
+    "page-copy-meta-description": "東京芸大卒・ミュンヘン芸術アカデミー修了の講師が指導。",
+    "page-copy-header-title": "講師紹介",
+    "page-copy-header-description": "東京芸大卒・ミュンヘン芸術アカデミー修了の講師が指導。",
+    "page-copy-cta-sub-copy": "ドイツ・オーストリアの美大受験について",
+    "page-copy-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

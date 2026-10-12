@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "page-faq",
+  "modelId": "page-copy",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "page-copy-route": "/faq/",
+    "page-copy-meta-title": "よくある質問 - Pinsel",
+    "page-copy-meta-description": "ドイツ美大受験・Pinselのレッスンについてのよくある質問。",
+    "page-copy-header-title": "よくある質問",
+    "page-copy-header-description": "Pinselのオンラインクラスやドイツ美大受験に関して、よくいただくご質問をまとめました。",
+    "page-copy-aside-label": "質問のカテゴリー",
+    "page-copy-cta-sub-copy": "上記以外のご質問もお気軽にお問い合わせください。",
+    "page-copy-order": 6
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

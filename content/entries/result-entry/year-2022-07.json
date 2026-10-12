@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2022-07",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2022"
+    },
+    "result-entry-school": "ケルンインターナショナルスクールオブデザイン",
+    "result-entry-department": "Integrated Design",
+    "result-entry-url": "https://kisd.de/",
+    "result-entry-order": 7
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

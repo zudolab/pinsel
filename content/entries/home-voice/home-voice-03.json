@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "home-voice-03",
+  "modelId": "home-voice",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "home-voice-quote": "ポートフォリオとしてまとめる方法や、自分のコンセプトをどう伝えるかについて多くのアドバイスをいただきました。",
+    "home-voice-author": "Yさん",
+    "home-voice-school": "ミュンヘン芸術大学 合格",
+    "home-voice-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

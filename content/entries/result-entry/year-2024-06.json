@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2024-06",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2024"
+    },
+    "result-entry-school": "フランクフルト美術大学・シュテーデルシューレ",
+    "result-entry-department": "Freie Bildende Kunst: Bildhauerei",
+    "result-entry-url": "https://staedelschule.de/",
+    "result-entry-order": 6
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

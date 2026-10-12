@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2017-03",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2017"
+    },
+    "result-entry-school": "スペイン・バルセロナ ヨーロッパデザイン学院",
+    "result-entry-department": "Modedesign",
+    "result-entry-url": "https://www.ied.edu/barcelona",
+    "result-entry-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "specialization-07",
+  "modelId": "specialization",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "specialization-de": "Produktdesign",
+    "specialization-ja": "プロダクトデザイン",
+    "specialization-order": 7
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

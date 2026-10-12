@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2025-04",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2025"
+    },
+    "result-entry-school": "ハンブルク美術大学",
+    "result-entry-department": "Design",
+    "result-entry-url": "https://www.hfbk-hamburg.de/",
+    "result-entry-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

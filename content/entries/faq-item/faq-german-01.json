@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-german-01",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-german"
+    },
+    "faq-item-question": "受験にはどのくらいのドイツ語力が必要ですか？",
+    "faq-item-answer": "大学や学科によって異なりますが、出願時にB1〜B2レベルのドイツ語証明を求められることが一般的です。ファインアート系は比較的語学要件が緩やかで、デザイン系はやや高い語学力を求められる傾向があります。入学後にドイツ語をさらに学ぶことを条件に入学許可が出るケースもあります。",
+    "faq-item-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

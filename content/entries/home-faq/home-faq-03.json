@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "home-faq-03",
+  "modelId": "home-faq",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "home-faq-question": "ドイツ語ができなくても受験は可能ですか？",
+    "home-faq-answer": "語学力の証明が不要な大学も数校ありますが、年々語学力が求められる傾向にあります。余裕を持ってドイツ語学習を始めることをお勧めします。",
+    "home-faq-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}
