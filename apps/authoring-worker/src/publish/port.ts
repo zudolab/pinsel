@@ -20,17 +20,8 @@ export type StoredPublicationState = Exclude<PublicationState, "draft-saved" | "
 /** States no provider observation can leave. */
 export const TERMINAL_PUBLICATION_STATES: readonly StoredPublicationState[] = ["live", "failed", "conflict"];
 
-/**
- * Seam: the single authoritative allowlist belongs in `@pinsel/content` (owned
- * by the content sub-issue); until it is exported there this copy is what the
- * port documents. A provider writes nothing outside it.
- */
-export const PUBLISH_PATH_ALLOWLIST = ["content/entries/**", "content/snapshot.json"] as const;
-
-export function isPublishablePath(path: string): boolean {
-  if (path === "content/snapshot.json") return true;
-  return /^content\/entries\/[a-z0-9][a-z0-9-]*\/[A-Za-z0-9][A-Za-z0-9._-]*\.json$/.test(path) && !path.includes("..");
-}
+/** A provider writes nothing outside `@pinsel/content`'s authoritative allowlist. */
+export { PINSEL_PUBLISH_ALLOWLIST, isPublishablePath } from "@pinsel/content";
 
 /** Opaque provider handle; `operationId` is the provider's id for the submission. Providers may add fields (branch, PR number). */
 export interface ProviderRef {

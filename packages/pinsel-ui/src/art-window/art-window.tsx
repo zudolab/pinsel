@@ -14,6 +14,8 @@ export interface ArtWindowProps {
   drift?: 1 | -1;
   /** Suffix that keeps the SVG's mask ids unique on the page; defaults to `art-<slot>-<size>`. */
   instance?: string;
+  /** Parallax travel in px; defaults to the prototype's 8 for the shallow strip, 52 otherwise. */
+  range?: number;
 }
 
 // The three literal pigments of the approved SVGs; the art clock cycles
@@ -56,7 +58,7 @@ export function suffixSvgIds(svg: string, suffix: string): string {
  * non-hero size uses the shallow strip (motion range 8); only the true hero
  * crops with `xMidYMid slice`, every other window stretches.
  */
-export function ArtWindow({ slot, size, drift = 1, instance }: ArtWindowProps): Child {
+export function ArtWindow({ slot, size, drift = 1, instance, range }: ArtWindowProps): Child {
   const shallow = slot === "hero" && size !== "hero";
   const svg = suffixSvgIds(preparedSvg(shallow ? "shallow" : slot, slot === "hero" && !shallow), instance || `art-${slot}-${size}`);
   return (
@@ -65,7 +67,7 @@ export function ArtWindow({ slot, size, drift = 1, instance }: ArtWindowProps): 
       aria-hidden="true"
       data-parallax=""
       data-drift={String(drift)}
-      data-motion-range={shallow ? "8" : "52"}
+      data-motion-range={String(range ?? (shallow ? 8 : 52))}
       rawHtml={svg}
     />
   );

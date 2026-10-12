@@ -17,8 +17,9 @@ describe("permitted records", () => {
     const handler = app();
     const listed = await call(handler, "/api/v1/content");
     expect(listed.status).toBe(200);
-    expect(listed.body.value.models.map((model: { id: string }) => model.id)).toEqual(["course"]);
-    const course = listed.body.value.models[0];
+    const ids: string[] = listed.body.value.models.map((model: { id: string }) => model.id);
+    expect([...ids].sort()).toEqual(Object.keys(PINSEL_CONTENT_POLICY.models).sort());
+    const course = listed.body.value.models.find((model: { id: string }) => model.id === "course");
     const permitted = PINSEL_CONTENT_POLICY.models.course!.fields;
     expect(course.operations).toEqual(["put-entry-values"]);
     expect(course.fields.every((field: { id: string }) => permitted.includes(field.id))).toBe(true);
@@ -27,7 +28,7 @@ describe("permitted records", () => {
     const one = await call(handler, "/api/v1/content/course/two-month");
     expect(one.body.value.entry.values[fieldId("course", "price")]).toBe("¥50,000");
     expect((await call(handler, "/api/v1/content/course/nope")).status).toBe(404);
-    expect((await call(handler, "/api/v1/content/site-copy")).status).toBe(404);
+    expect((await call(handler, "/api/v1/content/no-such-model")).status).toBe(404);
   });
 });
 

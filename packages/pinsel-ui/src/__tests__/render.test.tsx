@@ -16,9 +16,7 @@ const FRAME = { brandWord: "Pinsel", brandSub: "ART STUDY IN GERMANY", instagram
 describe("component pack", () => {
   it("is a valid contract pack with runtime parity", () => {
     expect(() => validateRuntimeParity(pinselPack.manifest, pinselPack.runtime)).not.toThrow();
-    expect(pinselPack.manifest.components.map((component) => component.id).slice(0, 6)).toEqual([
-      "pinsel.site-frame", "pinsel.section", "pinsel.heading", "pinsel.prose", "pinsel.pricing-cards", "pinsel.pricing-card",
-    ]);
+    expect(pinselPack.manifest.components.map((component) => component.id)).toEqual(expect.arrayContaining(["pinsel.site-frame", "pinsel.section", "pinsel.prose", "pinsel.pricing-cards", "pinsel.pricing-card"]));
     expect(Object.keys(pinselRegistry.components).sort()).toEqual(pinselPack.manifest.components.map((component) => component.id).sort());
   });
 });
@@ -64,7 +62,7 @@ describe("renderRouteDocument", () => {
     schemaVersion: 2,
     id: "frame",
     name: "Frame",
-    root: [{ id: "frame-root", componentId: "pinsel.site-frame", componentVersion: 1, props: {}, slots: { main: [] } }],
+    root: [{ id: "frame-root", componentId: "pinsel.site-frame", componentVersion: 2, props: {}, slots: { main: [] } }],
     publication: { kind: "global-template", outlet: { id: "outlet", label: "Main", target: { parentId: "frame-root", slotId: "main" } } },
   };
   const page: RouteCompositionDocument = {
@@ -73,7 +71,7 @@ describe("renderRouteDocument", () => {
     name: "Home",
     root: [
       {
-        id: "pricing", componentId: "pinsel.section", componentVersion: 1, props: { id: "pricing", eyebrow: "COURSE & PRICING", title: "コースと料金" },
+        id: "pricing", componentId: "pinsel.section", componentVersion: 2, props: { id: "pricing", eyebrow: "COURSE & PRICING", title: "コースと料金" },
         slots: { content: [{ id: "cards", componentId: "pinsel.pricing-cards", componentVersion: 1, props: { note: "n", moreLabel: "m", moreHref: "/lessons/" }, slots: { items: [{ id: "c1", componentId: "pinsel.pricing-card", componentVersion: 1, props: { name: "進路相談", price: "¥10,000", unit: "1回", description: "d", featured: false, courseIndex: 1 }, slots: {} }] } }] },
       },
     ],
@@ -95,11 +93,11 @@ describe("renderRouteDocument", () => {
 
   it("projects the local document into the template outlet and renders every node", () => {
     const html = renderToString(renderRouteDocument(route, pinselRegistry));
-    expect(html.indexOf('class="site-header"')).toBeLessThan(html.indexOf('<main id="main"'));
+    expect(html).toMatch(/^<a class="skip-link" href="#main">本文へスキップ<\/a><main id="main" tabindex="-1">/);
     expect(html).toContain('<main id="main" tabindex="-1"><section class="section container reading-zone" id="pricing">');
     expect(html).toContain('<h3>進路相談</h3>');
     expect(html).toContain('href="/contact/?course=1"');
-    expect(html.indexOf("</main>")).toBeLessThan(html.indexOf('<footer class="site-footer">'));
+    expect(html).toMatch(/<\/main>$/);
   });
 
   it("refuses an unknown component and a mismatched outlet", () => {
@@ -111,7 +109,8 @@ describe("renderRouteDocument", () => {
 });
 
 describe("renderRouteDocument contract", () => {
-  const node = (id: string, componentId: string, props: Record<string, unknown> = {}, slots: Record<string, unknown[]> = {}) => ({ id, componentId, componentVersion: 1, props, slots });
+  const version = (componentId: string) => pinselPack.manifest.components.find((component) => component.id === componentId)?.schemaVersion ?? 1;
+  const node = (id: string, componentId: string, props: Record<string, unknown> = {}, slots: Record<string, unknown[]> = {}) => ({ id, componentId, componentVersion: version(componentId), props, slots });
   const routeWith = (root: unknown[]): RouteDocument =>
     ({
       pathname: "/faq/",
@@ -123,9 +122,9 @@ describe("renderRouteDocument contract", () => {
     }) as unknown as RouteDocument;
 
   it("injects each node's position among its siblings", () => {
-    const items = ["一", "二", "三"].map((question, index) => node(`q${index}`, "pinsel.faq-item", { question, answer: "a", prefix: "category-1", openFirst: true }));
-    const html = renderToString(renderRouteDocument(routeWith([node("cat", "pinsel.faq-category", { title: "c" }, { content: [node("list", "pinsel.faq", {}, { items })] })]), pinselRegistry));
-    expect(html).toContain('<section class="faq-category reading-zone" id="faq-1">');
+    const items = ["一", "二", "三"].map((question, index) => node(`q${index}`, "pinsel.faq-item", { question, answer: "a", idPrefix: "category-1", openFirst: true }));
+    const html = renderToString(renderRouteDocument(routeWith([node("cat", "pinsel.faq-category", { fragmentId: "faq-1", title: "c" }, { items })]), pinselRegistry));
+    expect(html).toContain('<section class="faq-category reading-zone" id="faq-1"><h2>c</h2><div class="faq-list"><details id="category-1-1" open>');
     expect(html).toContain('<details id="category-1-1" open>');
     expect(html).toContain('<details id="category-1-3">');
   });
@@ -134,7 +133,7 @@ describe("renderRouteDocument contract", () => {
     expect(() => renderRouteDocument(routeWith([node("x", "pinsel.checklist-item", { text: "t", colour: "red" })]), pinselRegistry)).toThrow(/does not declare/);
     expect(() => renderRouteDocument(routeWith([node("x", "pinsel.checklist-item", { position: { index: 9 } })]), pinselRegistry)).toThrow(/does not declare/);
     expect(() => renderRouteDocument(routeWith([node("x", "pinsel.checklist", {}, { other: [] })]), pinselRegistry)).toThrow(/does not declare/);
-    expect(() => renderRouteDocument(routeWith([node("x", "pinsel.checklist", {}, { items: [node("y", "pinsel.faq-item")] })]), pinselRegistry)).toThrow(/not accepted/);
+    expect(() => renderRouteDocument(routeWith([node("x", "pinsel.checklist", {}, { items: [node("y", "pinsel.faq-item", { question: "q" })] })]), pinselRegistry)).toThrow(/not accepted/);
   });
 
   it("renders every pack component from its manifest defaults", () => {

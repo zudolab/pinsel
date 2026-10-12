@@ -5,6 +5,7 @@ import { createFakePublicationProvider, type FakePublicationProvider } from "../
 import { BASELINE, PINSEL_SITE } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
 import { COMMIT_1, COMMIT_2, PRICE, app, call, canonicalWith, priceOf, putPrice, readDraft, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
+import { PINSEL_PACK_VERSION } from "@pinsel/ui";
 
 const FAKE_ENV: TestEnv = { ...env, PUBLISHER_PROVIDER: "fake" };
 const INTEGRATED = (commit: string) => ({ evidence: { commit, pr: "17", checks: [{ name: "publication-validate", status: "passed" as const }] } });
@@ -36,7 +37,7 @@ describe("baseline advance from provider evidence", () => {
     fake.advance(job.providerRef.operationId, "integrated", INTEGRATED(COMMIT_1));
     const advanced = await advance(job.publicationId);
     expect(advanced.status).toBe(200);
-    expect(advanced.body.value).toMatchObject({ replayed: false, baseline: { gitSha: COMMIT_1, contentDigest: snapshot.snapshotId, packageIdentity: { packId: "pinsel", packVersion: "0.1.0" } }, draft: { baselineRevision: COMMIT_1, draftRevision: snapshot.draftRevision + 1 } });
+    expect(advanced.body.value).toMatchObject({ replayed: false, baseline: { gitSha: COMMIT_1, contentDigest: snapshot.snapshotId, packageIdentity: { packId: "pinsel", packVersion: PINSEL_PACK_VERSION } }, draft: { baselineRevision: COMMIT_1, draftRevision: snapshot.draftRevision + 1 } });
     const draft = await readDraft(handler);
     expect(priceOf(draft)).toBe("¥55,000");
     expect((await call(handler, "/api/v1/site")).body.baselineRevision).toBe(COMMIT_1);

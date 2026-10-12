@@ -100,7 +100,7 @@ D1 has no `BEGIN`; the only transaction is `db.batch()`. Every multi-row write i
 
 `src/publish/port.ts` defines `PublicationProviderPort` after the upstream export contract (`zudo-composer/export`): `submit({ submission: ContentExportSubmission, snapshot })` → provider ref, `status(ref)` → state + evidence (commit, PR, build id, checks, deployment), `lookupExisting(snapshotId)`. `selectPublisher` picks a registered factory by `PUBLISHER_PROVIDER`; `disabled` (default), an unknown name, an invalid `PROMOTION_POLICY` or missing provider inputs all answer `configuration-required`. The production entry registers no provider yet; the GitHub provider and the reconciliation loop (`src/publish/github-provider.ts`, `src/publish/reconcile.ts`) belong to the publication sub-issue. `src/publish/fake-provider.ts` is the deterministic fake with scriptable timeouts, lost acknowledgements, refusals and duplicates (tests and the local entry only).
 
-A provider writes only `content/entries/**` and `content/snapshot.json` (`PUBLISH_PATH_ALLOWLIST`; to move into `@pinsel/content` as the single authoritative list).
+A provider writes only `content/entries/**` and `content/snapshot.json` (`PINSEL_PUBLISH_ALLOWLIST` / `isPublishablePath` from `@pinsel/content`, the single authoritative list).
 
 ## Configuration and launch inputs
 

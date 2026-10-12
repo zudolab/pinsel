@@ -29,13 +29,13 @@ export interface PageHeadingProps {
 }
 
 // The approved lessons heading sets its title on two lines.
-const TITLE_LINES: Readonly<Record<string, readonly string[]>> = {
+export const PAGE_TITLE_LINES: Readonly<Record<string, readonly string[]>> = {
   "ドイツ美大受験オンラインクラス": ["ドイツ美大受験", "オンラインクラス"],
 };
 
 /** Prototype `ui.py page_header()`: breadcrumb, heading, description and the shallow hero art. */
 export function PageHeading(props: PageHeadingProps): Child {
-  const lines = TITLE_LINES[props.title];
+  const lines = PAGE_TITLE_LINES[props.title];
   const stats = props.stats ?? [];
   return (
     <>

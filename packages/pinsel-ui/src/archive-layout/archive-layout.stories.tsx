@@ -20,7 +20,7 @@ export const Results: Story = {
       <ArchiveLayout
         tocLabel="年度から見る"
         toc={resultYears.map((year, index) => <TocItem label={year} target={`year-${year}`} prefix="" index={index + 1} current={index === 0} />)}
-        body={[<ResultsYearSection label={resultYear.label} count={resultYear.count} rows={resultYear.rows.map((row) => <ResultRow {...row} />)} />]}
+        body={[<ResultsYearSection label={resultYear.label} count={resultYear.count} items={resultYear.rows.map((row) => <ResultRow {...row} />)} />]}
       />
     </div>
   ),
