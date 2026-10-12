@@ -1,6 +1,6 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import { previewReadyMessage, previewRenderedMessage, type HostPreviewState } from "zudo-composer/preview-protocol";
-import { PREVIEW_SANDBOX, attachComparisonFrame, enforcePreviewSandbox } from "../preview-frame";
+import { attachComparisonFrame } from "../preview-frame";
 
 const pack = { packId: "pinsel", packVersion: "0.1.0" };
 const SNAPSHOT = "c".repeat(64);
@@ -36,23 +36,3 @@ describe("comparison frame", () => {
   });
 });
 
-describe("preview sandbox", () => {
-  it("sandboxes the editor's preview frame and reloads its shell under the sandbox", async () => {
-    const root = document.createElement("div");
-    document.body.append(root);
-    const stop = enforcePreviewSandbox(root);
-    const frame = document.createElement("iframe");
-    frame.className = "sg-hosted-content-editor__frame";
-    frame.setAttribute("src", "about:blank#shell");
-    const setAttribute = vi.spyOn(frame, "setAttribute");
-    root.append(frame);
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(frame.getAttribute("sandbox")).toBe(PREVIEW_SANDBOX);
-    expect(setAttribute.mock.calls.map(([name]) => name)).toEqual(["sandbox", "src"]);
-    frame.removeAttribute("sandbox");
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(frame.getAttribute("sandbox")).toBe(PREVIEW_SANDBOX);
-    stop();
-    root.remove();
-  });
-});

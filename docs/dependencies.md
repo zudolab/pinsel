@@ -2,7 +2,7 @@
 
 Every direct dependency is pinned in the workspace `package.json` files and resolved once in `pnpm-lock.yaml` (pnpm 11.5.2, `autoInstallPeers: false`). Only the lockfile owners named in `CLAUDE.md` change these pins.
 
-Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `npm view <name> dist-tags` the same day.
+Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `npm view <name> dist-tags` the same day. Final pin (#16, 2026-10-13): `zudo-composer` moved to `547b532e…` and `@takazudo/zudo-sg` to `0.5.2`; every other identity is unchanged.
 
 ## Resolved identities
 
@@ -19,7 +19,7 @@ Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `n
 | `wrangler` | `4.149.0` | 4.149.0 | `apps/authoring-worker` | `sha512-OzK7xmB5r5iLKb3cIT3783g13fe6T7xyeKu9LEdUyl+DKAM2KP/jkjnE0OUhyw+mB/XJM9ycjgF3MWm8PR9amg==` |
 | `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | 1.0.0 (git `c0b452da075b66757c60bd0d721a47062d4354d0`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `git-hosted, no integrity recorded` |
 | `preact` | `^10.29.8` | 10.29.8 | `apps/authoring-worker` (dev, peer only), `apps/editor`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==` |
-| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#7ca114a3ed7dcef10f5420dcc1894ea7125e4da6` | 0.0.0 (git `7ca114a3ed7dcef10f5420dcc1894ea7125e4da6`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==` |
+| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#547b532eb56dfecaec1e2bd9060f8d579ad8862c` | 0.0.0 (git `547b532eb56dfecaec1e2bd9060f8d579ad8862c`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `git-hosted, no integrity recorded` (codeload tarball `sha512-ftScClSN77f5t6ij1nvoJpblXdEnHTfgqTO/jNFnNPx1r5rCMzcxpRy4xtbDHlO2IOTDNBDsVqQB3CnzHbgx1Q==`) |
 | `tsx` | `4.23.15` | 4.23.15 | `.` | `sha512-Yiex1Ovn8z2xPpOWckIiysV1SSyRMY9BkLF++q0yKiDxCqRhosKfMg3janKkiLBwZ5c/YryloKwGZcrEmtwxKw==` |
 | `vite` | `^8.2.2` | 8.3.4 | `apps/editor` | `sha512-IftLE8phJhdNRIGNEV4JCCvfNScoZQVfcXaN8TQropWGJtOHcu+iAB9pHcuGvmEb/kddw0LBe/jS8ztdC6xdiQ==` |
 | `@takazudo/zfb` | `4.3.2` | 4.3.2 | `apps/authoring-worker`, `apps/site`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-QTEQgD6pomJ7pnEyFL6GX7NuhstChEjcdzE46X0YWF3H8KiD3Ky17/IJs6d5/YGjmxgCyb2r9AHpbs5Jqn3+oA==` |
@@ -28,19 +28,19 @@ Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `n
 | `@takazudo/zdtp` | `0.8.6` | 0.8.6 | `apps/styleguide` | `sha512-powstLG6d4tkEroYbT6iAJk1Da4xAYS8+enW/bcn6IupkzQQf3agAtXrlJ8XVoWs43puOsCR5/hgpMDFKP3d3g==` |
 | `@takazudo/zfb-md-wasm` | `4.3.2` | 4.3.2 | `apps/styleguide` | `sha512-g744sQDNcrSa8akp1XNSRfQ2EglHsN5FnfVZ4JOtbOLGuzb9TPhC04Q0BjdS2mxgcgdVzyk/4QJFlIWwM9npRQ==` |
 | `@takazudo/zudo-doc` | `6.0.2` | 6.0.2 | `apps/styleguide` | `sha512-0RNBXQKnXH85WoaPbAqG+dhLnlJlvPCHi/XNs2lyAaEtuGLOce9ZM1ghndbCUUKS4GwNh5t7whEYj9uLl080zw==` |
-| `@takazudo/zudo-sg` | `0.5.1` | 0.5.1 | `apps/styleguide` | `sha512-GEljBkKbBjIBdeGBLkNkJKdUgqbXyv17ufc/U5px/YyfDYCyAN/8diYtSxRzjETv+f39GSR+I6cbbhMXTpCfhA==` |
+| `@takazudo/zudo-sg` | `0.5.2` | 0.5.2 | `apps/styleguide` | `sha512-lxrObkqQrGss9ExuOqFUXZ2K/p7O+wO+ZrnWqBmwBhhYqufNfrXlmJc6X4hDpeHS8g0VpfhZFnut6u+571cJhw==` |
 | `culori` | `^4.0.2` | 4.0.2 | `apps/styleguide` | `sha512-1+BhOB8ahCn4O0cep0Sh2l9KCOfOdY+BXJnKMHFFzDEouSr/el18QwXEMRlOj9UY5nCeA8UN3a/82rUWRBeyBw==` |
 | `diff` | `^8.0.4` | 8.0.4 | `apps/styleguide` | `sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw==` |
 | `katex` | `^0.16.38` | 0.16.47 | `apps/styleguide` | `sha512-Eeo8Ys1doU1z+x8AZsPpQu+p/QcZBI5PeOo7QGQdy2x2m0MU/hYagBbGOmXwr5KVbEfVuWv9LpnQWeehogurjg==` |
 | `tailwind-merge` | `3.6.0` | 3.6.0 | `apps/styleguide` | `sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==` |
 
-`@zudo-composer/component-contract` is a git package with a `prepare` build, so pnpm records no tarball integrity for it; its identity is the full commit SHA.
+Both Composer packages are git-hosted (`resolution: { gitHosted: true }`), so pnpm records no integrity for them; their identity is the full commit SHA. The `zudo-composer` tarball digest above is `sha512` of `https://codeload.github.com/Takazudo/zudo-composer/tar.gz/<sha>`, for reference only. (Before #16 this row showed `zwitch@2.0.4`'s integrity by mistake.)
 
 ## Composer pins
 
 | Package | Commit | Status |
 | --- | --- | --- |
-| `zudo-composer` | `7ca114a3ed7dcef10f5420dcc1894ea7125e4da6` | #903 milestone-2 commit on `feat/903-hosted-content-authoring` (draft PR Takazudo/zudo-composer#904), pinned by Gate-1 (#7). Gate-1 needed no upstream change. The upstream-reconcile sub-issue (#16) rebumps it to the reviewed SHA. |
+| `zudo-composer` | `547b532eb56dfecaec1e2bd9060f8d579ad8862c` | Final pin (#16) on `feat/903-hosted-content-authoring` (draft PR Takazudo/zudo-composer#904): milestone 2 (`7ca114a3`, the Gate-1 pin) plus `preview.sandbox` on the content-editor mount. Proved by `verify-root-git-install --sha 547b532e…` and `smoke:host-install -- --host hosted-content-host`. |
 | `@zudo-composer/component-contract` | `c0b452da075b66757c60bd0d721a47062d4354d0` | Package-root handoff commit (`package/component-contract-v1`). |
 
 Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<full-sha>`. There is no npm release of `zudo-composer`.
@@ -48,7 +48,7 @@ Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<f
 ## Pin decisions
 
 - `@takazudo/zfb`, `@takazudo/zfb-runtime`, `@takazudo/zfb-md-wasm` are exactly `4.3.2` everywhere: `zfb-runtime@4.3.2` peers `zfb` at exactly `4.3.2`, and `zudo-doc@6.0.2` raises its zfb floor to `^4.3.2`.
-- `@takazudo/zudo-sg` stays at `0.5.1` although `0.5.2` was published on 2026-10-12. 0.5.2 only changes the engine's own dependency and TypeScript tooling, with the same peers. The bump is left to the final-pin sub-issue.
+- `@takazudo/zudo-sg` is `0.5.2` (published 2026-10-12), adopted by the final pin. It only changes the engine's own dependency and TypeScript tooling against 0.5.1, with the same peers; `pnpm dedupe --check`, `sg:check` and `build:sg` stay green.
 - `@takazudo/zdtp@0.8.6` peers (`culori`, `preact`, `tailwind-merge 3.6.0`, `@tailwindcss/browser 4.3.2`) are declared explicitly in `apps/styleguide` because peers are not auto-installed.
 - `diff ^8`, `katex ^0.16` and `preact ^10` follow the zudo-doc and Composer peer ranges, not the newer majors on npm (`diff 9`, `katex 0.19`, `preact 11`).
 - `vite ^8.2.2` matches the `zudo-composer` dependency range, so the editor and Composer share one Vite. The editor builds with `contentEditorPlugins()` from `zudo-composer/vite` (Preact preset included), so `@preact/preset-vite` / `@babel/core` are no longer direct dependencies.
@@ -58,3 +58,20 @@ Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<f
 - `vitest 4.1.11` (V4 line) stays on the version zudo-sg and Composer test with. `5.x` is newer on npm.
 - `pnpm dedupe --check` is clean and runs in CI. Duplicate `@lezer/common` identities break the zudo-sg code panel (zudo-sg#963).
 - `happy-dom 20.14.6` matches the zudo-sg fixture; `21.x` (published 2026-10-11/12) is a new major and is not adopted yet.
+
+## Known Composer gaps
+
+Reconciled by the final pin (#16) against Takazudo/zudo-composer#903. Closed upstream: `preview.sandbox` (the editor no longer adds the attribute and reloads the shell). Still open, recorded on draft PR Takazudo/zudo-composer#904 as follow-ups; none blocks Pinsel, each has a working Pinsel-side handling:
+
+| Gap | Pinsel handling |
+| --- | --- |
+| `ContentEditorPreviewOptions.route` names one route per mount | `apps/editor/src/editor-mount.tsx` remounts per route after a flush (refused while a conflict or failed save is open) |
+| Content route chrome (directory, navigator, entry form, conflict banner) is fixed English; `labels` cover only the mount shell | `apps/editor/src/localize.ts` rewrites exact chrome strings |
+| No directory/model grouping in the mount | `apps/editor/src/groups.ts` narrows the policy per group and remounts |
+| No conflict actions on `ContentEditorHandle` | host panel explains the in-form Use latest / Reapply buttons; reload remounts |
+| The mount shows raw export states (`exportStatus.state`) | `apps/editor/src/host.css` hides the mount's export chip; `publication.ts` shows Pinsel states |
+| Global-template collection attachments are not materialised (every page root is a site-frame) | each route composition carries its own `pinsel.site-frame` |
+| Single models cannot be attached | the five singletons are one-entry collections |
+| `list<text>` / `list<long-text>` fields cannot bind to component props | five fields are `long-text`, one item per line |
+| Collection conditions are static (no parent-relative filter) | per-year / per-group mappings are generated at assemble time |
+| Restricted UI has no create / reorder, no completeness check before Submit; no SQLite two-process backend, two-publication trace or ZFB/SG parity upstream | Pinsel edits existing entries only; D1 conformance, publication trace and ZFB parity are proven in Pinsel (`docs/authoring-worker.md`, `docs/publication.md`) |

@@ -108,7 +108,7 @@ export function App({ site }: { site: SiteDescription }) {
     policy: policyForGroup(site.policy, group),
     storage: createTransport(),
     ...(site.assets ? { assets: site.assets } : {}),
-    preview: { url: site.preview.url, origin: site.preview.origin, pack: site.pack, route, title: `プレビュー: ${routeLabel(route)}` },
+    preview: { url: site.preview.url, origin: site.preview.origin, pack: site.pack, route, title: `プレビュー: ${routeLabel(route)}`, sandbox: PREVIEW_SANDBOX },
     export: { adapter, packageIdentity: { packId: site.pack.packId, packVersion: site.pack.packVersion, contractVersion: PACKAGE_CONTRACT_VERSION } },
     labels: { ...CONTENT_EDITOR_LABELS_JA, ...EDITOR_LABELS },
   } : null, [group?.id, route, generation]);

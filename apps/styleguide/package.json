@@ -23,7 +23,7 @@
     "@takazudo/zfb-md-wasm": "4.3.2",
     "@takazudo/zfb-runtime": "4.3.2",
     "@takazudo/zudo-doc": "6.0.2",
-    "@takazudo/zudo-sg": "0.5.1",
+    "@takazudo/zudo-sg": "0.5.2",
     "@tailwindcss/browser": "4.3.2",
     "culori": "^4.0.2",
     "diff": "^8.0.4",
