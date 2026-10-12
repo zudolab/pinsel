@@ -12,7 +12,7 @@ export interface DefaultLayoutProps {
   children: Child;
 }
 
-export const ROBOTS = siteConfig.indexing === "index" ? "index,follow" : "noindex,nofollow";
+const ROBOTS = siteConfig.indexing === "index" ? "index,follow" : "noindex,nofollow";
 
 // zfb appends the compiled stylesheet link to <head>; the body is the shared
 // renderer output, so the Worker preview and this layout differ only in <head>.

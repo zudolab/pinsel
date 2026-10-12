@@ -1,6 +1,7 @@
 // Every same-site link in the built public site resolves: its path is one of
 // the 14 outputs (or a shipped file) and its #fragment is an id on the target
-// page; every structure fragment in ROUTE_FRAGMENTS (invariants.ts) exists.
+// page; every structure fragment in ROUTE_FRAGMENTS (invariants.ts) exists;
+// each page's canonical URL is SITE_ORIGIN + its route.
 // Usage: node scripts/site/check-fragments.mjs [--dist apps/site/dist]
 import { readFile, stat } from "node:fs/promises";
 import path from "node:path";
@@ -16,7 +17,7 @@ const exists = (file) => stat(file).then((info) => info.isFile(), () => false);
 
 /** @param {string} dist @returns {Promise<string[]>} */
 export async function checkFragments(dist) {
-  const { PINSEL_ROUTES, ROUTE_FRAGMENTS, outputFileForRoute } = await tsImport(pathToFileURL(path.join(repoRoot, "packages/pinsel-content/src/invariants.ts")).href, import.meta.url);
+  const { PINSEL_ROUTES, ROUTE_FRAGMENTS, SITE_ORIGIN, outputFileForRoute } = await tsImport(pathToFileURL(path.join(repoRoot, "packages/pinsel-content/src/invariants.ts")).href, import.meta.url);
   /** @type {string[]} */
   const issues = [];
   /** @type {Map<string, Set<string>>} route → ids */
@@ -30,6 +31,8 @@ export async function checkFragments(dist) {
       continue;
     }
     const page = parseHtml(html);
+    const canonical = page.querySelector("link[rel=canonical]")?.getAttribute("href");
+    if (canonical !== `${SITE_ORIGIN}${route}`) issues.push(`${route}: canonical ${canonical} is not ${SITE_ORIGIN}${route}`);
     ids.set(route, new Set(Array.from(page.querySelectorAll("[id]")).map((element) => element.id)));
     hrefs.set(route, Array.from(page.querySelectorAll("a[href]")).map((element) => element.getAttribute("href") ?? ""));
   }

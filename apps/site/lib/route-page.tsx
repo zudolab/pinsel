@@ -14,11 +14,11 @@ export function outputFor(route: string): RouteOutput {
 /** One approved output: its compiled route document through the shared renderer, inside the site layout. */
 export function RoutePage(props: { route: string }): Child {
   const output = outputFor(props.route);
-  const document = ROUTES.find((candidate) => candidate.pathname === output.pathname);
-  if (!document) throw new Error(`routes.generated.ts has no route document ${output.pathname}; run \`pnpm content:project\`.`);
+  const routeDocument = ROUTES.find((candidate) => candidate.pathname === output.pathname);
+  if (!routeDocument) throw new Error(`routes.generated.ts has no route document ${output.pathname}; run \`pnpm content:project\`.`);
   return (
     <DefaultLayout route={output.route} title={output.title} description={output.description}>
-      {renderRouteDocument(document, pinselRegistry)}
+      {renderRouteDocument(routeDocument, pinselRegistry)}
     </DefaultLayout>
   );
 }

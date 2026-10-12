@@ -47,7 +47,7 @@ for (const file of siteFiles) {
   const text = await readFile(file, "utf8");
   const rel = path.relative(repoRoot, file);
   /** @type {[RegExp, string][]} */
-  const forbidden = [[/zudo-composer/, "Composer"], [/_zudo-sg|sg-hosted|sg-content/, "styleguide chrome"], [/preact/i, "Preact"], [/site-project/, "site-project data"], [/font-provenance|provenance\//, "provenance"], [/data-zfb-island/, "an island"], [/postMessage|[?&](motion|art-phase|state)=/, "review-only plumbing"]];
+  const forbidden = [[/zudo-composer/, "Composer"], [/_zudo-sg|sg-hosted|sg-content/, "styleguide chrome"], [/preact/i, "Preact"], [/site-project/, "site-project data"], [/font-provenance|provenance\//, "provenance"], [/data-zfb-island/, "an island"], [/postMessage|pinsel-r5-motion|\.get\(["'](motion|art-phase|state)["']\)/, "review-only plumbing"]];
   for (const [pattern, label] of forbidden) {
     if (pattern.test(text)) failures.push(`${rel} contains ${label}`);
   }
