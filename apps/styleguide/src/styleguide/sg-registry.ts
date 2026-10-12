@@ -24,6 +24,7 @@ import * as message from "../../ui/message/message.stories.tsx";
 import * as notFound from "../../ui/not-found/not-found.stories.tsx";
 import * as noteCards from "../../ui/note-cards/note-cards.stories.tsx";
 import * as pageHeading from "../../ui/page-heading/page-heading.stories.tsx";
+import * as pages from "../../ui/pages/pages.stories.tsx";
 import * as paragraphs from "../../ui/paragraphs/paragraphs.stories.tsx";
 import * as priceDetail from "../../ui/price-detail/price-detail.stories.tsx";
 import * as pricingCards from "../../ui/pricing-cards/pricing-cards.stories.tsx";
@@ -73,6 +74,7 @@ export const storyModules: Record<string, StoryModule> = {
   "./ui/not-found/not-found.stories.tsx": notFound as unknown as StoryModule,
   "./ui/note-cards/note-cards.stories.tsx": noteCards as unknown as StoryModule,
   "./ui/page-heading/page-heading.stories.tsx": pageHeading as unknown as StoryModule,
+  "./ui/pages/pages.stories.tsx": pages as unknown as StoryModule,
   "./ui/paragraphs/paragraphs.stories.tsx": paragraphs as unknown as StoryModule,
   "./ui/price-detail/price-detail.stories.tsx": priceDetail as unknown as StoryModule,
   "./ui/pricing-cards/pricing-cards.stories.tsx": pricingCards as unknown as StoryModule,
@@ -128,6 +130,7 @@ export const storyExportOrder: Record<string, string[]> = {
   "./ui/not-found/not-found.stories.tsx": [],
   "./ui/note-cards/note-cards.stories.tsx": [],
   "./ui/page-heading/page-heading.stories.tsx": [],
+  "./ui/pages/pages.stories.tsx": [],
   "./ui/paragraphs/paragraphs.stories.tsx": [],
   "./ui/price-detail/price-detail.stories.tsx": [],
   "./ui/pricing-cards/pricing-cards.stories.tsx": [],

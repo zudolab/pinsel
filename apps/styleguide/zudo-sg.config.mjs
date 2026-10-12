@@ -36,7 +36,7 @@ const tokensSpec = {
 export default {
   componentsRoots: [{ dir: "ui", importBase: "../../ui" }],
   registryOut: "./src/styleguide/sg-registry.ts",
-  categoryOrder: ["Chrome", "Layout", "Typography", "Sections"],
+  categoryOrder: ["Pages", "Chrome", "Layout", "Typography", "Sections", "Forms", "Art"],
   uiPackageName: "@pinsel/ui",
   barrelIndex: null,
   previewStyles: "./src/styles/preview-entry.css",
