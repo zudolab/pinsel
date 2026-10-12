@@ -1,45 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { fixtureComponentPack } from "@zudo-composer/component-contract/fixtures";
-import { CONTENT_PROVIDER_ID, DEFAULT_TIMESTAMP, canonicalStringifyJson, defineSite, node, validateSiteProject } from "zudo-composer/authoring";
+import { CONTENT_PROVIDER_ID, DEFAULT_TIMESTAMP, defineSite, node } from "zudo-composer/authoring";
+import { canonicalStringifyJson, validateContentEntryRecord, validateContentModelRecord, validateSiteProject } from "zudo-composer/content";
 import type { JsonValue } from "@zudo-composer/component-contract";
-import type { ContentEntryRecord, ContentModelRecord, Model, ModelInput, SiteProject } from "zudo-composer/site-project";
+import type { ContentEntryRecord, ContentModelRecord, Model, SiteProject } from "zudo-composer/site-project";
 
 import { PINSEL_CONTENT_PROVIDER_ID, MODEL_TIMESTAMP, PINSEL_MODELS, SEED_DECLARED_RESULT_COUNT, SEED_ENTRY_COUNTS, fieldId, modelById } from "../models";
+import { modelInput } from "../models/dsl";
 import { RECORD_ID_PATTERN } from "../policy";
 import { buildSeedEntries } from "./seed-entries";
 
-// `validateContentModelRecord` / `validateContentEntryRecord` are not public in
-// the pinned Composer (d99e7909); `validateSiteProject` runs the same record
-// validators over a whole project, so the models and entries are validated by
-// wrapping them in a minimal site. Gate-1 switches to `zudo-composer/content`.
-
-function dslInput(record: ContentModelRecord, models: Map<string, Model>): ModelInput {
-  return {
-    id: record.id,
-    name: record.document.name,
-    kind: record.document.kind,
-    description: record.document.description,
-    fields: record.document.fields.map((field) => {
-      const base = { key: field.key, label: field.label, required: field.required };
-      switch (field.kind) {
-        case "reference":
-          return { ...base, kind: "reference", target: models.get(field.target.recordId)! };
-        case "reference-list":
-          return { ...base, kind: "reference-list", target: models.get(field.target.recordId)!, ordered: field.ordered };
-        case "choice":
-          return { ...base, kind: "choice", options: field.options };
-        case "list":
-          return { ...base, kind: "list", item: field.item };
-        case "object":
-          throw new Error("object fields are not used by Pinsel models");
-        case "asset-use":
-          return { ...base, kind: "asset-use", use: field.use };
-        default:
-          return { ...base, kind: field.kind };
-      }
-    }),
-  };
-}
+// Records are validated one by one with the `zudo-composer/content` validators
+// and together through `validateSiteProject`, which runs the same validators
+// over the whole project plus every cross-record edge.
 
 function minimalProject(models: readonly ContentModelRecord[], entries: readonly ContentEntryRecord[]): SiteProject {
   const site = defineSite({ id: "pinsel", name: "Pinsel", componentPack: fixtureComponentPack });
@@ -64,7 +37,7 @@ describe("Pinsel content models", () => {
     const site = defineSite({ id: "pinsel", name: "Pinsel", componentPack: fixtureComponentPack });
     const built = new Map<string, Model>();
     for (const record of PINSEL_MODELS) {
-      const model = site.model(dslInput(record, built));
+      const model = site.model(modelInput(record, built));
       built.set(record.id, model);
       expect(model.record, record.id).toEqual(record);
       for (const field of record.document.fields) {
@@ -83,6 +56,12 @@ describe("Pinsel content models", () => {
       for (const field of model.document.fields) expect(field.id).toMatch(RECORD_ID_PATTERN);
       if (model.document.kind === "collection") expect(keys, `${model.id} needs order`).toContain("order");
     }
+  });
+
+  it("validate every record and entry with the zudo-composer/content validators", () => {
+    for (const record of PINSEL_MODELS) expect(validateContentModelRecord(record).ok, record.id).toBe(true);
+    for (const entry of seedEntries) expect(validateContentEntryRecord(entry).ok, entry.id).toBe(true);
+    expect(validateContentModelRecord({ ...PINSEL_MODELS[0], document: { ...PINSEL_MODELS[0]!.document, kind: "many" } }).ok).toBe(false);
   });
 
   it("validate together with one seed entry per record through validateSiteProject", () => {

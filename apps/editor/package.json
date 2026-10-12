@@ -8,13 +8,12 @@
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
+    "@pinsel/content": "workspace:*",
     "@zudo-composer/component-contract": "git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0",
     "preact": "^10.29.8",
-    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#d99e79097f7309ba9419325836d369809f284ad1"
+    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#7ca114a3ed7dcef10f5420dcc1894ea7125e4da6"
   },
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@preact/preset-vite": "^2.10.6",
     "vite": "^8.2.2"
   }
 }

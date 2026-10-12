@@ -33,15 +33,26 @@ jobs:
       - run: pnpm dedupe --check
       - run: pnpm no-deploy:check
       - run: pnpm assets:sync
-      - run: pnpm check
+      - run: pnpm content:assemble
+      - run: pnpm content:project
+      # The site build precedes `pnpm check`: the Worker tests compare their in-workerd
+      # projection against apps/site/dist/index.html (Gate-1 parity).
       - run: pnpm build:site
+      - run: pnpm check
+      - run: pnpm sg:check
       - run: pnpm build:sg
       - run: pnpm build:editor
       - run: pnpm assets:assemble-worker
       - name: Verify staged assets
         run: pnpm assets:verify
+      - run: pnpm check:boundaries
       - run: pnpm worker:dry-run
+      - run: pnpm worker:bundle:check
       - run: pnpm worker:types:check
+      - name: No-JS home page (Playwright, chromium)
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          pnpm test:browser
       - name: Detect content snapshot
         id: content
         run: |

@@ -4,8 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "echo 'styleguide: zudo-sg host is scaffolded by the Gate-1 sub-issue; nothing to build yet'",
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "dev": "zfb dev",
+    "build": "zfb build",
+    "gen-registry": "zudo-sg gen-registry",
+    "gen-token-manifest": "zudo-sg gen-token-manifest",
+    "check:generated": "node scripts/gen-story-shims.mjs --check && zudo-sg gen-registry --check && zudo-sg gen-token-manifest --check",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "gen-story-shims": "node scripts/gen-story-shims.mjs"
   },
   "dependencies": {
     "@pinsel/ui": "workspace:*",

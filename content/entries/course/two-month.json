@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "two-month",
+  "modelId": "course",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "course-name": "2ヶ月コース",
+    "course-price": "¥50,000",
+    "course-unit": "全4回（月2回）",
+    "course-home-description": "ポートフォリオ制作指導",
+    "course-lessons-note": "税込 / 1ヶ月あたり25,000円",
+    "course-contact-option-label": "2ヶ月コース",
+    "course-featured": true,
+    "course-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

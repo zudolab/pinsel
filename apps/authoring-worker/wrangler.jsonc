@@ -14,5 +14,40 @@
     // Every request, including navigations, must pass the Worker's auth gate.
     "run_worker_first": true
   },
-  "observability": { "enabled": true }
+  // Launch inputs (docs/launch-inputs.md): empty values fail closed with 503 configuration-required.
+  "vars": {
+    "TEAM_DOMAIN": "",
+    "POLICY_AUD": "",
+    "EDITOR_ALLOWLIST": ""
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pinsel-authoring",
+      // Placeholder until `wrangler d1 create` runs at launch; local dev and tests key on the name only.
+      "database_id": "00000000-0000-4000-8000-000000000000",
+      "migrations_dir": "./migrations"
+    }
+  ],
+  "observability": { "enabled": true },
+  "env": {
+    // `wrangler dev --env local`: the fixture identity entry instead of Access JWT verification.
+    "local": {
+      "main": "./src/local-dev.ts",
+      "vars": {
+        "TEAM_DOMAIN": "",
+        "POLICY_AUD": "",
+        "EDITOR_ALLOWLIST": "",
+        "LOCAL_DEV_SUBJECT": "local-dev@example.test"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "pinsel-authoring",
+          "database_id": "00000000-0000-4000-8000-000000000000",
+          "migrations_dir": "./migrations"
+        }
+      ]
+    }
+  }
 }

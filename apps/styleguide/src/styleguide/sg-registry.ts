@@ -1,0 +1,31 @@
+// GENERATED:SG_REGISTRY_BEGIN — do not hand-edit; run `zudo-sg gen-registry`.
+import type { StoryModule } from "@takazudo/zudo-sg/stories";
+
+import * as pricingCards from "../../ui/pricing-cards/pricing-cards.stories.tsx";
+import * as siteFrame from "../../ui/site-frame/site-frame.stories.tsx";
+
+/**
+ * Path → story module map. Keys are glob-relative (e.g.
+ * `./ui/src/button/button.stories.tsx`). Each module is
+ * `{ default: meta, ...named Story exports }`.
+ */
+export const storyModules: Record<string, StoryModule> = {
+  "./ui/pricing-cards/pricing-cards.stories.tsx": pricingCards as unknown as StoryModule,
+  "./ui/site-frame/site-frame.stories.tsx": siteFrame as unknown as StoryModule,
+};
+
+/**
+ * Per-story named-export declaration order (SOURCE order), keyed by the
+ * same path as `storyModules`. registry.ts sorts each story's variants
+ * by this so tabs render in authored order (and the default tab is the
+ * first-authored story) instead of the alphabetical key-enumeration order
+ * of the `import * as` namespace. Captured at codegen time because the
+ * runtime namespace cannot recover source order (#128 / #174). Superset:
+ * lists every `export const`, so registry.ts uses it only to SORT the
+ * `isStory()`-filtered variants, never to gate membership.
+ */
+export const storyExportOrder: Record<string, string[]> = {
+  "./ui/pricing-cards/pricing-cards.stories.tsx": [],
+  "./ui/site-frame/site-frame.stories.tsx": [],
+};
+// GENERATED:SG_REGISTRY_END

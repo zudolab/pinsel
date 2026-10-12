@@ -1,0 +1,19 @@
+/* Pinsel approved palette and color roles (seed 2026-10-12, prototype/src/styles.css @layer tokens). */
+:root {
+  --palette-paper: #f2f5ee;
+  --palette-white: #fbfcf7;
+  --palette-ink: #263c3e;
+  --palette-muted: #526964;
+  --palette-line: #c7d4ca;
+  --palette-teal: #336461;
+  --palette-pale: #e7eee6;
+  --palette-error: #8d3730;
+  --color-bg: var(--palette-paper);
+  --color-surface: var(--palette-white);
+  --color-fg: var(--palette-ink);
+  --color-muted: var(--palette-muted);
+  --color-line: var(--palette-line);
+  --color-action: var(--palette-teal);
+  --color-soft: var(--palette-pale);
+  --color-error: var(--palette-error);
+}

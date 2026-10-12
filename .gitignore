@@ -27,3 +27,6 @@ packages/pinsel-content/.site-project/
 test-results/
 playwright-report/
 .DS_Store
+
+# zudo-doc copies package-owned route sources here during builds
+.zudo-doc/

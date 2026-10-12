@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "four-month",
+  "modelId": "course",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "course-name": "4ヶ月コース",
+    "course-price": "¥92,000",
+    "course-unit": "全8回（月2回）",
+    "course-home-description": "出願準備までフルサポート",
+    "course-lessons-note": "税込 / 1ヶ月あたり23,000円",
+    "course-contact-option-label": "4ヶ月コース",
+    "course-featured": false,
+    "course-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}
