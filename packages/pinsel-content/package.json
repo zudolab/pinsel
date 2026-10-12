@@ -1,0 +1,21 @@
+{
+  "name": "@pinsel/content",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@zudo-composer/component-contract": "git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0",
+    "preact": "^10.29.8",
+    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#d99e79097f7309ba9419325836d369809f284ad1"
+  }
+}
