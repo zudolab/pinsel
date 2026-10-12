@@ -68,7 +68,7 @@ export const PAGE_COPY_IDS: Readonly<Record<(typeof PAGE_ROUTES)[number] | typeo
 };
 
 /** `nav-link` entry id for a navigation href (`/lessons/` → `nav-lessons`). */
-export function navLinkId(href: (typeof NAV_HREFS)[number]): string {
+export function navLinkId(href: string): string {
   return `nav-${href.replaceAll("/", "")}`;
 }
 

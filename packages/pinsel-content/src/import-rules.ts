@@ -70,10 +70,11 @@ export function decideImport({ seedDigest, baselineDigest, currentDigest }: Impo
 }
 
 /**
- * Entry id scheme (all ids match Composer's `RECORD_ID_PATTERN`):
+ * Entry id scheme (ids match Composer's `RECORD_ID_PATTERN` and are unique
+ * per provider, not per model):
  * - singletons: the model id (`site-copy`, `lessons-copy`, ...)
- * - `page-copy`: route key (`home`, `lessons`, ..., `not-found`)
- * - `nav-link`: route segment (`lessons`, `notes`, ..., `contact`)
+ * - `page-copy`: `page-<route key>` (`page-home`, ..., `page-not-found`)
+ * - `nav-link`: `nav-<route segment>` (`nav-lessons`, ..., `nav-contact`)
  * - `course`: `consultation` | `two-month` | `four-month`
  * - `result-year`: `year-<YYYY>`; `result-entry`: `<yearId>-<NN>` (1-based, 2 digits, seed row order)
  * - `note`: the slug; `knowledge-card`: `card-<slug>`
@@ -83,8 +84,6 @@ export function decideImport({ seedDigest, baselineDigest, currentDigest }: Impo
  * - other ordered collections: `<modelId>-<NN>`
  * Entries the client creates later get `<modelId>-<ulid-like lowercase id>` from the host; ids are never reused.
  */
-export const ENTRY_ID_SCHEME_VERSION = 1;
-
 export function seedEntryId(prefix: string, index1: number): string {
   return `${prefix}-${String(index1).padStart(2, "0")}`;
 }

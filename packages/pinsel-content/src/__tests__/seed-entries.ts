@@ -170,7 +170,7 @@ export function buildSeedEntries(models: readonly ContentModelRecord[]): Content
   const headerLabels: Record<string, string> = { "/notes/": "Notes" };
   footerLinks.forEach((link, index) => {
     entries.push(
-      makeEntry(model("nav-link"), navLinkId(link.href as "/lessons/"), {
+      makeEntry(model("nav-link"), navLinkId(link.href), {
         href: link.href,
         label: link.label,
         headerLabel: headerLabels[link.href] ?? link.title,

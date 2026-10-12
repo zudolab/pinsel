@@ -59,7 +59,7 @@ export function fieldId(modelId: string, key: string): string {
   return `${modelId}-${kebab(key)}`;
 }
 
-function schemaOf(modelId: string, spec: FieldSpec): ContentValueSchema {
+function schemaOf(spec: FieldSpec): ContentValueSchema {
   switch (spec.kind) {
     case "choice":
       return { kind: "choice", options: spec.options.map((option) => ({ ...option })) };
@@ -87,7 +87,7 @@ export function defineModel(spec: ModelSpec): ContentModelRecord {
     key: field.key,
     label: field.label,
     required: field.required ?? true,
-    ...schemaOf(spec.id, field),
+    ...schemaOf(field),
   }));
   return {
     id: spec.id,

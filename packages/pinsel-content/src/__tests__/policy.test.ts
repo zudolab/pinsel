@@ -100,6 +100,11 @@ describe("authorizeContentMutation", () => {
     expect(codes(authorizeContentMutation({ kind: "reorder-entries", modelId: "course", entryIds: ["two-month", "consultation", "four-month"] }, { existingEntryIds: idsOf("course") }))).toEqual(["forbidden-operation"]);
   });
 
+  it("updates only existing entries when the current ids are known", () => {
+    expect(authorizeContentMutation({ kind: "update-entry", modelId: "legal-row", entryId: "legal-row-01", values: { value: "x" } }, { existingEntryIds: idsOf("legal-row") }).ok).toBe(true);
+    expect(codes(authorizeContentMutation({ kind: "update-entry", modelId: "legal-row", entryId: "legal-row-99", values: { value: "x" } }, { existingEntryIds: idsOf("legal-row") }))).toEqual(["invalid-request"]);
+  });
+
   it("deletes only existing entries of deletable collections", () => {
     expect(authorizeContentMutation({ kind: "delete-entry", modelId: "legal-row", entryId: "legal-row-08" }, { existingEntryIds: idsOf("legal-row") }).ok).toBe(true);
     expect(codes(authorizeContentMutation({ kind: "delete-entry", modelId: "legal-row", entryId: "legal-row-99" }, { existingEntryIds: idsOf("legal-row") }))).toEqual(["invalid-request"]);

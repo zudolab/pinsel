@@ -203,7 +203,13 @@ export function checkFieldValue(model: ContentModelRecord, field: ContentFieldDe
 export interface AuthorizationContext {
   policy?: HostContentPolicy;
   models?: readonly ContentModelRecord[];
-  /** Current entry ids of the request's model; required to authorize `reorder-entries` and `delete-entry`. */
+  /**
+   * Current entry ids in the request's scope: the whole model, or for scoped
+   * collections (`faq-item` per group, `result-entry` per year, `target-item`
+   * per page, `timeline-entry` per timeline) the ids of that scope. Required
+   * for `reorder-entries`; when given, `update-entry`/`delete-entry` must name
+   * one of them and `create-entry` must not.
+   */
   existingEntryIds?: readonly string[];
 }
 
@@ -277,6 +283,9 @@ export function authorizeContentMutation(request: ContentMutationRequest, contex
       }
       if (request.kind === "create-entry" && context.existingEntryIds?.includes(request.entryId)) {
         return fail({ code: "unsafe-id", message: `id "${request.entryId}" は既に存在します` });
+      }
+      if (request.kind === "update-entry" && context.existingEntryIds && !context.existingEntryIds.includes(request.entryId)) {
+        return fail({ code: "invalid-request", message: `id "${request.entryId}" は存在しません` });
       }
       const issues = checkValues(model, modelPolicy, request.values, request.kind === "create-entry");
       return issues.length > 0 ? fail(...issues) : { ok: true, request, model };
