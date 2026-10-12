@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { beforeEach, describe, expect, it } from "vitest";
 import { fieldId } from "@pinsel/content";
+import { PINSEL_PACK_ID, PINSEL_PACK_VERSION } from "@pinsel/ui";
 
 import { createApp } from "../src/app";
 import { createFixtureIdentity } from "../src/auth/identity";
@@ -53,7 +54,7 @@ describe("authoring API", () => {
     expect(site.body.baselineRevision).toBe(BASELINE.baselineRevision);
     expect(site.body.policy.models.course.fields).toContain(PRICE);
     expect(site.body.policy.models.course.fields).not.toContain(SLUG_LIKE);
-    expect(site.body.pack).toEqual({ packId: "pinsel", packVersion: "0.1.0" });
+    expect(site.body.pack).toEqual({ packId: PINSEL_PACK_ID, packVersion: PINSEL_PACK_VERSION });
     expect(site.body.preview).toEqual({ url: `${ORIGIN}/preview/`, origin: ORIGIN, route: "/" });
   });
 
