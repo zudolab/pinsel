@@ -6,7 +6,7 @@
 export type InlineNode = { kind: "text"; text: string } | { kind: "strong"; text: string } | { kind: "link"; href: string; text: string };
 
 export type BlockNode =
-  | { kind: "heading"; id: string; text: string }
+  | { kind: "heading"; id: string; text: string; children: InlineNode[] }
   | { kind: "paragraph"; children: InlineNode[] }
   | { kind: "list"; items: InlineNode[][] };
 
@@ -50,7 +50,8 @@ export function parseMarkdown(markdown: string): BlockNode[] {
   let headingCount = 0;
   const flush = () => {
     if (paragraph.length > 0) {
-      blocks.push({ kind: "paragraph", children: parseInline(paragraph.join("\n")) });
+      // Source line breaks inside a paragraph are dropped, as the approved notes render them.
+      blocks.push({ kind: "paragraph", children: parseInline(paragraph.join("")) });
       paragraph = [];
     }
     if (list) {
@@ -68,7 +69,8 @@ export function parseMarkdown(markdown: string): BlockNode[] {
     if (heading) {
       flush();
       headingCount += 1;
-      blocks.push({ kind: "heading", id: `section-${headingCount}`, text: heading[1]!.trim() });
+      const text = heading[1]!.trim();
+      blocks.push({ kind: "heading", id: `section-${headingCount}`, text, children: parseInline(text) });
       continue;
     }
     const item = /^- (.*)$/.exec(line);

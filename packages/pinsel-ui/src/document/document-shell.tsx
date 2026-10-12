@@ -8,6 +8,12 @@ export interface DocumentShellProps {
   robots: string;
   /** Extra `<head>` children: the stylesheet and, for the private preview, its protocol client. */
   head?: Child;
+  /**
+   * The visitor client scripts (`<script type="module" src={clientScript(…)}>`
+   * from the site layout), placed last in `<head>` like the prototype's
+   * deferred scripts. The only place a component tree carries a script.
+   */
+  scripts?: Child;
   children: Child;
 }
 
@@ -33,6 +39,7 @@ export function DocumentShell(props: DocumentShellProps): Child {
         <link rel="icon" href="/favicon.svg" />
         <link rel="stylesheet" href="/assets/fonts/fonts.css" />
         {props.head ?? null}
+        {props.scripts ?? null}
       </head>
       <body class={bodyClassForPathname(props.pathname)}>{props.children}</body>
     </html>

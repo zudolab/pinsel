@@ -11,7 +11,9 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "gen:art": "node scripts/gen-art-sources.mjs",
+    "check:art": "node scripts/gen-art-sources.mjs --check"
   },
   "dependencies": {
     "@takazudo/zfb": "4.3.2",
