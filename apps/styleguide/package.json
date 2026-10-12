@@ -4,13 +4,17 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "sync-assets": "node scripts/sync-assets.mjs",
+    "predev": "node scripts/sync-assets.mjs",
     "dev": "zfb dev",
+    "prebuild": "node scripts/sync-assets.mjs",
     "build": "zfb build",
     "gen-registry": "zudo-sg gen-registry",
     "gen-token-manifest": "zudo-sg gen-token-manifest",
+    "gen-story-shims": "node scripts/gen-story-shims.mjs",
     "check:generated": "node scripts/gen-story-shims.mjs --check && zudo-sg gen-registry --check && zudo-sg gen-token-manifest --check",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "gen-story-shims": "node scripts/gen-story-shims.mjs"
+    "check": "pnpm check:generated && pnpm typecheck"
   },
   "dependencies": {
     "@pinsel/ui": "workspace:*",
