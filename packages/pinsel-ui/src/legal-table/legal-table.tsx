@@ -19,13 +19,15 @@ export interface LegalTableProps {
   summary: string;
   /** `pinsel.legal-row` children (eight in the approved page). */
   rows?: readonly unknown[];
+  /** Static open state for stories. */
+  open?: boolean;
 }
 
 /** The 特定商取引法に基づく表記 disclosure, `details#legal`, closed by default. */
 export function LegalTable(props: LegalTableProps): Child {
   return (
     <section class="container">
-      <details class="legal" id="legal">
+      <details class="legal" id="legal" open={props.open ?? false}>
         <summary>{props.summary}</summary>
         <table>
           <tbody>{(props.rows ?? []) as Child}</tbody>

@@ -36,6 +36,12 @@ export interface ContactFormProps {
   backLabel: string;
   /** `pinsel.course-option` children, in `?course=N` order (1 = 有料進路相談, 2 = 2ヶ月, 3 = 4ヶ月). */
   courseOptions?: readonly unknown[];
+  /**
+   * Static rendering of the states the visitor script produces (stories and
+   * review only; never authored): `invalid` = every required field empty
+   * after submit, `error` = the failure banner, `success` = the thank-you panel.
+   */
+  previewState?: "idle" | "invalid" | "error" | "success";
 }
 
 interface FieldProps {
@@ -43,9 +49,10 @@ interface FieldProps {
   label: string;
   marker: string;
   control: Child;
+  error?: string;
 }
 
-function Field({ name, label, marker, control }: FieldProps): Child {
+function Field({ name, label, marker, control, error }: FieldProps): Child {
   return (
     <div class="form-field">
       <label for={name}>
@@ -53,7 +60,9 @@ function Field({ name, label, marker, control }: FieldProps): Child {
         <span>{marker}</span>
       </label>
       {control}
-      <p class="form-error" id={`${name}-error`} hidden></p>
+      <p class="form-error" id={`${name}-error`} hidden={!error}>
+        {error ?? ""}
+      </p>
     </div>
   );
 }
@@ -65,6 +74,12 @@ function Field({ name, label, marker, control }: FieldProps): Child {
  * messages from the `data-*` attributes on the form.
  */
 export function ContactForm(props: ContactFormProps): Child {
+  const state = props.previewState ?? "idle";
+  const missing = (name: string, label: string) =>
+    state === "invalid" ? { error: props.valueMissingMessage.replaceAll("{label}", label), invalid: { "aria-invalid": "true", "aria-describedby": `${name}-error` } } : { error: undefined, invalid: {} };
+  const name = missing("name", props.nameLabel);
+  const email = missing("email", props.emailLabel);
+  const message = missing("message", props.messageLabel);
   return (
     <div class="contact-panel">
       <form
@@ -72,15 +87,16 @@ export function ContactForm(props: ContactFormProps): Child {
         class="contact-form"
         novalidate
         aria-label={props.formAriaLabel}
+        hidden={state === "success"}
         data-submitting-label={props.submittingLabel}
         data-value-missing-message={props.valueMissingMessage}
         data-email-format-message={props.emailFormatMessage}
       >
-        <p class="form-error" role="alert" data-form-error="" hidden>
+        <p class="form-error" role="alert" data-form-error="" hidden={state !== "error"}>
           {props.errorMessage}
         </p>
-        <Field name="name" label={props.nameLabel} marker={props.requiredLabel} control={<input id="name" name="name" type="text" autocomplete="name" required />} />
-        <Field name="email" label={props.emailLabel} marker={props.requiredLabel} control={<input id="email" name="email" type="email" autocomplete="email" required />} />
+        <Field name="name" label={props.nameLabel} marker={props.requiredLabel} error={name.error} control={<input id="name" name="name" type="text" autocomplete="name" required {...name.invalid} />} />
+        <Field name="email" label={props.emailLabel} marker={props.requiredLabel} error={email.error} control={<input id="email" name="email" type="email" autocomplete="email" required {...email.invalid} />} />
         <Field
           name="course"
           label={props.courseLabel}
@@ -92,7 +108,7 @@ export function ContactForm(props: ContactFormProps): Child {
             </select>
           }
         />
-        <Field name="message" label={props.messageLabel} marker={props.requiredLabel} control={<textarea id="message" name="message" rows={6} required></textarea>} />
+        <Field name="message" label={props.messageLabel} marker={props.requiredLabel} error={message.error} control={<textarea id="message" name="message" rows={6} required {...message.invalid}></textarea>} />
         <p class="prototype-message">{props.previewNotice}</p>
         <button type="submit" class="button button--primary">
           <span class="button__label">
@@ -102,7 +118,7 @@ export function ContactForm(props: ContactFormProps): Child {
           <Icon name="arrow-right" class="button__arrow" />
         </button>
       </form>
-      <div class="form-success" tabindex={-1} hidden>
+      <div class="form-success" tabindex={-1} hidden={state !== "success"}>
         <p class="eyebrow">{props.successPreviewEyebrow}</p>
         <h2>{props.successTitle}</h2>
         <p>{props.successBody}</p>

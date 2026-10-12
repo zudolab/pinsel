@@ -11,6 +11,9 @@ export interface SiteHeaderProps {
   /** Rendered `NavLink`s, six in the approved design (no 料金 item). */
   nav: Child;
   pathname?: string;
+  /** Static initial states for stories; the visitor scripts own them at runtime. */
+  menuOpen?: boolean;
+  motionOn?: boolean;
 }
 
 /**
@@ -24,22 +27,22 @@ export function SiteHeader(props: SiteHeaderProps): Child {
     <div class="site-header">
       <header class="container site-header__inner">
         <Brand word={props.brandWord} sub={props.brandSub} />
-        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation">
+        <button class="menu-toggle" type="button" aria-expanded={props.menuOpen ? "true" : "false"} aria-controls="site-navigation">
           <span>メニュー</span>
           <Icon name="menu" class="menu-open-icon" />
           <Icon name="close" class="menu-close-icon" />
         </button>
-        <nav id="site-navigation" class="site-nav" aria-label="メインメニュー">
+        <nav id="site-navigation" class="site-nav" aria-label="メインメニュー" data-open={props.menuOpen ? "" : null}>
           {props.nav}
           <a class="site-nav__contact button--primary" href="/contact/" aria-current={isCurrentSection(props.pathname, "/contact/") ? "page" : null}>
             <Icon name="mail" />
             <span>{props.contactLabel}</span>
           </a>
         </nav>
-        <button class="motion-toggle" type="button" aria-label="装飾の動きと色の変化" aria-pressed="false" data-motion-toggle="">
+        <button class="motion-toggle" type="button" aria-label="装飾の動きと色の変化" aria-pressed={props.motionOn ? "true" : "false"} data-motion-toggle="">
           <Icon name="pause" class="motion-running-icon" />
           <Icon name="play" class="motion-paused-icon" />
-          <span data-motion-label="">動き OFF</span>
+          <span data-motion-label="">{props.motionOn ? "動き ON" : "動き OFF"}</span>
         </button>
       </header>
     </div>

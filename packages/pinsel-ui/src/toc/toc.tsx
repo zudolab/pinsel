@@ -10,6 +10,8 @@ export interface TocItemProps {
   /** Injected by the renderer: drives the `01` numbering and positional targets. */
   position?: SlotPosition;
   index?: number;
+  /** Static `aria-current="location"` for stories; the visitor script tracks it at runtime. */
+  current?: boolean;
 }
 
 export const twoDigits = (index: number): string => String(index).padStart(2, "0");
@@ -20,7 +22,7 @@ export function TocItem(props: TocItemProps): Child {
   const target = props.target || `${props.prefix}${index}`;
   return (
     <li>
-      <a href={`#${target}`}>
+      <a href={`#${target}`} aria-current={props.current ? "location" : null}>
         <span aria-hidden="true">{twoDigits(index)}</span>
         {props.label}
       </a>
