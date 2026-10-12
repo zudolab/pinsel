@@ -9,6 +9,8 @@ import { BASELINE } from "../src/site/baseline";
 
 export const ORIGIN = "https://authoring.example";
 export const PRICE = fieldId("course", "price");
+/** The committed two-month price (the migrated ¥50,000 until a publication changes it). */
+export const COMMITTED_PRICE = BASELINE.project.providers.content[0]!.entries.find((entry) => entry.id === "two-month")!.values[PRICE] as string;
 
 export type Handler = ReturnType<typeof createApp>;
 export type TestEnv = typeof env & { PUBLISHER_PROVIDER?: string; PROMOTION_POLICY?: string };
