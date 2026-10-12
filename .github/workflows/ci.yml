@@ -99,14 +99,35 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-  # A published content snapshot exists; implemented by the publication sub-issue.
+  # A published content snapshot exists (content/snapshot.json): the tree carries
+  # CMS-edited content, so the snapshot-based checks replace the historical
+  # strict checker. The full PR gate is .github/workflows/content-validate.yml;
+  # here (pushes, and PRs into other branches) the committed entries are checked
+  # against this build. The record may name an earlier publication's pins.
   publication-validate:
     needs: build
     if: needs.build.outputs.snapshot == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Snapshot checker and invariants
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+      - name: Enable corepack (pnpm from packageManager)
         run: |
-          echo "::error::publication-validate is not implemented yet (publication sub-issue)."
-          exit 1
+          corepack enable
+          test "$(pnpm --version)" = "11.5.2"
+      - run: pnpm install --frozen-lockfile
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: site-dist
+          path: apps/site/dist
+      - name: Snapshot record
+        run: node scripts/publication/check-snapshot.mjs record --any-identity
+      - name: Publication checker against the committed entries
+        run: node scripts/content/check-publication.mjs --dist apps/site/dist
+      - name: Public output exclusions
+        run: node scripts/publication/check-public-output.mjs --dist apps/site/dist
