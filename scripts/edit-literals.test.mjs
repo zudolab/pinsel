@@ -13,6 +13,7 @@ const SOURCES = ["apps/authoring-worker/test", "apps/editor/src/__tests__", "tes
 const COURSE_IDS = ["consultation", "two-month", "four-month"];
 const YEN = /¥\d{1,3}(?:,\d{3})+/g;
 
+/** @param {string} dir @returns {string[]} */
 function files(dir) {
   return readdirSync(dir).flatMap((name) => {
     const full = path.join(dir, name);
@@ -21,6 +22,7 @@ function files(dir) {
 }
 
 function testLiterals() {
+  /** @type {Set<string>} */
   const found = new Set();
   for (const file of SOURCES.flatMap((dir) => files(path.join(root, dir)))) {
     for (const match of readFileSync(file, "utf8").matchAll(YEN)) found.add(match[0]);
@@ -34,6 +36,7 @@ function migratedPrices() {
   return new Map(COURSE_IDS.map((id, index) => [id, pricing[index].price]));
 }
 
+/** @param {string} id */
 function committedPrice(id) {
   const entry = JSON.parse(readFileSync(path.join(root, "content/entries/course", `${id}.json`), "utf8"));
   return entry.values["course-price"];
