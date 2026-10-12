@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "card-exam-schedule",
+  "modelId": "knowledge-card",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "knowledge-card-note": {
+      "providerId": "content-filesystem",
+      "modelId": "note",
+      "recordId": "exam-schedule"
+    },
+    "knowledge-card-title": "ドイツ美大受験の時期とスケジュール",
+    "knowledge-card-description": "受験スケジュールと準備開始の目安",
+    "knowledge-card-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

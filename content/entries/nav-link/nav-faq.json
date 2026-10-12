@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "nav-faq",
+  "modelId": "nav-link",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "nav-link-href": "/faq/",
+    "nav-link-label": "FAQ",
+    "nav-link-header-label": "よくある質問",
+    "nav-link-footer-title": "よくある質問",
+    "nav-link-footer-description": "レッスンや受験に関するQ&A",
+    "nav-link-order": 6
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

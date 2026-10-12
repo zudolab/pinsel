@@ -35,6 +35,7 @@ jobs:
       - run: pnpm assets:sync
       - run: pnpm content:assemble
       - run: pnpm content:project
+      - run: pnpm content:check
       # The site build precedes `pnpm check`: the Worker tests compare their in-workerd
       # projection against apps/site/dist/index.html (Gate-1 parity).
       - run: pnpm build:site
@@ -48,6 +49,7 @@ jobs:
       - run: pnpm check:boundaries
       - run: pnpm worker:dry-run
       - run: pnpm worker:bundle:check
+      - run: pnpm worker:check-preview
       - run: pnpm worker:types:check
       - name: No-JS home page (Playwright, chromium)
         run: |

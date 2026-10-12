@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "feature-card-03",
+  "modelId": "feature-card",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "feature-card-title": "実体験に基づく指導",
+    "feature-card-description": "ドイツでの10年以上の留学・制作・アートスクール経営の経験をもとにした実践的なアドバイスを提供します。ベルリンで6年間Atelier HY+を運営し、多国籍の学生をサポートしてきた経験が指導の土台です。",
+    "feature-card-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

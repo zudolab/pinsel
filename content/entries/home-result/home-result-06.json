@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "home-result-06",
+  "modelId": "home-result",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "home-result-year-label": "2024",
+    "home-result-school": "ウィーン応用美術大学",
+    "home-result-detail": "Bildende Kunst",
+    "home-result-order": 6
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

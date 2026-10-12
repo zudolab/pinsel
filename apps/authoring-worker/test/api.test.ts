@@ -1,6 +1,7 @@
 import { env } from "cloudflare:workers";
 import { beforeEach, describe, expect, it } from "vitest";
 import { fieldId } from "@pinsel/content";
+import { PINSEL_PACK_ID, PINSEL_PACK_VERSION } from "@pinsel/ui";
 
 import { createApp } from "../src/app";
 import { createFixtureIdentity } from "../src/auth/identity";
@@ -53,7 +54,7 @@ describe("authoring API", () => {
     expect(site.body.baselineRevision).toBe(BASELINE.baselineRevision);
     expect(site.body.policy.models.course.fields).toContain(PRICE);
     expect(site.body.policy.models.course.fields).not.toContain(SLUG_LIKE);
-    expect(site.body.pack).toEqual({ packId: "pinsel", packVersion: "0.1.0" });
+    expect(site.body.pack).toEqual({ packId: PINSEL_PACK_ID, packVersion: PINSEL_PACK_VERSION });
     expect(site.body.preview).toEqual({ url: `${ORIGIN}/preview/`, origin: ORIGIN, route: "/" });
   });
 
@@ -86,9 +87,9 @@ describe("authoring API", () => {
     expect(order.body.refusal.code).toBe("forbidden");
     const unknown = await call(handler, "/api/v1/content/course/two-month", { method: "PUT", headers: { "idempotency-key": "op-unknown" }, json: { expectedRevision: draft.draftRevision, expectedBaselineRevision: draft.baselineRevision, values: { "course-nope": "x" } } });
     expect(unknown.body.refusal.code).toBe("unknown-field");
-    const model = await call(handler, "/api/v1/content/site-copy/site-copy", { method: "PUT", headers: { "idempotency-key": "op-model" }, json: { expectedRevision: draft.draftRevision, expectedBaselineRevision: draft.baselineRevision, values: { "site-copy-hero-label": "x" } } });
-    // `site-copy` is policy-listed but not part of the Gate-1 snapshot: unknown-model, nothing written.
-    expect(model.body.refusal.code).toBe("unknown-model");
+    const model = await call(handler, "/api/v1/content/no-such-model/x", { method: "PUT", headers: { "idempotency-key": "op-model" }, json: { expectedRevision: draft.draftRevision, expectedBaselineRevision: draft.baselineRevision, values: { "no-such-model-label": "x" } } });
+    // Every policy-listed model is in the full snapshot; a model outside the policy is forbidden, nothing written.
+    expect(model.body.refusal.code).toBe("forbidden");
     const create = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-create", request: { ...putPrice(draft.draftRevision, "¥1", "six-month"), kind: "create-entry" }, expectedBaselineRevision: draft.baselineRevision } });
     expect(create.body.refusal.code).toBe("forbidden");
     for (const path of ["/composer", "/mapping/x", "/sitemapper", "/api/v1/models", "/api/v1/upload", "/content/schema"]) {

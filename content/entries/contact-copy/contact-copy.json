@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "contact-copy",
+  "modelId": "contact-copy",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "contact-copy-steps-title": "お申し込みの流れ",
+    "contact-copy-legal-summary": "特定商取引法に基づく表記",
+    "contact-copy-form-aria-label": "お問い合わせフォーム",
+    "contact-copy-name-label": "お名前",
+    "contact-copy-email-label": "メールアドレス",
+    "contact-copy-course-label": "ご希望のコース",
+    "contact-copy-course-undecided-option": "未定",
+    "contact-copy-message-label": "ご相談内容",
+    "contact-copy-required-label": "必須",
+    "contact-copy-optional-label": "任意",
+    "contact-copy-submit-label": "送信する",
+    "contact-copy-submitting-label": "送信中...",
+    "contact-copy-success-title": "送信ありがとうございます",
+    "contact-copy-success-body": "通常2〜3営業日以内にご返信いたします。しばらくお待ちください。",
+    "contact-copy-error-message": "送信に失敗しました。時間をおいて再度お試しください。",
+    "contact-copy-back-label": "入力画面に戻る",
+    "contact-copy-value-missing-message": "{label}を入力してください。",
+    "contact-copy-email-format-message": "メールアドレスの形式をご確認ください。",
+    "contact-copy-preview-notice": "デザイン確認用のプレビューです。入力内容は送信されません。",
+    "contact-copy-success-preview-eyebrow": "送信完了画面 · プレビュー",
+    "contact-copy-success-preview-notice": "プレビューのため、実際のお問い合わせは送信されていません。"
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

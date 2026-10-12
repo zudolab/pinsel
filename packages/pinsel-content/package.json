@@ -12,7 +12,10 @@
     "test": "vitest run",
     "content:assemble": "tsx --tsconfig tsconfig.scripts.json src/site/assemble.ts",
     "content:project": "tsx --tsconfig tsconfig.scripts.json src/site/project.ts",
-    "content:render-home": "tsx --tsconfig tsconfig.scripts.json src/site/render-home.ts"
+    "content:render-home": "tsx --tsconfig tsconfig.scripts.json src/site/render-home.ts",
+    "content:import": "node ../../scripts/content/import-seed.mjs",
+    "content:validate": "tsx --tsconfig tsconfig.scripts.json src/site/validate.ts",
+    "content:check": "tsx --tsconfig tsconfig.scripts.json src/site/check.ts"
   },
   "dependencies": {
     "@pinsel/ui": "workspace:*",

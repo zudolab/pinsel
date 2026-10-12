@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-fees-01",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-fees"
+    },
+    "faq-item-question": "受講料の支払い方法を教えてください。",
+    "faq-item-answer": "お申し込み確定後、請求書をお送りいたします。お支払いは銀行振込でお願いしております。コースの詳細や料金については、お問い合わせいただいた後にご案内いたします。",
+    "faq-item-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

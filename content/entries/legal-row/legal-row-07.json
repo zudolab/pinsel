@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "legal-row-07",
+  "modelId": "legal-row",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "legal-row-key": "お支払方法",
+    "legal-row-value": "銀行振り込み",
+    "legal-row-order": 7
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

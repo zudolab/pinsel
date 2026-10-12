@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "home-01",
+  "modelId": "target-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "target-item-page": "home",
+    "target-item-text": "ドイツ美大に興味があるが、何から始めればいいかわからない",
+    "target-item-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

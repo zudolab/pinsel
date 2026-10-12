@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "contact-step-04",
+  "modelId": "contact-step",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "contact-step-title": "お支払い",
+    "contact-step-description": "お申し込み確定後、請求書をお送りします",
+    "contact-step-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

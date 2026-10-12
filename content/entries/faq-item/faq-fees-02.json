@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-fees-02",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-fees"
+    },
+    "faq-item-question": "キャンセルや返金は可能ですか？",
+    "faq-item-answer": "契約成立日から2週間後まで返金を受け付けております。詳しくはお問い合わせページの特定商取引法に基づく表記をご確認ください。",
+    "faq-item-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

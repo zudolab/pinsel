@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "legal-row-06",
+  "modelId": "legal-row",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "legal-row-key": "価格",
+    "legal-row-value": "HP記載の税込価格",
+    "legal-row-order": 6
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

@@ -10,6 +10,17 @@ export function entryFilePath(modelId: string, entryId: string): string {
   return `${CONTENT_ENTRIES_DIR}/${modelId}/${entryId}.json`;
 }
 
+export const CONTENT_SNAPSHOT_PATH = "content/snapshot.json";
+
+/** The only repository paths a publication may write: entry files and the snapshot record. */
+export const PINSEL_PUBLISH_ALLOWLIST = [`${CONTENT_ENTRIES_DIR}/**`, CONTENT_SNAPSHOT_PATH] as const;
+
+/** `content/snapshot.json` or `content/entries/<modelId>/<entryId>.json` with id-shaped segments; nothing else. */
+export function isPublishablePath(path: string): boolean {
+  if (path === CONTENT_SNAPSHOT_PATH) return true;
+  return /^content\/entries\/[a-z0-9][a-z0-9-]*\/[A-Za-z0-9][A-Za-z0-9._-]*\.json$/.test(path) && !path.includes("..");
+}
+
 export function baselineKey(modelId: string, entryId: string): string {
   return `${modelId}/${entryId}`;
 }
@@ -25,6 +36,8 @@ export interface ContentBaselineEntry {
   modelId: string;
   entryId: string;
   digest: ValuesDigest;
+  /** Same digest over only the fields the server policy never lets the client write (`page-copy.route`, `nav-link.href`, `note.slug`, `course.order`, …). */
+  protectedDigest: ValuesDigest;
 }
 
 export interface ContentBaseline {
@@ -33,6 +46,8 @@ export interface ContentBaseline {
   source: { repository: string; pr: number; head: string };
   /** sha256 of the seed `content.json` the digests were derived from. */
   seedContentDigest: string;
+  /** sha256 of the canonical `entries` map below: one digest for the whole imported set. */
+  entriesDigest: string;
   /** ISO timestamp of the import run that last advanced this baseline. */
   importedAt: string;
   /** Keyed by `baselineKey(modelId, entryId)`. */

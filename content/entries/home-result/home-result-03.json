@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "home-result-03",
+  "modelId": "home-result",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "home-result-year-label": "2025",
+    "home-result-school": "ハンブルク美術大学",
+    "home-result-detail": "Design",
+    "home-result-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

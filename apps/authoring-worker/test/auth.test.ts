@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { SignJWT, createLocalJWKSet, exportJWK, generateKeyPair } from "jose";
 
+import { env } from "cloudflare:workers";
+
+import { createApp } from "../src/app";
 import { ACCESS_ASSERTION_HEADER, createAccessIdentity } from "../src/auth/identity";
 
 const TEAM = "https://pinsel.cloudflareaccess.com";
@@ -11,14 +14,15 @@ const jwk = { ...(await exportJWK(publicKey)), kid: "k1", alg: "RS256", use: "si
 const jwks = createLocalJWKSet({ keys: [jwk] });
 const { privateKey: strangerKey } = await generateKeyPair("RS256");
 
-async function token(claims: { email?: string; iss?: string; aud?: string; exp?: string; key?: CryptoKey } = {}) {
-  return new SignJWT({ email: claims.email ?? "editor@example.test" })
+async function token(claims: { email?: string; iss?: string; aud?: string; exp?: string | null; nbf?: string; key?: CryptoKey } = {}) {
+  const jwt = new SignJWT({ email: claims.email ?? "editor@example.test" })
     .setProtectedHeader({ alg: "RS256", kid: "k1" })
     .setIssuer(claims.iss ?? TEAM)
     .setAudience(claims.aud ?? AUD)
-    .setIssuedAt()
-    .setExpirationTime(claims.exp ?? "10m")
-    .sign(claims.key ?? privateKey);
+    .setIssuedAt();
+  if (claims.exp !== null) jwt.setExpirationTime(claims.exp ?? "10m");
+  if (claims.nbf) jwt.setNotBefore(claims.nbf);
+  return jwt.sign(claims.key ?? privateKey);
 }
 
 function request(assertion?: string) {
@@ -41,6 +45,26 @@ describe("Cloudflare Access identity", () => {
     expect(await identity(request(await token({ key: strangerKey })))).toMatchObject({ ok: false, status: 403, code: "invalid-assertion" });
     expect(await identity(request("not-a-jwt"))).toMatchObject({ ok: false, status: 403, code: "invalid-assertion" });
     expect(await identity(request(await token({ email: "stranger@example.test" })))).toMatchObject({ ok: false, status: 403, code: "not-allowed" });
+  });
+
+  it("requires exp and honours nbf", async () => {
+    expect(await identity(request(await token({ exp: null })))).toMatchObject({ ok: false, status: 403, code: "invalid-assertion" });
+    expect(await identity(request(await token({ nbf: "5m" })))).toMatchObject({ ok: false, status: 403, code: "invalid-assertion" });
+  });
+
+  it("answers API calls with JSON and navigations with a page, for every route including assets", async () => {
+    const app = createApp({ identity });
+    for (const path of ["/api/v1/draft", "/api/v1/publications", "/api/v1/baseline"]) {
+      const response = await app.fetch(new Request(`https://authoring.example${path}`), env);
+      expect(response.status, path).toBe(401);
+      expect(await response.json()).toMatchObject({ status: "unauthorized", code: "missing-assertion" });
+    }
+    for (const path of ["/editor/", "/preview/", "/assets/fonts/fonts.css", "/admin/seed"]) {
+      const response = await app.fetch(new Request(`https://authoring.example${path}`, { headers: { [ACCESS_ASSERTION_HEADER]: await token({ aud: "other" }) } }), env);
+      expect(response.status, path).toBe(403);
+      expect(response.headers.get("content-type")).toContain("text/html");
+      expect(await response.text()).toContain("invalid-assertion");
+    }
   });
 
   it("fails closed with 503 when any launch input is missing", async () => {

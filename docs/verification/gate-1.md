@@ -5,6 +5,8 @@ One realistic record — the `course` collection rendered as the home `PricingCa
 - Pinsel: branch `pinsel-site-cms/gate1`, commit `489953dd5afd7a9d7bb72d75a9dd96cf9040c266` (base `base/pinsel-site-cms` @ `9ab6d86`).
 - Composer: `zudo-composer@git+https://github.com/Takazudo/zudo-composer.git#7ca114a3ed7dcef10f5420dcc1894ea7125e4da6` (#903 milestone 2, draft PR Takazudo/zudo-composer#904, **no upstream change was needed**), `@zudo-composer/component-contract@…#c0b452da075b66757c60bd0d721a47062d4354d0`.
 
+Superseded since Gate-1 (wave-4 reconcile, `pinsel-site-cms/reconcile-w4`): the pack is `pinsel@0.2.0` and implements the full component contract of `packages/pinsel-content/src/site/component-contract.ts` (every page root is a `pinsel.site-frame@2` with header/main/footer slots; no global template). The canonical project digest is `a56eb8f7408c…` and the plan of all 14 routes is pinned by `tests/golden/routes.snapshot.json` (`pnpm content:check`). The `0.1.0`, `229b6fa5…` and one-route figures below are the Gate-1 record.
+
 ## Verdict per leg
 
 | Leg | Verdict | Proof |

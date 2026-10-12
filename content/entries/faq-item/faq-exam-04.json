@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-exam-04",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-exam"
+    },
+    "faq-item-question": "複数の大学を同時に受験することは可能ですか？",
+    "faq-item-answer": "はい、可能です。出願時期が重ならない限り、複数の大学に出願することができます。むしろ、合格の可能性を高めるために複数校の受験をお勧めしています。レッスンでは、志望校の選定から各大学に合わせたマッペの調整までサポートいたします。",
+    "faq-item-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

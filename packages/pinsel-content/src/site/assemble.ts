@@ -3,13 +3,16 @@
 // (the baseline identity the Worker seeds and the editor is built for).
 import { execFile } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
-import { pinselPack } from "@pinsel/ui";
+import type { TrustedComponentPack } from "@zudo-composer/component-contract";
 import { serializeSiteProject, validateSiteProject } from "zudo-composer/content";
 import { sha256Hex } from "zudo-composer/host-storage";
+import type { ContentEntryRecord } from "zudo-composer/site-project";
 
 import { readContentEntries, BASELINE_PATH, REPO_ROOT, SITE_PROJECT_DIR, SITE_PROJECT_PATH } from "./entries";
-import { buildGate1Project } from "./proof";
+import { structurePack } from "./pack";
+import { buildPinselSite } from "./structure";
 
 export interface AssembledBaseline {
   /** Git commit the content tree was assembled from (`PINSEL_BASELINE_REVISION` overrides). */
@@ -24,12 +27,16 @@ async function gitHead(): Promise<string> {
   return stdout.trim();
 }
 
-export async function assemble(): Promise<AssembledBaseline> {
-  const entries = await readContentEntries();
-  const { project } = buildGate1Project(entries);
-  const validated = validateSiteProject(project, { componentPack: pinselPack.manifest });
+/** Entries + structure → the canonical site-project.json text; throws on any validation diagnostic. */
+export function assembleProjectText(entries: readonly ContentEntryRecord[], pack: TrustedComponentPack): string {
+  const { project } = buildPinselSite(entries, pack);
+  const validated = validateSiteProject(project, { componentPack: pack.manifest });
   if (!validated.ok) throw new Error(`site project is invalid:\n${validated.diagnostics.map((d) => `  ${d.code} ${d.path}: ${d.message}`).join("\n")}`);
-  const text = serializeSiteProject(validated.project);
+  return serializeSiteProject(validated.project);
+}
+
+export async function assemble(): Promise<AssembledBaseline> {
+  const text = assembleProjectText(await readContentEntries(), structurePack());
   const baseline: AssembledBaseline = {
     baselineRevision: process.env.PINSEL_BASELINE_REVISION ?? (await gitHead()),
     projectDigest: await sha256Hex(text),
@@ -41,5 +48,7 @@ export async function assemble(): Promise<AssembledBaseline> {
   return baseline;
 }
 
-const baseline = await assemble();
-console.log(`content:assemble wrote ${SITE_PROJECT_PATH} (digest ${baseline.projectDigest.slice(0, 12)}…, baseline ${baseline.baselineRevision})`);
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+  const baseline = await assemble();
+  console.log(`content:assemble wrote ${SITE_PROJECT_PATH} (digest ${baseline.projectDigest.slice(0, 12)}…, baseline ${baseline.baselineRevision})`);
+}

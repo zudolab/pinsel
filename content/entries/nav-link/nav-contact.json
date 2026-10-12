@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "nav-contact",
+  "modelId": "nav-link",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "nav-link-href": "/contact/",
+    "nav-link-label": "Contact",
+    "nav-link-header-label": "お問い合わせ",
+    "nav-link-footer-title": "お問い合わせ",
+    "nav-link-footer-description": "まずはお気軽にご相談ください",
+    "nav-link-order": 7
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-exam-02",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-exam"
+    },
+    "faq-item-question": "マッペ（ポートフォリオ）とは何ですか？",
+    "faq-item-answer": "マッペ（Mappe）はドイツ語でポートフォリオのことです。ドイツの美術大学受験では、自分の作品をまとめたマッペの提出が求められます。絵画、彫刻、デザインなど志望する分野に応じた作品を20〜40点程度まとめ、自分の芸術的な方向性や技術力を示します。大学や学科によって求められる内容は異なります。",
+    "faq-item-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

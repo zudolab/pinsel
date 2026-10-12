@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-lessons-02",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-lessons"
+    },
+    "faq-item-question": "レッスンの頻度はどのくらいですか？",
+    "faq-item-answer": "コースにより異なりますが、基本的には週1回〜2週に1回程度です。受験直前は頻度を上げることも可能です。レッスン以外でも、メールでの質問やマッペの添削を随時受け付けています。",
+    "faq-item-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "about-career-01",
+  "modelId": "timeline-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "timeline-entry-timeline": "about-career",
+    "timeline-entry-year": "2010〜2014",
+    "timeline-entry-text": "ミュンヘン滞在",
+    "timeline-entry-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

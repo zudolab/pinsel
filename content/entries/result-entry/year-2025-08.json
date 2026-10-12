@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2025-08",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2025"
+    },
+    "result-entry-school": "マインツ美術大学",
+    "result-entry-department": "Freie Bildende Kunst: Malerei",
+    "result-entry-url": "https://kunsthochschule-mainz.de/",
+    "result-entry-order": 8
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

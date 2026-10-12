@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "lessons-career-02",
+  "modelId": "timeline-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "timeline-entry-timeline": "lessons-career",
+    "timeline-entry-year": "2006〜2010",
+    "timeline-entry-text": "東京芸術大学 美術学部 絵画科 油画専攻 卒業",
+    "timeline-entry-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

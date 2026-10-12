@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-german-03",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-german"
+    },
+    "faq-item-question": "ドイツ語がまったくできなくても受講を始められますか？",
+    "faq-item-answer": "はい、始められます。レッスンはすべて日本語で行いますので、ドイツ語の知識がなくても問題ありません。受験準備と並行してドイツ語の学習を進めていくことをお勧めしています。必要なドイツ語レベルや学習の進め方についてもアドバイスいたします。",
+    "faq-item-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

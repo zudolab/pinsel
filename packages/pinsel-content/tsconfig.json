@@ -5,7 +5,8 @@
       "node"
     ],
     "jsx": "react-jsx",
-    "jsxImportSource": "@takazudo/zfb/zudo-react"
+    "jsxImportSource": "@takazudo/zfb/zudo-react",
+    "allowImportingTsExtensions": true
   },
   "include": [
     "src"

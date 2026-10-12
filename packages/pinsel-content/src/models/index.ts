@@ -73,6 +73,17 @@ export const PINSEL_MODELS = [
 
 export type PinselModelId = (typeof PINSEL_MODELS)[number]["id"];
 
+/**
+ * Singletons in meaning: collection-kind models with exactly one entry whose
+ * id is the model id, and no `order` (see singletons.ts for why they are not
+ * `single`).
+ */
+export const SINGLE_ENTRY_MODEL_IDS = ["site-copy", "lessons-copy", "about-copy", "instructor-profile", "contact-copy"] as const satisfies readonly PinselModelId[];
+
+export function isSingleEntryModel(modelId: string): boolean {
+  return (SINGLE_ENTRY_MODEL_IDS as readonly string[]).includes(modelId);
+}
+
 export const PINSEL_MODEL_IDS = PINSEL_MODELS.map((model) => model.id) as PinselModelId[];
 
 const byId = new Map<string, ContentModelRecord>(PINSEL_MODELS.map((model) => [model.id, model]));

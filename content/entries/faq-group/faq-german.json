@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-german",
+  "modelId": "faq-group",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-group-title": "ドイツ語について",
+    "faq-group-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

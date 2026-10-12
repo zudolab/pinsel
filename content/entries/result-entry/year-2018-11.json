@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2018-11",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2018"
+    },
+    "result-entry-school": "アーヘン応用科学大学",
+    "result-entry-department": "Produktdesign",
+    "result-entry-url": "https://www.fh-aachen.de/",
+    "result-entry-order": 11
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2020-07",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2020"
+    },
+    "result-entry-school": "ライプツィヒ版画製本芸術大学",
+    "result-entry-department": "Buchkunst/Grafik-Design",
+    "result-entry-url": "https://www.hgb-leipzig.de/",
+    "result-entry-order": 7
+  },
+  "lifecycle": "published",
+  "generation": 0
+}
