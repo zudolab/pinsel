@@ -30,10 +30,12 @@ if (!bundle) throw new Error(`check-worker-bundle-preview: no bundle in ${outdir
 const { default: entry } = await import(pathToFileURL(path.join(outdir, bundle)).href);
 const { script, source } = await (await entry.fetch()).json();
 
+/** @param {string} code */
 function run(code) {
+  /** @type {Array<{ type?: string }>} */
   const posted = [];
   const window = {
-    parent: { postMessage: (message) => posted.push(message) },
+    parent: { postMessage: (/** @type {{ type?: string }} */ message) => posted.push(message) },
     location: { origin: "https://authoring.example", replace() {} },
     crypto: { randomUUID: () => "load-1" },
     addEventListener() {},
