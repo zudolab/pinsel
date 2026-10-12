@@ -53,7 +53,7 @@ const malformed = (message: string, path?: string): HostContentApplyResult => ({
 
 const rejected = (message: string, path?: string) => ({ status: "rejected", code: "validation", message, ...(path ? { path } : {}) });
 
-/** Bodies of the publication/baseline endpoints carry exactly these keys; anything else (a sha, a path, a URL) is refused. */
+/** Request bodies carry exactly these keys; anything else (a sha, a file path, a URL) is refused, never ignored. */
 function exactBody(body: Record<string, unknown>, required: readonly string[], optional: readonly string[] = []): string | null {
   const unknown = Object.keys(body).find((key) => !required.includes(key) && !optional.includes(key));
   if (unknown) return `Unexpected field "${unknown}".`;
@@ -158,6 +158,8 @@ export async function handleApi(request: Request, url: URL, context: ApiContext)
   if (method === "POST" && path === "/operations") {
     const body = await readJson(request);
     if (!body) return json(malformed("A JSON object body is required."), 400);
+    const shape = exactBody(body, ["operationId", "request", "expectedBaselineRevision"]);
+    if (shape) return json(malformed(shape), 422);
     return applyOperation(context, body.operationId, body.request, body.expectedBaselineRevision);
   }
   const receipt = /^\/operations\/([^/]+)$/.exec(path);
@@ -170,6 +172,8 @@ export async function handleApi(request: Request, url: URL, context: ApiContext)
   if (method === "PUT" && entry) {
     const body = await readJson(request);
     if (!body) return json(malformed("A JSON object body is required."), 400);
+    const shape = exactBody(body, ["expectedRevision", "expectedBaselineRevision", "values"]);
+    if (shape) return json(malformed(shape), 422);
     const content = { kind: "put-entry-values", ...base, modelId: decodeURIComponent(entry[1]!), entryId: decodeURIComponent(entry[2]!), expectedRevision: body.expectedRevision, values: body.values };
     return applyOperation(context, request.headers.get("idempotency-key"), content, body.expectedBaselineRevision);
   }
@@ -177,6 +181,8 @@ export async function handleApi(request: Request, url: URL, context: ApiContext)
   if (method === "POST" && collection) {
     const body = await readJson(request);
     if (!body) return json(malformed("A JSON object body is required."), 400);
+    const shape = exactBody(body, ["entryId", "expectedRevision", "expectedBaselineRevision", "values"]);
+    if (shape) return json(malformed(shape), 422);
     const content = { kind: "create-entry", ...base, modelId: decodeURIComponent(collection[1]!), entryId: body.entryId, expectedRevision: body.expectedRevision, values: body.values };
     return applyOperation(context, request.headers.get("idempotency-key"), content, body.expectedBaselineRevision);
   }
@@ -184,6 +190,8 @@ export async function handleApi(request: Request, url: URL, context: ApiContext)
   if (method === "POST" && reorder) {
     const body = await readJson(request);
     if (!body) return json(malformed("A JSON object body is required."), 400);
+    const shape = exactBody(body, ["entryIds", "expectedRevision", "expectedBaselineRevision"], ["fieldId"]);
+    if (shape) return json(malformed(shape), 422);
     const modelId = decodeURIComponent(reorder[1]!);
     const content = { kind: "reorder", ...base, modelId, fieldId: body.fieldId ?? orderField(context, modelId), entryIds: body.entryIds, expectedRevision: body.expectedRevision };
     return applyOperation(context, request.headers.get("idempotency-key"), content, body.expectedBaselineRevision);
@@ -193,6 +201,8 @@ export async function handleApi(request: Request, url: URL, context: ApiContext)
   if (method === "POST" && path === "/snapshots") {
     const body = await readJson(request);
     if (!body || !Number.isSafeInteger(body.expectedDraftRevision)) return json(rejected("expectedDraftRevision is required.", "expectedDraftRevision"), 400);
+    const shape = exactBody(body, ["expectedDraftRevision"]);
+    if (shape) return json(rejected(shape), 422);
     const result = await context.adapter.snapshot({ expectedDraftRevision: body.expectedDraftRevision as number });
     return json(result, statusCodeFor(result));
   }

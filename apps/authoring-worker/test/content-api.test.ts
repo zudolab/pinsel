@@ -6,7 +6,7 @@ import { CONTENT_STORAGE_CONFORMANCE_POLICY, createContentStorageConformanceBase
 import { localSeedHandler } from "../src/admin/seed";
 import type { AuthoringSite } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
-import { COMMITTED_PRICE, app, call, priceOf, putPrice, readDraft, savePrice } from "./helpers";
+import { COMMITTED_PRICE, PRICE, app, call, priceOf, putPrice, readDraft, savePrice } from "./helpers";
 
 beforeEach(async () => {
   await resetD1ContentDraftStorage(env.DB);
@@ -81,6 +81,25 @@ describe("unsafe values and concurrency", () => {
     const url = await call(handler, "/api/v1/content/result-entry/a", { method: "PUT", headers: { "idempotency-key": "op-url" }, json: { expectedRevision: draft.draftRevision, expectedBaselineRevision: draft.baselineRevision, values: { [fieldId("result-entry", "url")]: "javascript:alert(1)" } } });
     expect(url.body.refusal.code).toBe("unsafe-reference");
     expect((await readDraft(handler)).draftRevision).toBe(draft.draftRevision);
+  });
+
+  it("refuses request bodies with keys beyond the documented ones (a file path is never ignored)", async () => {
+    const handler = app();
+    const draft = await readDraft(handler);
+    const base = { expectedRevision: draft.draftRevision, expectedBaselineRevision: draft.baselineRevision };
+    const attempts = [
+      call(handler, "/api/v1/content/course/two-month", { method: "PUT", headers: { "idempotency-key": "op-path" }, json: { ...base, values: { [PRICE]: "¥1" }, path: "apps/site/zfb.config.ts" } }),
+      call(handler, "/api/v1/content/course", { method: "POST", headers: { "idempotency-key": "op-files" }, json: { ...base, entryId: "two-month", values: {}, files: ["package.json"] } }),
+      call(handler, "/api/v1/content/course-step/reorder", { method: "POST", headers: { "idempotency-key": "op-reorder" }, json: { ...base, entryIds: [], patch: {} } }),
+      call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-extra", request: putPrice(draft.draftRevision, "¥1"), expectedBaselineRevision: draft.baselineRevision, path: "content/entries" } }),
+    ];
+    for (const answer of await Promise.all(attempts)) {
+      expect(answer.status).toBe(422);
+      expect(answer.body.refusal).toMatchObject({ code: "malformed-request", message: expect.stringMatching(/^Unexpected field "(path|files|patch)"\.$/) });
+    }
+    expect((await call(handler, "/api/v1/snapshots", { method: "POST", json: { expectedDraftRevision: draft.draftRevision, project: {} } })).status).toBe(422);
+    expect(await readDraft(handler)).toMatchObject({ draftRevision: draft.draftRevision });
+    expect(priceOf(await readDraft(handler))).toBe(COMMITTED_PRICE);
   });
 
   it("lets exactly one of two concurrent sessions win the same revision; the other gets a recoverable conflict", async () => {
