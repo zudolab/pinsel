@@ -2,7 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { ART_CYCLE_MS, ART_PALETTES, artColorsAt, artPhaseAt, smoothstep } from "./art-clock";
-import { COURSE_OPTIONS, EMAIL_MISMATCH_MESSAGE, courseIndexFromSearch, fieldLabel, initContactForm, validationMessage } from "./contact-form";
+import { COURSE_OPTIONS, EMAIL_MISMATCH_MESSAGE, VALUE_MISSING_TEMPLATE, courseIndexFromSearch, fieldLabel, initContactForm, validationMessage, validationTextsFrom } from "./contact-form";
 import { activeSectionIndex, railScrollDelta, readingLine } from "./contents";
 import { MOTION_STORAGE_KEY, initMotion, parallaxProgress, parallaxTransform, parsePreference } from "./motion";
 import { initMenu } from "./site";
@@ -101,6 +101,14 @@ describe("contact form", () => {
     expect(validationMessage({ valueMissing: false, typeMismatch: false }, "お名前")).toBe("");
   });
 
+  it("takes its texts from the form's data attributes, falling back when absent or empty", () => {
+    const texts = validationTextsFrom({ valueMissingMessage: "{label}は必須です", emailFormatMessage: "形式エラー" });
+    expect(validationMessage({ valueMissing: true, typeMismatch: false }, "お名前", texts)).toBe("お名前は必須です");
+    expect(validationMessage({ valueMissing: false, typeMismatch: true }, "メールアドレス", texts)).toBe("形式エラー");
+    expect(validationTextsFrom({})).toEqual({ valueMissing: VALUE_MISSING_TEMPLATE, emailFormat: EMAIL_MISMATCH_MESSAGE });
+    expect(validationTextsFrom({ valueMissingMessage: "", emailFormatMessage: "" })).toEqual({ valueMissing: VALUE_MISSING_TEMPLATE, emailFormat: EMAIL_MISMATCH_MESSAGE });
+  });
+
   describe("in a document", () => {
     beforeEach(() => {
       vi.useFakeTimers();
@@ -162,6 +170,27 @@ describe("contact form", () => {
       expect(form.hidden).toBe(false);
       expect(document.activeElement).toBe(name);
       expect(fetchSpy).not.toHaveBeenCalled();
+    });
+
+    it("uses data-submitting-label / data-value-missing-message / data-email-format-message", () => {
+      const form = document.getElementById("contact-form") as HTMLFormElement;
+      form.dataset.submittingLabel = "SENDING";
+      form.dataset.valueMissingMessage = "{label}: required";
+      form.dataset.emailFormatMessage = "bad email";
+      initContactForm();
+      const name = document.getElementById("name") as HTMLInputElement;
+      const email = document.getElementById("email") as HTMLInputElement;
+      form.requestSubmit();
+      expect(document.getElementById("name-error")!.textContent).toBe("お名前: required");
+      name.value = "x";
+      email.value = "nope";
+      form.requestSubmit();
+      expect(document.getElementById("email-error")!.textContent).toBe("bad email");
+      email.value = "a@example.test";
+      form.requestSubmit();
+      expect(form.querySelector("[data-submit-label]")!.textContent).toBe("SENDING");
+      vi.advanceTimersByTime(450);
+      expect(form.querySelector("[data-submit-label]")!.textContent).toBe("送信する");
     });
   });
 });
