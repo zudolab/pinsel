@@ -119,8 +119,10 @@ export function App({ site }: { site: SiteDescription }) {
       setSwitchError("保存が完了していない変更があるため切り替えられません。先に下の案内に従って解決してください。");
       return;
     }
+    // Nothing is editable before the draft loads, so there is nothing to flush.
+    const loaded = status !== undefined && status !== "loading" && status !== "load-failed" && status !== "blocked";
     try {
-      await handleRef.current?.flush();
+      if (loaded) await handleRef.current?.flush();
     } catch (cause) {
       setSwitchError(`変更を保存できなかったため切り替えませんでした: ${cause instanceof Error ? cause.message : String(cause)}`);
       return;
