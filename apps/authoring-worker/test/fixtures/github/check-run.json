@@ -1,0 +1,17 @@
+{
+  "id": {{RUN_ID}},
+  "head_sha": "{{RUN_HEAD_SHA}}",
+  "node_id": "CR_kwDOPinsel",
+  "external_id": "",
+  "url": "https://api.github.com/repos/zudolab/pinsel/check-runs/{{RUN_ID}}",
+  "html_url": "https://github.com/zudolab/pinsel/runs/{{RUN_ID}}",
+  "status": "{{RUN_STATUS}}",
+  "conclusion": {{RUN_CONCLUSION}},
+  "started_at": "2026-10-13T00:01:00Z",
+  "completed_at": {{RUN_COMPLETED_AT}},
+  "output": { "title": "{{RUN_NAME}}", "summary": {{RUN_SUMMARY}}, "text": null, "annotations_count": 0 },
+  "name": "{{RUN_NAME}}",
+  "check_suite": { "id": 3100000001 },
+  "app": { "id": 15368, "slug": "{{RUN_APP}}", "name": "GitHub Actions" },
+  "pull_requests": []
+}

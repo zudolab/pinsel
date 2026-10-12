@@ -9,8 +9,15 @@ import { TERMINAL_PUBLICATION_STATES, publicationStateFor, type ProviderRef, typ
 // The provider is only ever asked to submit the snapshot under the job's
 // deterministic idempotency key, and after the first attempt it is first asked
 // whether the submission already exists, so a lost acknowledgement or a
-// restart never creates a second submission. The reconciliation loop of the
-// publication sub-issue (src/publish/reconcile.ts) builds on `refreshPublication`.
+// restart never creates a second submission. The reconciliation loop
+// (src/publish/reconcile.ts) serializes `observeJob` per job and adds promotion
+// and the baseline advance on top.
+//
+// Recovery policy: a `failed` job is re-armed when the same snapshot is
+// requested again (its base unchanged): it goes back to `submitted` and is
+// re-delivered through lookup first, so the provider reuses the branch and only
+// opens a new PR when the old one was closed. `conflict` stays terminal: the
+// base moved or the provider's copy changed, so the editor snapshots again.
 
 interface JobRow {
   job_id: string;
@@ -28,6 +35,10 @@ interface JobRow {
   requested_by: string;
   created_at: string;
   updated_at: string;
+  lease_token: string | null;
+  lease_expires_at: string | null;
+  reconcile_attempts: number;
+  provider_failures: number;
 }
 
 export interface PublicationView {
@@ -42,7 +53,12 @@ export interface PublicationView {
   providerRef: ProviderRef | null;
   evidence: PublicationEvidence | null;
   message: string | null;
+  /** Submissions handed to the provider (lookups included). */
   attempts: number;
+  /** Provider status observations made for this job. */
+  reconcileAttempts: number;
+  /** Consecutive provider timeouts / unavailable answers; 0 after any answer. */
+  providerFailures: number;
   requestedBy: string;
   createdAt: string;
   updatedAt: string;
@@ -67,14 +83,14 @@ export interface PublicationContext {
   now?: () => string;
 }
 
-const COLUMNS = "job_id, snapshot_id, baseline_revision, idempotency_key, provider_id, state, provider_ref_json, evidence_json, message, attempts, version, update_token, requested_by, created_at, updated_at";
+const COLUMNS = "job_id, snapshot_id, baseline_revision, idempotency_key, provider_id, state, provider_ref_json, evidence_json, message, attempts, version, update_token, requested_by, created_at, updated_at, lease_token, lease_expires_at, reconcile_attempts, provider_failures";
 
 /** Deterministic per snapshot, and a valid upstream idempotency key (short, no separators). */
 export function publicationIdFor(snapshotId: string): string {
   return `pub-${snapshotId.slice(0, 32)}`;
 }
 
-function view(row: JobRow): PublicationView {
+export function view(row: JobRow): PublicationView {
   return {
     publicationId: row.job_id,
     snapshotId: row.snapshot_id,
@@ -85,11 +101,15 @@ function view(row: JobRow): PublicationView {
     evidence: row.evidence_json ? (JSON.parse(row.evidence_json) as PublicationEvidence) : null,
     message: row.message,
     attempts: row.attempts,
+    reconcileAttempts: row.reconcile_attempts,
+    providerFailures: row.provider_failures,
     requestedBy: row.requested_by,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
 }
+
+export type { JobRow };
 
 export function readJob(db: D1Database, projectId: string, jobId: string): Promise<JobRow | null> {
   return db.prepare(`SELECT ${COLUMNS} FROM jobs WHERE job_id = ? AND project_id = ?`).bind(jobId, projectId).first<JobRow>();
@@ -106,16 +126,18 @@ interface JobPatch {
   evidence?: PublicationEvidence | null;
   message?: string | null;
   attempts?: number;
+  reconcileAttempts?: number;
+  providerFailures?: number;
 }
 
 /** One CAS on `version`. Returns the row after the attempt and whether this call wrote it. */
-async function casJob(db: D1Database, projectId: string, row: JobRow, patch: JobPatch, now: string): Promise<{ won: boolean; row: JobRow }> {
+export async function casJob(db: D1Database, projectId: string, row: JobRow, patch: JobPatch, now: string): Promise<{ won: boolean; row: JobRow }> {
   const token = crypto.randomUUID();
   const providerRef = patch.providerRef === undefined ? row.provider_ref_json : patch.providerRef === null ? null : JSON.stringify(patch.providerRef);
   const evidence = patch.evidence === undefined ? row.evidence_json : patch.evidence === null ? null : JSON.stringify(patch.evidence);
   await db
-    .prepare("UPDATE jobs SET state = ?, provider_ref_json = ?, evidence_json = ?, message = ?, attempts = ?, version = version + 1, update_token = ?, updated_at = ? WHERE job_id = ? AND project_id = ? AND version = ?")
-    .bind(patch.state ?? row.state, providerRef, evidence, patch.message === undefined ? row.message : patch.message, patch.attempts ?? row.attempts, token, now, row.job_id, projectId, row.version)
+    .prepare("UPDATE jobs SET state = ?, provider_ref_json = ?, evidence_json = ?, message = ?, attempts = ?, reconcile_attempts = ?, provider_failures = ?, version = version + 1, update_token = ?, updated_at = ? WHERE job_id = ? AND project_id = ? AND version = ?")
+    .bind(patch.state ?? row.state, providerRef, evidence, patch.message === undefined ? row.message : patch.message, patch.attempts ?? row.attempts, patch.reconcileAttempts ?? row.reconcile_attempts, patch.providerFailures ?? row.provider_failures, token, now, row.job_id, projectId, row.version)
     .run();
   const after = await readJob(db, projectId, row.job_id);
   if (!after) throw new Error(`Job ${row.job_id} disappeared.`);
@@ -153,7 +175,13 @@ async function deliver(context: PublicationContext, port: PublicationProviderPor
       return { status: "uncertain", operationId: row.job_id, message: existing.message, value: view(row) };
     }
   }
-  const submitted = await port.submit({ submission: submissionFor(job, snapshot.value, context.packageIdentity), snapshot: snapshot.value });
+  const submitted = await port.submit({
+    submission: submissionFor(job, snapshot.value, context.packageIdentity),
+    snapshot: snapshot.value,
+    ...(baseline.status === "ok" ? { baseline: baseline.value } : {}),
+    requestedBy: job.requested_by,
+    requestedAt: job.created_at,
+  });
   switch (submitted.status) {
     case "ok":
       return { status: "ok", value: view(await record({ providerRef: submitted.ref, message: null })), replayed: submitted.replayed };
@@ -179,6 +207,12 @@ export async function requestPublication(context: PublicationContext, input: { s
   const jobId = publicationIdFor(input.snapshotId);
   const prior = await readJob(context.db, context.projectId, jobId);
   if (prior) {
+    if (prior.state === "failed") {
+      // Recovery: re-arm the same job (same key) and deliver again; `deliver` refuses if the base moved meanwhile.
+      const now = context.now?.() ?? new Date().toISOString();
+      const rearmed = await casJob(context.db, context.projectId, prior, { state: "submitted", providerRef: null, evidence: null, providerFailures: 0, message: `Retry requested by ${context.actor.subject} after: ${prior.message ?? "failed"}` }, now);
+      return rearmed.won ? deliver(context, port, rearmed.row) : { status: "ok", value: view(rearmed.row), replayed: true };
+    }
     // The same snapshot was already requested: the existing job, re-delivered only if the provider never acknowledged it.
     if (prior.provider_ref_json === null && !TERMINAL_PUBLICATION_STATES.includes(prior.state)) return deliver(context, port, prior);
     return { status: "ok", value: view(prior), replayed: true };
@@ -196,7 +230,7 @@ export async function requestPublication(context: PublicationContext, input: { s
   const now = context.now?.() ?? new Date().toISOString();
   const token = crypto.randomUUID();
   await context.db
-    .prepare(`INSERT INTO jobs (project_id, ${COLUMNS}) VALUES (?, ?, ?, ?, ?, ?, 'submitted', NULL, NULL, NULL, 0, 1, ?, ?, ?, ?) ON CONFLICT DO NOTHING`)
+    .prepare(`INSERT INTO jobs (project_id, ${COLUMNS}) VALUES (?, ?, ?, ?, ?, ?, 'submitted', NULL, NULL, NULL, 0, 1, ?, ?, ?, ?, NULL, NULL, 0, 0) ON CONFLICT DO NOTHING`)
     .bind(context.projectId, jobId, input.snapshotId, current.baselineRevision, jobId, port.providerId, token, context.actor.subject, now, now)
     .run();
   const job = await readJob(context.db, context.projectId, jobId);
@@ -206,18 +240,37 @@ export async function requestPublication(context: PublicationContext, input: { s
   return deliver(context, port, job);
 }
 
-/** `GET /api/v1/publications/:id`: the stored job, refreshed from the provider when it is not terminal. */
+/** `GET /api/v1/publications/:id` without the reconcile loop: the stored job, refreshed from the provider when it is not terminal. */
 export async function refreshPublication(context: PublicationContext, jobId: string): Promise<PublicationResult> {
   const job = await readJob(context.db, context.projectId, jobId);
   if (!job) return { status: "not-found" };
-  if (!context.publisher.ok) return { status: "ok", value: { ...view(job), state: "configuration-required", lastObservedState: job.state, message: context.publisher.message } };
+  if (!context.publisher.ok) return { status: "ok", value: configurationRequiredView(job, context.publisher.message) };
   if (TERMINAL_PUBLICATION_STATES.includes(job.state)) return { status: "ok", value: view(job) };
-  const port = context.publisher.port;
+  return observeJob(context, context.publisher.port, job);
+}
+
+export function configurationRequiredView(job: JobRow, message: string): PublicationView {
+  return { ...view(job), state: "configuration-required", lastObservedState: job.state, message };
+}
+
+/** One provider observation of a job (or its first delivery), written as one CAS with the attempt counters. */
+export async function observeJob(context: PublicationContext, port: PublicationProviderPort, job: JobRow): Promise<PublicationResult> {
   if (job.provider_ref_json === null) return deliver(context, port, job);
   const ref = JSON.parse(job.provider_ref_json) as ProviderRef;
   const observed = await port.status(ref);
-  if (observed.status === "not-found") return { status: "ok", value: { ...view(job), message: "The provider has no record of this submission." } };
-  if (observed.status !== "ok") return { status: "ok", value: { ...view(job), message: `Provider ${observed.status}: ${observed.message}` } };
+  const now = context.now?.() ?? new Date().toISOString();
+  const reconcileAttempts = job.reconcile_attempts + 1;
+  const write = async (patch: JobPatch): Promise<PublicationResult> => {
+    // Lost the CAS: another refresh wrote first; its row is the truth.
+    const { row } = await casJob(context.db, context.projectId, job, { reconcileAttempts, ...patch }, now);
+    return { status: "ok", value: view(row) };
+  };
+  if (observed.status === "not-found") return write({ providerFailures: 0, message: "The provider has no record of this submission." });
+  if (observed.status !== "ok") {
+    // Unknown is not failed: the state stays, the failure is counted and reported.
+    const failures = job.provider_failures + 1;
+    return write({ providerFailures: failures, message: `Provider ${observed.status} (${failures} in a row): ${observed.message}` });
+  }
   const observation = observed.value;
   let state = publicationStateFor(observation);
   let message = observation.message ?? null;
@@ -232,10 +285,5 @@ export async function refreshPublication(context: PublicationContext, jobId: str
       state = "conflict";
     }
   }
-  const evidence = observation.evidence ?? null;
-  if (state === job.state && JSON.stringify(evidence) === (job.evidence_json ?? "null") && message === job.message) return { status: "ok", value: view(job) };
-  const now = context.now?.() ?? new Date().toISOString();
-  const { row } = await casJob(context.db, context.projectId, job, { state, evidence, message }, now);
-  // Lost the CAS: another refresh wrote first; its row is the truth.
-  return { status: "ok", value: view(row) };
+  return write({ state, evidence: observation.evidence ?? null, message, providerFailures: 0 });
 }

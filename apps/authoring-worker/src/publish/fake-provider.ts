@@ -11,16 +11,18 @@ export const FAKE_PROVIDER_MARKER = "pinsel-fake-publication-provider";
 /**
  * - `timeout` / `unavailable`: the call does nothing and reports that.
  * - `lost-ack` (submit only): the submission is recorded, then reported as a timeout.
- * - `rejected` (submit only): the provider refuses the submission.
+ * - `rejected` (submit, promote): the provider refuses the submission / the merge.
  */
 export type FakeOutcome = "timeout" | "unavailable" | "lost-ack" | "rejected";
+
+type FakeMethod = "submit" | "status" | "lookupExisting" | "promote";
 
 export interface FakePublicationProvider extends PublicationProviderPort {
   readonly marker: typeof FAKE_PROVIDER_MARKER;
   readonly submissions: readonly { operationId: string; submission: ContentExportSubmission; files: readonly string[] }[];
-  readonly calls: { submit: number; status: number; lookupExisting: number };
+  readonly calls: { submit: number; status: number; lookupExisting: number; promote: number };
   /** Queue an outcome for the next call of `method`. */
-  script(method: "submit" | "status" | "lookupExisting", outcome: FakeOutcome): void;
+  script(method: FakeMethod, outcome: FakeOutcome): void;
   /** Move a submission to `state`, optionally with evidence; unknown ids throw. */
   advance(operationId: string, state: ContentExportState, details?: { evidence?: PublicationEvidence; message?: string }): void;
 }
@@ -37,8 +39,9 @@ export function createFakePublicationProvider(options: FakePublicationProviderOp
   const bySnapshot = new Map<string, string>();
   const observations = new Map<string, ProviderObservation>();
   const submissions: { operationId: string; submission: ContentExportSubmission; files: string[] }[] = [];
-  const scripted: Record<"submit" | "status" | "lookupExisting", FakeOutcome[]> = { submit: [], status: [], lookupExisting: [] };
-  const calls = { submit: 0, status: 0, lookupExisting: 0 };
+  const scripted: Record<FakeMethod, FakeOutcome[]> = { submit: [], status: [], lookupExisting: [], promote: [] };
+  const calls = { submit: 0, status: 0, lookupExisting: 0, promote: 0 };
+  let merges = 0;
   const ref = (operationId: string): ProviderRef => ({ providerId, operationId, branch: `content/${observations.get(operationId)?.snapshotId ?? ""}` });
 
   return {
@@ -86,6 +89,21 @@ export function createFakePublicationProvider(options: FakePublicationProviderOp
       if (outcome === "timeout" || outcome === "unavailable") return { status: outcome, message: `fake provider ${outcome}` };
       const operationId = bySnapshot.get(snapshotId);
       return operationId ? { status: "ok", ref: ref(operationId) } : { status: "not-found" };
+    },
+    // Merges only a submission whose evidence verifies (every check passed), like branch rules would.
+    async promote(target) {
+      calls.promote += 1;
+      const outcome = scripted.promote.shift();
+      if (outcome === "timeout" || outcome === "unavailable") return { status: outcome, message: `fake provider ${outcome}` };
+      if (outcome === "rejected") return { status: "refused", message: "fake provider refused the merge" };
+      const observation = observations.get(target.operationId);
+      if (!observation) return { status: "refused", message: "unknown submission" };
+      const checks = observation.evidence?.checks ?? [];
+      if (observation.state !== "verified" || !observation.evidence?.commit || checks.length === 0 || checks.some((check) => check.status !== "passed")) return { status: "refused", message: `not every required check passed (${observation.state})` };
+      merges += 1;
+      const commit = String(merges).padStart(40, "c");
+      observations.set(target.operationId, { ...observation, state: "integrated", evidence: { ...observation.evidence, commit }, observedAt: now() });
+      return { status: "ok", commit };
     },
     advance(operationId, state, details = {}) {
       const observation = observations.get(operationId);

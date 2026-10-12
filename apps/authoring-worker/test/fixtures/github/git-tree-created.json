@@ -1,0 +1,6 @@
+{
+  "sha": "{{NEW_TREE}}",
+  "url": "https://api.github.com/repos/zudolab/pinsel/git/trees/{{NEW_TREE}}",
+  "tree": [{ "path": "content", "mode": "040000", "type": "tree", "sha": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1", "url": "https://api.github.com/repos/zudolab/pinsel/git/trees/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa1" }],
+  "truncated": false
+}
