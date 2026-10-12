@@ -1,5 +1,6 @@
 // Scans the `wrangler deploy --dry-run --outdir` bundle of the authoring
-// Worker: no Node builtins, no Vite, no Preact, no local identity fixture.
+// Worker: no Node builtins, no Vite, no Preact, no local identity fixture, no
+// local seed endpoint, no fake publication provider.
 // Usage: node scripts/check-worker-bundle.mjs [outdir]
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
@@ -21,6 +22,8 @@ const forbidden = [
   [/__vite-browser-external/, "a Vite browser stub"],
   [/pinsel-local-dev-identity-fixture/, "the local identity fixture (src/local-dev.ts)"],
   [/local-dev@example\.test/, "the local identity subject"],
+  [/pinsel-local-admin-seed/, "the local seed endpoint (src/admin/seed.ts)"],
+  [/pinsel-fake-publication-provider/, "the fake publication provider (src/publish/fake-provider.ts)"],
   [/zudo-composer\/src\//, "a private Composer source path"],
 ];
 const failures = forbidden.filter(([pattern]) => pattern.test(code)).map(([, label]) => label);
@@ -29,10 +32,10 @@ if (failures.length > 0) {
   process.exit(1);
 }
 /** @type {[string, string][]} */
-const required = [["zudo-composer-host-preview", "the preview protocol"], ["pricing-card", "the pinsel-ui renderer"], ["cf-access-jwt-assertion", "Access verification"]];
+const required = [["zudo-composer-host-preview", "the preview protocol"], ["pricing-card", "the pinsel-ui renderer"], ["cf-access-jwt-assertion", "Access verification"], ["PUBLISHER_PROVIDER", "the fail-closed publisher selection"]];
 const missing = required.filter(([needle]) => !code.includes(needle)).map(([, label]) => label);
 if (missing.length > 0) {
   console.error(`check-worker-bundle: the production bundle is missing ${missing.join(", ")}`);
   process.exit(1);
 }
-console.log(`check-worker-bundle: ${files.length} file(s), ${code.length} chars; no node:/vite/preact/local fixture`);
+console.log(`check-worker-bundle: ${files.length} file(s), ${code.length} chars; no node:/vite/preact/local fixture/seed/fake provider`);

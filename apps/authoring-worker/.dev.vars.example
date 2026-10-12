@@ -1,0 +1,15 @@
+# Copy to .dev.vars for `wrangler dev` (never commit .dev.vars). No real values
+# belong in this repository; launch inputs are listed in docs/authoring-worker.md.
+#
+# Production entry (`wrangler dev`): all three empty = 503 configuration-required.
+TEAM_DOMAIN=https://<team>.cloudflareaccess.com
+POLICY_AUD=<access-application-aud-tag>
+EDITOR_ALLOWLIST=editor@example.test
+#
+# Publication: "disabled" (default) answers configuration-required. The local
+# entry (`wrangler dev --env local`) also accepts "fake" (in-memory provider).
+PUBLISHER_PROVIDER=disabled
+PROMOTION_POLICY=manual
+#
+# Local entry only: the fixture identity's subject.
+LOCAL_DEV_SUBJECT=local-dev@example.test

@@ -18,7 +18,11 @@
   "vars": {
     "TEAM_DOMAIN": "",
     "POLICY_AUD": "",
-    "EDITOR_ALLOWLIST": ""
+    "EDITOR_ALLOWLIST": "",
+    // Publication stays off until launch: "disabled" answers configuration-required.
+    "PUBLISHER_PROVIDER": "disabled",
+    // "manual" leaves integration to a human; "auto" lets the provider promote after all checks pass.
+    "PROMOTION_POLICY": "manual"
   },
   "d1_databases": [
     {
@@ -38,6 +42,9 @@
         "TEAM_DOMAIN": "",
         "POLICY_AUD": "",
         "EDITOR_ALLOWLIST": "",
+        // `--var PUBLISHER_PROVIDER:fake` selects the in-memory fake provider of src/local-dev.ts.
+        "PUBLISHER_PROVIDER": "disabled",
+        "PROMOTION_POLICY": "manual",
         "LOCAL_DEV_SUBJECT": "local-dev@example.test"
       },
       "d1_databases": [

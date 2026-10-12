@@ -125,7 +125,7 @@ function planMutation(mutation: ContentMutation, models: readonly ContentModelRe
 
 /** Clears every table: tests only. The Worker never calls this. */
 export async function resetD1ContentDraftStorage(db: D1Database): Promise<void> {
-  await db.batch(["baseline", "draft_state", "draft_entries", "operations", "revisions", "snapshots", "baseline_advances"].map((table) => db.prepare(`DELETE FROM ${table}`)));
+  await db.batch(["baseline", "draft_state", "draft_entries", "operations", "revisions", "snapshots", "baseline_advances", "jobs", "baseline_evidence", "baseline_conflicts"].map((table) => db.prepare(`DELETE FROM ${table}`)));
 }
 
 /** Seeds the baseline and a clean draft once; a second call is a no-op. */
