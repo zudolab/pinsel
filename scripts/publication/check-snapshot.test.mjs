@@ -3,7 +3,7 @@ import { publicOutputProblems } from "./check-public-output.mjs";
 import { changedPathProblems, recordProblems } from "./check-snapshot.mjs";
 import { loadImportRules, loadPublicationRecord } from "./lib.mjs";
 
-const IDENTITY = { zfb: "4.3.2", composerSha: "7ca114a3ed7dcef10f5420dcc1894ea7125e4da6", contractSha: "c0b452da075b66757c60bd0d721a47062d4354d0" };
+const IDENTITY = { zfb: "4.3.2", composerSha: "547b532eb56dfecaec1e2bd9060f8d579ad8862c", contractSha: "c0b452da075b66757c60bd0d721a47062d4354d0" };
 const ID = "a".repeat(64);
 
 describe("publication CI checks", () => {

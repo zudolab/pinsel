@@ -133,3 +133,16 @@ Downstream sub-issues #8–#16 and #19 were edited with the locked file paths, t
 2. Open `http://127.0.0.1:8787/editor/` — expected: the restricted Composer editor in Japanese listing only `コース・料金`; edit `価格（表示）` of 2ヶ月コース; status shows 保存しました（改訂 n）; the receipt is visible at `GET /api/v1/operations/<id>`.
 3. Click プレビュー → the iframe navigates to `/preview/<snapshotId>/?revision=n` and the editor state becomes `rendered` for that exact identity; the preview shows the new price with the approved CSS.
 4. Reload in a new browser context (or restart `wrangler dev`): the value persists; `GET /api/v1/draft` shows it.
+
+## Addendum — final pin (#16)
+
+Re-run at the final identities: `zudo-composer@git+https://github.com/Takazudo/zudo-composer.git#547b532eb56dfecaec1e2bd9060f8d579ad8862c` (milestone 2 + `preview.sandbox`, draft PR Takazudo/zudo-composer#904), `@zudo-composer/component-contract@…#c0b452da075b66757c60bd0d721a47062d4354d0` (unchanged), `@takazudo/zudo-sg@0.5.2`. Decision 6 above no longer holds: one bounded upstream change was made (the editor's preview frame is sandboxed through the mount option instead of a host-side reload). The remaining gaps are listed in `docs/dependencies.md` → "Known Composer gaps".
+
+```
+node scripts/verify/external-install.mjs          # fresh lockfile, frozen reinstall, every public subpath import outside the repository: passed
+corepack pnpm --filter @pinsel/authoring-worker exec vitest run test/parity.test.ts test/storage-conformance.test.ts
+                                                   # in-workerd projection parity 2/2 (byte-identical to Node compileStaticSite; equals the ZFB body), D1 conformance 14/14
+corepack pnpm gate1:wrangler-dev                  # 29 steps passed (the structure probe now writes a protected site-copy field and a model outside the policy; every model is policy-listed since the migration)
+```
+
+Fresh clone of the branch: `corepack pnpm install --frozen-lockfile` and `pnpm dedupe --check` pass; the installed `zudo-composer` carries `preview.sandbox`.

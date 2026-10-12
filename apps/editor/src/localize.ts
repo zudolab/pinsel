@@ -1,11 +1,12 @@
 // Stopgap Japanese copy for Composer's Content chrome. `mountContentEditor`
 // localises only its own shell (`labels`); the Content route inside it
 // (directory, navigator, entry form, conflict banner) renders fixed English at
-// Composer 7ca114a3. Until upstream takes labels for those (reported for #16),
-// this observer rewrites EXACT text nodes and a few attributes inside the
-// editor root. It never touches values the author typed: only whole text
-// nodes / attribute values equal to a known string (or matching a known
-// pattern) are replaced, and form-control values are never read or written.
+// the pinned Composer. Until upstream takes labels for those (docs/dependencies.md
+// "Known Composer gaps"), this observer rewrites EXACT text nodes and a few
+// attributes inside the editor root. It never touches values the author
+// typed: only whole text nodes / attribute values equal to a known string (or
+// matching a known pattern) are replaced, and form-control values are never
+// read or written.
 
 export const CHROME_TEXT: Readonly<Record<string, string>> = {
   // Directory / navigator
