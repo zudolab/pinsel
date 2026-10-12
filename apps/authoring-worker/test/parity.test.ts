@@ -56,6 +56,8 @@ describe("workerd route projection parity", () => {
     if (compiled.status !== "ready") throw new Error("projection blocked");
     const workerHtml = renderRouteBody(compiled.plan.routes.find((candidate) => candidate.pathname === "/")!);
     expect(workerHtml).toBe(bodyOf(env.ZFB_HOME_HTML));
-    expect(env.ZFB_HOME_HTML).not.toContain("<script");
+    // The public layout's only scripts are the three visitor client entries, in <head>; the body has none.
+    expect(env.ZFB_HOME_HTML.match(/<script\b[^>]*>/g)).toEqual(["art-clock", "motion", "site"].map((name) => expect.stringMatching(new RegExp(`^<script type="module" src="/assets/client/${name}-[0-9a-f]{8}\\.js">$`))));
+    expect(bodyOf(env.ZFB_HOME_HTML)).not.toContain("<script");
   });
 });
