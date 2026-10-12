@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    outputs:
+      snapshot: ${{ steps.content.outputs.snapshot }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+      - name: Enable corepack (pnpm from packageManager)
+        run: |
+          corepack enable
+          test "$(pnpm --version)" = "11.5.2"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm dedupe --check
+      - run: pnpm no-deploy:check
+      - run: pnpm assets:sync
+      - run: pnpm check
+      - run: pnpm build:site
+      - run: pnpm build:sg
+      - run: pnpm build:editor
+      - run: pnpm assets:assemble-worker
+      - name: Verify staged assets
+        run: pnpm assets:verify
+      - run: pnpm worker:dry-run
+      - run: pnpm worker:types:check
+      - name: Detect content snapshot
+        id: content
+        run: |
+          if [ -f content/snapshot.json ]; then
+            echo "snapshot=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "snapshot=false" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: site-dist
+          path: apps/site/dist
+          if-no-files-found: error
+          retention-days: 3
+
+  # Content still equals the approved migration baseline (no published snapshot yet).
+  migration-baseline:
+    needs: build
+    if: needs.build.outputs.snapshot == 'false'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
+        with:
+          name: site-dist
+          path: apps/site/dist
+      # The projection golden step joins here with the content-migration sub-issue.
+      # Gated by a repository variable until the routes sub-issue renders all 14 outputs;
+      # never delete this step to get green.
+      - name: Historical strict content checker (14/14)
+        if: vars.PINSEL_MIGRATION_CHECKER == 'enabled'
+        run: bash scripts/check-content.sh
+      - name: Historical checker gate
+        if: vars.PINSEL_MIGRATION_CHECKER != 'enabled'
+        run: echo "::notice::Historical content checker is gated off (repository variable PINSEL_MIGRATION_CHECKER != enabled)."
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always() && vars.PINSEL_MIGRATION_CHECKER == 'enabled'
+        with:
+          name: content-parity-report
+          path: .reports/content-parity.json
+          if-no-files-found: ignore
+          retention-days: 7
+
+  # A published content snapshot exists; implemented by the publication sub-issue.
+  publication-validate:
+    needs: build
+    if: needs.build.outputs.snapshot == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Snapshot checker and invariants
+        run: |
+          echo "::error::publication-validate is not implemented yet (publication sub-issue)."
+          exit 1
