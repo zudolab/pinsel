@@ -17,13 +17,12 @@ Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `n
 | `zod` | `^4.3.6` | 4.6.5 | `apps/authoring-worker`, `apps/styleguide`, `packages/pinsel-content` | `sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==` |
 | `@cloudflare/vitest-plugin` | `1.4.0` | 1.4.0 | `apps/authoring-worker` | `sha512-SgIhyhpVH+2MVSJxidG8gosqrpzF25IwKevQhPykwulTgAFe4s0Nkj71pNzqCkwV2+A4NKkHJP2ReyyRsoIxsg==` |
 | `wrangler` | `4.149.0` | 4.149.0 | `apps/authoring-worker` | `sha512-OzK7xmB5r5iLKb3cIT3783g13fe6T7xyeKu9LEdUyl+DKAM2KP/jkjnE0OUhyw+mB/XJM9ycjgF3MWm8PR9amg==` |
-| `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | 1.0.0 (git `c0b452da075b66757c60bd0d721a47062d4354d0`) | `apps/editor`, `packages/pinsel-content` | `git-hosted, no integrity recorded` |
-| `preact` | `^10.29.8` | 10.29.8 | `apps/editor`, `apps/styleguide`, `packages/pinsel-content` | `sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==` |
-| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#d99e79097f7309ba9419325836d369809f284ad1` | 0.0.0 (git `d99e79097f7309ba9419325836d369809f284ad1`) | `apps/editor`, `packages/pinsel-content` | `sha512-IsnXIEY1UbReN7JpER3Aog4nQ3U3uxEMwYSvHb+RcXPQ2DDwP46weqf3o19Y7Wm+uL8JijhzYiBq0djSy0u2+g==` |
-| `@babel/core` | `^7.29.7` | 7.29.7 | `apps/editor` | `sha512-RgHBCvtjbOK2gXSNBNIkNoEc9qoVEtau3hj8gEqKQuL3HZAibKarWFEI3Lfm6EYKkLalOh8eSrj9b+ch9H/VBA==` |
-| `@preact/preset-vite` | `^2.10.6` | 2.10.6 | `apps/editor` | `sha512-ZZ5RIT2ZVXg8UxRA8VZpoT8CdpDG7RFIqOT4bELqNBp85+HKvQBbgmh3gsoW1UOQXx26TLe+ZRNKI7q281Kckw==` |
+| `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | 1.0.0 (git `c0b452da075b66757c60bd0d721a47062d4354d0`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `git-hosted, no integrity recorded` |
+| `preact` | `^10.29.8` | 10.29.8 | `apps/authoring-worker` (dev, peer only), `apps/editor`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==` |
+| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#7ca114a3ed7dcef10f5420dcc1894ea7125e4da6` | 0.0.0 (git `7ca114a3ed7dcef10f5420dcc1894ea7125e4da6`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==` |
+| `tsx` | `4.23.15` | 4.23.15 | `.` | `sha512-Yiex1Ovn8z2xPpOWckIiysV1SSyRMY9BkLF++q0yKiDxCqRhosKfMg3janKkiLBwZ5c/YryloKwGZcrEmtwxKw==` |
 | `vite` | `^8.2.2` | 8.3.4 | `apps/editor` | `sha512-IftLE8phJhdNRIGNEV4JCCvfNScoZQVfcXaN8TQropWGJtOHcu+iAB9pHcuGvmEb/kddw0LBe/jS8ztdC6xdiQ==` |
-| `@takazudo/zfb` | `4.3.2` | 4.3.2 | `apps/site`, `apps/styleguide` | `sha512-QTEQgD6pomJ7pnEyFL6GX7NuhstChEjcdzE46X0YWF3H8KiD3Ky17/IJs6d5/YGjmxgCyb2r9AHpbs5Jqn3+oA==` |
+| `@takazudo/zfb` | `4.3.2` | 4.3.2 | `apps/authoring-worker`, `apps/site`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-QTEQgD6pomJ7pnEyFL6GX7NuhstChEjcdzE46X0YWF3H8KiD3Ky17/IJs6d5/YGjmxgCyb2r9AHpbs5Jqn3+oA==` |
 | `@takazudo/zfb-runtime` | `4.3.2` | 4.3.2 | `apps/site`, `apps/styleguide` | `sha512-30rubZuXmPJUVbrPCLTVyL/eREQ3M4av7xNJ98kVJA5ygn8Q3lBTtKHwkM23d6MD6csfcSuWfS2KORpV9t7TRA==` |
 | `@tailwindcss/browser` | `4.3.2` | 4.3.2 | `apps/styleguide` | `sha512-R6hewP9HHwLAY88bFkgAYFIQMRGi9bqx6sR1anI3IThTJtwhPlAm4aHIzDKrnJ8Ct4M3d5A9PCsah8Z5+EjLiQ==` |
 | `@takazudo/zdtp` | `0.8.6` | 0.8.6 | `apps/styleguide` | `sha512-powstLG6d4tkEroYbT6iAJk1Da4xAYS8+enW/bcn6IupkzQQf3agAtXrlJ8XVoWs43puOsCR5/hgpMDFKP3d3g==` |
@@ -41,7 +40,7 @@ Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `n
 
 | Package | Commit | Status |
 | --- | --- | --- |
-| `zudo-composer` | `d99e79097f7309ba9419325836d369809f284ad1` | Provisional (Composer `main`). The final-integration sub-issue rebumps it to the reviewed #903 feature SHA. |
+| `zudo-composer` | `7ca114a3ed7dcef10f5420dcc1894ea7125e4da6` | #903 milestone-2 commit on `feat/903-hosted-content-authoring` (draft PR Takazudo/zudo-composer#904), pinned by Gate-1 (#7). Gate-1 needed no upstream change. The upstream-reconcile sub-issue (#16) rebumps it to the reviewed SHA. |
 | `@zudo-composer/component-contract` | `c0b452da075b66757c60bd0d721a47062d4354d0` | Package-root handoff commit (`package/component-contract-v1`). |
 
 Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<full-sha>`. There is no npm release of `zudo-composer`.
@@ -52,7 +51,9 @@ Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<f
 - `@takazudo/zudo-sg` stays at `0.5.1` although `0.5.2` was published on 2026-10-12. 0.5.2 only changes the engine's own dependency and TypeScript tooling, with the same peers. The bump is left to the final-pin sub-issue.
 - `@takazudo/zdtp@0.8.6` peers (`culori`, `preact`, `tailwind-merge 3.6.0`, `@tailwindcss/browser 4.3.2`) are declared explicitly in `apps/styleguide` because peers are not auto-installed.
 - `diff ^8`, `katex ^0.16` and `preact ^10` follow the zudo-doc and Composer peer ranges, not the newer majors on npm (`diff 9`, `katex 0.19`, `preact 11`).
-- `vite ^8.2.2` matches the `zudo-composer` dependency range, so the editor and Composer share one Vite. `@babel/core ^7` satisfies the `@preact/preset-vite` peer.
+- `vite ^8.2.2` matches the `zudo-composer` dependency range, so the editor and Composer share one Vite. The editor builds with `contentEditorPlugins()` from `zudo-composer/vite` (Preact preset included), so `@preact/preset-vite` / `@babel/core` are no longer direct dependencies.
+- `tsx 4.23.15` (root devDependency) runs the content pipeline scripts (`packages/pinsel-content/src/site/*.ts`), which import the zudo-react TSX of `@pinsel/ui`; Node cannot run the extensionless TypeScript imports natively. The scripts pass `--tsconfig tsconfig.scripts.json` so tsx applies the zudo-react JSX settings to files outside the package.
+- `zudo-composer` and `@zudo-composer/component-contract` are declared by every package that imports them (`autoInstallPeers: false`): `packages/pinsel-ui` (pack manifest, route types), `packages/pinsel-content` (policy, authoring DSL, validators), `apps/editor` (editor mount), `apps/authoring-worker` (portable entries). `preact` is Composer's peer; the Worker declares it as a devDependency to satisfy the peer and `scripts/check-worker-bundle.mjs` proves the production bundle never imports it.
 - `@cloudflare/vitest-plugin 1.4.0` replaces the deprecated `@cloudflare/vitest-pool-workers`. It depends on `wrangler 4.149.0`, which is also the direct pin, so there is a single miniflare/workerd install.
 - `vitest 4.1.11` (V4 line) stays on the version zudo-sg and Composer test with. `5.x` is newer on npm.
 - `pnpm dedupe --check` is clean and runs in CI. Duplicate `@lezer/common` identities break the zudo-sg code panel (zudo-sg#963).

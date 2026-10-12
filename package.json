@@ -11,7 +11,7 @@
     "assets:sync": "node scripts/assets/sync.mjs",
     "assets:verify": "node scripts/assets/verify.mjs",
     "assets:assemble-worker": "node scripts/assets/assemble-worker.mjs",
-    "content:assemble": "pnpm --filter @pinsel/content content:assemble",
+    "content:assemble": "pnpm --filter @pinsel/content content:assemble && pnpm --filter @pinsel/authoring-worker styles:generate",
     "content:project": "pnpm --filter @pinsel/content content:project",
     "typecheck": "tsc --noEmit -p tsconfig.json && pnpm -r --no-bail run typecheck",
     "test": "vitest run",
@@ -21,9 +21,15 @@
     "worker:dry-run": "pnpm --filter @pinsel/authoring-worker dry-run",
     "worker:types": "pnpm --filter @pinsel/authoring-worker types",
     "worker:types:check": "pnpm --filter @pinsel/authoring-worker types:check",
-    "check": "pnpm assets:verify && pnpm typecheck && pnpm test",
+    "check": "pnpm assets:verify && pnpm content:assemble && pnpm content:project && pnpm typecheck && pnpm test",
     "check:content": "bash scripts/check-content.sh",
-    "no-deploy:check": "node scripts/no-deploy-check.mjs"
+    "no-deploy:check": "node scripts/no-deploy-check.mjs",
+    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "worker:bundle:check": "node scripts/check-worker-bundle.mjs",
+    "sg:check": "pnpm --filter @pinsel/styleguide check:generated",
+    "verify:external-install": "node scripts/verify/external-install.mjs",
+    "gate1:wrangler-dev": "node scripts/gate1/wrangler-dev-proof.mjs",
+    "test:browser": "playwright test"
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",

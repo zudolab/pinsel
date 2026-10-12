@@ -12,6 +12,7 @@ const files = (await readdir(outdir, { recursive: true, withFileTypes: true })).
 if (files.length === 0) throw new Error(`no bundle in ${outdir}; run pnpm worker:dry-run first`);
 const code = (await Promise.all(files.map((file) => readFile(file, "utf8")))).join("\n");
 
+/** @type {[RegExp, string][]} */
 const forbidden = [
   [/\bfrom\s*["']node:[a-z]/, "a node: builtin import"],
   [/\brequire\(\s*["']node:[a-z]/, "a node: builtin require"],
@@ -27,6 +28,7 @@ if (failures.length > 0) {
   console.error(`check-worker-bundle: the production bundle contains ${failures.join(", ")}`);
   process.exit(1);
 }
+/** @type {[string, string][]} */
 const required = [["zudo-composer-host-preview", "the preview protocol"], ["pricing-card", "the pinsel-ui renderer"], ["cf-access-jwt-assertion", "Access verification"]];
 const missing = required.filter(([needle]) => !code.includes(needle)).map(([, label]) => label);
 if (missing.length > 0) {

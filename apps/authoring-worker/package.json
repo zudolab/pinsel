@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "styles:generate": "node scripts/generate-preview-styles.mjs",
+    "d1:migrate:local": "wrangler d1 migrations apply pinsel-authoring --local --env local",
     "dev:local": "wrangler dev --env local",
     "dry-run": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
     "types": "wrangler types --strict-vars=false",

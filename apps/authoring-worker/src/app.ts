@@ -21,7 +21,13 @@ export interface AppOptions {
 
 export function createApp(options: AppOptions) {
   let seeded: Promise<void> | null = null;
-  const ensureSeeded = (db: D1Database) => (seeded ??= seedD1ContentDraftStorage(db, BASELINE, { projectId: PROJECT_ID }).then(() => undefined));
+  const ensureSeeded = (db: D1Database) =>
+    (seeded ??= seedD1ContentDraftStorage(db, BASELINE, { projectId: PROJECT_ID })
+      .then(() => undefined)
+      .catch((error: unknown) => {
+        seeded = null;
+        throw error;
+      }));
 
   return {
     async fetch(request: Request, env: AppEnv): Promise<Response> {
@@ -38,10 +44,15 @@ export function createApp(options: AppOptions) {
       }
       if (url.pathname === "/") return Response.redirect(`${url.origin}/editor/`, 302);
       if (url.pathname.startsWith(API_PREFIX) || url.pathname.startsWith("/preview")) {
-        await ensureSeeded(env.DB);
-        const context = { adapter: createD1ContentDraftStorage(env.DB, { projectId: PROJECT_ID }), actor: identity.actor, origin: url.origin };
-        const handled = url.pathname.startsWith(API_PREFIX) ? await handleApi(request, url, context) : await handlePreview(url, context);
-        if (handled) return handled;
+        try {
+          await ensureSeeded(env.DB);
+          const context = { adapter: createD1ContentDraftStorage(env.DB, { projectId: PROJECT_ID }), actor: identity.actor, origin: url.origin };
+          const handled = url.pathname.startsWith(API_PREFIX) ? await handleApi(request, url, context) : await handlePreview(url, context);
+          if (handled) return handled;
+        } catch (error) {
+          // Storage failures (for example unapplied migrations) are reported, never left as an opaque 500.
+          return json({ status: "unavailable", message: error instanceof Error ? error.message : String(error) }, 503);
+        }
         if (url.pathname.startsWith(API_PREFIX)) return json({ status: "not-found" }, 404);
       }
       if (request.method !== "GET" && request.method !== "HEAD") return json({ status: "not-found" }, 404);
