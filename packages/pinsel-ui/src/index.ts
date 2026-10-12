@@ -51,4 +51,5 @@ export { NotFound, type NotFoundProps } from "./not-found/not-found";
 export { DocumentShell, bodyClassForPathname, type DocumentShellProps } from "./document/document-shell";
 export { RouteRenderError, renderRouteDocument, type RouteCompositionDocument, type RouteCompositionNode, type RouteDocument } from "./render/render-route-document";
 export type { RenderRegistry, RenderableComponent, RouteContext, SlotPosition } from "./render/types";
+export * from "./contract/contract-components";
 export { PINSEL_PACK_ID, PINSEL_PACK_VERSION, pinselPack, pinselRegistry } from "./pack";

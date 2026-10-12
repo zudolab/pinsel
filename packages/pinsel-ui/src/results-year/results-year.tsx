@@ -36,7 +36,7 @@ export interface ResultsYearSectionProps {
   /** The declared count shown in the heading, independent of the rows. */
   count: number;
   /** `pinsel.result-row` children. */
-  rows?: readonly unknown[];
+  items?: readonly unknown[];
 }
 
 /** One results year: `section#year-<label>` with `h2 {label}（{count}件）` and its rows. */
@@ -47,7 +47,7 @@ export function ResultsYearSection(props: ResultsYearSectionProps): Child {
         {props.label}
         <span>（{props.count}件）</span>
       </h2>
-      <ul>{(props.rows ?? []) as Child}</ul>
+      <ul>{(props.items ?? []) as Child}</ul>
     </section>
   );
 }

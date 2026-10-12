@@ -18,7 +18,7 @@ export function LegalRow({ term, value }: LegalRowProps): Child {
 export interface LegalTableProps {
   summary: string;
   /** `pinsel.legal-row` children (eight in the approved page). */
-  rows?: readonly unknown[];
+  items?: readonly unknown[];
   /** Static open state for stories. */
   open?: boolean;
 }
@@ -30,7 +30,7 @@ export function LegalTable(props: LegalTableProps): Child {
       <details class="legal" id="legal" open={props.open ?? false}>
         <summary>{props.summary}</summary>
         <table>
-          <tbody>{(props.rows ?? []) as Child}</tbody>
+          <tbody>{(props.items ?? []) as Child}</tbody>
         </table>
       </details>
     </section>

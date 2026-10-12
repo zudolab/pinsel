@@ -210,7 +210,7 @@ describe("page blocks", () => {
 
   it("Results year rows link out with noopener and keep school and department together", () => {
     const html = renderToString(
-      <ResultsYearSection label="2025年度" count={12} rows={[<ResultRow school="ベルリン芸術大学" department="Design" url="https://www.udk-berlin.de/" />, <ResultRow school="x" department="y" url="" />]} />,
+      <ResultsYearSection label="2025年度" count={12} items={[<ResultRow school="ベルリン芸術大学" department="Design" url="https://www.udk-berlin.de/" />, <ResultRow school="x" department="y" url="" />]} />,
     );
     expect(html).toMatch(/^<section class="year-section reading-zone" id="year-2025年度"><h2>2025年度<span>（12件）<\/span><\/h2><ul>/);
     expect(html).toContain('<li class="result-row"><a href="https://www.udk-berlin.de/" target="_blank" rel="noopener noreferrer"><div><p>ベルリン芸術大学</p><p>Design</p></div><svg');
@@ -315,7 +315,7 @@ describe("contact", () => {
     expect(renderToString(<ContactLayout stepsTitle="お申し込みの流れ" steps={[<Step title="t" description="d" position={{ index: 1, count: 5 }} />]} panel={["p"]} />)).toBe(
       '<div class="container contact-layout"><aside class="contact-aside"><h2>お申し込みの流れ</h2><ol class="step-flow"><li><span class="step-flow__number" aria-hidden="true">01</span><div><h3>t</h3><p>d</p></div></li></ol></aside>p</div>',
     );
-    const legal = renderToString(<LegalTable summary="特定商取引法に基づく表記" rows={[LegalRow({ term: "販売業者", value: "Pinsel" })]} />);
+    const legal = renderToString(<LegalTable summary="特定商取引法に基づく表記" items={[LegalRow({ term: "販売業者", value: "Pinsel" })]} />);
     expect(legal).toBe('<section class="container"><details class="legal" id="legal"><summary>特定商取引法に基づく表記</summary><table><tbody><tr><th scope="row">販売業者</th><td>Pinsel</td></tr></tbody></table></details></section>');
   });
 });

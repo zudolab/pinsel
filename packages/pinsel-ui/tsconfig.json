@@ -8,7 +8,7 @@
     ],
     "jsx": "react-jsx",
     "jsxImportSource": "@takazudo/zfb/zudo-react",
-    "types": []
+    "types": ["node"]
   },
   "include": [
     "src"

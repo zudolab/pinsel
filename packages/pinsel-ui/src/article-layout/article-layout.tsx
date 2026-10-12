@@ -1,6 +1,7 @@
 import type { Child } from "@takazudo/zfb/zudo-react";
 import { parseMarkdown } from "../markdown/safe-markdown";
 import { Prose } from "../prose/prose";
+import { directoryPath } from "../nav-link/nav-link";
 import type { RouteContext } from "../render/types";
 import { TextLink } from "../text-link/text-link";
 import { Toc, TocItem } from "../toc/toc";
@@ -14,7 +15,7 @@ export interface RelatedNoteProps {
 
 /** One `li` of the All Notes list. */
 export function RelatedNote({ href, title, route }: RelatedNoteProps): Child {
-  return <li>{route?.pathname === href ? <span aria-current="page">{title}</span> : <TextLink href={href} label={title} />}</li>;
+  return <li>{route && directoryPath(route.pathname) === directoryPath(href) ? <span aria-current="page">{title}</span> : <TextLink href={href} label={title} />}</li>;
 }
 
 export interface ArticleLayoutProps {

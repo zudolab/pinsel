@@ -8,10 +8,17 @@ export interface NavLinkProps {
   route?: RouteContext;
 }
 
+/** `/lessons` → `/lessons/`: compiled plan pathnames carry no trailing slash, hrefs do. */
+export function directoryPath(pathname: string): string {
+  return pathname.endsWith("/") || pathname.endsWith(".html") ? pathname : `${pathname}/`;
+}
+
 /** Same rule as the prototype header: the current route starts with the item's path. */
 export function isCurrentSection(pathname: string | undefined, href: string): boolean {
   if (!pathname) return false;
-  return pathname === href || (href !== "/" && pathname.startsWith(href));
+  const current = directoryPath(pathname);
+  const target = directoryPath(href);
+  return current === target || (target !== "/" && current.startsWith(target));
 }
 
 /** One `a.site-nav__item` of the header navigation. */

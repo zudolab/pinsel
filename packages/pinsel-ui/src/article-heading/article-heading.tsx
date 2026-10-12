@@ -13,7 +13,7 @@ export interface ArticleHeadingProps {
 }
 
 // The approved free-tuition heading keeps each phrase unbroken.
-const TITLE_PHRASES: Readonly<Record<string, readonly string[]>> = {
+export const TITLE_PHRASES: Readonly<Record<string, readonly string[]>> = {
   "free-tuition": ["ドイツの美大は", "学費が無料"],
 };
 

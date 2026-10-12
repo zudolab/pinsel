@@ -7,11 +7,11 @@ const meta: StoryMeta = {
   title: "LegalTable",
   category: "Forms",
   description: "details#legal: 特定商取引法に基づく表記, closed by default.",
-  usage: `import { LegalRow, LegalTable } from "@pinsel/ui";\n\n<LegalTable summary="特定商取引法に基づく表記" rows={rows.map((row) => LegalRow(row))} />`,
+  usage: `import { LegalRow, LegalTable } from "@pinsel/ui";\n\n<LegalTable summary="特定商取引法に基づく表記" items={rows.map((row) => LegalRow(row))} />`,
 };
 export default meta;
 
 const rows = (): Child[] => legalRows.map((row) => LegalRow(row));
 
-export const Closed: Story = { name: "Closed", render: (): Child => <LegalTable summary="特定商取引法に基づく表記" rows={rows()} /> };
-export const Open: Story = { name: "Open", render: (): Child => <LegalTable summary="特定商取引法に基づく表記" rows={rows()} open /> };
+export const Closed: Story = { name: "Closed", render: (): Child => <LegalTable summary="特定商取引法に基づく表記" items={rows()} /> };
+export const Open: Story = { name: "Open", render: (): Child => <LegalTable summary="特定商取引法に基づく表記" items={rows()} open /> };
