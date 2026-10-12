@@ -1,5 +1,5 @@
 import type { ContentExportEvidence, ContentExportState, ContentExportSubmission } from "zudo-composer/export";
-import type { ContentSnapshotRecord } from "zudo-composer/host-storage";
+import type { ContentBaseline, ContentSnapshotRecord } from "zudo-composer/host-storage";
 
 // The publication provider port. A provider turns one immutable snapshot into
 // a content-only change in the canonical Git source and reports what it can
@@ -54,6 +54,11 @@ export interface ProviderObservation {
 export interface ProviderSubmitInput {
   readonly submission: ContentExportSubmission;
   readonly snapshot: ContentSnapshotRecord;
+  /** The stored baseline the snapshot was frozen against; lets a Git provider write only the entries that changed. */
+  readonly baseline?: ContentBaseline;
+  /** The editor who requested the publication and when (recorded in `content/snapshot.json`). */
+  readonly requestedBy?: string;
+  readonly requestedAt?: string;
 }
 
 export type ProviderSubmitResult =
@@ -69,6 +74,15 @@ export type ProviderStatusResult = { status: "ok"; value: ProviderObservation } 
 
 export type ProviderLookupResult = { status: "ok"; ref: ProviderRef } | { status: "not-found" } | { status: "timeout"; message: string } | { status: "unavailable"; message: string };
 
+export type ProviderPromoteResult =
+  | { status: "ok"; commit: string }
+  /** The provider (or its branch rules) refused to integrate; nothing changed. */
+  | { status: "refused"; message: string }
+  /** The submission no longer matches what was validated (head moved, base moved). */
+  | { status: "conflict"; message: string }
+  | { status: "timeout"; message: string }
+  | { status: "unavailable"; message: string };
+
 export interface PublicationProviderPort {
   readonly providerId: string;
   /** Submit one snapshot against its exact base and package identity. Idempotent per `submission.idempotencyKey`. */
@@ -77,6 +91,8 @@ export interface PublicationProviderPort {
   status(ref: ProviderRef): Promise<ProviderStatusResult>;
   /** Find a submission for this snapshot that already exists (after a lost acknowledgement or a restart). */
   lookupExisting(snapshotId: string): Promise<ProviderLookupResult>;
+  /** `PROMOTION_POLICY=auto` only: integrate a submission whose every required check passed. Providers without promotion omit it. */
+  promote?(ref: ProviderRef): Promise<ProviderPromoteResult>;
 }
 
 /**

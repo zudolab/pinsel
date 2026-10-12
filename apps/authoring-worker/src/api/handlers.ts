@@ -3,7 +3,8 @@ import { applyHostContentRequest, isHostContentOperationId, readHostContentRecei
 import { advanceFromPublication } from "../baseline/advance";
 import { reconcileCanonical } from "../baseline/reconcile-canonical";
 import { PREVIEW_PACK, previewRoutesOf, previewShellDocument, renderPreviewDocument } from "../preview/preview";
-import { refreshPublication, requestPublication, type PublicationContext } from "../publish/jobs";
+import { requestPublication, type PublicationContext } from "../publish/jobs";
+import { reconcilePublication } from "../publish/reconcile";
 import type { PublisherSelection } from "../publish/port";
 import type { AuthoringSite } from "../site/baseline";
 
@@ -212,7 +213,7 @@ export async function handleApi(request: Request, url: URL, context: ApiContext)
   }
   const publication = /^\/publications\/([A-Za-z0-9._-]{1,128})$/.exec(path);
   if (method === "GET" && publication) {
-    const result = await refreshPublication(publicationContext(context), publication[1]!);
+    const result = await reconcilePublication(publicationContext(context), publication[1]!);
     return json(result, statusCodeFor(result));
   }
 

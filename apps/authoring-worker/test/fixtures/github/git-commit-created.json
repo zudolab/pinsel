@@ -1,0 +1,12 @@
+{
+  "sha": "{{HEAD_SHA}}",
+  "node_id": "C_kwDOPinselHead",
+  "url": "https://api.github.com/repos/zudolab/pinsel/git/commits/{{HEAD_SHA}}",
+  "html_url": "https://github.com/zudolab/pinsel/commit/{{HEAD_SHA}}",
+  "author": { "name": "pinsel-publisher[bot]", "email": "publisher@example.test", "date": "2026-10-13T00:00:00Z" },
+  "committer": { "name": "pinsel-publisher[bot]", "email": "publisher@example.test", "date": "2026-10-13T00:00:00Z" },
+  "tree": { "sha": "{{NEW_TREE}}", "url": "https://api.github.com/repos/zudolab/pinsel/git/trees/{{NEW_TREE}}" },
+  "message": "content: publish snapshot",
+  "parents": [{ "sha": "{{BASE_SHA}}", "url": "https://api.github.com/repos/zudolab/pinsel/git/commits/{{BASE_SHA}}", "html_url": "https://github.com/zudolab/pinsel/commit/{{BASE_SHA}}" }],
+  "verification": { "verified": false, "reason": "unsigned", "signature": null, "payload": null, "verified_at": null }
+}

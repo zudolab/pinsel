@@ -7,3 +7,8 @@ declare namespace Cloudflare {
     ZFB_HOME_HTML: string;
   }
 }
+
+/** Vite's `import.meta.glob` (eager raw imports of fixtures and committed entries). */
+interface ImportMeta {
+  glob(pattern: string, options: { query: "?raw"; import: "default"; eager: true }): Record<string, unknown>;
+}
