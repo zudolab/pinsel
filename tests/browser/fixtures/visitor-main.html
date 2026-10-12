@@ -29,7 +29,7 @@
 </div>
 <div class="container contact-layout">
   <div class="contact-panel">
-    <form id="contact-form" class="contact-form" novalidate aria-label="お問い合わせフォーム">
+    <form id="contact-form" class="contact-form" novalidate aria-label="お問い合わせフォーム" data-submitting-label="送信中..." data-value-missing-message="{label}を入力してください。" data-email-format-message="メールアドレスの形式をご確認ください。">
       <p class="form-error" role="alert" data-form-error hidden>送信に失敗しました。時間をおいて再度お試しください。</p>
       <div class="form-field"><label for="name">お名前<span>必須</span></label><input id="name" name="name" type="text" autocomplete="name" required><p class="form-error" id="name-error" hidden></p></div>
       <div class="form-field"><label for="email">メールアドレス<span>必須</span></label><input id="email" name="email" type="email" autocomplete="email" required><p class="form-error" id="email-error" hidden></p></div>
