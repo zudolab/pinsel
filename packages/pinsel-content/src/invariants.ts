@@ -46,6 +46,16 @@ export const PINSEL_ROUTES: readonly PinselRoute[] = [
   NOT_FOUND_ROUTE,
 ];
 
+/** The compiled plan's pathname for an output route: Composer's sitemap paths carry no trailing slash. */
+export function planPathname(route: PinselRoute): string {
+  return route === "/" || route === NOT_FOUND_ROUTE ? route : route.replace(/\/$/, "");
+}
+
+/** Inverse of `planPathname`; `undefined` for a pathname that is not one of the 14 outputs. */
+export function routeForPlanPathname(pathname: string): PinselRoute | undefined {
+  return PINSEL_ROUTES.find((route) => planPathname(route) === pathname);
+}
+
 export function outputFileForRoute(route: PinselRoute): string {
   return route === NOT_FOUND_ROUTE ? "404.html" : `${route.slice(1)}index.html`;
 }

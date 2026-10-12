@@ -34,11 +34,6 @@ export const STRUCTURE_LITERALS = {
 /** Prototype header order (`ui.py NAV`); the footer follows `nav-link.order`. */
 export const HEADER_NAV_ORDER = ["/lessons/", "/about/", "/results/", "/voices/", "/notes/", "/faq/"] as const;
 
-/** Sitemap pathname (Composer drops the trailing slash) for each output route. */
-export function planPathname(route: string): string {
-  return route === "/" || route === NOT_FOUND_ROUTE ? route : route.replace(/\/$/, "");
-}
-
 const art = (slot: "hero" | "middle" | "closing", size: "hero" | "large" | "closing" | "medium" | "small" | "ribbon", drift: 1 | -1 = 1, id?: string): NodeInput =>
   node("pinsel.art-window", { slot, size, drift: String(drift), range: slot === "hero" && size !== "hero" ? 8 : 52 }, {}, id);
 const group = (id: string): NodeInput => node("pinsel.group", {}, {}, id);
@@ -382,7 +377,7 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
   const resultsBody: NodeInput[] = [];
   const yearSections: [string, Mapping][] = [];
   for (const year of years) {
-    const tocItem = fragment(`results-toc-${year.id}`, "result-year", [node("pinsel.toc-item", { fragmentPrefix: "year-" }, {}, "item")], [
+    const tocItem = fragment(`results-toc-${year.id}`, "result-year", [node("pinsel.toc-item", { number: resultsBody.length + 1 }, {}, "item")], [
       { field: "label", prop: "label" },
       { field: "label", prop: "href", transform: { kind: "prefix", prefix: "#year-" } },
     ], { kind: "pinned", entryId: year.id });
