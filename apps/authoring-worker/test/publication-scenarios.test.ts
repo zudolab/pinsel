@@ -187,6 +187,35 @@ describe("publication scenarios (fake provider, local D1)", () => {
     expect((await readDraft(auto)).baselineRevision).toBe(promoted.evidence.commit);
   });
 
+  it("exposes an immutable baseline preview snapshot on /site that follows each baseline advance", async () => {
+    const site = async () => (await call(handler, "/api/v1/site")).body.baselinePreview as { snapshotId: string; revision: number };
+    const preview = (target: { snapshotId: string; revision: number }) => call(handler, `/preview/${target.snapshotId}/?revision=${target.revision}`);
+    const before = await site();
+    expect(before).toMatchObject({ snapshotId: expect.stringMatching(/^[0-9a-f]{64}$/), revision: expect.any(Number) });
+    expect(await site()).toEqual(before);
+    const original = await preview(before);
+    expect(original.status).toBe(200);
+    // Unsent draft edits never move it.
+    await savePrice(handler, "¥55,000");
+    expect(await site()).toEqual(before);
+    expect((await preview(before)).text).not.toContain("¥55,000");
+
+    const created = await published(await snapshotNow(handler));
+    fake.advance(created.providerRef.operationId, "integrated", GREEN(COMMIT_1));
+    expect((await job(created.publicationId)).baselineAdvance.status).toBe("advanced");
+    expect((await call(handler, "/api/v1/site")).body.baselineRevision).toBe(COMMIT_1);
+    const after = await site();
+    expect(after.snapshotId).not.toBe(before.snapshotId);
+    const integrated = await preview(after);
+    expect(integrated.status).toBe(200);
+    expect(integrated.text).toContain("¥55,000");
+    // The earlier baseline stays renderable, byte for byte.
+    expect((await preview(before)).text).toBe(original.text);
+    // Content-addressed: the integrated baseline is the published snapshot itself.
+    const publishedSnapshot = await call(handler, `/api/v1/publications/${created.publicationId}`, { env: FAKE_ENV });
+    expect(after).toEqual({ snapshotId: publishedSnapshot.body.value.snapshotId, revision: (await call(handler, `/api/v1/snapshots/${after.snapshotId}`)).body.value.draftRevision });
+  });
+
   it("runs the scheduled pass only when PUBLICATION_RECONCILE_SCHEDULE=enabled and a provider is configured", async () => {
     const created = await published(await snapshotNow(handler));
     fake.advance(created.providerRef.operationId, "verified", GREEN("a".repeat(40)));
