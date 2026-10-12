@@ -1,0 +1,138 @@
+---
+import Logo from '@components/logo/logo.astro';
+
+const navLinks = [
+  { label: 'Pricing', href: '/#pricing' },
+  { label: 'Lessons', href: '/lessons/' },
+  { label: 'Notes', href: '/notes/' },
+  { label: 'Results', href: '/results/' },
+  { label: 'Voices', href: '/voices/' },
+  { label: 'About', href: '/about/' },
+  { label: 'FAQ', href: '/faq/' },
+  { label: 'Contact', href: '/contact/' },
+];
+
+const pathname = Astro.url.pathname;
+
+function isActive(href: string): boolean {
+  if (href === '/') return pathname === '/';
+  if (href.startsWith('/#')) return pathname === '/';
+  return pathname.startsWith(href);
+}
+---
+<header class="sticky top-0 z-50 bg-pd-bg/80 backdrop-blur-md border-b border-pd-border" data-site-header>
+  <div class="mx-auto max-w-7xl flex items-center justify-between px-hgap-sm py-vgap-xs md:px-hgap-md lg:py-vgap-sm">
+    <div>
+      <Logo href="/" subClassName="lg:block hidden" />
+    </div>
+
+    {/* Desktop nav */}
+    <nav class="hidden md:flex items-center gap-hgap-sm">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'inline-block no-underline text-[12px] lg:text-[14px] font-medium tracking-[1px] uppercase transition-all hover:-translate-y-[2px]',
+            isActive(link.href) ? 'text-pd-accent' : 'text-pd-fg hover:text-pd-accent',
+          ]}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    {/* Mobile hamburger */}
+    <button
+      type="button"
+      class="md:hidden flex flex-col gap-[5px] p-hgap-2xs"
+      aria-label="Toggle menu"
+      aria-expanded="false"
+      data-menu-toggle
+    >
+      <span class="block w-[22px] h-[2px] bg-pd-fg transition-transform" data-bar-top></span>
+      <span class="block w-[22px] h-[2px] bg-pd-fg transition-opacity" data-bar-mid></span>
+      <span class="block w-[22px] h-[2px] bg-pd-fg transition-transform" data-bar-bot></span>
+    </button>
+  </div>
+
+  {/* Mobile menu */}
+  <nav class="md:hidden border-t border-pd-border bg-pd-bg hidden" data-mobile-menu>
+    <ul class="list-none m-0 p-0">
+      {navLinks.map((link) => (
+        <li class="border-b border-pd-border">
+          <a
+            href={link.href}
+            class:list={[
+              'block no-underline text-[13px] font-medium tracking-[1px] uppercase px-hgap-sm py-vgap-sm transition-colors',
+              isActive(link.href)
+                ? 'text-pd-accent bg-pd-surface'
+                : 'text-pd-fg hover:bg-pd-surface',
+            ]}
+          >
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+</header>
+
+<script>
+  function initHeader() {
+    const header = document.querySelector('[data-site-header]');
+    if (!header) return;
+
+    const toggle = header.querySelector<HTMLButtonElement>('[data-menu-toggle]');
+    const menu = header.querySelector<HTMLElement>('[data-mobile-menu]');
+    const barTop = header.querySelector<HTMLElement>('[data-bar-top]');
+    const barMid = header.querySelector<HTMLElement>('[data-bar-mid]');
+    const barBot = header.querySelector<HTMLElement>('[data-bar-bot]');
+
+    let menuOpen = false;
+
+    function setMenuState(open: boolean) {
+      menuOpen = open;
+      toggle?.setAttribute('aria-expanded', String(open));
+
+      if (menu) {
+        menu.classList.toggle('hidden', !open);
+      }
+
+      if (barTop) {
+        barTop.classList.toggle('translate-y-[7px]', open);
+        barTop.classList.toggle('rotate-45', open);
+      }
+      if (barMid) {
+        barMid.classList.toggle('opacity-0', open);
+      }
+      if (barBot) {
+        barBot.classList.toggle('-translate-y-[7px]', open);
+        barBot.classList.toggle('-rotate-45', open);
+      }
+
+      document.body.style.overflow = open ? 'hidden' : '';
+    }
+
+    toggle?.addEventListener('click', () => {
+      setMenuState(!menuOpen);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && menuOpen) {
+        setMenuState(false);
+      }
+    });
+  }
+
+  // Re-initialize on every page load (including View Transitions)
+  document.addEventListener('astro:page-load', () => {
+    initHeader();
+  });
+
+  // Close menu before View Transition navigation
+  document.addEventListener('astro:before-preparation', () => {
+    const menu = document.querySelector<HTMLElement>('[data-mobile-menu]');
+    if (menu) menu.classList.add('hidden');
+    document.body.style.overflow = '';
+  });
+</script>

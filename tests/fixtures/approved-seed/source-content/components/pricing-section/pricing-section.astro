@@ -1,0 +1,40 @@
+---
+import PricingCard from '@components/pricing-card/pricing-card.astro';
+
+const pricingData = [
+  {
+    name: '進路相談',
+    price: '¥10,000',
+    unit: '1回',
+    description: '有料面談 / 1.5〜2時間',
+  },
+  {
+    name: '2ヶ月コース',
+    price: '¥50,000',
+    unit: '全4回（月2回）',
+    description: 'ポートフォリオ制作指導',
+    featured: true,
+  },
+  {
+    name: '4ヶ月コース',
+    price: '¥92,000',
+    unit: '全8回（月2回）',
+    description: '出願準備までフルサポート',
+  },
+];
+---
+<section id="pricing" class="px-hgap-sm py-vgap-xl">
+  <h2 class="text-center text-sm font-medium tracking-[3px] text-pd-muted">
+    COURSE &amp; PRICING
+  </h2>
+  <div class="mx-auto mt-vgap-lg flex max-w-4xl flex-col gap-hgap-sm md:flex-row md:items-start">
+    {pricingData.map((card) => (
+      <div class="flex-1">
+        <PricingCard {...card} />
+      </div>
+    ))}
+  </div>
+  <p class="mt-vgap-md text-center text-pd-muted">
+    ※ お問い合わせ後にコースをお選びいただけます
+  </p>
+</section>

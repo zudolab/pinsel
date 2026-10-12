@@ -1,0 +1,59 @@
+---
+export type LogoSize = 'small' | 'default' | 'large';
+
+interface Props {
+  size?: LogoSize;
+  href?: string;
+  subClassName?: string;
+}
+
+const sizeConfig: Record<LogoSize, { pinsel: string; sub: string; gap: string }> = {
+  small: {
+    pinsel: 'text-[14px]',
+    sub: 'text-[10px]',
+    gap: 'gap-[2px]',
+  },
+  default: {
+    pinsel: 'text-[22px]',
+    sub: 'text-[15px]',
+    gap: 'gap-[3px]',
+  },
+  large: {
+    pinsel: 'text-[36px]',
+    sub: 'text-[22px]',
+    gap: 'gap-[4px]',
+  },
+};
+
+const { size = 'default', href, subClassName } = Astro.props;
+const config = sizeConfig[size];
+---
+{href ? (
+  <a href={href} class="block leading-[0] no-underline text-inherit hover:text-inherit">
+    <span class:list={['inline-flex flex-col items-center leading-none', config.gap]}>
+      <span
+        class:list={[config.pinsel, "font-raleway font-extralight uppercase tracking-[0.25em] after:content-[''] after:ml-[-0.25em]"]}
+      >
+        Pinsel
+      </span>
+      <span
+        class:list={[config.sub, "font-zen-kaku font-light tracking-[0.25em] whitespace-nowrap after:content-[''] after:ml-[-0.25em]", subClassName]}
+      >
+        ピンゼル
+      </span>
+    </span>
+  </a>
+) : (
+  <span class:list={['inline-flex flex-col items-center leading-none', config.gap]}>
+    <span
+      class:list={[config.pinsel, "font-raleway font-extralight uppercase tracking-[0.25em] after:content-[''] after:ml-[-0.25em]"]}
+    >
+      Pinsel
+    </span>
+    <span
+      class:list={[config.sub, "font-zen-kaku font-light tracking-[0.25em] whitespace-nowrap after:content-[''] after:ml-[-0.25em]", subClassName]}
+    >
+      ピンゼル
+    </span>
+  </span>
+)}

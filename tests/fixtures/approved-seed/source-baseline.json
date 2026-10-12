@@ -1,0 +1,33 @@
+{
+  "preparedDateJapan": "2026-10-12",
+  "targetRepository": {
+    "url": "https://github.com/zudolab/pinsel",
+    "defaultBranch": "main",
+    "baseSha": null,
+    "emptyAtInspection": true,
+    "existingOpenIssues": 0,
+    "existingOpenPRs": 0
+  },
+  "approvedReference": {
+    "url": "https://pinsel-client-review.takazudo69458.chatgpt.site/",
+    "commitSha": "1d5eff1b6a671cf3145cb849160b0a12b36411c7",
+    "version": 1
+  },
+  "contentSource": {
+    "url": "https://github.com/Takazudo/yuko-site/pull/4",
+    "headSha": "ce2ec05b9549c8f4b50a9ba01c201d8f88992348",
+    "baseBranch": "master",
+    "state": "open",
+    "fixtureFiles": 75,
+    "verifiedMatchingFixtures": 75
+  },
+  "designHistory": {
+    "url": "https://pinsel-design-directions.takazudo69458.chatgpt.site/detailed/",
+    "latestDetailedCommit": "bb620a220567e035b84088aace90d9a9a24a57f9"
+  },
+  "scope": "Seed issue and artifacts only; production implementation follows in a separate session.",
+  "productionStack": "Open decision; Astro + TypeScript static components recommended based on actual source.",
+  "mergeAuthorized": false,
+  "deployAuthorized": false,
+  "seedIssue": "https://github.com/zudolab/pinsel/issues/1"
+}

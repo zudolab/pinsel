@@ -1,0 +1,158 @@
+---
+import BaseLayout from '../layouts/base-layout.astro';
+import HeroSection from '@components/hero-section/hero-section.astro';
+import ShadowDivider from '@components/shadow-divider/shadow-divider.astro';
+import PricingSection from '@components/pricing-section/pricing-section.astro';
+import MoreLinkButton from '@components/more-link-button/more-link-button.astro';
+import InPageDivider from '@components/in-page-divider/in-page-divider.astro';
+import Section from '@components/section/section.astro';
+import InstructorProfile from '@components/instructor-profile/instructor-profile.astro';
+import Carousel from '@components/carousel/carousel.astro';
+import ResultCard from '@components/result-card/result-card.astro';
+import TestimonialCard from '@components/testimonial-card/testimonial-card.astro';
+import TargetChecklist from '@components/target-checklist/target-checklist.astro';
+import { FaqAccordion } from '@components/faq-accordion/faq-accordion';
+import CtaSection from '@components/cta-section/cta-section.astro';
+
+const title = 'Pinsel - ドイツ美大受験オンラインクラス';
+const description = 'ドイツ美大受験をマンツーマンでサポート。123件以上の合格実績。';
+
+const results = [
+  { year: '2025', school: 'ベルリン芸術大学', detail: 'Visuelle Kommunikation' },
+  { year: '2025', school: 'ミュンヘン芸術大学', detail: 'Freie Kunst: Bildhauerei' },
+  { year: '2025', school: 'ハンブルク美術大学', detail: 'Design' },
+  { year: '2025', school: 'ニュルンベルク美術大学', detail: 'Freie Kunst: Malerei' },
+  { year: '2024', school: 'ミュンヘン芸術大学', detail: 'Freie Kunst: Malerei' },
+  { year: '2024', school: 'ウィーン応用美術大学', detail: 'Bildende Kunst' },
+];
+
+const voices = [
+  {
+    quote:
+      '知識0の状態から合格をいただけました。クリエイティブ面でのアドバイスも沢山いただけたことは今でも役に立っています。',
+    author: 'Rさん',
+    school: 'ハンブルク芸術アカデミー 合格',
+  },
+  {
+    quote:
+      '先生からとりあえず受けてみようと提案していただき、夜中でも休日でもレッスンやメールでたくさんのアドバイスをいただきました。',
+    author: 'Kさん',
+    school: 'ニュルンベルク芸術アカデミー 合格',
+  },
+  {
+    quote:
+      'ポートフォリオとしてまとめる方法や、自分のコンセプトをどう伝えるかについて多くのアドバイスをいただきました。',
+    author: 'Yさん',
+    school: 'ミュンヘン芸術大学 合格',
+  },
+];
+
+const faqItems = [
+  {
+    question: '年齢制限はありますか？',
+    answer:
+      '大学・専攻により異なりますが、目安として35歳程度です。受験生は18〜30歳が多いですが、ファインアート学科では35歳以上の学生もいます。',
+  },
+  {
+    question: '専攻が決まっていなくても大丈夫ですか？',
+    answer:
+      'はい。受講開始時に検討中の方も多くいらっしゃいます。基礎的な授業から始まり、受講中にご検討いただけます。',
+  },
+  {
+    question: 'ドイツ語ができなくても受験は可能ですか？',
+    answer:
+      '語学力の証明が不要な大学も数校ありますが、年々語学力が求められる傾向にあります。余裕を持ってドイツ語学習を始めることをお勧めします。',
+  },
+  {
+    question: '準備期間はどのくらい必要ですか？',
+    answer: '初心者の方や高校卒業直後の方は1年〜、美大卒の方は半年〜を目安にお考えください。',
+  },
+];
+
+const targetItems = [
+  'ドイツ美大に興味があるが、何から始めればいいかわからない',
+  '海外の美大に興味があるが、学費についてお悩みの方',
+  'マッペ（ポートフォリオ）制作や受験についてアドバイスが欲しい方',
+  '美大卒で、ドイツ美大への進学を検討している方',
+  'ドイツ美大受験の最中で、まとめとしてのサポートを必要とする方',
+];
+---
+
+<BaseLayout title={title} description={description}>
+  <!-- Hero -->
+  <HeroSection />
+
+  <ShadowDivider />
+
+  <!-- Pricing -->
+  <PricingSection />
+  <div class="mt-vgap-sm mb-vgap-lg text-center">
+    <MoreLinkButton text="クラスの詳細はこちら" href="/lessons/" />
+  </div>
+
+  <InPageDivider />
+
+  <!-- Instructor -->
+  <Section title="Instructor">
+    <InstructorProfile
+      name="高津戸 優子"
+      title="東京芸大卒 / ミュンヘン芸術アカデミー修了"
+      bio="ドイツ美大受験は情報が少なく、不安に感じる方が多いと思います。私自身の経験をもとに、進路相談からポートフォリオ作成、出願準備まで、一人ひとりに寄り添ったサポートをしています。"
+      imageSrc="/images/instructor-yuko.jpg"
+      detailHref="/about/"
+    />
+  </Section>
+
+  <!-- Results Carousel -->
+  <Carousel title="Results" moreHref="/results/" moreText="もっと見る" lgCols={3}>
+    {results.map((r) => (
+      <div
+        class="w-[220px] shrink-0 lg:w-auto"
+        style="scroll-snap-align: start;"
+      >
+        <ResultCard year={r.year} school={r.school} detail={r.detail} />
+      </div>
+    ))}
+  </Carousel>
+
+  <InPageDivider />
+
+  <!-- Voices Carousel -->
+  <Carousel title="Voices" moreHref="/voices/" moreText="もっと見る" lgCols={3}>
+    {voices.map((v) => (
+      <div
+        class="w-[280px] shrink-0 lg:w-auto"
+        style="scroll-snap-align: start;"
+      >
+        <TestimonialCard quote={v.quote} author={v.author} school={v.school} />
+      </div>
+    ))}
+  </Carousel>
+
+  <InPageDivider />
+
+  <!-- Target ("For You") -->
+  <Section title="For You">
+    <p class="mb-vgap-md text-base text-pd-fg leading-relaxed">
+      初心者の方も美大卒の方も、どなたでも１対１のオンライン個人レッスンでドイツ美大留学を目指して頂けます。
+    </p>
+    <TargetChecklist items={targetItems} />
+  </Section>
+
+  <InPageDivider />
+
+  <!-- FAQ -->
+  <Section title="FAQ">
+    <FaqAccordion items={faqItems} client:visible />
+    <div class="mt-vgap-md text-center">
+      <MoreLinkButton text="もっと見る" href="/faq/" />
+    </div>
+  </Section>
+
+  <!-- CTA -->
+  <CtaSection
+    text="お問い合わせ"
+    href="/contact/"
+    subCopy="まずはお気軽にご相談ください。ささいなことでも構いません。"
+  />
+</BaseLayout>

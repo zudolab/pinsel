@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../layouts/base-layout.astro';
+---
+
+<BaseLayout title="ページが見つかりません - Pinsel">
+  <section class="py-vgap-xl">
+    <div class="mx-auto max-w-5xl">
+      <h1 class="text-center text-2xl text-pd-fg">ページが見つかりません</h1>
+      <p class="mx-auto mt-vgap-sm max-w-[640px] text-center text-sm text-pd-muted">
+        お探しのページは存在しないか、移動した可能性があります。
+      </p>
+      <div class="mt-vgap-xl border-b border-pd-border"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="text-center">
+      <a
+        href="/"
+        class="inline-block text-pd-link underline decoration-1 underline-offset-4"
+      >
+        トップページに戻る
+      </a>
+    </div>
+  </section>
+</BaseLayout>

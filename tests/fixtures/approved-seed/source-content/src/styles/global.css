@@ -1,0 +1,69 @@
+@import './index.css';
+@import 'tailwindcss';
+
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: currentcolor;
+  }
+
+  html {
+    @apply underline-offset-4 bg-pd-bg;
+    scroll-behavior: smooth;
+  }
+
+  @media (max-width: 739px) {
+    html {
+      font-size: 90%;
+    }
+  }
+
+  body {
+    @apply text-base font-noto text-pd-fg font-light decoration-1;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background-image: url('/images/bg-texture.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 0.04;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+      radial-gradient(ellipse at 15% 20%, color-mix(in srgb, var(--pd-theme-bg-pattern-a) 40%, transparent) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 15%, color-mix(in srgb, var(--pd-theme-bg-pattern-b) 12%, transparent) 0%, transparent 45%),
+      radial-gradient(ellipse at 50% 80%, color-mix(in srgb, var(--pd-theme-bg-pattern-c) 10%, transparent) 0%, transparent 50%),
+      radial-gradient(ellipse at 20% 70%, color-mix(in srgb, var(--pd-theme-bg-pattern-d) 12%, transparent) 0%, transparent 40%);
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  a {
+    @apply underline text-pd-link font-medium;
+  }
+
+  a:hover {
+    @apply text-pd-accent;
+  }
+
+
+  [id] {
+    scroll-margin-top: 80px;
+  }
+}

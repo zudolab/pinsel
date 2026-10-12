@@ -1,0 +1,121 @@
+---
+import Logo from '@components/logo/logo.astro';
+import InstagramIcon from '@components/instagram-icon/instagram-icon.astro';
+
+const currentYear = new Date().getFullYear();
+
+const navLinks = [
+  {
+    label: 'Lessons',
+    title: 'オンラインクラス',
+    description: 'マッペ制作から出願まで完全マンツーマンサポート',
+    href: '/lessons/',
+  },
+  {
+    label: 'Notes',
+    title: 'ドイツ美大受験ノート',
+    description: 'ドイツ美大受験に関する情報まとめ',
+    href: '/notes/',
+  },
+  {
+    label: 'Results',
+    title: '合格実績',
+    description: '11年間で123件以上、30校以上の合格実績',
+    href: '/results/',
+  },
+  {
+    label: 'Voices',
+    title: '生徒の声',
+    description: '受講生の合格体験談をご紹介',
+    href: '/voices/',
+  },
+  {
+    label: 'About',
+    title: '講師紹介',
+    description: '東京芸大卒・ミュンヘン芸術アカデミー修了',
+    href: '/about/',
+  },
+  {
+    label: 'FAQ',
+    title: 'よくある質問',
+    description: 'レッスンや受験に関するQ&A',
+    href: '/faq/',
+  },
+  {
+    label: 'Contact',
+    title: 'お問い合わせ',
+    description: 'まずはお気軽にご相談ください',
+    href: '/contact/',
+  },
+];
+---
+<footer class="mt-vgap-lg bg-pd-fg text-pd-bg py-vgap-xl px-hgap-md md:px-hgap-md">
+  <div class="mx-auto max-w-5xl flex flex-col md:flex-row md:items-start gap-hgap-md">
+    {/* Left col: Logo box + Instagram */}
+    <div class="flex flex-col items-center gap-vgap-sm shrink-0">
+      <a
+        href="/"
+        class="aspect-square w-[280px] border border-pd-border flex items-center justify-center no-underline text-pd-bg hover:bg-pd-bg hover:text-pd-fg transition-colors"
+      >
+        <Logo size="large" />
+      </a>
+      <a
+        href="https://www.instagram.com/yuko_takatsudo"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Instagram"
+        class="inline-flex items-center gap-hgap-2xs no-underline text-pd-border hover:text-pd-bg transition-colors"
+      >
+        <InstagramIcon />
+        <span class="text-[13px]">yuko_takatsudo</span>
+      </a>
+    </div>
+
+    {/* Right col: Sitemap nav */}
+    <nav class="flex-1">
+      {/* Mobile: 3-column grid with "/" aligned at center */}
+      <div class="sm:hidden grid grid-cols-[auto_auto_auto] items-baseline gap-x-hgap-2xs gap-y-vgap-xs w-fit mx-auto">
+        {navLinks.map((link) => (
+          <a href={link.href} class="contents group no-underline hover:underline transition-colors">
+            <span class="text-[13px] font-medium tracking-[2px] uppercase text-pd-border group-hover:text-pd-bg transition-colors text-right">
+              {link.label}
+            </span>
+            <span class="text-[13px] text-pd-border">/</span>
+            <span class="text-[15px] text-pd-bg text-left">
+              {link.title}
+            </span>
+          </a>
+        ))}
+      </div>
+
+      {/* Desktop: multi-column card layout */}
+      <ul class="list-none m-0 p-0 hidden sm:grid sm:grid-cols-2 lg:grid-cols-3 gap-x-hgap-sm gap-y-vgap-md">
+        {navLinks.map((link) => (
+          <li class="border-t border-pd-border pt-vgap-sm">
+            <a
+              href={link.href}
+              class="group block no-underline hover:underline transition-colors"
+            >
+              <span class="block text-[13px] font-medium tracking-[2px] uppercase text-pd-border group-hover:text-pd-bg transition-colors">
+                {link.label}
+              </span>
+              <span class="block text-[17px] text-pd-bg mt-[2px]">
+                {link.title}
+              </span>
+              <span class="block text-[14px] text-pd-border mt-[2px]">
+                {link.description}
+              </span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  {/* Copyright */}
+  <div class="mx-auto max-w-5xl mt-vgap-lg border-t border-pd-border">
+    <p class="pt-vgap-md text-center text-sm text-pd-bg tracking-[1px]">
+      &copy; 2015-{currentYear} Pinsel Germany. All rights reserved.
+    </p>
+  </div>
+</footer>

@@ -1,0 +1,13 @@
+---
+interface Props {
+  title: string;
+  description: string;
+  titleColor?: string;
+}
+
+const { title, description, titleColor = 'text-pd-link' } = Astro.props;
+---
+<div class="rounded-md border border-pd-border bg-pd-bg px-hgap-sm py-vgap-sm">
+  <p class:list={['font-bold', titleColor]}>{title}</p>
+  <p class="mt-vgap-xs leading-relaxed text-pd-fg">{description}</p>
+</div>

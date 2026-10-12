@@ -1,0 +1,30 @@
+---
+interface Props {
+  author: string;
+  year: string;
+  school: string;
+  department: string;
+  quote: string;
+}
+
+const { author, year, school, department, quote } = Astro.props;
+const paragraphs = quote.split('\n');
+---
+<div class="rounded-md border border-pd-border bg-pd-bg px-hgap-sm py-vgap-md">
+  <div class="mb-vgap-sm">
+    <p class="font-bold text-pd-fg">
+      {author}
+      <span class="ml-hgap-xs text-sm font-normal text-pd-link">{year}</span>
+    </p>
+    <p class="mt-vgap-2xs text-sm text-pd-muted">
+      {school} / {department}
+    </p>
+  </div>
+  <div class="flex flex-col gap-vgap-sm border-l-[3px] border-pd-accent pl-hgap-xs">
+    {paragraphs.map((paragraph) => (
+      <p class="leading-relaxed text-pd-fg">
+        {paragraph}
+      </p>
+    ))}
+  </div>
+</div>

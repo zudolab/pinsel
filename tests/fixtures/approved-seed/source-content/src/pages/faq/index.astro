@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../layouts/base-layout.astro';
+import Section from '@components/section/section.astro';
+import PageHeader from '@components/page-header/page-header.astro';
+import Breadcrumb from '@components/breadcrumb/breadcrumb.astro';
+import { FaqAccordion } from '@components/faq-accordion/faq-accordion';
+import CtaSection from '@components/cta-section/cta-section.astro';
+import { faqData } from '@/data/faq-data';
+
+const title = 'よくある質問 - Pinsel';
+const description = 'ドイツ美大受験・Pinselのレッスンについてのよくある質問。';
+---
+
+<BaseLayout title={title} description={description}>
+  <Section>
+    <Breadcrumb items={[{ label: '', href: '/' }, { label: 'よくある質問' }]} />
+    <PageHeader
+      title="よくある質問"
+      description="Pinselのオンラインクラスやドイツ美大受験に関して、よくいただくご質問をまとめました。"
+    />
+  </Section>
+
+  {faqData.map((category) => (
+    <Section>
+      <h2 class="text-lg text-pd-fg mb-vgap-sm">{category.title}</h2>
+      <FaqAccordion items={category.items} client:visible />
+    </Section>
+  ))}
+
+  <CtaSection
+    text="お問い合わせ"
+    href="/contact/"
+    subCopy="上記以外のご質問もお気軽にお問い合わせください。"
+  />
+</BaseLayout>

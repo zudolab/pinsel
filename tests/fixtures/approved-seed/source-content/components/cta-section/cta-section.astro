@@ -1,0 +1,31 @@
+---
+interface Props {
+  text: string;
+  href: string;
+  subCopy?: string;
+}
+
+const { text, href, subCopy } = Astro.props;
+---
+<section
+  class="relative -mx-hgap-sm md:-mx-hgap-md -mb-vgap-lg overflow-hidden py-vgap-xl"
+  style="background: linear-gradient(135deg, var(--pd-theme-link) 0%, color-mix(in srgb, var(--pd-theme-link) 70%, black) 40%, var(--pd-theme-accent) 100%);"
+>
+  <div class="pointer-events-none absolute inset-0 mx-auto max-w-[1100px]">
+    <div class="absolute top-[-80px] right-[-40px] h-[300px] w-[300px] rounded-full bg-white/[0.08]"></div>
+    <div class="absolute bottom-[-60px] left-[-30px] h-[200px] w-[200px] rounded-full bg-white/[0.06]"></div>
+  </div>
+  <div class="relative z-[1] mx-auto flex max-w-[560px] lg:max-w-[680px] xl:max-w-[800px] 2xl:max-w-[920px] flex-col items-center gap-vgap-sm rounded-[16px] border border-white/25 bg-white/15 px-hgap-lg py-vgap-xl backdrop-blur-[12px]">
+    <p class="text-center font-raleway text-sm uppercase tracking-[4px] text-white/80">
+      Contact
+    </p>
+    <p class="text-center text-lg text-white">まずはお気軽にご相談ください。</p>
+    {subCopy && <p class="text-center text-white/70">{subCopy}</p>}
+    <a
+      href={href}
+      class="mt-vgap-xs inline-block rounded-[50px] border border-white/40 bg-white/20 px-hgap-md py-vgap-xs text-sm font-bold tracking-[2px] text-white no-underline backdrop-blur-[4px] transition-opacity hover:opacity-85"
+    >
+      {text}
+    </a>
+  </div>
+</section>
