@@ -12,6 +12,11 @@ describe("chrome localisation", () => {
     expect(translateChrome("¥50,000")).toBeNull();
   });
 
+  it("translates the session messages the host status line shows", () => {
+    expect(translateChrome("The save is not confirmed yet.")).toBe("保存をまだ確認できていません。");
+    expect(translateChrome("Failed to fetch")).toBe("編集サーバーに接続できませんでした。");
+  });
+
   it("rewrites rendered and later-rendered chrome but never author text", async () => {
     const root = document.createElement("div");
     root.innerHTML = `<button>Save</button><textarea>Save</textarea><input aria-label="Search models" value="Save">`;
