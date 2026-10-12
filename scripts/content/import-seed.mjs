@@ -6,6 +6,7 @@ import { tsImport } from "tsx/esm/api";
 
 const { importSeed } = await tsImport("../../packages/pinsel-content/src/import/import-seed.ts", import.meta.url);
 
+/** @type {{ rows: { key: string, modelId: string, decision: string }[], written: string[] }} */
 const result = await importSeed();
 const byDecision = new Map();
 const byModel = new Map();
