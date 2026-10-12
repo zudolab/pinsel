@@ -1,7 +1,10 @@
-import { parseMarkdown } from "@pinsel/ui";
+// The markdown tree module itself, not the @pinsel/ui index: this file must load without the zudo-react JSX setup.
+import { parseMarkdown } from "@pinsel/ui/src/markdown/safe-markdown.ts";
 import type { SiteProjectPlanRoute } from "zudo-composer/content";
+import type { ContentEntryRecord } from "zudo-composer/site-project";
 
-import { CONTACT_HREF, INSTAGRAM_URL } from "../invariants";
+import { CONTACT_HREF, INSTAGRAM_URL, ROUTE_FRAGMENTS, resultYearFragment, type PinselRoute } from "../invariants";
+import { fieldId } from "../models";
 import { CONTRACT_COMPONENT_IDS, contractComponent } from "./component-contract";
 
 // Facts read off a compiled route document without rendering it: the
@@ -120,4 +123,23 @@ export function routeFacts(route: SiteProjectPlanRoute): RouteFacts {
   const facts: RouteFacts = { pathname: route.pathname, fragments: [], links: [], art: [], components: [] };
   route.composition.document.root.forEach((root, index) => visit(root, index + 1, facts));
   return facts;
+}
+
+/** Fragments fixed by the structure (not derived from collection sizes). */
+const STRUCTURE_FRAGMENT_ROUTES: readonly PinselRoute[] = ["/", "/lessons/", "/about/", "/notes/", "/contact/", "/404.html"];
+
+const ordered = (entries: readonly ContentEntryRecord[], modelId: string) =>
+  entries
+    .filter((entry) => entry.modelId === modelId)
+    .sort((left, right) => Number(left.values[fieldId(modelId, "order")]) - Number(right.values[fieldId(modelId, "order")]) || (left.id < right.id ? -1 : 1));
+
+/** The content fragment ids a route must carry, in document order, given its entries (collection sizes, labels, note headings). */
+export function expectedFragments(route: PinselRoute, entries: readonly ContentEntryRecord[]): readonly string[] {
+  if (STRUCTURE_FRAGMENT_ROUTES.includes(route)) return ROUTE_FRAGMENTS[route];
+  if (route === "/results/") return ordered(entries, "result-year").map((entry) => resultYearFragment(String(entry.values[fieldId("result-year", "label")])));
+  if (route === "/faq/") return ordered(entries, "faq-group").map((_, index) => `faq-${index + 1}`);
+  if (route === "/voices/") return ordered(entries, "testimonial").map((_, index) => `student-${index + 1}`);
+  const slug = route.split("/")[2]!;
+  const note = entries.find((entry) => entry.modelId === "note" && entry.id === slug);
+  return parseMarkdown(String(note?.values[fieldId("note", "body")] ?? "")).flatMap((block) => (block.kind === "heading" ? [block.id] : []));
 }

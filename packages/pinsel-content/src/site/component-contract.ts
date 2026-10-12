@@ -76,7 +76,8 @@ export const PINSEL_COMPONENT_CONTRACT: readonly ContractComponent[] = [
   component("section-after", "div.section-after around the content slot.", {}, [many("content")]),
   component("text-link", "a.text-link (instagram icon for instagram.com, arrow-up-right for https, else arrow-right).", { href: text(), label: text() }),
   component("eyebrow", "p.eyebrow with the text.", { text: text() }),
-  component("prose-block", "div.prose around the items slot.", {}, [many("items", ["pinsel.paragraphs"])]),
+  component("prose-block", "div.prose around the items slot.", {}, [many("items", ["pinsel.paragraph", "pinsel.paragraphs"])]),
+  component("paragraph", "One <p> with `text` as is (a newline inside stays a newline, e.g. the lessons schedule note).", { text: lines() }),
   component("paragraphs", "One <p> per line of `text`, no wrapper.", { text: lines() }),
   component("prose", "Note markdown body through the safe subset (h2#section-N, p, ul, a, strong).", { markdown: lines() }),
 
@@ -154,7 +155,7 @@ export const PINSEL_COMPONENT_CONTRACT: readonly ContractComponent[] = [
   component("step-flow-item", "li: span.step-flow__number (slotIndex, 2 digits, aria-hidden) + div(h3 title, p description).", { title: text(), description: text() }),
   component(
     "contact-form",
-    "div.contact-panel: form#contact-form (labels, required/optional marks, select#course = undecidedOption + options slot, preview notice, submit) + div.form-success[hidden][tabindex=-1]. Validation messages go to data attributes for site.js.",
+    "div.contact-panel: form#contact-form[aria-label=formAriaLabel][data-submitting-label][data-value-missing-message][data-email-format-message] (label own text + span required/optional mark, select#course = undecidedOption + options slot, p[data-form-error], p.prototype-message previewNotice, submit [data-submit-label]) + div.form-success[hidden][tabindex=-1] (p.eyebrow, h2, p, p.prototype-message, button[data-form-back]). The three data attributes carry the strings site.js shows at runtime.",
     {
       formAriaLabel: text(),
       nameLabel: text(),

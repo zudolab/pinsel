@@ -258,14 +258,14 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
   inject(lessonsForYou.page, "list", checklistItems("lessons").mapping);
 
   const lessonsCourse = lessonsSection("lessons-course", "course", "Course", "courseTitle", [
-    node("pinsel.prose-block", {}, { items: [node("pinsel.paragraphs", {}, {}, "intro")] }, "prose"),
+    node("pinsel.prose-block", {}, { items: [node("pinsel.paragraph", {}, {}, "intro")] }, "prose"),
     node("pinsel.course-steps", {}, {}, "steps"),
   ], [{ field: "courseIntro", nodeId: "intro", prop: "text" }]);
   inject(lessonsCourse.page, "steps", list("lessons-course-steps", "course-step", node("pinsel.course-step", {}, {}, "step"), [{ field: "title", prop: "title" }, { field: "description", prop: "description" }]).mapping);
 
   const lessonsPricing = lessonsSection("lessons-pricing", "pricing", "Pricing", "pricingTitle", [
     node("pinsel.price-detail", {}, {}, "detail"),
-    node("pinsel.prose-block", {}, { items: [node("pinsel.paragraphs", {}, {}, "schedule"), node("pinsel.paragraphs", {}, {}, "continue"), node("pinsel.paragraphs", {}, {}, "payment")] }, "notes"),
+    node("pinsel.prose-block", {}, { items: [node("pinsel.paragraph", {}, {}, "schedule"), node("pinsel.paragraph", {}, {}, "continue"), node("pinsel.paragraph", {}, {}, "payment")] }, "notes"),
   ], [
     { field: "pricingScheduleNote", nodeId: "schedule", prop: "text" },
     { field: "pricingContinueNote", nodeId: "continue", prop: "text" },
@@ -291,7 +291,7 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
 
   const lessonsSpecializations = lessonsSection("lessons-specializations", "specializations", "Specializations", "specializationsTitle", [
     node("pinsel.specialization-grid", {}, {}, "grid"),
-    node("pinsel.section-after", {}, { content: [node("pinsel.prose-block", {}, { items: [node("pinsel.paragraphs", {}, {}, "note")] }, "prose")] }, "after"),
+    node("pinsel.section-after", {}, { content: [node("pinsel.prose-block", {}, { items: [node("pinsel.paragraph", {}, {}, "note")] }, "prose")] }, "after"),
   ], [{ field: "specializationsNote", nodeId: "note", prop: "text" }]);
   inject(lessonsSpecializations.page, "grid", list("lessons-specialization-items", "specialization", node("pinsel.specialization-item", {}, {}, "item"), [{ field: "de", prop: "de" }, { field: "ja", prop: "ja" }]).mapping);
 

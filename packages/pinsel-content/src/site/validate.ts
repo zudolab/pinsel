@@ -6,7 +6,8 @@ import { fileURLToPath } from "node:url";
 import type { JsonValue, TrustedComponentPack } from "@zudo-composer/component-contract";
 import { pinselPack } from "@pinsel/ui";
 import { compileSiteProjectPlan, serializeSiteProject, validateSiteProject } from "zudo-composer/content";
-import type { ContentEntryRecord, SiteProjectPlanRoute } from "zudo-composer/content";
+import type { SiteProjectPlanRoute } from "zudo-composer/content";
+import type { ContentEntryRecord } from "zudo-composer/site-project";
 
 import {
   ALLOWED_EXTERNAL_URLS,
@@ -15,9 +16,7 @@ import {
   NOTE_SLUGS,
   PAGE_COPY_IDS,
   PINSEL_ROUTES,
-  ROUTE_FRAGMENTS,
   planPathname,
-  resultYearFragment,
   routeForPlanPathname,
   type PinselRoute,
 } from "../invariants";
@@ -26,14 +25,11 @@ import { checkFieldValue } from "../policy";
 import { checkPackAgainstContract } from "./contract-pack";
 import { readContentEntries } from "./entries";
 import { structurePack } from "./pack";
-import { routeFacts, type RouteFacts } from "./plan-facts";
+import { expectedFragments, routeFacts, type RouteFacts } from "./plan-facts";
 import { buildPinselSite } from "./structure";
 
 /** Models that are singletons in meaning (one entry, id = model id). */
 export const SINGLE_ENTRY_MODELS = ["site-copy", "lessons-copy", "about-copy", "instructor-profile", "contact-copy"] as const;
-
-/** Fragments fixed by the structure (not derived from collection sizes). */
-const STRUCTURE_FRAGMENT_ROUTES: readonly PinselRoute[] = ["/", "/lessons/", "/about/", "/notes/", "/contact/", "/404.html"];
 
 const value = (entry: ContentEntryRecord, key: string): JsonValue | undefined => entry.values[fieldId(entry.modelId, key)] as JsonValue | undefined;
 const ordered = (entries: readonly ContentEntryRecord[], modelId: string) =>
@@ -86,18 +82,6 @@ export function checkEntries(entries: readonly ContentEntryRecord[]): string[] {
     }
   }
   return issues;
-}
-
-/** Fragments the content itself implies (collection sizes, labels, note headings). */
-export function expectedFragments(route: PinselRoute, entries: readonly ContentEntryRecord[]): readonly string[] {
-  if (STRUCTURE_FRAGMENT_ROUTES.includes(route)) return ROUTE_FRAGMENTS[route];
-  if (route === "/results/") return ordered(entries, "result-year").map((entry) => resultYearFragment(String(value(entry, "label"))));
-  if (route === "/faq/") return ordered(entries, "faq-group").map((_, index) => `faq-${index + 1}`);
-  if (route === "/voices/") return ordered(entries, "testimonial").map((_, index) => `student-${index + 1}`);
-  const slug = route.split("/")[2]!;
-  const note = entries.find((entry) => entry.modelId === "note" && entry.id === slug);
-  const headings = String(note ? value(note, "body") : "").split(/\r?\n/).filter((line) => /^## \S/.test(line)).length;
-  return Array.from({ length: headings }, (_, index) => `section-${index + 1}`);
 }
 
 function normalisedRoute(path: string): PinselRoute | undefined {
@@ -164,7 +148,7 @@ export async function validateContent(entries: readonly ContentEntryRecord[], pa
   // Compile the canonical form, exactly what site-project.json and a Worker snapshot carry.
   const compiled = await compileSiteProjectPlan(JSON.parse(serializeSiteProject(validated.project)), pack.manifest);
   if (compiled.status !== "ready") {
-    const diagnostics = "diagnostics" in compiled ? (compiled.diagnostics as { code: string; message: string; pathname?: string }[]) : [];
+    const diagnostics = "diagnostics" in compiled ? (compiled.diagnostics as unknown as readonly { code: string; message: string; pathname?: string }[]) : [];
     for (const diagnostic of diagnostics) issues.push(`compile ${diagnostic.code} ${diagnostic.pathname ?? ""}: ${diagnostic.message}`);
     if (diagnostics.length === 0) issues.push(`compile status ${compiled.status}`);
     return { issues, routes: [] };
