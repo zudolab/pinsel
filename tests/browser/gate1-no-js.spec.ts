@@ -1,10 +1,18 @@
 import { readFileSync } from "node:fs";
+import path from "node:path";
 import { expect, test } from "@playwright/test";
 import { ORIGIN, OUTPUT_ROUTES, outputFile, serve } from "./serve-dist";
 
 // Every built output with JavaScript disabled still shows its content and
 // frame; each document's only scripts are the three visitor client entries.
 // (Gate-1 step 4 started this lane with the home pricing record.)
+
+// The committed course prices in ?course= order: the migrated ¥10,000 / ¥50,000 / ¥92,000 until a publication edits them.
+const prices = ["consultation", "two-month", "four-month"].map((id) => {
+  const entry = JSON.parse(readFileSync(path.resolve(import.meta.dirname, `../../content/entries/course/${id}.json`), "utf8")) as { values: Record<string, string> };
+  return new RegExp(entry.values["course-price"]!.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"));
+});
+
 test.use({ javaScriptEnabled: false });
 
 const VISITOR_SCRIPT = (name: string) => new RegExp(`^/assets/client/${name}-[0-9a-f]{8}\\.js$`);
@@ -40,7 +48,7 @@ test("home page renders the pricing record without JavaScript", async ({ page })
   await page.goto(`${ORIGIN}/`);
   const cards = page.locator("article.pricing-card");
   await expect(cards).toHaveCount(3);
-  await expect(cards.locator(".price")).toHaveText([/¥10,000/, /¥50,000/, /¥92,000/]);
+  await expect(cards.locator(".price")).toHaveText(prices);
   await expect(cards.locator("h3")).toHaveText(["進路相談", "2ヶ月コース", "4ヶ月コース"]);
   await expect(cards.locator(".pricing-card__popular")).toHaveText(["POPULAR"]);
   for (const index of [1, 2, 3]) await expect(page.locator(`a.text-link[href="/contact/?course=${index}"]`)).toHaveCount(1);

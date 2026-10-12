@@ -6,6 +6,7 @@ import { compileSiteProjectPlan } from "zudo-composer/content";
 import { renderRouteBody } from "../src/preview/preview";
 import { BASELINE, PROJECT_ID } from "../src/site/baseline";
 import { createD1ContentDraftStorage, resetD1ContentDraftStorage, seedD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
+import { COMMITTED_PRICE } from "./helpers";
 
 // Gate-1 item 6: inside workerd, snapshot -> portable projection
 // (compileSiteProjectPlan) -> renderRouteDocument -> HTML must equal the HTML
@@ -38,7 +39,7 @@ describe("workerd route projection parity", () => {
     const route = compiled.plan.routes.find((candidate) => candidate.pathname === "/");
     expect(route).toBeDefined();
     const workerHtml = renderRouteBody(route!);
-    expect(workerHtml).toContain("¥50,000");
+    expect(workerHtml).toContain(COMMITTED_PRICE);
     expect(env.NODE_HOME_HTML.length).toBeGreaterThan(1000);
     expect(workerHtml).toBe(env.NODE_HOME_HTML);
   });

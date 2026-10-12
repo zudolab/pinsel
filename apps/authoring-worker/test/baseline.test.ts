@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { createFakePublicationProvider, type FakePublicationProvider } from "../src/publish/fake-provider";
 import { BASELINE, PINSEL_SITE } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
-import { COMMIT_1, COMMIT_2, PRICE, app, call, canonicalWith, priceOf, putPrice, readDraft, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
+import { COMMIT_1, COMMIT_2, COMMITTED_PRICE, PRICE, app, call, canonicalWith, priceOf, putPrice, readDraft, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
 import { PINSEL_PACK_VERSION } from "@pinsel/ui";
 
 const FAKE_ENV: TestEnv = { ...env, PUBLISHER_PROVIDER: "fake" };
@@ -120,7 +120,7 @@ describe("baseline advance from provider evidence", () => {
     if (saved.body.status === "ok") expect(priceOf(after)).toBe("¥61,000");
     else {
       expect(saved.body).toMatchObject({ status: "conflict", reason: "baseline-revision" });
-      expect(priceOf(after)).toBe("¥50,000");
+      expect(priceOf(after)).toBe(COMMITTED_PRICE);
     }
   });
 
@@ -134,7 +134,7 @@ describe("baseline advance from provider evidence", () => {
     expect(saved.body.status).toBe("ok");
     if (snapshot.body.status === "ok") {
       expect(snapshot.body.value.draftRevision).toBe(draft.draftRevision);
-      expect(snapshot.body.value.project.providers.content[0].entries.find((entry: { id: string }) => entry.id === "two-month").values[PRICE]).toBe("¥50,000");
+      expect(snapshot.body.value.project.providers.content[0].entries.find((entry: { id: string }) => entry.id === "two-month").values[PRICE]).toBe(COMMITTED_PRICE);
     } else {
       expect(snapshot.body).toMatchObject({ status: "conflict", reason: "draft-revision" });
     }
@@ -201,7 +201,7 @@ describe("canonical reconcile", () => {
     await savePrice(handler, "¥55,000");
     const external = withCanonical("external-1", { "two-month": "¥60,000" });
     const detected = await reconcile(external);
-    expect(detected.body.conflict.conflicts).toEqual([{ kind: "field", entryId: "two-month", modelId: "course", fieldId: PRICE, base: "¥50,000", draft: "¥55,000", canonical: "¥60,000" }]);
+    expect(detected.body.conflict.conflicts).toEqual([{ kind: "field", entryId: "two-month", modelId: "course", fieldId: PRICE, base: COMMITTED_PRICE, draft: "¥55,000", canonical: "¥60,000" }]);
     const resolution = { conflictId: detected.body.conflict.conflictId, expectedDraftRevision: detected.body.current.draftRevision };
     const unresolved = await reconcile(external, resolution);
     expect(unresolved.status).toBe(409);

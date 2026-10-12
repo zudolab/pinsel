@@ -39,7 +39,9 @@ describe("check-publication", () => {
   });
 
   it("passes after an allowed price and FAQ edit, and catches a dist that did not pick them up", async () => {
-    const edited = edit(edit(entries, "two-month", "course-price", "¥55,000"), "faq-exam-02", "faq-item-answer", "改訂した回答です。");
+    // Values that differ from the committed ones in either content state (a publication may already carry ¥55,000).
+    const price = entries.find((entry) => entry.id === "two-month")?.values["course-price"] === "¥55,000" ? "¥56,000" : "¥55,000";
+    const edited = edit(edit(entries, "two-month", "course-price", price), "faq-exam-02", "faq-item-answer", "改訂した回答です。");
     const fresh = await dist(edited);
     expect(await checkPublication({ entries: edited, baseline, page: (route) => fresh.get(route) })).toEqual([]);
     const stale = await dist(entries);

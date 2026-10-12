@@ -35,6 +35,8 @@ jobs:
       - run: pnpm assets:sync
       - run: pnpm content:assemble
       - run: pnpm content:project
+      # Golden byte equality while the content is the migration baseline; structure only once
+      # content/snapshot.json exists (packages/pinsel-content/src/site/content-state.ts).
       - run: pnpm content:check
       # The site build precedes `pnpm check`: the Worker tests compare their in-workerd
       # projection against apps/site/dist/index.html (Gate-1 parity).

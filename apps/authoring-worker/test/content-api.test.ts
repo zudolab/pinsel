@@ -6,7 +6,7 @@ import { CONTENT_STORAGE_CONFORMANCE_POLICY, createContentStorageConformanceBase
 import { localSeedHandler } from "../src/admin/seed";
 import type { AuthoringSite } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
-import { app, call, priceOf, putPrice, readDraft, savePrice } from "./helpers";
+import { COMMITTED_PRICE, app, call, priceOf, putPrice, readDraft, savePrice } from "./helpers";
 
 beforeEach(async () => {
   await resetD1ContentDraftStorage(env.DB);
@@ -26,7 +26,7 @@ describe("permitted records", () => {
     for (const entry of course.entries) expect(Object.keys(entry.values).every((field) => permitted.includes(field))).toBe(true);
     expect(course.entries.map((entry: { id: string }) => entry.id).sort()).toEqual(["consultation", "four-month", "two-month"]);
     const one = await call(handler, "/api/v1/content/course/two-month");
-    expect(one.body.value.entry.values[fieldId("course", "price")]).toBe("¥50,000");
+    expect(one.body.value.entry.values[fieldId("course", "price")]).toBe(COMMITTED_PRICE);
     expect((await call(handler, "/api/v1/content/course/nope")).status).toBe(404);
     expect((await call(handler, "/api/v1/content/no-such-model")).status).toBe(404);
   });

@@ -7,6 +7,7 @@ import { createApp } from "../src/app";
 import { createFixtureIdentity } from "../src/auth/identity";
 import { BASELINE } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
+import { COMMITTED_PRICE } from "./helpers";
 
 const ORIGIN = "https://authoring.example";
 const PRICE = fieldId("course", "price");
@@ -62,7 +63,7 @@ describe("authoring API", () => {
     const handler = app();
     const before = await readDraft(handler);
     expect(before.baselineRevision).toBe(BASELINE.baselineRevision);
-    expect(before.snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe("¥50,000");
+    expect(before.snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe(COMMITTED_PRICE);
     const saved = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-1", request: putPrice(before.draftRevision, "¥55,000"), expectedBaselineRevision: before.baselineRevision } });
     expect(saved.status).toBe(200);
     expect(saved.body.status).toBe("ok");

@@ -1,7 +1,10 @@
 // `pnpm content:check`: content:validate, then content:assemble + content:project
 // (Node release compiler), then the projected plan against the committed
 // golden tests/golden/routes.snapshot.json. `--update` rewrites the golden;
-// only do that deliberately, after reviewing the diff.
+// only do that deliberately, after reviewing the diff. Once content/snapshot.json
+// exists (content was published) the golden is compared without content values
+// (`planStructure`): the structure stays fixed, the edited values are checked by
+// the publication checker instead.
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -9,6 +12,7 @@ import type { JsonValue } from "@zudo-composer/component-contract";
 import { canonicalStringifyJson } from "zudo-composer/content";
 
 import { assemble } from "./assemble";
+import { hasPublishedSnapshot } from "./content-state";
 import { readContentEntries, REPO_ROOT, SITE_PROJECT_PATH } from "./entries";
 import { structurePack } from "./pack";
 import { NAVIGATION_OUT, PLAN_OUT, ROUTES_OUT, navigationModule, projectSite, routesModule, type ProjectedPlan } from "./project";
@@ -18,6 +22,18 @@ export const GOLDEN_PATH = join(REPO_ROOT, "tests/golden/routes.snapshot.json");
 
 export function goldenText(plan: ProjectedPlan): string {
   return `${JSON.stringify(plan, null, 2)}\n`;
+}
+
+/** The plan without content values: every `props` object reduced to its sorted keys, `displayTitle` dropped. */
+export function planStructure(value: unknown): unknown {
+  if (Array.isArray(value)) return value.map(planStructure);
+  if (typeof value !== "object" || value === null) return value;
+  const result: Record<string, unknown> = {};
+  for (const [key, child] of Object.entries(value)) {
+    if (key === "displayTitle") continue;
+    result[key] = key === "props" && typeof child === "object" && child !== null && !Array.isArray(child) ? Object.keys(child).sort() : planStructure(child);
+  }
+  return result;
 }
 
 /** First differing route/path between two plans, for a readable failure. */
@@ -56,6 +72,11 @@ async function main(): Promise<void> {
   await writeFile(ROUTES_OUT, routesModule(projection, source));
   await writeFile(NAVIGATION_OUT, navigationModule(projection, source));
   const actual = goldenText(projection.plan);
+  const published = hasPublishedSnapshot();
+  if (update && published) {
+    console.error("content:check: the golden records the migration baseline; it is not rewritten while content/snapshot.json exists");
+    process.exit(1);
+  }
   if (update) {
     await mkdir(dirname(GOLDEN_PATH), { recursive: true });
     await writeFile(GOLDEN_PATH, actual);
@@ -66,6 +87,16 @@ async function main(): Promise<void> {
   if (expected === undefined) {
     console.error(`content:check: ${GOLDEN_PATH} is missing; run with --update to create it deliberately`);
     process.exit(1);
+  }
+  if (published) {
+    const golden = planStructure(JSON.parse(expected));
+    const current = planStructure(projection.plan);
+    if (canonicalStringifyJson(golden as JsonValue) !== canonicalStringifyJson(current as JsonValue)) {
+      console.error(`content:check: the projected structure differs from the golden (content values excluded): ${firstDifference(golden, current)}`);
+      process.exit(1);
+    }
+    console.log(`content:check ok: ${entries.length} entries, ${projection.plan.routes.length} routes, plan structure equals ${join("tests/golden", "routes.snapshot.json")} (content/snapshot.json present: values are checked by check-publication)`);
+    return;
   }
   if (expected !== actual) {
     console.error(`content:check: projected routes differ from the golden: ${firstDifference(JSON.parse(expected), JSON.parse(actual))}\n  (re-run with --update only if the change is intended)`);
