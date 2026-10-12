@@ -5,6 +5,7 @@ import { createFakePublicationProvider, type FakePublicationProvider } from "../
 import { isPublishablePath, publicationStateFor, selectPublisher } from "../src/publish/port";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
 import { COMMIT_1, app, call, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
+import { PINSEL_PACK_VERSION } from "@pinsel/ui";
 
 const FAKE_ENV: TestEnv = { ...env, PUBLISHER_PROVIDER: "fake" };
 
@@ -53,7 +54,7 @@ describe("publication jobs with the fake provider", () => {
     expect(first.body.value).toMatchObject({ snapshotId: snapshot.snapshotId, baselineRevision: snapshot.baselineRevision, state: "submitted", providerId: "fake", attempts: 1, requestedBy: "editor@example.test" });
     expect(first.body.value.providerRef.operationId).toBe("fake-0001");
     expect(fake.submissions).toHaveLength(1);
-    expect(fake.submissions[0]!.submission).toEqual({ snapshotId: snapshot.snapshotId, projectRevision: snapshot.snapshotId, baselineRevision: snapshot.baselineRevision, packageIdentity: { packId: "pinsel", packVersion: "0.1.0", contractVersion: 2 }, idempotencyKey: first.body.value.publicationId });
+    expect(fake.submissions[0]!.submission).toEqual({ snapshotId: snapshot.snapshotId, projectRevision: snapshot.snapshotId, baselineRevision: snapshot.baselineRevision, packageIdentity: { packId: "pinsel", packVersion: PINSEL_PACK_VERSION, contractVersion: 2 }, idempotencyKey: first.body.value.publicationId });
     expect(fake.submissions[0]!.files.every(isPublishablePath)).toBe(true);
 
     const again = await publish(snapshot);
