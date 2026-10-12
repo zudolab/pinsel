@@ -29,10 +29,9 @@ const PROGRESSION = ["submitted", "building", "validated", "integrated"] as cons
 const projectDir = path.resolve(import.meta.dirname, "../../../packages/pinsel-content/.site-project");
 
 interface Job {
-  operationId: string;
+  publicationId: string;
   snapshotId: string;
   baselineRevision: string;
-  idempotencyKey: string;
   step: number;
   updatedAt: string;
 }
@@ -126,7 +125,7 @@ function routes(): readonly string[] {
 }
 
 function jobStatus(job: Job): Record<string, unknown> {
-  return { operationId: job.operationId, state: PROGRESSION[Math.min(job.step, PROGRESSION.length - 1)], snapshotId: job.snapshotId, baselineRevision: job.baselineRevision, updatedAt: job.updatedAt, evidence: job.step >= 2 ? { commit: "0".repeat(40), pr: "https://example.test/pull/1", checks: [{ name: "build", status: job.step >= 2 ? "passed" : "pending" }] } : {}, message: "モックの公開サービスです。" };
+  return { publicationId: job.publicationId, state: PROGRESSION[Math.min(job.step, PROGRESSION.length - 1)], snapshotId: job.snapshotId, baselineRevision: job.baselineRevision, updatedAt: job.updatedAt, evidence: job.step >= 2 ? { commit: "0".repeat(40), pr: "https://example.test/pull/1", checks: [{ name: "build", status: job.step >= 2 ? "passed" : "pending" }] } : {}, message: "モックの公開サービスです。" };
 }
 
 /** Connect-style middleware; returns false when the request is not the mock's. */
@@ -144,7 +143,7 @@ export async function handleMockRequest(req: IncomingMessage, res: ServerRespons
   const origin = `http://${req.headers.host ?? "localhost"}`;
 
   if (pathname === "/api/v1/site" && method === "GET") {
-    send(res, 200, { status: "ok", projectId: PINSEL_PROJECT_ID, providerId: PINSEL_EDITOR_POLICY.providerId, baselineRevision: mock.baselineRevision, pack: PACK, contractVersion: 1, policy: PINSEL_EDITOR_POLICY, routes: routes(), preview: { url: "/preview/", origin, route: "/" }, baselinePreview: mock.baselinePreview, actor: ACTOR });
+    send(res, 200, { status: "ok", projectId: PINSEL_PROJECT_ID, providerId: PINSEL_EDITOR_POLICY.providerId, baselineRevision: mock.baselineRevision, pack: PACK, policy: PINSEL_EDITOR_POLICY, routes: routes(), preview: { url: "/preview/", origin, route: "/" }, canonicalBaselineRevision: mock.baselineRevision, publication: process.env.MOCK_PUBLISHER === "disabled" ? { state: "configuration-required", message: "PUBLISHER_PROVIDER=disabled" } : { providerId: "mock", promotionPolicy: "manual" }, baselinePreview: mock.baselinePreview, actor: ACTOR });
     return true;
   }
   if (pathname === "/api/v1/draft" && method === "GET") {
@@ -179,30 +178,35 @@ export async function handleMockRequest(req: IncomingMessage, res: ServerRespons
     answer(res, await mock.adapter.snapshot({ expectedDraftRevision: input.expectedDraftRevision }));
     return true;
   }
+  // Same contract as the Worker (docs/authoring-worker.md "Publications"): exactly { snapshotId, expectedBaselineRevision }, one job per snapshot.
   if (pathname === "/api/v1/publications" && method === "POST") {
     if (process.env.MOCK_PUBLISHER === "disabled") {
-      send(res, 503, { status: "configuration-required", message: "PUBLISHER_PROVIDER=disabled" });
+      send(res, 503, { status: "unavailable", code: "configuration-required", state: "configuration-required", message: "PUBLISHER_PROVIDER=disabled" });
       return true;
     }
-    const input = (await readJson(req)) as { snapshotId?: unknown; baselineRevision?: unknown; idempotencyKey?: unknown } | null;
-    if (typeof input?.snapshotId !== "string" || typeof input.idempotencyKey !== "string" || typeof input.baselineRevision !== "string") {
-      send(res, 422, { status: "rejected", message: "malformed submission" });
+    const input = (await readJson(req)) as Record<string, unknown> | null;
+    const keys = input ? Object.keys(input).sort().join(",") : "";
+    if (keys !== "expectedBaselineRevision,snapshotId" || typeof input?.snapshotId !== "string" || typeof input.expectedBaselineRevision !== "string") {
+      send(res, 422, { status: "rejected", code: "validation", message: "body must be exactly { snapshotId, expectedBaselineRevision }" });
       return true;
     }
-    const existing = [...mock.jobs.values()].find((job) => job.idempotencyKey === input.idempotencyKey);
+    if (input.expectedBaselineRevision !== mock.baselineRevision) {
+      send(res, 409, { status: "conflict", reason: "baseline-revision", current: { baselineRevision: mock.baselineRevision }, message: "The stored baseline moved." });
+      return true;
+    }
+    const existing = [...mock.jobs.values()].find((job) => job.snapshotId === input.snapshotId);
     if (existing) {
-      if (existing.snapshotId !== input.snapshotId) send(res, 409, { status: "conflict", operationId: existing.operationId });
-      else send(res, 200, { status: "ok", value: { operationId: existing.operationId, replayed: true } });
+      send(res, 200, { status: "ok", value: jobStatus(existing), replayed: true });
       return true;
     }
     const snapshot = await mock.adapter.readSnapshot(input.snapshotId);
     if (snapshot.status !== "ok") {
-      send(res, 422, { status: "rejected", message: "unknown snapshot", path: "snapshotId" });
+      send(res, 404, { status: "not-found" });
       return true;
     }
-    const job: Job = { operationId: `pub-${mock.jobs.size + 1}`, snapshotId: input.snapshotId, baselineRevision: input.baselineRevision, idempotencyKey: input.idempotencyKey, step: 0, updatedAt: new Date().toISOString() };
-    mock.jobs.set(job.operationId, job);
-    send(res, 200, { status: "ok", value: { operationId: job.operationId, replayed: false } });
+    const job: Job = { publicationId: `pub-${mock.jobs.size + 1}`, snapshotId: input.snapshotId, baselineRevision: input.expectedBaselineRevision, step: 0, updatedAt: new Date().toISOString() };
+    mock.jobs.set(job.publicationId, job);
+    send(res, 200, { status: "ok", value: jobStatus(job) });
     return true;
   }
   const publication = /^\/api\/v1\/publications\/([^/]+)$/.exec(pathname);

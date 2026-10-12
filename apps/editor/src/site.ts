@@ -12,16 +12,18 @@ export interface SiteDescription {
   readonly status: "ok";
   readonly projectId: string;
   readonly providerId: string;
+  /** The STORED baseline drafts are saved against; it moves after a baseline advance. */
   readonly baselineRevision: string;
+  /** The baseline bundled into the Worker at `content:assemble`. */
+  readonly canonicalBaselineRevision?: string;
   readonly pack: { readonly packId: string; readonly packVersion: string };
-  /** Upstream `ContentExportPackageIdentity.contractVersion`; not in the Gate-1 contract, 1 when absent. */
-  readonly contractVersion?: number;
+  readonly publication?: { readonly providerId: string; readonly promotionPolicy: string } | { readonly state: "configuration-required"; readonly message: string };
   readonly policy: MountContentEditorOptions["policy"];
   readonly routes: readonly string[];
   readonly preview: { readonly url: string; readonly origin: string; readonly route: string };
-  /** Immutable snapshot of the integrated baseline for the comparison frame; not in the Gate-1 contract (asked of #11). */
+  /** Immutable snapshot of the integrated baseline for the comparison frame; the Worker does not serve it yet (toggle stays disabled). */
   readonly baselinePreview?: SitePreviewTarget | null;
-  /** Read-only committed asset catalog; not in the Gate-1 contract and absent while no model has asset fields. */
+  /** Read-only committed asset catalog; not served while no model has asset fields. */
   readonly assets?: ContentEditorAssetCatalog;
   readonly actor?: { readonly subject: string };
 }

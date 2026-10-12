@@ -4,7 +4,7 @@ import type { HostPreviewBridge, HostPreviewState } from "zudo-composer/preview-
 import { EditorMount } from "./editor-mount";
 import { groupsForPolicy, policyForGroup, routeLabel } from "./groups";
 import { PREVIEW_SANDBOX, attachComparisonFrame, previewFrameOf, reloadPreviewFrame } from "./preview-frame";
-import { createPublicationAdapter, fetchPublicationStatus, publicationDisplay, type PublicationRequestSummary, type PublicationStatus } from "./publication";
+import { PUBLICATION_LABELS, createPublicationAdapter, fetchPublicationStatus, publicationDisplay, type PublicationRequestSummary, type PublicationStatus } from "./publication";
 import { PublishDialog } from "./publish-dialog";
 import type { SiteDescription } from "./site";
 import { EDITOR_LABELS, previewDisplay, saveStatusLabel } from "./status";
@@ -12,15 +12,17 @@ import { createTransport } from "./transport";
 
 const LAST_PUBLICATION_KEY = "pinsel-editor:last-publication";
 const POLL_MS = 5000;
+// Required by the mount's export option but never sent: the Worker derives the package identity it builds.
+const PACKAGE_CONTRACT_VERSION = 2;
 
 interface PendingConfirm {
   readonly summary: PublicationRequestSummary;
   readonly resolve: (confirmed: boolean) => void;
 }
 
-function rememberPublication(operationId: string): void {
+function rememberPublication(publicationId: string): void {
   try {
-    localStorage.setItem(LAST_PUBLICATION_KEY, operationId);
+    localStorage.setItem(LAST_PUBLICATION_KEY, publicationId);
   } catch {
     // Storage may be disabled; the status is still shown for this page.
   }
@@ -73,7 +75,7 @@ export function App({ site }: { site: SiteDescription }) {
   const adoptPublication = useCallback((status: PublicationStatus) => {
     setPublication(status);
     setPublicationError(null);
-    rememberPublication(status.operationId);
+    rememberPublication(status.publicationId);
   }, []);
 
   const adapter = useMemo(() => createPublicationAdapter({
@@ -81,8 +83,8 @@ export function App({ site }: { site: SiteDescription }) {
     onStatus: adoptPublication,
   }), [adoptPublication]);
 
-  const refreshPublication = useCallback(async (operationId: string) => {
-    const result = await fetchPublicationStatus(operationId);
+  const refreshPublication = useCallback(async (publicationId: string) => {
+    const result = await fetchPublicationStatus(publicationId);
     if ("error" in result) setPublicationError(result.error);
     else adoptPublication(result);
   }, [adoptPublication]);
@@ -95,9 +97,9 @@ export function App({ site }: { site: SiteDescription }) {
   const settled = publication ? publicationDisplay(publication).settled : true;
   useEffect(() => {
     if (!publication || settled) return;
-    const timer = setInterval(() => void refreshPublication(publication.operationId), POLL_MS);
+    const timer = setInterval(() => void refreshPublication(publication.publicationId), POLL_MS);
     return () => clearInterval(timer);
-  }, [publication?.operationId, settled]);
+  }, [publication?.publicationId, settled]);
 
   const group = groups.find((candidate) => candidate.id === groupId) ?? groups[0];
   const options = useMemo<MountContentEditorOptions | null>(() => group ? {
@@ -107,7 +109,7 @@ export function App({ site }: { site: SiteDescription }) {
     storage: createTransport(),
     ...(site.assets ? { assets: site.assets } : {}),
     preview: { url: site.preview.url, origin: site.preview.origin, pack: site.pack, route, title: `プレビュー: ${routeLabel(route)}` },
-    export: { adapter, packageIdentity: { packId: site.pack.packId, packVersion: site.pack.packVersion, contractVersion: site.contractVersion ?? 1 } },
+    export: { adapter, packageIdentity: { packId: site.pack.packId, packVersion: site.pack.packVersion, contractVersion: PACKAGE_CONTRACT_VERSION } },
     labels: { ...CONTENT_EDITOR_LABELS_JA, ...EDITOR_LABELS },
   } : null, [group?.id, route, generation]);
 
@@ -153,8 +155,8 @@ export function App({ site }: { site: SiteDescription }) {
         </p>
         <p class="pinsel-editor__preview-status" role="status" data-preview={preview?.kind ?? "idle"} data-testid="preview-status">{preview?.label ?? "プレビュー未表示"}</p>
         <div class="pinsel-editor__publication" data-testid="publication-status" data-publication-state={publicationView?.kind === "state" ? publicationView.state : publicationView ? "unverified" : "none"}>
-          <span>公開状況: {publicationView ? publicationView.label : "未申請"}</span>
-          {publication ? <button type="button" class="pinsel-button pinsel-button--small" onClick={() => void refreshPublication(publication.operationId)}>状況を更新</button> : null}
+          <span>公開状況: {publicationView ? publicationView.label : site.publication && "state" in site.publication ? PUBLICATION_LABELS["configuration-required"] : "未申請"}</span>
+          {publication ? <button type="button" class="pinsel-button pinsel-button--small" onClick={() => void refreshPublication(publication.publicationId)}>状況を更新</button> : null}
         </div>
         {site.actor ? <span class="pinsel-editor__actor">{site.actor.subject}</span> : null}
       </header>

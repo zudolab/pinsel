@@ -62,7 +62,7 @@ test.beforeAll(async () => {
   await mkdir(persist, { recursive: true });
   if (screenshots) await mkdir(screenshots, { recursive: true });
   await run(["d1", "migrations", "apply", "pinsel-authoring", "--local", "--env", "local", "--persist-to", persist]);
-  wrangler = spawn("corepack", ["pnpm", "exec", "wrangler", "dev", "--env", "local", "--port", String(port), "--ip", "127.0.0.1", "--persist-to", persist, "--log-level", "warn"], { cwd: worker, stdio: ["ignore", "inherit", "inherit"], env: { ...process.env, CI: "1", WRANGLER_SEND_METRICS: "false" } });
+  wrangler = spawn("corepack", ["pnpm", "exec", "wrangler", "dev", "--env", "local", "--var", "PUBLISHER_PROVIDER:fake", "--port", String(port), "--ip", "127.0.0.1", "--persist-to", persist, "--log-level", "warn"], { cwd: worker, stdio: ["ignore", "inherit", "inherit"], env: { ...process.env, CI: "1", WRANGLER_SEND_METRICS: "false" } });
   const started = Date.now();
   while (Date.now() - started < 90_000) {
     if (wrangler.exitCode !== null) throw new Error("wrangler dev exited early");
@@ -133,9 +133,6 @@ test("a second context that saved first produces a conflict", async ({ browser }
 });
 
 test("a publish request shows 公開申請済み and then the provider's state", async ({ browser }) => {
-  // An empty submission is refused by an implemented endpoint (422/503); a Worker without it answers 404.
-  const probe = await fetch(`${origin}/api/v1/publications`, { method: "POST", headers: { "content-type": "application/json", origin }, body: "{}" });
-  test.skip(probe.status === 404, "the Worker has no POST /api/v1/publications yet (#11)");
 
   const page = await openEditor(browser);
   await openTwoMonthCourse(page);
