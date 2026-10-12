@@ -223,11 +223,19 @@ function checkRow(row: PublicationRow, route: PinselRoute, page: DomDocument, en
       if (row.adjacentTo && element) {
         const sibling = PUBLICATION_MAP.find((candidate) => candidate.model === row.model && candidate.field === row.adjacentTo && candidate.entry === row.entry);
         const before = sibling ? target(item, sibling.selector) : null;
-        if (!before || element.previousElementSibling !== before) issues.push(`${group.label} #${index + 1}: ${row.field} must directly follow ${row.adjacentTo}`);
+        if (!before || element.previousElementSibling !== before || visibleTextBetween(before, element)) issues.push(`${group.label} #${index + 1}: ${row.field} must directly follow ${row.adjacentTo}`);
       }
     });
   }
   return issues;
+}
+
+/** Text a reader (or the seed checker's text-order rule) would see between two sibling elements. */
+function visibleTextBetween(before: DomElement, after: DomElement): boolean {
+  const siblings = Array.from((before as unknown as { parentNode: DomNode | null }).parentNode?.childNodes ?? []);
+  const from = siblings.indexOf(before);
+  const to = siblings.indexOf(after);
+  return siblings.slice(from + 1, to).some((node) => normalise(node.nodeType === TEXT ? (node.textContent ?? "") : textOf({ nodeType: 1, textContent: null, childNodes: [node] })) !== "");
 }
 
 function checkLines(row: PublicationRow, elements: DomElement[], entry: ContentEntryRecord, where: string): string[] {

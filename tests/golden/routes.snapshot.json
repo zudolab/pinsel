@@ -12581,7 +12581,7 @@
                                 "slots": {
                                   "items": [
                                     {
-                                      "componentId": "pinsel.paragraphs",
+                                      "componentId": "pinsel.paragraph",
                                       "componentVersion": 1,
                                       "id": "__zudo_collection_f_lessons--course_c_lessons-copy_5_intro",
                                       "props": {
@@ -12697,7 +12697,7 @@
                                 "slots": {
                                   "items": [
                                     {
-                                      "componentId": "pinsel.paragraphs",
+                                      "componentId": "pinsel.paragraph",
                                       "componentVersion": 1,
                                       "id": "__zudo_collection_g_lessons--pricing_c_lessons-copy_8_schedule",
                                       "props": {
@@ -12706,7 +12706,7 @@
                                       "slots": {}
                                     },
                                     {
-                                      "componentId": "pinsel.paragraphs",
+                                      "componentId": "pinsel.paragraph",
                                       "componentVersion": 1,
                                       "id": "__zudo_collection_g_lessons--pricing_c_lessons-copy_8_continue",
                                       "props": {
@@ -12715,7 +12715,7 @@
                                       "slots": {}
                                     },
                                     {
-                                      "componentId": "pinsel.paragraphs",
+                                      "componentId": "pinsel.paragraph",
                                       "componentVersion": 1,
                                       "id": "__zudo_collection_g_lessons--pricing_c_lessons-copy_7_payment",
                                       "props": {
@@ -13090,7 +13090,7 @@
                                       "slots": {
                                         "items": [
                                           {
-                                            "componentId": "pinsel.paragraphs",
+                                            "componentId": "pinsel.paragraph",
                                             "componentVersion": 1,
                                             "id": "__zudo_collection_o_lessons--specializations_c_lessons-copy_4_note",
                                             "props": {

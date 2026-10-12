@@ -20,16 +20,13 @@ import {
   routeForPlanPathname,
   type PinselRoute,
 } from "../invariants";
-import { PINSEL_MODELS, fieldId, modelById } from "../models";
+import { PINSEL_MODELS, SINGLE_ENTRY_MODEL_IDS, fieldId, modelById } from "../models";
 import { checkFieldValue } from "../policy";
 import { checkPackAgainstContract } from "./contract-pack";
 import { readContentEntries } from "./entries";
 import { structurePack } from "./pack";
 import { expectedFragments, routeFacts, type RouteFacts } from "./plan-facts";
 import { buildPinselSite } from "./structure";
-
-/** Models that are singletons in meaning (one entry, id = model id). */
-export const SINGLE_ENTRY_MODELS = ["site-copy", "lessons-copy", "about-copy", "instructor-profile", "contact-copy"] as const;
 
 const value = (entry: ContentEntryRecord, key: string): JsonValue | undefined => entry.values[fieldId(entry.modelId, key)] as JsonValue | undefined;
 const ordered = (entries: readonly ContentEntryRecord[], modelId: string) =>
@@ -53,7 +50,7 @@ export function checkEntries(entries: readonly ContentEntryRecord[]): string[] {
       }
     }
   }
-  for (const modelId of SINGLE_ENTRY_MODELS) {
+  for (const modelId of SINGLE_ENTRY_MODEL_IDS) {
     const found = entries.filter((entry) => entry.modelId === modelId);
     if (found.length !== 1 || found[0]!.id !== modelId) issues.push(`${modelId}: needs exactly one entry with id "${modelId}" (found ${found.map((entry) => entry.id).join(", ") || "none"})`);
   }

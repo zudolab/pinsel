@@ -303,12 +303,11 @@ export const PUBLICATION_MAP: readonly PublicationRow[] = [
   each("legal-row", "value", CONTACT, "details.legal tbody > tr", "td"),
 ];
 
-/** Model fields deliberately not rendered (structure keys, sort keys, internal routing). */
+/**
+ * Fields with no DOM text of their own: `page-copy.route` selects the entry
+ * per page. Every `order` is checked through the one-to-one item order of the
+ * "each"/"nested" rows; placement/grouping fields through `filter`/`parent`.
+ */
 export const UNRENDERED_FIELDS: Readonly<Record<string, readonly string[]>> = {
-  "page-copy": ["route", "order"],
-  "nav-link": ["order"],
-  "result-year": ["order"],
-  "result-entry": ["year", "order"],
-  "faq-item": ["group", "order"],
-  note: ["order"],
+  "page-copy": ["route"],
 };
