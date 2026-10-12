@@ -32,7 +32,7 @@ if (failures.length > 0) {
   process.exit(1);
 }
 /** @type {[string, string][]} */
-const required = [["zudo-composer-host-preview", "the preview protocol"], ["pricing-card", "the pinsel-ui renderer"], ["cf-access-jwt-assertion", "Access verification"], ["PUBLISHER_PROVIDER", "the fail-closed publisher selection"]];
+const required = [["zudo-composer-host-preview", "the preview protocol"], ["pricing-card", "the pinsel-ui renderer"], ["cf-access-jwt-assertion", "Access verification"], ["PUBLISHER_PROVIDER", "the fail-closed publisher selection"], ["var __name = (target) => target;", "the inline preview client's __name prelude (keep-names; see check-worker-bundle-preview.mjs)"]];
 const missing = required.filter(([needle]) => !code.includes(needle)).map(([, label]) => label);
 if (missing.length > 0) {
   console.error(`check-worker-bundle: the production bundle is missing ${missing.join(", ")}`);

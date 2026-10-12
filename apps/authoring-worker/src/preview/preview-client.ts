@@ -58,7 +58,19 @@ export function previewClientMain(window: PreviewClientWindow, pack: PreviewPack
   return frameLoadId;
 }
 
+/**
+ * Wrangler's esbuild runs with keep-names, which rewrites function bodies to
+ * call its module-level `__name(fn, "name")` helper. A body inlined through
+ * `.toString()` loses that helper, so the inline script brings an identity one.
+ */
+export const INLINE_NAME_PRELUDE = "var __name = (target) => target;";
+
+/** `source` (a function expression) called with `args`, in its own scope with the `__name` prelude. */
+export function inlineFunctionScript(source: string, args: readonly string[]): string {
+  return `(() => { ${INLINE_NAME_PRELUDE} (${source})(${args.join(", ")}); })();`;
+}
+
 /** The inline `<script>` body for one preview document. */
 export function previewClientScript(pack: PreviewPackIdentity, self: PreviewIdentity | null, loadError: string | null): string {
-  return `(${previewClientMain.toString()})(window, ${JSON.stringify(pack)}, ${JSON.stringify(self)}, ${JSON.stringify(loadError)});`;
+  return inlineFunctionScript(previewClientMain.toString(), ["window", JSON.stringify(pack), JSON.stringify(self), JSON.stringify(loadError)]);
 }
