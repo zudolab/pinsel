@@ -119,8 +119,11 @@ try {
     record("PUT with the read-only `order` field is refused: forbidden", forbidden.status === 422 && forbidden.body.refusal?.code === "forbidden", forbidden.body.refusal);
     const unknown = await call("/api/v1/content/course/two-month", { method: "PUT", headers: { "idempotency-key": "gate1-unknown" }, json: { expectedRevision: savedRevision, expectedBaselineRevision: baseline, values: { "course-slug": "x" } } });
     record("PUT with an unknown field is refused: unknown-field", unknown.status === 422 && unknown.body.refusal?.code === "unknown-field", unknown.body.refusal);
-    const structure = await call("/api/v1/operations", { method: "POST", json: operation("gate1-structure", { kind: "put-entry-values", projectId: "pinsel", providerId: "content-filesystem", modelId: "site-copy", entryId: "site-copy", expectedRevision: savedRevision, values: {} }, baseline) });
-    record("A structure/other-model write is refused with a typed code", structure.status === 422 && typeof structure.body.refusal?.code === "string", structure.body.refusal);
+    // Every Pinsel model is policy-listed since the content migration; structure is a protected field or a model outside the policy.
+    const structure = await call("/api/v1/operations", { method: "POST", json: operation("gate1-structure", { kind: "put-entry-values", projectId: "pinsel", providerId: "content-filesystem", modelId: "site-copy", entryId: "site-copy", expectedRevision: savedRevision, values: { "site-copy-brand-word": "x" } }, baseline) });
+    record("A protected structure field on another model is refused: forbidden", structure.status === 422 && structure.body.refusal?.code === "forbidden", structure.body.refusal);
+    const outside = await call("/api/v1/operations", { method: "POST", json: operation("gate1-outside", { kind: "put-entry-values", projectId: "pinsel", providerId: "content-filesystem", modelId: "no-such-model", entryId: "x", expectedRevision: savedRevision, values: { "no-such-model-label": "x" } }, baseline) });
+    record("A write to a model outside the policy is refused: forbidden", outside.status === 422 && outside.body.refusal?.code === "forbidden", outside.body.refusal);
     const composer = await call("/composer");
     record("GET /composer is refused (403)", composer.status === 403, composer.body);
     const stale = await call("/api/v1/operations", { method: "POST", json: operation("gate1-stale", putPrice(revision, "¥1"), baseline) });
