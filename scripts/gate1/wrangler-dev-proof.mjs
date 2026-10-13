@@ -10,6 +10,8 @@ import { spawn } from "node:child_process";
 import { mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { readCommittedEntries } from "../lib/committed-entries.mjs";
+import { committedAmounts, editPrices } from "../lib/edit-prices.mjs";
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const worker = path.join(repoRoot, "apps/authoring-worker");
@@ -21,7 +23,9 @@ const reportPath = path.resolve(repoRoot, option("--report", ".reports/gate1-wra
 const persist = path.join(worker, ".wrangler/gate1-state");
 const origin = `http://127.0.0.1:${port}`;
 const PRICE_FIELD = "course-price";
-const NEW_PRICE = "¥55,000";
+const committed = readCommittedEntries(repoRoot);
+const COMMITTED_PRICE = committed.find((entry) => entry.id === "two-month")?.values[PRICE_FIELD];
+const NEW_PRICE = editPrices(committedAmounts(committed, PRICE_FIELD))(1);
 /** @type {{ step: string, ok: boolean, detail: unknown }[]} */
 const steps = [];
 
@@ -110,7 +114,7 @@ try {
     record("GET /api/v1/site describes the site", site.status === 200 && site.body.status === "ok", site.status === 200 ? { baselineRevision: site.body.baselineRevision, pack: site.body.pack } : { status: site.status, body: site.text.slice(0, 300) });
     const baseline = site.body.baselineRevision;
     const draft = await call("/api/v1/draft");
-    record("GET /api/v1/draft seeds the draft from the assembled baseline", draft.status === 200 && draft.body.value.snapshot.entries.find((/** @type {any} */ entry) => entry.id === "two-month")?.values[PRICE_FIELD] === "¥50,000", { draftRevision: draft.body.value.draftRevision });
+    record("GET /api/v1/draft seeds the draft from the assembled baseline", draft.status === 200 && draft.body.value.snapshot.entries.find((/** @type {any} */ entry) => entry.id === "two-month")?.values[PRICE_FIELD] === COMMITTED_PRICE && COMMITTED_PRICE !== undefined, { draftRevision: draft.body.value.draftRevision });
     const revision = draft.body.value.draftRevision;
     const saved = await call("/api/v1/operations", { method: "POST", json: operation("gate1-save", putPrice(revision, NEW_PRICE), baseline) });
     record(`POST /api/v1/operations saves course.price=${NEW_PRICE} with a receipt`, saved.status === 200 && saved.body.value?.receipt?.affectedEntryIds?.[0] === "two-month", { draftRevision: saved.body.value?.draft?.draftRevision, receipt: saved.body.value?.receipt?.operationId });

@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
 import { expect, test, type Browser, type Page } from "@playwright/test";
-import { repoRoot, startLocalWorker, type LocalWorker } from "./local-worker";
+import { editPrice, repoRoot, startLocalWorker, type LocalWorker } from "./local-worker";
 
 // #18 adversarial confirm pass of the hosted CMS slice against
 // `wrangler dev --env local` (workerd + local D1, the in-memory fake
@@ -23,7 +23,7 @@ const port = Number(process.env.PINSEL_CMS_CONFIRM_PORT ?? 8853);
 const reports = path.join(repoRoot, ".reports/cms-confirm");
 const PRICE = "#content-entry-course-price";
 const ANSWER = "#content-entry-faq-item-answer";
-const NEW_PRICE = "¥58,000";
+const NEW_PRICE = editPrice(8);
 const FAQ_ID = "faq-exam-01";
 const FAQ_QUESTION = "ドイツの美術大学の受験時期はいつ頃ですか？";
 const NEW_ANSWER = "【確認用】出願時期は大学ごとに異なります。最新の日程は各大学の公式サイトで確認してください。";
@@ -343,10 +343,10 @@ test("2. forbidden writes get typed refusals and change nothing", async ({ brows
 
 test("3. concurrent saves: one ok, one conflict; idempotent replays; aborted requests never report success", async ({ browser }) => {
   const state = await draft();
-  const [a, b] = await Promise.all([put("course", "four-month", { "course-price": "¥91,000" }, "c-a", state), put("course", "four-month", { "course-price": "¥93,000" }, "c-b", state)]);
+  const [a, b] = await Promise.all([put("course", "four-month", { "course-price": editPrice(41) }, "c-a", state), put("course", "four-month", { "course-price": editPrice(43) }, "c-b", state)]);
   const outcomes = [a, b].map((answer) => answer.body.status).sort();
   expect(outcomes).toEqual(["conflict", "ok"]);
-  const winner = a.body.status === "ok" ? { key: "c-a", price: "¥91,000", answer: a } : { key: "c-b", price: "¥93,000", answer: b };
+  const winner = a.body.status === "ok" ? { key: "c-a", price: editPrice(41), answer: a } : { key: "c-b", price: editPrice(43), answer: b };
   const loser = a.body.status === "ok" ? b : a;
   expect(loser.status).toBe(409);
   expect(loser.body.reason).toBe("draft-revision");
@@ -361,7 +361,7 @@ test("3. concurrent saves: one ok, one conflict; idempotent replays; aborted req
   expect(replay.body.value.receipt).toEqual(winner.answer.body.value.receipt);
   expect((await draft()).draftRevision).toBe(afterRace.draftRevision);
   // Same key + different request: refused, nothing written.
-  const reused = await put("course", "four-month", { "course-price": "¥99,999" }, winner.key, state);
+  const reused = await put("course", "four-month", { "course-price": editPrice(50) }, winner.key, state);
   expect(reused.status).toBe(409);
   expect(reused.body.reason).toBe("operation-id");
   expect(valueOf(await draft(), "course", "four-month", "course-price")).toBe(winner.price);
@@ -372,19 +372,19 @@ test("3. concurrent saves: one ok, one conflict; idempotent replays; aborted req
   await openEntry(first, "コースと料金", "コース・料金", "4ヶ月コース", PRICE);
   const second = await openEditor(browser);
   await openEntry(second, "コースと料金", "コース・料金", "4ヶ月コース", PRICE);
-  await setField(second, PRICE, "¥94,000");
+  await setField(second, PRICE, editPrice(44));
   await expect(second.getByTestId("save-status")).toHaveText(/^保存済み（改訂 \d+）$/, { timeout: 30_000 });
-  await setField(first, PRICE, "¥95,500");
+  await setField(first, PRICE, editPrice(45));
   await expect(first.getByTestId("save-status")).toHaveText("競合", { timeout: 30_000 });
   await expect(first.getByTestId("conflict-panel")).toBeVisible();
-  expect(valueOf(await draft(), "course", "four-month", "course-price")).toBe("¥94,000");
+  expect(valueOf(await draft(), "course", "four-month", "course-price")).toBe(editPrice(44));
   await shot(first, "03-conflict");
   await first.context().close();
 
   // The save request never reaches the Worker: the editor reports a failure, never a save.
   const beforeAbort = await draft();
   await second.route("**/api/v1/operations", (route) => route.abort("connectionfailed"));
-  await setField(second, PRICE, "¥97,000");
+  await setField(second, PRICE, editPrice(47));
   await expect(second.getByTestId("save-status")).not.toHaveText(/^保存済み/, { timeout: 5_000 });
   await expect(second.getByTestId("save-status")).toHaveText(/保存に失敗|保存を確認中|未保存の変更/, { timeout: 30_000 });
   // The status line stays Japanese: session messages are localised by the host.
@@ -393,7 +393,7 @@ test("3. concurrent saves: one ok, one conflict; idempotent replays; aborted req
   await shot(second, "03-request-aborted");
   const afterAbort = await draft();
   expect(afterAbort.draftRevision).toBe(beforeAbort.draftRevision);
-  expect(valueOf(afterAbort, "course", "four-month", "course-price")).toBe("¥94,000");
+  expect(valueOf(afterAbort, "course", "four-month", "course-price")).toBe(editPrice(44));
   await second.unroute("**/api/v1/operations");
   await second.context().close();
 
@@ -410,9 +410,9 @@ test("3. concurrent saves: one ok, one conflict; idempotent replays; aborted req
     }
     await route.continue();
   });
-  await setField(third, PRICE, "¥98,000");
+  await setField(third, PRICE, editPrice(48));
   const truth = await draft();
-  expect(valueOf(truth, "course", "four-month", "course-price")).toBe("¥98,000");
+  expect(valueOf(truth, "course", "four-month", "course-price")).toBe(editPrice(48));
   await expect(third.getByTestId("save-status")).toHaveText(/保存済み（改訂 \d+）|保存を確認中|保存に失敗/, { timeout: 30_000 });
   const lostLabel = (await third.getByTestId("save-status").textContent()) ?? "";
   const savedRevision = /改訂 (\d+)/.exec(lostLabel)?.[1];
@@ -448,7 +448,7 @@ test("5. publication: external change → conflict → rebase; two publications 
   const jobE = await api("/api/v1/publications", { json: { snapshotId: external.snapshotId, expectedBaselineRevision: external.baselineRevision } });
   expect(jobE.body.status, JSON.stringify(jobE.body)).toBe("ok");
   expect(jobE.body.value.state).toBe("submitted");
-  const unsent = await put("course", "two-month", { "course-price": "¥61,000" }, "e-unsent");
+  const unsent = await put("course", "two-month", { "course-price": editPrice(11) }, "e-unsent");
   expect(unsent.body.status).toBe("ok");
 
   await worker.stop();
@@ -469,7 +469,7 @@ test("5. publication: external change → conflict → rebase; two publications 
   expect(rebased.status, JSON.stringify(rebased.body)).toBe(200);
   const afterRebase = await draft();
   expect(afterRebase.baselineRevision).toBe(EXTERNAL_SHA);
-  expect(valueOf(afterRebase, "course", "two-month", "course-price")).toBe("¥61,000");
+  expect(valueOf(afterRebase, "course", "two-month", "course-price")).toBe(editPrice(11));
   expect(valueOf(afterRebase, "course", "four-month", "course-unit")).toBe(EXTERNAL_UNIT);
   expect(valueOf(afterRebase, "faq-item", FAQ_ID, "faq-item-answer")).toBe(NEWER_ANSWER);
   const conflicted = await api(`/api/v1/publications/${jobE.body.value.publicationId}`);
@@ -495,7 +495,7 @@ test("5. publication: external change → conflict → rebase; two publications 
   const op1 = job1.value.providerRef.operationId as string;
 
   await openEntry(page, "コースと料金", "コース・料金", "4ヶ月コース", PRICE);
-  await setField(page, PRICE, "¥96,000");
+  await setField(page, PRICE, editPrice(46));
   await expect(page.getByTestId("save-status")).toHaveText(/^保存済み（改訂 \d+）$/, { timeout: 30_000 });
   const editDuring = await draft();
 
@@ -509,15 +509,15 @@ test("5. publication: external change → conflict → rebase; two publications 
   await page.context().close();
   const afterP1 = await draft();
   expect(afterP1.baselineRevision).toBe("1".repeat(40));
-  expect(valueOf(afterP1, "course", "four-month", "course-price")).toBe("¥96,000");
+  expect(valueOf(afterP1, "course", "four-month", "course-price")).toBe(editPrice(46));
   expect(afterP1.draftRevision).toBeGreaterThanOrEqual(editDuring.draftRevision);
   const published1 = (await api(`/api/v1/snapshots/${snapshot1}`)).body.value;
-  expect(valueOf({ snapshot: { entries: published1.project.providers.content[0].entries } }, "course", "four-month", "course-price")).not.toBe("¥96,000");
+  expect(valueOf({ snapshot: { entries: published1.project.providers.content[0].entries } }, "course", "four-month", "course-price")).not.toBe(editPrice(46));
 
   // --- publication 2 carries the edit made during publication 1 ---
   const page2 = await openEditor(browser);
   await openEntry(page2, "コースと料金", "コース・料金", "4ヶ月コース", PRICE);
-  await expect(page2.locator(PRICE)).toHaveValue("¥96,000");
+  await expect(page2.locator(PRICE)).toHaveValue(editPrice(46));
   await page2.getByRole("button", { name: "保存済みの下書きをプレビュー" }).click();
   await expect(page2.getByTestId("preview-status")).toHaveText(/^表示中: 改訂 \d+$/, { timeout: 30_000 });
   await page2.getByRole("button", { name: "公開を申請" }).click();
@@ -530,7 +530,7 @@ test("5. publication: external change → conflict → rebase; two publications 
   const submitted2 = (await fakeSubmissions()).submissions.find((entry: Json) => entry.snapshotId === snapshot2);
   expect(submitted2.baselineRevision).toBe("1".repeat(40));
   const published2 = (await api(`/api/v1/snapshots/${snapshot2}`)).body.value;
-  expect(valueOf({ snapshot: { entries: published2.project.providers.content[0].entries } }, "course", "four-month", "course-price")).toBe("¥96,000");
+  expect(valueOf({ snapshot: { entries: published2.project.providers.content[0].entries } }, "course", "four-month", "course-price")).toBe(editPrice(46));
   // `deployed` without deployment evidence for the commit is never live.
   await fakeDriver("advance", { operationId: job2.providerRef.operationId, state: "deployed", ...GREEN("2".repeat(40)) });
   await page2.getByTestId("publication-status").getByRole("button", { name: "状況を更新" }).click();
@@ -545,12 +545,12 @@ test("5. publication: external change → conflict → rebase; two publications 
   evidence.publications = { job1: job1.value.publicationId, snapshot1, job2: job2.publicationId, snapshot2, deployedWithoutEvidence: unproven.state, baselineAfter: "2".repeat(40) };
 
   // --- refused submission → failed, draft intact; a retry re-arms the same job; a duplicate replays ---
-  expect((await put("course", "two-month", { "course-price": "¥62,000" }, "p-62")).body.status).toBe("ok");
+  expect((await put("course", "two-month", { "course-price": editPrice(12) }, "p-62")).body.status).toBe("ok");
   const s3 = await snapshotNow();
   await fakeDriver("script", { method: "submit", outcome: "rejected" });
   const failed = await api("/api/v1/publications", { json: { snapshotId: s3.snapshotId, expectedBaselineRevision: s3.baselineRevision } });
   expect(failed.body.value?.state, JSON.stringify(failed.body)).toBe("failed");
-  expect(valueOf(await draft(), "course", "two-month", "course-price")).toBe("¥62,000");
+  expect(valueOf(await draft(), "course", "two-month", "course-price")).toBe(editPrice(12));
   expect((await draft()).baselineRevision).toBe("2".repeat(40));
   const failedPage = await openEditor(browser, failed.body.value.publicationId);
   await expectPublicationLabel(failedPage, "failed");
@@ -571,7 +571,7 @@ test("5. publication: external change → conflict → rebase; two publications 
   expect(timedOut.value?.state ?? timedOut.status, JSON.stringify(timedOut)).toBe("submitted");
 
   // --- a lost acknowledgement is recovered by lookup, never by a second submission ---
-  expect((await put("course", "two-month", { "course-price": "¥63,000" }, "p-63")).body.status).toBe("ok");
+  expect((await put("course", "two-month", { "course-price": editPrice(13) }, "p-63")).body.status).toBe("ok");
   const s4 = await snapshotNow();
   const submitsBefore = (await fakeSubmissions()).calls.submit;
   await fakeDriver("script", { method: "submit", outcome: "lost-ack" });

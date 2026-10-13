@@ -6,7 +6,7 @@ import { compileSiteProjectPlan } from "zudo-composer/content";
 import { renderRouteBody } from "../src/preview/preview";
 import { BASELINE, PROJECT_ID } from "../src/site/baseline";
 import { createD1ContentDraftStorage, resetD1ContentDraftStorage, seedD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
-import { COMMITTED_PRICE } from "./helpers";
+import { COMMITTED_PRICE, editPrice } from "./helpers";
 
 // Gate-1 item 6: inside workerd, snapshot -> portable projection
 // (compileSiteProjectPlan) -> renderRouteDocument -> HTML must equal the HTML

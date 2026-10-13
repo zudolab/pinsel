@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { createFakePublicationProvider, type FakePublicationProvider } from "../src/publish/fake-provider";
 import { BASELINE, PINSEL_SITE } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
-import { COMMIT_1, COMMIT_2, COMMITTED_PRICE, PRICE, app, call, canonicalWith, priceOf, putPrice, readDraft, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
+import { COMMIT_1, COMMIT_2, COMMITTED_PRICE, PRICE, app, editPrice, call, canonicalWith, priceOf, putPrice, readDraft, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
 import { PINSEL_PACK_VERSION } from "@pinsel/ui";
 
 const FAKE_ENV: TestEnv = { ...env, PUBLISHER_PROVIDER: "fake" };
@@ -31,7 +31,7 @@ function advance(publicationId: string, target = handler, body: Record<string, u
 
 describe("baseline advance from provider evidence", () => {
   it("advances a clean draft to the integrated commit and records the evidence; a retry is a replay", async () => {
-    await savePrice(handler, "¥55,000");
+    await savePrice(handler, editPrice(5));
     const snapshot = await snapshotNow(handler);
     const job = await publish(snapshot);
     fake.advance(job.providerRef.operationId, "integrated", INTEGRATED(COMMIT_1));
@@ -39,7 +39,7 @@ describe("baseline advance from provider evidence", () => {
     expect(advanced.status).toBe(200);
     expect(advanced.body.value).toMatchObject({ replayed: false, baseline: { gitSha: COMMIT_1, contentDigest: snapshot.snapshotId, packageIdentity: { packId: "pinsel", packVersion: PINSEL_PACK_VERSION } }, draft: { baselineRevision: COMMIT_1, draftRevision: snapshot.draftRevision + 1 } });
     const draft = await readDraft(handler);
-    expect(priceOf(draft)).toBe("¥55,000");
+    expect(priceOf(draft)).toBe(editPrice(5));
     expect((await call(handler, "/api/v1/site")).body.baselineRevision).toBe(COMMIT_1);
     const baseline = await call(handler, "/api/v1/baseline");
     expect(baseline.body.value.evidence).toMatchObject({ publicationId: job.publicationId, gitSha: COMMIT_1, contentDigest: snapshot.snapshotId });
@@ -49,22 +49,22 @@ describe("baseline advance from provider evidence", () => {
   });
 
   it("keeps an edit made while the publication was building, and a second publication carries it", async () => {
-    await savePrice(handler, "¥55,000");
+    await savePrice(handler, editPrice(5));
     const first = await snapshotNow(handler);
     const job1 = await publish(first);
     fake.advance(job1.providerRef.operationId, "building");
     // Edit during publication 1.
-    await savePrice(handler, "¥56,000", { entryId: "four-month" });
+    await savePrice(handler, editPrice(6), { entryId: "four-month" });
     fake.advance(job1.providerRef.operationId, "integrated", INTEGRATED(COMMIT_1));
     const advanced = await advance(job1.publicationId);
     expect(advanced.body.status).toBe("ok");
     const draft = await readDraft(handler);
     expect(draft.baselineRevision).toBe(COMMIT_1);
-    expect(priceOf(draft)).toBe("¥55,000");
-    expect(priceOf(draft, "four-month")).toBe("¥56,000");
+    expect(priceOf(draft)).toBe(editPrice(5));
+    expect(priceOf(draft, "four-month")).toBe(editPrice(6));
     // The first snapshot is unchanged.
     const frozen = await call(handler, `/api/v1/snapshots/${first.snapshotId}`);
-    expect(frozen.body.value.project.providers.content[0].entries.find((entry: { id: string }) => entry.id === "four-month").values[PRICE]).not.toBe("¥56,000");
+    expect(frozen.body.value.project.providers.content[0].entries.find((entry: { id: string }) => entry.id === "four-month").values[PRICE]).not.toBe(editPrice(6));
 
     const second = await snapshotNow(handler);
     expect(second.baselineRevision).toBe(COMMIT_1);
@@ -73,7 +73,7 @@ describe("baseline advance from provider evidence", () => {
     expect(fake.submissions[1]!.submission.baselineRevision).toBe(COMMIT_1);
     fake.advance(job2.providerRef.operationId, "integrated", INTEGRATED(COMMIT_2));
     expect((await advance(job2.publicationId)).body.value.draft.baselineRevision).toBe(COMMIT_2);
-    expect(priceOf(await readDraft(handler), "four-month")).toBe("¥56,000");
+    expect(priceOf(await readDraft(handler), "four-month")).toBe(editPrice(6));
   });
 
   it("refuses to advance without integration evidence or with a caller-supplied sha, and fails closed when disabled", async () => {
@@ -92,16 +92,16 @@ describe("baseline advance from provider evidence", () => {
   });
 
   it("marks an in-flight publication conflict once another publication moved the base", async () => {
-    await savePrice(handler, "¥55,000");
+    await savePrice(handler, editPrice(5));
     const job1 = await publish(await snapshotNow(handler));
-    await savePrice(handler, "¥56,000", { entryId: "four-month" });
+    await savePrice(handler, editPrice(6), { entryId: "four-month" });
     const job2 = await publish(await snapshotNow(handler));
     fake.advance(job1.providerRef.operationId, "integrated", INTEGRATED(COMMIT_1));
     expect((await advance(job1.publicationId)).body.status).toBe("ok");
     const stale = await call(handler, `/api/v1/publications/${job2.publicationId}`, { env: FAKE_ENV });
     expect(stale.body.value).toMatchObject({ state: "conflict", message: expect.stringContaining(COMMIT_1) });
     // The newer edit is still the draft, ready to snapshot again on the new base.
-    expect(priceOf(await readDraft(handler), "four-month")).toBe("¥56,000");
+    expect(priceOf(await readDraft(handler), "four-month")).toBe(editPrice(6));
   });
 
   it("races a save against the advance: the save either lands and survives as the draft, or loses with a conflict", async () => {
@@ -111,13 +111,13 @@ describe("baseline advance from provider evidence", () => {
     const other = app("second@example.test", { publishers: { fake: () => fake } });
     const draft = await readDraft(handler);
     const [saved, advanced] = await Promise.all([
-      call(other, "/api/v1/operations", { method: "POST", json: { operationId: "op-race", request: putPrice(draft.draftRevision, "¥61,000"), expectedBaselineRevision: draft.baselineRevision } }),
+      call(other, "/api/v1/operations", { method: "POST", json: { operationId: "op-race", request: putPrice(draft.draftRevision, editPrice(11)), expectedBaselineRevision: draft.baselineRevision } }),
       advance(job.publicationId),
     ]);
     expect(advanced.body.status).toBe("ok");
     const after = await readDraft(handler);
     expect(after.baselineRevision).toBe(COMMIT_1);
-    if (saved.body.status === "ok") expect(priceOf(after)).toBe("¥61,000");
+    if (saved.body.status === "ok") expect(priceOf(after)).toBe(editPrice(11));
     else {
       expect(saved.body).toMatchObject({ status: "conflict", reason: "baseline-revision" });
       expect(priceOf(after)).toBe(COMMITTED_PRICE);
@@ -128,7 +128,7 @@ describe("baseline advance from provider evidence", () => {
     const draft = await readDraft(handler);
     const other = app("second@example.test");
     const [saved, snapshot] = await Promise.all([
-      call(other, "/api/v1/operations", { method: "POST", json: { operationId: "op-snap-race", request: putPrice(draft.draftRevision, "¥62,000"), expectedBaselineRevision: draft.baselineRevision } }),
+      call(other, "/api/v1/operations", { method: "POST", json: { operationId: "op-snap-race", request: putPrice(draft.draftRevision, editPrice(12)), expectedBaselineRevision: draft.baselineRevision } }),
       call(handler, "/api/v1/snapshots", { method: "POST", json: { expectedDraftRevision: draft.draftRevision } }),
     ]);
     expect(saved.body.status).toBe("ok");
@@ -155,53 +155,53 @@ describe("canonical reconcile", () => {
 
   it("is in sync with the bundled baseline, and ignores a bundle the store already moved past", async () => {
     expect((await reconcile(handler)).body.value).toMatchObject({ state: "in-sync", baselineRevision: BASELINE.baselineRevision });
-    expect((await reconcile(withCanonical("external-1", { "four-month": "¥99,000" }))).body.value.state).toBe("rebased");
+    expect((await reconcile(withCanonical("external-1", { "four-month": editPrice(49) }))).body.value.state).toBe("rebased");
     expect((await reconcile(handler)).body.value).toMatchObject({ state: "behind", baselineRevision: "external-1" });
   });
 
   it("adopts a new commit with unchanged content and keeps unsent edits", async () => {
-    await savePrice(handler, "¥55,000");
+    await savePrice(handler, editPrice(5));
     const result = await reconcile(withCanonical("code-only-1"));
     expect(result.body.value).toMatchObject({ state: "rebased", kind: "identity", baselineRevision: "code-only-1" });
     const draft = await readDraft(handler);
     expect(draft.baselineRevision).toBe("code-only-1");
-    expect(priceOf(draft)).toBe("¥55,000");
+    expect(priceOf(draft)).toBe(editPrice(5));
   });
 
   it("fast-forwards a draft without unsent edits", async () => {
     await seedThroughDefault();
-    const result = await reconcile(withCanonical("external-1", { "two-month": "¥60,000" }));
+    const result = await reconcile(withCanonical("external-1", { "two-month": editPrice(10) }));
     expect(result.body.value).toMatchObject({ state: "rebased", kind: "fast-forward" });
-    expect(priceOf(await readDraft(handler))).toBe("¥60,000");
+    expect(priceOf(await readDraft(handler))).toBe(editPrice(10));
   });
 
   it("records a recoverable conflict for unsent edits and rebases non-overlapping changes on request", async () => {
-    await savePrice(handler, "¥55,000");
-    const external = withCanonical("external-1", { "four-month": "¥99,000" });
+    await savePrice(handler, editPrice(5));
+    const external = withCanonical("external-1", { "four-month": editPrice(49) });
     const detected = await reconcile(external);
     expect(detected.status).toBe(409);
     expect(detected.body).toMatchObject({ status: "conflict", reason: "baseline-revision", conflict: { storedBaselineRevision: BASELINE.baselineRevision, canonicalBaselineRevision: "external-1", conflicts: [] } });
     const conflictId = detected.body.conflict.conflictId as string;
     expect((await call(handler, "/api/v1/baseline")).body.value.openConflicts).toHaveLength(1);
     // Saving continues on the stored baseline meanwhile; nothing was overwritten.
-    expect(priceOf(await readDraft(handler))).toBe("¥55,000");
+    expect(priceOf(await readDraft(handler))).toBe(editPrice(5));
     const stale = await reconcile(external, { conflictId, expectedDraftRevision: 1 });
     expect(stale.body).toMatchObject({ status: "conflict", reason: "draft-revision" });
     const rebased = await reconcile(external, { conflictId, expectedDraftRevision: detected.body.current.draftRevision });
     expect(rebased.body.value).toMatchObject({ state: "rebased", kind: "merge", baselineRevision: "external-1" });
     const draft = await readDraft(handler);
-    expect(priceOf(draft)).toBe("¥55,000");
-    expect(priceOf(draft, "four-month")).toBe("¥99,000");
+    expect(priceOf(draft)).toBe(editPrice(5));
+    expect(priceOf(draft, "four-month")).toBe(editPrice(49));
     expect((await call(handler, "/api/v1/baseline")).body.value.openConflicts).toHaveLength(0);
     // The editor saves against the new baseline.
-    await savePrice(handler, "¥56,000");
+    await savePrice(handler, editPrice(6));
   });
 
   it("lists field conflicts and resolves them only with an explicit preference", async () => {
-    await savePrice(handler, "¥55,000");
-    const external = withCanonical("external-1", { "two-month": "¥60,000" });
+    await savePrice(handler, editPrice(5));
+    const external = withCanonical("external-1", { "two-month": editPrice(10) });
     const detected = await reconcile(external);
-    expect(detected.body.conflict.conflicts).toEqual([{ kind: "field", entryId: "two-month", modelId: "course", fieldId: PRICE, base: COMMITTED_PRICE, draft: "¥55,000", canonical: "¥60,000" }]);
+    expect(detected.body.conflict.conflicts).toEqual([{ kind: "field", entryId: "two-month", modelId: "course", fieldId: PRICE, base: COMMITTED_PRICE, draft: editPrice(5), canonical: editPrice(10) }]);
     const resolution = { conflictId: detected.body.conflict.conflictId, expectedDraftRevision: detected.body.current.draftRevision };
     const unresolved = await reconcile(external, resolution);
     expect(unresolved.status).toBe(409);
@@ -209,6 +209,6 @@ describe("canonical reconcile", () => {
     expect((await reconcile(external, { ...resolution, prefer: "sideways" })).status).toBe(422);
     const kept = await reconcile(external, { ...resolution, prefer: "draft" });
     expect(kept.body.value.state).toBe("rebased");
-    expect(priceOf(await readDraft(handler))).toBe("¥55,000");
+    expect(priceOf(await readDraft(handler))).toBe(editPrice(5));
   });
 });

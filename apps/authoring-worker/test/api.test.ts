@@ -7,7 +7,7 @@ import { createApp } from "../src/app";
 import { createFixtureIdentity } from "../src/auth/identity";
 import { BASELINE } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
-import { COMMITTED_PRICE } from "./helpers";
+import { COMMITTED_PRICE, editPrice } from "./helpers";
 
 const ORIGIN = "https://authoring.example";
 const PRICE = fieldId("course", "price");
@@ -64,19 +64,19 @@ describe("authoring API", () => {
     const before = await readDraft(handler);
     expect(before.baselineRevision).toBe(BASELINE.baselineRevision);
     expect(before.snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe(COMMITTED_PRICE);
-    const saved = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-1", request: putPrice(before.draftRevision, "¥55,000"), expectedBaselineRevision: before.baselineRevision } });
+    const saved = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-1", request: putPrice(before.draftRevision, editPrice(5)), expectedBaselineRevision: before.baselineRevision } });
     expect(saved.status).toBe(200);
     expect(saved.body.status).toBe("ok");
     expect(saved.body.value.replayed).toBe(false);
     expect(saved.body.value.receipt.affectedEntryIds).toEqual(["two-month"]);
     const after = await readDraft(handler);
     expect(after.draftRevision).toBe(saved.body.value.draft.draftRevision);
-    expect(after.snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe("¥55,000");
+    expect(after.snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe(editPrice(5));
     const receipt = await call(handler, "/api/v1/operations/op-1");
     expect(receipt.body.value.operationId).toBe("op-1");
     // A second session sees the durable value, and the receipt only for its author.
     const other = app("someone-else@example.test");
-    expect((await readDraft(other)).snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe("¥55,000");
+    expect((await readDraft(other)).snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe(editPrice(5));
     expect((await call(other, "/api/v1/operations/op-1")).status).toBe(404);
   });
 
@@ -103,14 +103,14 @@ describe("authoring API", () => {
   it("reports a stale expectedRevision as a conflict and keeps the draft; identical retries replay", async () => {
     const handler = app();
     const draft = await readDraft(handler);
-    const first = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-a", request: putPrice(draft.draftRevision, "¥51,000"), expectedBaselineRevision: draft.baselineRevision } });
+    const first = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-a", request: putPrice(draft.draftRevision, editPrice(1)), expectedBaselineRevision: draft.baselineRevision } });
     expect(first.body.status).toBe("ok");
-    const stale = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-b", request: putPrice(draft.draftRevision, "¥52,000"), expectedBaselineRevision: draft.baselineRevision } });
+    const stale = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-b", request: putPrice(draft.draftRevision, editPrice(2)), expectedBaselineRevision: draft.baselineRevision } });
     expect(stale.status).toBe(409);
     expect(stale.body).toEqual({ status: "conflict", reason: "draft-revision", current: { draftRevision: first.body.value.draft.draftRevision, baselineRevision: draft.baselineRevision } });
-    const replay = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-a", request: putPrice(draft.draftRevision, "¥51,000"), expectedBaselineRevision: draft.baselineRevision } });
+    const replay = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-a", request: putPrice(draft.draftRevision, editPrice(1)), expectedBaselineRevision: draft.baselineRevision } });
     expect(replay.body.value.replayed).toBe(true);
-    expect((await readDraft(handler)).snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe("¥51,000");
+    expect((await readDraft(handler)).snapshot.entries.find((entry) => entry.id === "two-month")?.values[PRICE]).toBe(editPrice(1));
     const wrongBaseline = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-c", request: putPrice(first.body.value.draft.draftRevision, "¥1"), expectedBaselineRevision: "other" } });
     expect(wrongBaseline.body).toMatchObject({ status: "conflict", reason: "baseline-revision" });
   });
@@ -129,7 +129,7 @@ describe("authoring API", () => {
   it("captures immutable snapshots and renders the saved revision in the preview", async () => {
     const handler = app();
     const draft = await readDraft(handler);
-    const saved = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-p", request: putPrice(draft.draftRevision, "¥58,000"), expectedBaselineRevision: draft.baselineRevision } });
+    const saved = await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-p", request: putPrice(draft.draftRevision, editPrice(8)), expectedBaselineRevision: draft.baselineRevision } });
     const revision = saved.body.value.draft.draftRevision as number;
     const snapshot = await call(handler, "/api/v1/snapshots", { method: "POST", json: { expectedDraftRevision: revision } });
     expect(snapshot.status).toBe(200);
@@ -141,15 +141,15 @@ describe("authoring API", () => {
     const preview = await call(handler, `/preview/${snapshotId}/?revision=${revision}`);
     expect(preview.status).toBe(200);
     expect(preview.headers.get("content-security-policy")).toBe("frame-ancestors 'self'");
-    expect(preview.text).toContain("¥58,000");
+    expect(preview.text).toContain(editPrice(8));
     expect(preview.text).toContain('<main id="main" tabindex="-1">');
     expect(preview.text).toContain("zudo-composer-host-preview");
     expect(preview.text).not.toMatch(/preact/i);
     expect(preview.text).not.toContain('"revision":null');
 
-    // The snapshot stays at ¥58,000 after a later save, and an older revision claim is refused.
-    await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-q", request: putPrice(revision, "¥59,000"), expectedBaselineRevision: draft.baselineRevision } });
-    expect((await call(handler, `/api/v1/snapshots/${snapshotId}`)).body.value.project.providers.content[0].entries.find((entry: { id: string }) => entry.id === "two-month").values[PRICE]).toBe("¥58,000");
+    // The snapshot keeps the first saved price after a later save, and an older revision claim is refused.
+    await call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-q", request: putPrice(revision, editPrice(9)), expectedBaselineRevision: draft.baselineRevision } });
+    expect((await call(handler, `/api/v1/snapshots/${snapshotId}`)).body.value.project.providers.content[0].entries.find((entry: { id: string }) => entry.id === "two-month").values[PRICE]).toBe(editPrice(8));
     const mismatch = await call(handler, `/preview/${snapshotId}/?revision=${revision + 1}`);
     expect(mismatch.status).toBe(409);
     expect(mismatch.text).toContain("captured at revision");
