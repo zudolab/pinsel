@@ -32,6 +32,8 @@
     "worker:bundle:check": "node scripts/check-worker-bundle.mjs",
     "worker:check-preview": "node scripts/check-worker-bundle-preview.mjs",
     "sg:check": "pnpm --filter @pinsel/styleguide check:generated",
+    "verify:auth": "node scripts/verify/worker-auth-probe.mjs",
+    "verify:publication": "node scripts/verify/publication-rehearsal.mjs",
     "verify:external-install": "node scripts/verify/external-install.mjs",
     "gate1:wrangler-dev": "node scripts/gate1/wrangler-dev-proof.mjs",
     "test:browser": "playwright test",

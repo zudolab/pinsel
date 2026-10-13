@@ -1,6 +1,6 @@
-# Completion report for zudolab/pinsel#1
+# Historical completion-report template for zudolab/pinsel#1
 
-The text below is the comment the manager posts on zudolab/pinsel#1 after PR #27 merges. The manager replaces every `TBD-after-merge` with the real value and fills the final-head results. Nothing in it may be claimed before then.
+The completed report **was posted** after PR #27 merged as `dbc4f594b8f5ea96d169fa40f89cfd2ff7664e8f`: [authoritative completion report on #1](https://github.com/zudolab/pinsel/issues/1#issuecomment-6139039236). The text below is the historical pre-posting template, preserved with its original placeholders. It is not a pending delivery task and is not evidence for later heads. Current verification commands are documented in [local-gates.md](local-gates.md).
 
 ---
 

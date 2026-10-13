@@ -35,11 +35,15 @@ CI runs these in this order (`.github/workflows/ci.yml`, job `build`). `pnpm bui
 | `pnpm assets:verify` | Check every approved asset and every staged copy of it against the sha256 manifest |
 | `pnpm check:boundaries` | Public dist allowlist and visitor scripts only; the editor bundle has no zudo-react |
 | `pnpm worker:dry-run` / `worker:bundle:check` / `worker:check-preview` / `worker:types:check` | Run `wrangler deploy --dry-run` (no upload), scan the bundle (no `node:`, Vite, Preact or local fixtures), check the preview, check `worker-configuration.d.ts` |
+| `pnpm verify:auth` | Production entry under local Wrangler with per-run HTTPS JWKS; auth, CSRF, refusal isolation and authenticated save |
+| `pnpm verify:publication` | Real price/FAQ save, immutable snapshot and publisher validation in a disposable checkout; preserves caller content and site dist |
 | `pnpm test:browser` | Playwright lanes in `tests/browser/` (run through `heavy-guard` locally) |
 | `pnpm check:approved-seed` | Hash-check every immutable fixture file against `tests/approved-seed.sha256.json` (CI job `approved-seed`) |
 | `pnpm check:content` | The historical strict checker against `apps/site/dist`. CI job `migration-baseline` runs it only while there is no `content/snapshot.json` |
 
-More checks, run by the verification passes: `pnpm site:check-fragments`, `pnpm site:wrangler-dev` (public Worker on `wrangler dev`), `pnpm verify:external-install` (Composer git-pin install in a fresh directory), `pnpm gate1:wrangler-dev`, `node scripts/verify/worker-auth-probe.mjs` (production entry with a fixture JWKS), and `node scripts/content/check-publication.mjs --dist apps/site/dist` together with `node scripts/publication/check-public-output.mjs --dist apps/site/dist`. Publication PRs are validated by `.github/workflows/content-validate.yml` ([`docs/publication.md`](docs/publication.md)).
+More checks, run by the verification passes: `pnpm site:check-fragments`, `pnpm site:wrangler-dev` (public Worker on `wrangler dev`), `pnpm verify:external-install` (Composer git-pin install in a fresh directory), `pnpm gate1:wrangler-dev`, and `node scripts/content/check-publication.mjs --dist apps/site/dist` together with `node scripts/publication/check-public-output.mjs --dist apps/site/dist`. Publication PRs are validated by `.github/workflows/content-validate.yml` ([`docs/publication.md`](docs/publication.md)).
+
+Both local verification gates require the frozen install, content assembly, editor build and Worker asset assembly above. They run in every ordinary CI build, without application credentials or a prototype archive. Commit tracked changes before `verify:publication`: it rehearses the exact current Git HEAD. See [local verification](docs/verification/local-gates.md) for bounds, failure controls and sanitized reports.
 
 ## Layout
 

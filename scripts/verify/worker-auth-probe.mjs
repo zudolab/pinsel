@@ -10,27 +10,27 @@
 // exercised end to end; nothing leaves the machine.
 //
 // Prerequisites: pnpm content:assemble && pnpm build:editor && pnpm assets:assemble-worker.
-// Usage: node scripts/verify/worker-auth-probe.mjs [--port 8854] [--jwks-port 9454] [--report .reports/worker-auth-probe.json]
-import { execFile, spawn } from "node:child_process";
+// Usage: pnpm verify:auth [--report <file>] [--fail-startup | --fail-request]
+// Ports default to OS-assigned loopback ports; --port / --jwks-port are optional.
 import { createSign, generateKeyPairSync, randomUUID } from "node:crypto";
-import { mkdir, readFile, readdir, rm, writeFile } from "node:fs/promises";
+import { readFile, readdir } from "node:fs/promises";
 import { createServer } from "node:https";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { promisify } from "node:util";
+import { createHarness, freePort, migrate, prerequisites, sanitize, startWorker, workerConfig } from "./local-harness.mjs";
 import { readCommittedEntries } from "../lib/committed-entries.mjs";
 import { committedAmounts, editPrices } from "../lib/edit-prices.mjs";
 
-const run = promisify(execFile);
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const worker = path.join(repoRoot, "apps/authoring-worker");
 const argv = process.argv.slice(2);
 /** @param {string} name @param {string} fallback */
 const option = (name, fallback) => (argv.includes(name) ? (argv[argv.indexOf(name) + 1] ?? fallback) : fallback);
-const port = Number(option("--port", "8854"));
-const jwksPort = Number(option("--jwks-port", "9454"));
+const port = Number(option("--port", "0")) || await freePort();
+const jwksPort = Number(option("--jwks-port", "0")) || await freePort();
 const reportPath = path.resolve(repoRoot, option("--report", ".reports/worker-auth-probe.json"));
-const work = path.join(worker, ".wrangler/auth-probe");
+const harness = await createHarness("auth", reportPath);
+const work = harness.work;
 const persist = path.join(work, "state");
 const origin = `http://127.0.0.1:${port}`;
 const TEAM = `https://127.0.0.1:${jwksPort}`;
@@ -38,8 +38,8 @@ const AUD = "pinsel-authoring-aud-fixture";
 const EDITOR = "editor@example.test";
 const NEW_PRICE = editPrices(committedAmounts(readCommittedEntries(repoRoot), "course-price"))(1);
 
-/** @type {{ probe: string, command: string, expected: string, actual: string, ok: boolean }[]} */
-const results = [];
+
+const results = harness.report.results;
 
 const b64url = (/** @type {Buffer | string} */ value) => Buffer.from(value).toString("base64url");
 
@@ -54,12 +54,13 @@ function sign(/** @type {import("node:crypto").KeyObject} */ key, /** @type {str
 
 /** curl with the body captured: returns { status, body }. */
 async function request(/** @type {string[]} */ args) {
-  const { stdout } = await run("curl", ["-sS", "-w", "\n%{http_code}", ...args], { maxBuffer: 1 << 24 });
-  const index = stdout.lastIndexOf("\n");
-  return { status: Number(stdout.slice(index + 1)), body: stdout.slice(0, index) };
+  const { output, code, error } = await harness.start("curl", ["--noproxy", "*", "--connect-timeout", "2", "--max-time", "10", "-sS", "-w", "\n%{http_code}", ...args], { timeout: 12_000 }).result();
+  if (code !== 0 || error) throw new Error(`Loopback request failed (curl exit ${code})`);
+  const index = output.lastIndexOf("\n");
+  return { status: Number(output.slice(index + 1)), body: output.slice(0, index) };
 }
 
-const show = (/** @type {string[]} */ args) => `curl ${args.map((arg) => (/[\s"'{}]/.test(arg) ? `'${arg.length > 80 ? `${arg.slice(0, 40)}…${arg.slice(-12)}` : arg}'` : arg.length > 120 ? `${arg.slice(0, 60)}…` : arg)).join(" ")}`;
+const show = (/** @type {string[]} */ args) => `curl ${args.map((arg) => sanitize(arg)).join(" ")}`;
 
 /**
  * @param {string} probe
@@ -77,41 +78,23 @@ async function expectAnswer(probe, args, status, code) {
   return answer;
 }
 
-async function wranglerDev(/** @type {string[]} */ vars, /** @type {string} */ caFile) {
-  const args = ["pnpm", "exec", "wrangler", "dev", "--port", String(port), "--ip", "127.0.0.1", "--persist-to", persist, "--log-level", "warn", ...vars.flatMap((entry) => ["--var", entry])];
-  const child = spawn("corepack", args, { cwd: worker, stdio: ["ignore", "pipe", "pipe"], env: { ...process.env, CI: "1", WRANGLER_SEND_METRICS: "false", NODE_EXTRA_CA_CERTS: caFile } });
-  let output = "";
-  child.stdout.on("data", (chunk) => (output += chunk));
-  child.stderr.on("data", (chunk) => (output += chunk));
-  const started = Date.now();
-  while (Date.now() - started < 90_000) {
-    if (child.exitCode !== null) throw new Error(`wrangler dev exited early:\n${output}`);
-    try {
-      await fetch(`${origin}/api/v1/site`, { signal: AbortSignal.timeout(2000) });
-      return {
-        output: () => output,
-        stop: () =>
-          new Promise((resolve) => {
-            child.once("exit", resolve);
-            child.kill("SIGTERM");
-            setTimeout(() => child.kill("SIGKILL"), 10_000);
-          }),
-      };
-    } catch {
-      // not up yet
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }
-  child.kill("SIGKILL");
-  throw new Error(`wrangler dev did not start within 90s:\n${output}`);
+let launch = 0;
+/** @param {string[]} vars @param {string} caFile */
+async function wranglerDev(vars, caFile) {
+  const config = await workerConfig(repoRoot, path.join(work, `config-${++launch}`), { vars: Object.fromEntries(vars.map((value) => { const colon = value.indexOf(":"); return [value.slice(0, colon), value.slice(colon + 1)]; })) });
+  return startWorker(harness, repoRoot, config, persist, { port, caFile, failStartup: argv.includes("--fail-startup") });
 }
 
 async function main() {
-  await rm(work, { recursive: true, force: true });
-  await mkdir(persist, { recursive: true });
+  await prerequisites(repoRoot);
+  harness.report.sourceSha = await harness.run("git", ["rev-parse", "HEAD"], { cwd: repoRoot });
+  harness.report.baseline = JSON.parse(await readFile(path.join(repoRoot, "packages/pinsel-content/.site-project/baseline.json"), "utf8"));
+  if (harness.report.baseline.baselineRevision !== harness.report.sourceSha) throw new Error("Assembled baseline is stale: run pnpm content:assemble at the current HEAD");
+  await harness.run("curl", ["--version"]);
+  await harness.run("openssl", ["version"]);
   const keyFile = path.join(work, "tls-key.pem");
   const certFile = path.join(work, "tls-cert.pem");
-  await run("openssl", ["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", keyFile, "-out", certFile, "-days", "1", "-subj", "/CN=127.0.0.1", "-addext", "subjectAltName=IP:127.0.0.1"]);
+  await harness.run("openssl", ["req", "-x509", "-newkey", "rsa:2048", "-nodes", "-keyout", keyFile, "-out", certFile, "-days", "1", "-subj", "/CN=127.0.0.1", "-addext", "subjectAltName=IP:127.0.0.1"]);
 
   const kid = `fixture-${randomUUID()}`;
   const access = generateKeyPairSync("rsa", { modulusLength: 2048 });
@@ -124,7 +107,12 @@ async function main() {
       res.writeHead(200, { "content-type": "application/json" }).end(JSON.stringify(jwks));
     } else res.writeHead(404).end();
   });
-  await new Promise((resolve) => server.listen(jwksPort, "127.0.0.1", () => resolve(undefined)));
+  harness.cleanups.push(async () => {
+    server.closeAllConnections();
+    await new Promise((resolve, reject) => server.close((error) => error && /** @type {NodeJS.ErrnoException} */ (error).code !== "ERR_SERVER_NOT_RUNNING" ? reject(error) : resolve(undefined)));
+    harness.report.cleanup.jwksClosed = true;
+  });
+  await new Promise((resolve, reject) => { server.once("error", reject); server.listen(jwksPort, "127.0.0.1", () => resolve(undefined)); });
 
   const now = Math.floor(Date.now() / 1000);
   const claims = { iss: TEAM, aud: [AUD], email: EDITOR, sub: "fixture-subject", iat: now, nbf: now - 5, exp: now + 600, type: "app" };
@@ -141,13 +129,20 @@ async function main() {
   };
   const auth = (/** @type {string} */ token) => ["-H", `Cf-Access-Jwt-Assertion: ${token}`];
 
-  await run("corepack", ["pnpm", "exec", "wrangler", "d1", "migrations", "apply", "pinsel-authoring", "--local", "--persist-to", persist], { cwd: worker, env: { ...process.env, CI: "1", WRANGLER_SEND_METRICS: "false" } });
+  const migrationConfig = await workerConfig(repoRoot, path.join(work, "migration"));
+  await migrate(harness, repoRoot, migrationConfig, persist);
   const editorAsset = (await readdir(path.join(worker, "dist-assets/editor/static"))).find((file) => file.endsWith(".js"));
+  if (!editorAsset) throw new Error("No built editor JavaScript asset found");
   const navigations = ["/", "/editor/", `/editor/static/${editorAsset}`, "/preview/", `/preview/${"0".repeat(64)}/`, "/assets/fonts/fonts.css"];
 
   // --- configured: TEAM_DOMAIN + POLICY_AUD + EDITOR_ALLOWLIST ---
   let dev = await wranglerDev([`TEAM_DOMAIN:${TEAM}`, `POLICY_AUD:${AUD}`, `EDITOR_ALLOWLIST:${EDITOR}`], certFile);
   try {
+    if (argv.includes("--fail-request")) {
+      await dev.stop();
+      await request([`${origin}/api/v1/site`]);
+      throw new Error("Induced request failure unexpectedly succeeded");
+    }
     await expectAnswer("configured: valid allowlisted assertion reads the site (positive control)", [...auth(tokens.valid), `${origin}/api/v1/site`], 200, '"status":"ok"');
     for (const route of ["/api/v1/site", "/api/v1/draft", ...navigations]) await expectAnswer(`configured: no assertion ${route}`, [`${origin}${route}`], 401, "missing-assertion");
     await expectAnswer("configured: an email header alone is not authentication", ["-H", `Cf-Access-Authenticated-User-Email: ${EDITOR}`, `${origin}/api/v1/draft`], 401, "missing-assertion");
@@ -174,6 +169,9 @@ async function main() {
     const kept = unchanged.value.draftRevision === draft.value.draftRevision && priceOf(unchanged) === priceOf(draft);
     results.push({ probe: "CSRF: every refused mutation wrote nothing", command: "GET /api/v1/draft", expected: `revision ${draft.value.draftRevision}, price ${priceOf(draft)}`, actual: `revision ${unchanged.value.draftRevision}, price ${priceOf(unchanged)}`, ok: kept });
     console.log(`${kept ? "PASS" : "FAIL"} CSRF: every refused mutation wrote nothing`);
+    for (const id of ["probe-no-origin", "probe-evil-origin", "probe-cross-site", "probe-text"]) {
+      await expectAnswer(`refused mutation has no receipt: ${id}`, [...auth(tokens.valid), `${origin}/api/v1/operations/${id}`], 404, null);
+    }
     await expectAnswer("same-origin JSON mutation with a valid assertion saves (positive control)", ["-X", "PUT", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Sec-Fetch-Site: same-origin", "-H", "Idempotency-Key: probe-ok", "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 200, '"status":"ok"');
     const saved = JSON.parse((await request([...auth(tokens.valid), `${origin}/api/v1/operations/probe-ok`])).body);
     results.push({ probe: "the receipt records the verified Access email as the actor", command: "GET /api/v1/operations/probe-ok", expected: EDITOR, actual: JSON.stringify(saved).includes(EDITOR) ? EDITOR : JSON.stringify(saved).slice(0, 160), ok: JSON.stringify(saved).includes(EDITOR) });
@@ -199,14 +197,12 @@ async function main() {
     await expectAnswer("non-https TEAM_DOMAIN → 503", [...auth(tokens.valid), `${origin}/api/v1/site`], 503, "configuration-required");
   } finally {
     await dev.stop();
-    server.close();
   }
 
-  await mkdir(path.dirname(reportPath), { recursive: true });
-  await writeFile(reportPath, `${JSON.stringify({ origin, team: TEAM, audience: AUD, results }, null, 2)}\n`);
   const failed = results.filter((result) => !result.ok);
-  console.log(`worker-auth-probe: ${results.length - failed.length}/${results.length} passed; report ${path.relative(repoRoot, reportPath)}`);
-  if (failed.length > 0) process.exit(1);
+  if (failed.length > 0) throw new Error(`${failed.length}/${results.length} auth assertions failed`);
 }
 
-await main();
+let failure;
+try { await main(); } catch (error) { failure = error; console.error(sanitize(String(error))); }
+await harness.finish(failure);
