@@ -19,7 +19,7 @@ const persist = path.join(h.work, "d1");
 const gitEnv = { GIT_AUTHOR_NAME: "Local rehearsal", GIT_AUTHOR_EMAIL: "rehearsal@example.test", GIT_COMMITTER_NAME: "Local rehearsal", GIT_COMMITTER_EMAIL: "rehearsal@example.test", GIT_CONFIG_NOSYSTEM: "1", GIT_CONFIG_GLOBAL: "/dev/null" };
 const git = (/** @type {string[]} */ args, cwd = checkout) => h.run("git", ["-c", "core.hooksPath=/dev/null", ...args], { cwd, env: gitEnv });
 /** @param {...string} args */
-const pnpm = (...args) => h.run("corepack", ["pnpm", ...args], { cwd: checkout, timeout: 180_000 });
+const pnpm = (...args) => h.run("corepack", ["pnpm", ...args], { cwd: checkout, timeout: 180_000, env: { pnpm_config_verify_deps_before_run: "false" } });
 /** @param {...string} args */
 const check = (...args) => h.run(process.execPath, ["scripts/publication/check-snapshot.mjs", ...args], { cwd: checkout });
 const reject = (/** @type {string[]} */ args, /** @type {RegExp} */ pattern) => h.run(process.execPath, ["scripts/publication/check-snapshot.mjs", ...args], { cwd: checkout, rejects: pattern });
@@ -40,6 +40,8 @@ async function main() {
       if (entry.isDirectory()) modules.push(`${group}/${entry.name}/node_modules`);
     }
   }
+  // The copied frozen install has relocated metadata; disable pnpm automatic
+  // reinstallation for rehearsal commands (including nested scripts).
   // Copy the frozen install, preserving relative pnpm workspace links. Symlinking
   // node_modules back to the caller would resolve @pinsel/content to its baseline.
   for (const relative of modules) {

@@ -36,7 +36,6 @@ const origin = `http://127.0.0.1:${port}`;
 const TEAM = `https://127.0.0.1:${jwksPort}`;
 const AUD = "pinsel-authoring-aud-fixture";
 const EDITOR = "editor@example.test";
-const NEW_PRICE = editPrices(committedAmounts(readCommittedEntries(repoRoot), "course-price"))(1);
 
 
 const results = harness.report.results;
@@ -54,7 +53,7 @@ function sign(/** @type {import("node:crypto").KeyObject} */ key, /** @type {str
 
 /** curl with the body captured: returns { status, body }. */
 async function request(/** @type {string[]} */ args) {
-  const { output, code, error } = await harness.start("curl", ["--noproxy", "*", "--connect-timeout", "2", "--max-time", "10", "-sS", "-w", "\n%{http_code}", ...args], { timeout: 12_000 }).result();
+  const { output, code, error } = await harness.start("curl", ["-q", "--noproxy", "*", "--connect-timeout", "2", "--max-time", "10", "-sS", "-w", "\n%{http_code}", ...args], { timeout: 12_000 }).result();
   if (code !== 0 || error) throw new Error(`Loopback request failed (curl exit ${code})`);
   const index = output.lastIndexOf("\n");
   return { status: Number(output.slice(index + 1)), body: output.slice(0, index) };
@@ -86,11 +85,12 @@ async function wranglerDev(vars, caFile) {
 }
 
 async function main() {
+  const NEW_PRICE = editPrices(committedAmounts(readCommittedEntries(repoRoot), "course-price"))(1);
   await prerequisites(repoRoot);
   harness.report.sourceSha = await harness.run("git", ["rev-parse", "HEAD"], { cwd: repoRoot });
   harness.report.baseline = JSON.parse(await readFile(path.join(repoRoot, "packages/pinsel-content/.site-project/baseline.json"), "utf8"));
   if (harness.report.baseline.baselineRevision !== harness.report.sourceSha) throw new Error("Assembled baseline is stale: run pnpm content:assemble at the current HEAD");
-  await harness.run("curl", ["--version"]);
+  await harness.run("curl", ["-q", "--version"]);
   await harness.run("openssl", ["version"]);
   const keyFile = path.join(work, "tls-key.pem");
   const certFile = path.join(work, "tls-cert.pem");
