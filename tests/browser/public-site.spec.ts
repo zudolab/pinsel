@@ -230,6 +230,10 @@ test.describe("contact", () => {
   });
 });
 
+// Overflow the approved prototype measured with PINSEL_REFERENCE_DIST set, used when the reference is not served (CI).
+// /contact/ at 390px with 150% text overflows 8px in the prototype too (tracked in #26).
+const PROTOTYPE_OVERFLOW: Record<string, number> = { "150% text, narrow /contact/": 8 };
+
 test.describe("robustness", () => {
   for (const width of WIDTHS) {
     test(`no horizontal scroll on any route at ${width}px`, async ({ page }) => {
@@ -270,7 +274,7 @@ test.describe("robustness", () => {
         const site = await inspect(`${ORIGIN}${route}`);
         expect(site.clipped, route).toEqual([]);
         if (site.overflow === 0) continue;
-        const reference = REFERENCE ? await inspect(`${REF_ORIGIN}${route}`) : { overflow: 0 };
+        const reference = REFERENCE ? await inspect(`${REF_ORIGIN}${route}`) : { overflow: PROTOTYPE_OVERFLOW[`${name} ${route}`] ?? 0 };
         console.log(`overflow ${name} ${route}: site ${site.overflow}px, prototype ${reference.overflow}px`);
         expect(site.overflow, `${route} overflows by ${site.overflow}px (prototype ${reference.overflow}px)`).toBeLessThanOrEqual(reference.overflow);
       }
