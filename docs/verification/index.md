@@ -23,8 +23,22 @@ These are local lane branches merged into the integration branch. Their results 
 
 ## Final-head results
 
-> **Placeholder — filled in by the manager after the final run on the PR #27 head.** Record the head SHA, the CI run URL, and every command with its result and its skips (with reasons). Do not copy lane or historical numbers here.
-
-- Head: `TBD`
-- CI run: `TBD`
-- Results: `TBD`
+- Head: `ef256bde4e660556378fa495e3425547eaff633d` (code under test; the only later commit fills these result sections and changes no code). Local machine run on 2026-10-13 through `heavy-guard.sh`, verdict PASS, starting from deleted `node_modules`.
+- Results (each command exit 0, in CI order):
+  - `pnpm install --frozen-lockfile`, `pnpm dedupe --check`, `pnpm no-deploy:check`
+  - `pnpm check:approved-seed` — 83 files, manifest sha256 `eecacda9…`
+  - `pnpm assets:sync`, `pnpm content:assemble`, `pnpm content:project` (14 routes), `pnpm content:check` (246 entries, 14 routes, equals the golden)
+  - `pnpm build:site` (16 pages), then `pnpm check` — vitest 412 passed, 15 skipped
+  - `pnpm sg:check`, `pnpm build:sg` (50 pages), `pnpm check:token-layers` (44 tokens layered in the styleguide preview and the site dist)
+  - `pnpm build:editor`, `pnpm assets:assemble-worker` (136 files), `pnpm assets:verify`, `pnpm check:boundaries`
+  - `pnpm worker:dry-run`, `pnpm worker:bundle:check` (no node:/vite/preact/local fixture/seed/fake provider), `pnpm worker:check-preview`, `pnpm worker:types:check`
+  - `pnpm verify:external-install`
+  - `check-publication.mjs --dist apps/site/dist` (246 entries, 14 routes), `check-public-output.mjs` (153 files)
+  - `pnpm check:content` — strict historical checker 14/14 (0 missing files/copy, 0 record/link/shared/metadata issues)
+  - `pnpm site:check-fragments`, `pnpm site:wrangler-dev` (6/6), `pnpm gate1:wrangler-dev` (29 steps)
+  - `node scripts/verify/worker-auth-probe.mjs` — 58/58 against the production entry with a local fixture JWKS
+  - `pnpm test:browser` — 81 passed, 15 skipped. The 15 skips are the reference-only checks (no-JS copy parity on 14 routes and the prototype token measurement) with the reason "PINSEL_REFERENCE_DIST is not set"; axe-core 4.14.0 runs unconditionally.
+  - `PINSEL_REFERENCE_DIST=<seed>/prototype/dist playwright test public-site.spec.ts token-layers.spec.ts` — 62 passed (reference-dependent checks against the verified approved prototype)
+  - working tree clean afterwards
+- Not performed: any live test (Access, remote D1, GitHub publication, Workers Builds, contact delivery). Nothing is deployed.
+- CI: the PR #27 checks on this head (see the PR's Checks tab); `publication-validate` / `content-validate` skip by design because the branch carries no publication snapshot.
