@@ -21,7 +21,7 @@ Every request, static assets included (`run_worker_first: true`), goes through t
 
 ### Local entry
 
-`src/local-dev.ts` (`wrangler dev --env local`) replaces Access with a fixed subject (`LOCAL_DEV_SUBJECT`), compiles in `POST /admin/seed` and registers the in-memory fake publication provider (`--var PUBLISHER_PROVIDER:fake`). The production entry never imports it; `pnpm worker:bundle:check` (`scripts/check-worker-bundle.mjs`) scans the `--dry-run` bundle and fails on the local fixture, the seed endpoint marker or the fake provider marker.
+`src/local-dev.ts` (`wrangler dev --env local`) replaces Access with a fixed subject (`LOCAL_DEV_SUBJECT`), compiles in `POST /admin/seed` and registers the in-memory fake publication provider (`--var PUBLISHER_PROVIDER:fake`), which a browser run drives through `/admin/fake-publisher` (`GET` lists calls and submissions; `POST …/script {method, outcome}` queues a timeout / unavailable / lost-ack / rejected answer; `POST …/advance {operationId, state, evidence?}` moves a submission through the upstream export states). The production entry never imports it; `pnpm worker:bundle:check` (`scripts/check-worker-bundle.mjs`) scans the `--dry-run` bundle and fails on the local fixture, the seed endpoint marker, the fake provider marker or the driver route.
 
 ```sh
 pnpm build:editor && pnpm assets:assemble-worker
@@ -32,7 +32,7 @@ pnpm dev:local                        # or: wrangler dev --env local --var PUBLI
 
 ## API (`/api/v1`)
 
-Every body is JSON with a `status` discriminator from the upstream vocabulary. HTTP mirrors it: `ok` 200, `conflict` 409, `refused` / `rejected` 422, `not-found` 404, `unavailable` / `uncertain` 503. Upstream refusal codes (`malformed-request`, `forbidden`, `wrong-project`, `stale`, `unknown-model`, `unknown-field`, `not-found`, `conflict`, `invalid-value`, `unsafe-reference`) and conflict reasons (`draft-revision`, `baseline-revision`, `operation-id`) are used unchanged.
+Every body is JSON with a `status` discriminator from the upstream vocabulary. Request bodies carry exactly the documented keys: any other key (a file path, a sha, a URL) is refused (`422 malformed-request` on content routes, `422 rejected` on snapshot, publication and baseline routes), never ignored. HTTP mirrors it: `ok` 200, `conflict` 409, `refused` / `rejected` 422, `not-found` 404, `unavailable` / `uncertain` 503. Upstream refusal codes (`malformed-request`, `forbidden`, `wrong-project`, `stale`, `unknown-model`, `unknown-field`, `not-found`, `conflict`, `invalid-value`, `unsafe-reference`) and conflict reasons (`draft-revision`, `baseline-revision`, `operation-id`) are used unchanged.
 
 ### Site, draft and content
 
