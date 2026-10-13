@@ -185,9 +185,24 @@ pnpm no-deploy:check                               ok
 
 ## Regression
 
-The full pipeline at `44208b1`, all steps through heavy-guard in the foreground:
+The full pipeline at `41f60c9` (code identical to `44208b1`), all steps through heavy-guard in the foreground:
 
-PIPELINE_RESULTS
+```
+pnpm install --frozen-lockfile / pnpm dedupe --check     ok
+pnpm assets:sync, content:assemble, content:project      ok (14 routes)
+pnpm content:check                                       ok: plan equals tests/golden/routes.snapshot.json (revision a56eb8f7408c…)
+pnpm build:site                                          16 pages
+pnpm check                                               36 files passed, 1 skipped; 360 tests passed, 15 skipped
+pnpm build:editor, assets:assemble-worker                ok (136 files)
+pnpm check:boundaries                                    ok
+check-publication / check-public-output                  ok: 246 entries, 14 routes / 153 files
+pnpm site:check-fragments                                ok
+bash scripts/check-content.sh (migration state)          14/14 passed, 0 issues
+pnpm test:browser                                        34 passed (the 29 existing specs, editor.spec.ts on the shared helper, and the 5 new cms-confirm tests)
+git status                                               clean
+```
+
+`tests/fixtures/` and `tests/golden/` were never edited.
 
 ## Remaining gaps
 
