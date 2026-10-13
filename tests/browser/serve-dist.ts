@@ -29,12 +29,18 @@ export function outputFile(route: string): string {
   return path.join(dist, route.endsWith("/") ? `${route}index.html` : route);
 }
 
-const TYPES: Record<string, string> = { ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".html": "text/html", ".png": "image/png", ".jpg": "image/jpeg" };
+const TYPES: Record<string, string> = { ".js": "text/javascript", ".mjs": "text/javascript", ".json": "application/json", ".wasm": "application/wasm", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".html": "text/html", ".png": "image/png", ".jpg": "image/jpeg" };
 
 export async function serve(page: Page): Promise<void> {
-  await page.route(`${ORIGIN}/**`, async (route) => {
-    const file = outputFile(decodeURIComponent(new URL(route.request().url()).pathname));
-    if (!file.startsWith(dist) || !statSync(file, { throwIfNoEntry: false })?.isFile()) return route.fulfill({ status: 404 });
+  await serveRoot(page, ORIGIN, dist);
+}
+
+/** Serves any built static directory on `origin` with the same directory-index lookup. */
+export async function serveRoot(page: Page, origin: string, root: string): Promise<void> {
+  await page.route(`${origin}/**`, async (route) => {
+    const pathname = decodeURIComponent(new URL(route.request().url()).pathname);
+    const file = path.join(root, pathname.endsWith("/") ? `${pathname}index.html` : pathname);
+    if (!file.startsWith(root) || !statSync(file, { throwIfNoEntry: false })?.isFile()) return route.fulfill({ status: 404 });
     return route.fulfill({ contentType: TYPES[path.extname(file)] ?? "application/octet-stream", body: readFileSync(file) });
   });
 }
