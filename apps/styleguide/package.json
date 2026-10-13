@@ -13,6 +13,7 @@
     "gen-token-manifest": "zudo-sg gen-token-manifest",
     "gen-story-shims": "node scripts/gen-story-shims.mjs",
     "check:generated": "node scripts/gen-story-shims.mjs --check && zudo-sg gen-registry --check && zudo-sg gen-token-manifest --check",
+    "check:token-layers": "node scripts/check-token-layers.mjs",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "check": "pnpm check:generated && pnpm typecheck"
   },
