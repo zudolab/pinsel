@@ -6,8 +6,8 @@ Website for Pinsel (online preparation classes for German art universities). It 
 
 ## Stack
 
-- **Public site** (`apps/site`): [ZFB](https://github.com/Takazudo/zudo-front-builder) 4.3.3, which emits static, zero-JS-by-default HTML.
-- **Styleguide** (`apps/styleguide`): a zudo-sg 0.5.2 host (zudo-doc 6.1.1) over `packages/pinsel-ui`.
+- **Public site** (`apps/site`): [ZFB](https://github.com/Takazudo/zudo-front-builder) 4.4.0, which emits static, zero-JS-by-default HTML.
+- **Styleguide** (`apps/styleguide`): a zudo-sg 0.5.4 host (zudo-doc 6.1.1) over `packages/pinsel-ui`.
 - **Editor** (`apps/editor`): Vite and Preact. It hosts the Composer content-only editor.
 - **Authoring Worker** (`apps/authoring-worker`): a Cloudflare Worker (wrangler 4.149.0) for Access-gated drafts, preview and publication requests. It is never deployed from this repository.
 - **Shared packages**: `packages/pinsel-ui` (components and the approved assets) and `packages/pinsel-content` (content model and projection).
