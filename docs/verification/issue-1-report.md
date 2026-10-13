@@ -70,7 +70,6 @@ Public and admin hostnames; Access team domain, AUD tag, One-time PIN enablement
 
 - zudolab/pinsel#26 stays open: at 390px with 150% text, `/contact/` overflows by 8px, as the approved prototype does. A fix changes approved component CSS and needs a design decision.
 - Publication was exercised only with the in-memory fake provider and recorded GitHub responses. The fake loses its records on a Worker restart, so restart recovery against a provider that keeps its state is proven in workerd tests, not in a browser run.
-- A published course price equal to one of the edit-test literals (¥51,000–¥63,000, ¥91,000–¥99,999) passes the content PR gate but turns `pnpm check` (`scripts/edit-literals.test.mjs`) red on `main`, until the literals are changed.
 - The reference-only browser checks (no-JS copy parity and the prototype token measurement) skip in CI, because the approved reference dist is not in the repository. They pass when `PINSEL_REFERENCE_DIST` points at the extracted seed.
 - No live test was performed: Access, remote D1, GitHub publication, Workers Builds and contact delivery.
 

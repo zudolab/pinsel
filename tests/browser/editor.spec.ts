@@ -1,7 +1,7 @@
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { expect, test, type Browser, type Page } from "@playwright/test";
-import { repoRoot, startLocalWorker, type LocalWorker } from "./local-worker";
+import { editPrice, repoRoot, startLocalWorker, type LocalWorker } from "./local-worker";
 
 // #12 editor against `wrangler dev --env local` (tests/browser/local-worker.ts).
 // Prerequisites: `pnpm content:assemble && pnpm build:editor &&
@@ -57,14 +57,14 @@ test("a saved price persists into a new browser context", async ({ browser }) =>
   const page = await openEditor(browser);
   await shot(page, "editor-overview");
   await openTwoMonthCourse(page);
-  await setPrice(page, "¥55,000");
+  await setPrice(page, editPrice(5));
   await expect(page.getByTestId("save-status")).toHaveText("保存済み（改訂 2）", { timeout: 30_000 });
   await shot(page, "editor-saved");
   await page.context().close();
 
   const second = await openEditor(browser);
   await openTwoMonthCourse(second);
-  await expect(second.locator(PRICE)).toHaveValue("¥55,000");
+  await expect(second.locator(PRICE)).toHaveValue(editPrice(5));
   await second.context().close();
 });
 
@@ -74,7 +74,7 @@ test("the preview shows the saved revision", async ({ browser }) => {
   await page.getByRole("button", { name: "保存済みの下書きをプレビュー" }).click();
   await expect(page.getByTestId("preview-status")).toHaveText("表示中: 改訂 2", { timeout: 30_000 });
   const frame = page.frameLocator(".sg-hosted-content-editor__frame");
-  await expect(frame.locator("article.pricing-card .price").nth(1)).toHaveText(/¥55,000/);
+  await expect(frame.locator("article.pricing-card .price").nth(1)).toHaveText(new RegExp(editPrice(5)));
   await expect(page.locator(".sg-hosted-content-editor__frame")).toHaveAttribute("sandbox", "allow-same-origin allow-scripts");
   await shot(page, "editor-preview");
   await page.context().close();
@@ -85,10 +85,10 @@ test("a second context that saved first produces a conflict", async ({ browser }
   await openTwoMonthCourse(first);
   const second = await openEditor(browser);
   await openTwoMonthCourse(second);
-  await setPrice(second, "¥56,000");
+  await setPrice(second, editPrice(6));
   await expect(second.getByTestId("save-status")).toHaveText("保存済み（改訂 3）", { timeout: 30_000 });
 
-  await setPrice(first, "¥57,000");
+  await setPrice(first, editPrice(7));
   await expect(first.getByTestId("save-status")).toHaveText("競合", { timeout: 30_000 });
   await expect(first.getByTestId("conflict-panel")).toBeVisible();
   await expect(first.getByRole("button", { name: "自分の変更を再適用" })).toBeVisible();

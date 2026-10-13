@@ -281,6 +281,8 @@ The edit went through the real publisher path, in a temporary detached worktree 
 
 A first run of the same procedure with `¥58,000` (snapshot `f13529b0…`, local commit `ba54ceb`) passed every content-validate and publication-validate step. `pnpm check` failed in `scripts/edit-literals.test.mjs`: `content/entries/course/two-month.json price ¥58,000 was published over the migrated value and is also an edit literal in the tests`. The guard keeps edit tests from becoming no-ops, and its literals cover ¥51,000–¥63,000 and ¥91,000–¥99,999. So a legitimate owner price change in those ranges passes the content PR gate (`content-validate`), but then makes the `build` job, and with it `content-gate`, red on the merge into `main`, until the test literals are changed. The re-run above used `¥65,000` to stay outside them.
 
+Resolved on the post-merge integration branch: the edit tests take their prices from `scripts/lib/edit-prices.mjs`, which returns values above every committed course price and ¥ amount, and `scripts/edit-literals.test.mjs` is gone. Its replacement, `scripts/lib/edit-prices.test.mjs`, proves the property for synthetic committed prices covering every former literal. Two-month `¥58,000` and four-month `¥55,000`, published through the local Worker and `write-snapshot-files.ts` in a temporary worktree, passed `content:assemble`, `content:project`, `build:site`, `pnpm check` (410 passed / 17 skipped), `gate1:wrangler-dev`, and the `editor`, `editor-mock`, `cms-confirm` and `gate1-no-js` browser specs.
+
 ### Limitations that still apply
 
 - The in-memory fake provider loses its records on a Worker restart, so restart recovery against a provider that keeps its state is covered only in workerd (`publication.test.ts`, the GitHub replay tests).

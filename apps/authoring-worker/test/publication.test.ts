@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { createFakePublicationProvider, type FakePublicationProvider } from "../src/publish/fake-provider";
 import { isPublishablePath, publicationStateFor, selectPublisher } from "../src/publish/port";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
-import { COMMIT_1, app, call, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
+import { COMMIT_1, app, call, editPrice, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
 import { PINSEL_PACK_VERSION } from "@pinsel/ui";
 
 const FAKE_ENV: TestEnv = { ...env, PUBLISHER_PROVIDER: "fake" };
@@ -34,7 +34,7 @@ describe("publication provider selection", () => {
   });
 
   it("answers configuration-required by default (PUBLISHER_PROVIDER=disabled) and creates no job", async () => {
-    await savePrice(handler, "¥55,000");
+    await savePrice(handler, editPrice(5));
     const snapshot = await snapshotNow(handler);
     const result = await publish(snapshot, env);
     expect(result.status).toBe(503);
@@ -47,7 +47,7 @@ describe("publication provider selection", () => {
 
 describe("publication jobs with the fake provider", () => {
   it("submits a snapshot once with its exact base and package identity; a duplicate request returns the same job", async () => {
-    await savePrice(handler, "¥55,000");
+    await savePrice(handler, editPrice(5));
     const snapshot = await snapshotNow(handler);
     const first = await publish(snapshot);
     expect(first.status).toBe(200);
@@ -131,7 +131,7 @@ describe("publication jobs with the fake provider", () => {
   });
 
   it("records a refused submission as failed, keeps the draft, and says configuration-required when the provider is switched off", async () => {
-    const saved = await savePrice(handler, "¥57,000");
+    const saved = await savePrice(handler, editPrice(7));
     const snapshot = await snapshotNow(handler);
     fake.script("submit", "rejected");
     const refused = await publish(snapshot);
@@ -158,7 +158,7 @@ describe("publication jobs with the fake provider", () => {
   });
 
   it("never publishes on save", async () => {
-    await savePrice(handler, "¥58,000", { env: FAKE_ENV });
+    await savePrice(handler, editPrice(8), { env: FAKE_ENV });
     await snapshotNow(handler, FAKE_ENV);
     expect(fake.calls.submit).toBe(0);
   });

@@ -6,11 +6,14 @@ import type { ContentBaseline } from "zudo-composer/host-storage";
 import { createApp, type AppOptions } from "../src/app";
 import { createFixtureIdentity } from "../src/auth/identity";
 import { BASELINE } from "../src/site/baseline";
+import { committedAmounts, editPrices } from "../../../scripts/lib/edit-prices.mjs";
 
 export const ORIGIN = "https://authoring.example";
 export const PRICE = fieldId("course", "price");
 /** The committed two-month price (the migrated ¥50,000 until a publication changes it). */
 export const COMMITTED_PRICE = BASELINE.project.providers.content[0]!.entries.find((entry) => entry.id === "two-month")!.values[PRICE] as string;
+/** The n-th price an edit test writes; never a committed price or other committed ¥ amount (scripts/lib/edit-prices.mjs). */
+export const editPrice = editPrices(committedAmounts(BASELINE.project.providers.content[0]!.entries, PRICE));
 
 export type Handler = ReturnType<typeof createApp>;
 export type TestEnv = typeof env & { PUBLISHER_PROVIDER?: string; PROMOTION_POLICY?: string };

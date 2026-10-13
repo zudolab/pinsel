@@ -2,6 +2,8 @@ import { spawn, type ChildProcess } from "node:child_process";
 import { existsSync } from "node:fs";
 import { mkdir, rm } from "node:fs/promises";
 import path from "node:path";
+import { readCommittedEntries } from "../../scripts/lib/committed-entries.mjs";
+import { committedAmounts, editPrices } from "../../scripts/lib/edit-prices.mjs";
 
 // `wrangler dev --env local` (workerd + local D1 with the committed
 // migrations) for the browser lanes, started the way
@@ -10,6 +12,8 @@ import path from "node:path";
 
 export const repoRoot = path.resolve(import.meta.dirname, "../..");
 export const workerDir = path.join(repoRoot, "apps/authoring-worker");
+/** The n-th price an edit lane writes; never a committed price or other committed ¥ amount (scripts/lib/edit-prices.mjs). */
+export const editPrice = editPrices(committedAmounts(readCommittedEntries(repoRoot), "course-price"));
 
 const WRANGLER_ENV = { CI: "1", WRANGLER_SEND_METRICS: "false" };
 
