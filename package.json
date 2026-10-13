@@ -10,6 +10,7 @@
   "scripts": {
     "assets:sync": "node scripts/assets/sync.mjs",
     "assets:verify": "node scripts/assets/verify.mjs",
+    "check:approved-seed": "node scripts/check-approved-seed.mjs",
     "assets:assemble-worker": "node scripts/assets/assemble-worker.mjs",
     "content:assemble": "pnpm --filter @pinsel/content content:assemble && pnpm --filter @pinsel/authoring-worker styles:generate",
     "content:project": "pnpm --filter @pinsel/content content:project",

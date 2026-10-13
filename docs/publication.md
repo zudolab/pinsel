@@ -84,7 +84,11 @@ Timeouts and unavailable answers never change the state: `providerFailures` coun
 
 No step deploys, merges or promotes.
 
-**Migration fixture split.** The historical strict checker (`scripts/check-content.sh`, the immutable 14-page seed fixture) runs only in ci.yml's `migration-baseline` job, which runs only while there is no `content/snapshot.json`. Once content has been published, ci.yml runs `publication-validate` instead: the record, `check-publication` against the committed entries and the public output check. The fixture itself is never edited or weakened, and a legitimate price edit passes the snapshot checks without touching it.
+**Migration fixture split.** The historical strict checker (`scripts/check-content.sh`, the immutable 14-page seed fixture) runs only in ci.yml's `migration-baseline` job, which runs only while there is no `content/snapshot.json`. There it is unconditional: no repository variable or other switch can turn it off. Once content has been published, ci.yml runs `publication-validate` instead: the record, `check-publication` against the committed entries and the public output check. The fixture itself is never edited or weakened, and a legitimate price edit passes the snapshot checks without touching it.
+
+**Fail-closed gate.** ci.yml's `content-gate` job always runs and fails unless `approved-seed` and `build` succeeded and the path selected by `content/snapshot.json` succeeded while the other one was skipped. A skipped, cancelled or failed selected path is a red run, not a silent skip.
+
+**Seed immutability.** `tests/approved-seed.sha256.json` lists the bytes and sha256 of all 83 files under `tests/fixtures/approved-seed/`, together with each file's path in the seed package (`README.md` is repository-authored and has no seed path). `pnpm check:approved-seed` (`scripts/check-approved-seed.mjs`) fails on any added, removed or changed file. The script also pins the manifest's own sha256, so a fixture edit cannot be hidden by regenerating the manifest alone. ci.yml runs it in the `approved-seed` job, which needs no install. `node scripts/check-approved-seed.mjs --seed <extracted seed package>` also checks the 82 seed-derived files against the package itself.
 
 ## Promotion policy
 
