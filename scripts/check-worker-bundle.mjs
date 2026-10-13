@@ -1,6 +1,6 @@
 // Scans the `wrangler deploy --dry-run --outdir` bundle of the authoring
 // Worker: no Node builtins, no Vite, no Preact, no local identity fixture, no
-// local seed endpoint, no fake publication provider.
+// local seed endpoint, no fake publication provider or its driver.
 // Usage: node scripts/check-worker-bundle.mjs [outdir]
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
@@ -24,6 +24,7 @@ const forbidden = [
   [/local-dev@example\.test/, "the local identity subject"],
   [/pinsel-local-admin-seed/, "the local seed endpoint (src/admin/seed.ts)"],
   [/pinsel-fake-publication-provider/, "the fake publication provider (src/publish/fake-provider.ts)"],
+  [/\/admin\/fake-publisher/, "the local fake publisher driver (src/admin/fake-publisher.ts)"],
   [/zudo-composer\/src\//, "a private Composer source path"],
 ];
 const failures = forbidden.filter(([pattern]) => pattern.test(code)).map(([, label]) => label);

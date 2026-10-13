@@ -1,4 +1,5 @@
 /* Authored CSS only (`wind: false`): the approved tokens, colors and component rules from pinsel-ui. */
-@import "@pinsel/ui/styles/tokens.css";
-@import "@pinsel/ui/styles/colors.css";
+/* The token files are plain :root blocks; import them into the prototype's `tokens` layer so the `responsive` layer can override them. */
+@import "@pinsel/ui/styles/tokens.css" layer(tokens);
+@import "@pinsel/ui/styles/colors.css" layer(tokens);
 @import "@pinsel/ui/styles/components.css";

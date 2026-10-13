@@ -46,6 +46,7 @@ jobs:
       - run: pnpm check
       - run: pnpm sg:check
       - run: pnpm build:sg
+      - run: pnpm check:token-layers
       - run: pnpm build:editor
       - run: pnpm assets:assemble-worker
       - name: Verify staged assets

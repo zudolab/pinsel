@@ -148,6 +148,20 @@ describe("publication scenarios (fake provider, local D1)", () => {
     expect((await job(inFlight.publicationId)).state).toBe("conflict");
   });
 
+  it("(f2) a provider that lost the submission cannot keep a job in flight once the base moved", async () => {
+    await savePrice(handler, "¥55,000");
+    const inFlight = await published(await snapshotNow(handler));
+    // A provider without the record (another instance, a reset), and a canonical change rebased in the meantime.
+    const forgetful = createFakePublicationProvider({ now: () => "2026-10-13T00:00:00.000Z" });
+    const unchanged = app("editor@example.test", { publishers: { fake: () => forgetful } });
+    expect(await job(inFlight.publicationId, unchanged)).toMatchObject({ state: "submitted", message: "The provider has no record of this submission." });
+    const external = app("editor@example.test", { site: { ...PINSEL_SITE, canonical: canonicalWith(COMMIT_2, { "four-month": "¥99,000" }) }, publishers: { fake: () => forgetful } });
+    const detected = await call(external, "/api/v1/baseline/reconcile", { method: "POST", json: {} });
+    await call(external, "/api/v1/baseline/reconcile", { method: "POST", json: { conflictId: detected.body.conflict.conflictId, expectedDraftRevision: detected.body.current.draftRevision } });
+    expect(await job(inFlight.publicationId, external)).toMatchObject({ state: "conflict", message: expect.stringContaining(COMMIT_2) });
+    expect(forgetful.calls.submit).toBe(0);
+  });
+
   it("(h) serializes concurrent reconciliations of one job: one provider observation, the other returns the stored job", async () => {
     const created = await published(await snapshotNow(handler));
     fake.advance(created.providerRef.operationId, "building");

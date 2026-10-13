@@ -33,7 +33,7 @@ Story-only state props (`menuOpen`, `motionOn`, `previewState`, `current`, `open
 
 `zudo-sg.config.mjs` reads exactly two files, `packages/pinsel-ui/styles/tokens.css` and `colors.css`, and groups them under `tokens.spec` (palette, color roles, space-1..9, layout lengths, font families and sizes, radius, z-index). A token added to either file must also be added to `tokens.spec`, then run `gen-token-manifest`. The token panel and the Live CSS panel on `/components/<slug>` edit these variables inside the preview iframe only; nothing is written back.
 
-Previews load `src/styles/preview-entry.css`: the fonts plus the byte-exact Pinsel `tokens.css`, `colors.css` and `components.css`. The host chrome (`src/styles/ui-tokens.css`) is the engine starter's and is not Pinsel design.
+Previews load `src/styles/preview-entry.css`: the fonts plus the byte-exact Pinsel `tokens.css`, `colors.css` and `components.css`. They are nested in a `pinsel` cascade layer (tokens in `pinsel.tokens`) because the host's wind stylesheet declares its own `components` layer first; `pnpm --filter @pinsel/styleguide check:token-layers` checks the built CSS of both the styleguide and the site. The host chrome (`src/styles/ui-tokens.css`) is the engine starter's and is not Pinsel design.
 
 ## Dependency guard
 

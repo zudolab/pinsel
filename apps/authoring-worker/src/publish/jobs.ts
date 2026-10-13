@@ -265,7 +265,17 @@ export async function observeJob(context: PublicationContext, port: PublicationP
     const { row } = await casJob(context.db, context.projectId, job, { reconcileAttempts, ...patch }, now);
     return { status: "ok", value: view(row) };
   };
-  if (observed.status === "not-found") return write({ providerFailures: 0, message: "The provider has no record of this submission." });
+  // A base that moved under a job still in flight means the snapshot can no longer integrate cleanly.
+  const movedBase = async (): Promise<string | null> => {
+    const baseline = await context.adapter.readBaseline();
+    return baseline.status === "ok" && baseline.value.baselineRevision !== job.baseline_revision ? baseline.value.baselineRevision : null;
+  };
+  if (observed.status === "not-found") {
+    // Nothing the provider says can settle this job any more; a moved base still decides it locally.
+    const moved = await movedBase();
+    if (moved) return write({ state: "conflict", providerFailures: 0, message: `The provider has no record of this submission, and the integrated baseline moved to ${moved}.` });
+    return write({ providerFailures: 0, message: "The provider has no record of this submission." });
+  }
   if (observed.status !== "ok") {
     // Unknown is not failed: the state stays, the failure is counted and reported.
     const failures = job.provider_failures + 1;
@@ -278,10 +288,9 @@ export async function observeJob(context: PublicationContext, port: PublicationP
     state = "conflict";
     message = `The provider reports snapshot ${observation.snapshotId}, not ${job.snapshot_id}.`;
   } else if (state !== "integrated" && state !== "live" && state !== "failed") {
-    // A base that moved under a job still in flight means the snapshot can no longer integrate cleanly.
-    const baseline = await context.adapter.readBaseline();
-    if (baseline.status === "ok" && baseline.value.baselineRevision !== job.baseline_revision) {
-      message = `The integrated baseline moved to ${baseline.value.baselineRevision} while this publication was ${state}.`;
+    const moved = await movedBase();
+    if (moved) {
+      message = `The integrated baseline moved to ${moved} while this publication was ${state}.`;
       state = "conflict";
     }
   }

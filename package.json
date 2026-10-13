@@ -35,7 +35,8 @@
     "gate1:wrangler-dev": "node scripts/gate1/wrangler-dev-proof.mjs",
     "test:browser": "playwright test",
     "site:check-fragments": "node scripts/site/check-fragments.mjs",
-    "site:wrangler-dev": "node scripts/site/wrangler-dev-check.mjs"
+    "site:wrangler-dev": "node scripts/site/wrangler-dev-check.mjs",
+    "check:token-layers": "pnpm --filter @pinsel/styleguide check:token-layers"
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",
