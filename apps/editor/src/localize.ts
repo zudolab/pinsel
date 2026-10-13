@@ -106,8 +106,10 @@ export const CHROME_TEXT: Readonly<Record<string, string>> = {
   "No draft exists for this site.": "このサイトの下書きがありません。",
   "The draft belongs to another Content provider.": "この下書きは別のコンテンツのものです。開発者に連絡してください。",
   "The stored draft was made for a different site version. A developer must reconcile it before editing continues.": "保存されている下書きは別のサイト版のものです。編集を続ける前に開発者が調整する必要があります。",
-  // The browser's network error (Chromium wording) when a request never reaches the Worker
+  // The browser's network error when a request never reaches the Worker (Chromium, Firefox, Safari wording)
   "Failed to fetch": "編集サーバーに接続できませんでした。",
+  "NetworkError when attempting to fetch resource.": "編集サーバーに接続できませんでした。",
+  "Load failed": "編集サーバーに接続できませんでした。",
 };
 
 const PATTERNS: readonly [RegExp, (...groups: string[]) => string][] = [

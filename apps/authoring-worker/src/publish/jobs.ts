@@ -272,7 +272,8 @@ export async function observeJob(context: PublicationContext, port: PublicationP
   };
   if (observed.status === "not-found") {
     // Nothing the provider says can settle this job any more; a moved base still decides it locally.
-    const moved = await movedBase();
+    // An integrated or live job moved the base itself; a lost provider record cannot demote it.
+    const moved = job.state === "integrated" || job.state === "live" ? null : await movedBase();
     if (moved) return write({ state: "conflict", providerFailures: 0, message: `The provider has no record of this submission, and the integrated baseline moved to ${moved}.` });
     return write({ providerFailures: 0, message: "The provider has no record of this submission." });
   }

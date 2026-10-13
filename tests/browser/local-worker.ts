@@ -62,9 +62,10 @@ export async function startLocalWorker(options: LocalWorkerOptions): Promise<Loc
       }
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
+    await stop();
     throw new Error("wrangler dev did not start within 90s");
   };
-  const stop = async () => {
+  async function stop(): Promise<void> {
     const running = child;
     child = null;
     if (!running || running.exitCode !== null) return;
@@ -79,7 +80,7 @@ export async function startLocalWorker(options: LocalWorkerOptions): Promise<Loc
       });
       running.kill("SIGTERM");
     });
-  };
+  }
 
   await start();
   return {

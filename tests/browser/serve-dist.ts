@@ -40,7 +40,7 @@ export async function serveRoot(page: Page, origin: string, root: string): Promi
   await page.route(`${origin}/**`, async (route) => {
     const pathname = decodeURIComponent(new URL(route.request().url()).pathname);
     const file = path.join(root, pathname.endsWith("/") ? `${pathname}index.html` : pathname);
-    if (!file.startsWith(root) || !statSync(file, { throwIfNoEntry: false })?.isFile()) return route.fulfill({ status: 404 });
+    if (!file.startsWith(root + path.sep) || !statSync(file, { throwIfNoEntry: false })?.isFile()) return route.fulfill({ status: 404 });
     return route.fulfill({ contentType: TYPES[path.extname(file)] ?? "application/octet-stream", body: readFileSync(file) });
   });
 }

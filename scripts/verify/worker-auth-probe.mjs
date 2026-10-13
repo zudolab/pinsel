@@ -18,6 +18,8 @@ import { createServer } from "node:https";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
+import { readCommittedEntries } from "../lib/committed-entries.mjs";
+import { committedAmounts, editPrices } from "../lib/edit-prices.mjs";
 
 const run = promisify(execFile);
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -34,6 +36,7 @@ const origin = `http://127.0.0.1:${port}`;
 const TEAM = `https://127.0.0.1:${jwksPort}`;
 const AUD = "pinsel-authoring-aud-fixture";
 const EDITOR = "editor@example.test";
+const NEW_PRICE = editPrices(committedAmounts(readCommittedEntries(repoRoot), "course-price"))(1);
 
 /** @type {{ probe: string, command: string, expected: string, actual: string, ok: boolean }[]} */
 const results = [];
@@ -161,17 +164,17 @@ async function main() {
     const draft = JSON.parse((await request([...auth(tokens.valid), `${origin}/api/v1/draft`])).body);
     const save = (/** @type {string} */ price) => JSON.stringify({ expectedRevision: draft.value.draftRevision, expectedBaselineRevision: draft.value.baselineRevision, values: { "course-price": price } });
     const put = `${origin}/api/v1/content/course/two-month`;
-    await expectAnswer("CSRF: mutation without Origin → 403", ["-X", "PUT", ...auth(tokens.valid), "-H", "Idempotency-Key: probe-no-origin", "-H", "Content-Type: application/json", "--data", save("¥51,000"), put], 403, "csrf-origin");
-    await expectAnswer("CSRF: mutation from another Origin → 403", ["-X", "PUT", ...auth(tokens.valid), "-H", "Origin: https://evil.example", "-H", "Idempotency-Key: probe-evil-origin", "-H", "Content-Type: application/json", "--data", save("¥51,000"), put], 403, "csrf-origin");
-    await expectAnswer("CSRF: same Origin but Sec-Fetch-Site cross-site → 403", ["-X", "PUT", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Sec-Fetch-Site: cross-site", "-H", "Idempotency-Key: probe-cross-site", "-H", "Content-Type: application/json", "--data", save("¥51,000"), put], 403, "csrf-fetch-site");
-    await expectAnswer("CSRF: same Origin, text/plain body → 415", ["-X", "PUT", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Idempotency-Key: probe-text", "-H", "Content-Type: text/plain", "--data", save("¥51,000"), put], 415, "unsupported-media-type");
-    await expectAnswer("CSRF: mutation without an assertion is refused before CSRF (401)", ["-X", "PUT", "-H", `Origin: ${origin}`, "-H", "Content-Type: application/json", "--data", save("¥51,000"), put], 401, "missing-assertion");
+    await expectAnswer("CSRF: mutation without Origin → 403", ["-X", "PUT", ...auth(tokens.valid), "-H", "Idempotency-Key: probe-no-origin", "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 403, "csrf-origin");
+    await expectAnswer("CSRF: mutation from another Origin → 403", ["-X", "PUT", ...auth(tokens.valid), "-H", "Origin: https://evil.example", "-H", "Idempotency-Key: probe-evil-origin", "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 403, "csrf-origin");
+    await expectAnswer("CSRF: same Origin but Sec-Fetch-Site cross-site → 403", ["-X", "PUT", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Sec-Fetch-Site: cross-site", "-H", "Idempotency-Key: probe-cross-site", "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 403, "csrf-fetch-site");
+    await expectAnswer("CSRF: same Origin, text/plain body → 415", ["-X", "PUT", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Idempotency-Key: probe-text", "-H", "Content-Type: text/plain", "--data", save(NEW_PRICE), put], 415, "unsupported-media-type");
+    await expectAnswer("CSRF: mutation without an assertion is refused before CSRF (401)", ["-X", "PUT", "-H", `Origin: ${origin}`, "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 401, "missing-assertion");
     const unchanged = JSON.parse((await request([...auth(tokens.valid), `${origin}/api/v1/draft`])).body);
     const priceOf = (/** @type {any} */ value) => value.value.snapshot.entries.find((/** @type {any} */ entry) => entry.modelId === "course" && entry.id === "two-month").values["course-price"];
     const kept = unchanged.value.draftRevision === draft.value.draftRevision && priceOf(unchanged) === priceOf(draft);
     results.push({ probe: "CSRF: every refused mutation wrote nothing", command: "GET /api/v1/draft", expected: `revision ${draft.value.draftRevision}, price ${priceOf(draft)}`, actual: `revision ${unchanged.value.draftRevision}, price ${priceOf(unchanged)}`, ok: kept });
     console.log(`${kept ? "PASS" : "FAIL"} CSRF: every refused mutation wrote nothing`);
-    await expectAnswer("same-origin JSON mutation with a valid assertion saves (positive control)", ["-X", "PUT", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Sec-Fetch-Site: same-origin", "-H", "Idempotency-Key: probe-ok", "-H", "Content-Type: application/json", "--data", save("¥51,000"), put], 200, '"status":"ok"');
+    await expectAnswer("same-origin JSON mutation with a valid assertion saves (positive control)", ["-X", "PUT", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Sec-Fetch-Site: same-origin", "-H", "Idempotency-Key: probe-ok", "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 200, '"status":"ok"');
     const saved = JSON.parse((await request([...auth(tokens.valid), `${origin}/api/v1/operations/probe-ok`])).body);
     results.push({ probe: "the receipt records the verified Access email as the actor", command: "GET /api/v1/operations/probe-ok", expected: EDITOR, actual: JSON.stringify(saved).includes(EDITOR) ? EDITOR : JSON.stringify(saved).slice(0, 160), ok: JSON.stringify(saved).includes(EDITOR) });
     results.push({ probe: "the Worker fetched the JWKS from TEAM_DOMAIN/cdn-cgi/access/certs", command: "(fixture server counter)", expected: ">= 1", actual: String(jwksHits), ok: jwksHits >= 1 });

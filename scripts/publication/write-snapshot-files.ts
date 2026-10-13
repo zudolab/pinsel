@@ -8,7 +8,7 @@
 // Usage: pnpm exec tsx scripts/publication/write-snapshot-files.ts <snapshot.json> [--requested-by <email>]
 // <snapshot.json> is a `GET /api/v1/snapshots/:id` value. The assembled
 // baseline (pnpm content:assemble) must be the snapshot's baseline.
-import { readFile, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { ContentSnapshotRecord } from "zudo-composer/host-storage";
@@ -20,7 +20,8 @@ const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../
 const argv = process.argv.slice(2);
 const snapshotFile = argv[0];
 if (!snapshotFile) throw new Error("usage: write-snapshot-files.ts <snapshot.json> [--requested-by <email>]");
-const requestedBy = argv.includes("--requested-by") ? argv[argv.indexOf("--requested-by") + 1]! : "local-dev@example.test";
+const requestedBy = argv.includes("--requested-by") ? argv[argv.indexOf("--requested-by") + 1] : "local-dev@example.test";
+if (!requestedBy) throw new Error("--requested-by needs an email");
 
 const snapshot = JSON.parse(await readFile(path.resolve(snapshotFile), "utf8")) as ContentSnapshotRecord;
 const assembled = path.join(repoRoot, "packages/pinsel-content/.site-project");
@@ -32,6 +33,7 @@ const plan = planPublication({ snapshot, baselineProject, packageIdentity: publi
 for (const write of plan.writes) {
   const file = path.join(repoRoot, write.path);
   const previous = write.existed ? JSON.parse(await readFile(file, "utf8")) : undefined;
+  await mkdir(path.dirname(file), { recursive: true });
   await writeFile(file, serializeEntryFile(write.entry, snapshot.project, previous));
 }
 for (const deleted of plan.deletes) await rm(path.join(repoRoot, deleted));
