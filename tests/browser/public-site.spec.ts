@@ -1,29 +1,23 @@
-import { readFileSync, statSync } from "node:fs";
+import { createRequire } from "node:module";
 import path from "node:path";
 import { expect, test, type Page } from "@playwright/test";
-import { ORIGIN, OUTPUT_ROUTES, serve } from "./serve-dist";
+import { ORIGIN, OUTPUT_ROUTES, serve, serveRoot } from "./serve-dist";
 
 // zudolab/pinsel#17: the public-site confirm pass on the built routes — no-JS
 // copy parity, keyboard and fragments, motion, contact, robustness and
-// accessibility. Optional inputs (the lane skips what it cannot reach):
-//   PINSEL_REFERENCE_DIST  the approved prototype's dist ($SEED/prototype/dist)
-//   PINSEL_AXE             a path to axe.min.js (axe-core is not a repo dependency)
+// accessibility. axe-core is the pinned root devDependency. Optional input:
+//   PINSEL_REFERENCE_DIST  the approved prototype's dist ($SEED/prototype/dist);
+//                          without it the copy-parity checks skip and the zoom checks
+//                          fall back to PROTOTYPE_OVERFLOW, measured from that reference.
 
 const REFERENCE = process.env.PINSEL_REFERENCE_DIST;
-const AXE = process.env.PINSEL_AXE;
+const AXE = createRequire(import.meta.url).resolve("axe-core/axe.min.js");
 const REF_ORIGIN = "http://reference.test";
 const WIDTHS = [1440, 1280, 1130, 1110, 1030, 1020, 770, 768, 767, 760, 390, 360];
 const SIX = ["/", "/lessons/", "/results/", "/faq/", "/notes/free-tuition/", "/contact/"];
 
 async function serveReference(page: Page): Promise<void> {
-  const root = path.resolve(REFERENCE!);
-  await page.route(`${REF_ORIGIN}/**`, async (route) => {
-    const pathname = decodeURIComponent(new URL(route.request().url()).pathname);
-    const file = path.join(root, pathname.endsWith("/") ? `${pathname}index.html` : pathname);
-    if (!file.startsWith(root) || !statSync(file, { throwIfNoEntry: false })?.isFile()) return route.fulfill({ status: 404 });
-    const type = { ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".html": "text/html", ".png": "image/png", ".jpg": "image/jpeg" }[path.extname(file)];
-    return route.fulfill({ contentType: type ?? "application/octet-stream", body: readFileSync(file) });
-  });
+  await serveRoot(page, REF_ORIGIN, path.resolve(REFERENCE!));
 }
 
 const mainText = (page: Page) => page.locator("main#main").evaluate((main) => (main as HTMLElement).innerText.replace(/\s+/g, " ").trim());
@@ -82,6 +76,23 @@ test.describe("keyboard", () => {
     }
     expect(order.slice(0, 10)).toEqual(["#main", "/", "/lessons/", "/about/", "/results/", "/voices/", "/notes/", "/faq/", "/contact/", "motion-toggle"]);
     expect(order[10]).toMatch(/^main:/);
+  });
+
+  test("the brand and the motion toggle are named by their visible text (WCAG 2.5.3)", async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    await serve(page);
+    await page.goto(`${ORIGIN}/`);
+    await expect(page.locator("a.brand")).toHaveCount(2);
+    for (const brand of await page.locator("a.brand").all()) await expect(brand).toHaveAccessibleName("Pinsel ART STUDY IN GERMANY");
+    const toggle = page.locator("[data-motion-toggle]");
+    await expect(toggle).toHaveAccessibleDescription("装飾の動きと色の変化");
+    for (let i = 0; i < 2; i++) {
+      const visible = (await toggle.locator("[data-motion-label]").innerText()).trim();
+      expect(visible).toMatch(/^動き (ON|OFF)$/);
+      await expect(toggle).toHaveAccessibleName(visible);
+      await toggle.click();
+      await expect(toggle.locator("[data-motion-label]")).not.toHaveText(visible);
+    }
   });
 
   test("the mobile menu opens from the keyboard; Escape closes it and returns focus", async ({ page }) => {
@@ -310,11 +321,11 @@ test.describe("robustness", () => {
 
   for (const route of SIX) {
     test(`axe-core finds no serious or critical violation on ${route}`, async ({ page }) => {
-      test.skip(!AXE, "PINSEL_AXE is not set");
       await page.setViewportSize({ width: 1440, height: 900 });
       await serve(page);
       await page.goto(`${ORIGIN}${route}`);
-      await page.addScriptTag({ path: AXE! });
+      await page.addScriptTag({ path: AXE });
+      expect(await page.evaluate(() => (window as unknown as { axe: { version: string } }).axe.version)).toBe("4.14.0");
       const violations = await page.evaluate(async () => {
         const result = await (window as unknown as { axe: { run: (context: Document) => Promise<{ violations: { id: string; impact: string; nodes: unknown[] }[] }> } }).axe.run(document);
         return result.violations.map(({ id, impact, nodes }) => ({ id, impact, nodes: nodes.length }));
