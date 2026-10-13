@@ -57,6 +57,9 @@ try {
   const missing = await get("/nope/");
   const missingBody = await missing.text();
   record("GET /nope/ is 404 with the 404 page body", missing.status === 404 && missingBody.includes("<h1>ページが見つかりません</h1>"), String(missing.status));
+  const notFoundPage = await fetch(`${origin}/404.html`, { signal: AbortSignal.timeout(10_000) });
+  const notFoundBody = await notFoundPage.text();
+  record("GET /404.html serves the 404 page", notFoundBody.includes("<h1>ページが見つかりません</h1>"), `${notFoundPage.status} ${new URL(notFoundPage.url).pathname}`);
   const image = await get(ILLUSTRATION);
   const sha = createHash("sha256").update(Buffer.from(await image.arrayBuffer())).digest("hex");
   record(`GET ${ILLUSTRATION} is 200 with the approved sha256`, image.status === 200 && sha === illustrationSha, `${image.status} ${sha}`);

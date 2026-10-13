@@ -7,7 +7,7 @@ import siteManifest from "../../site/package.json";
 import { formatIdentityReport, packageIdentityFromManifest, parseIdentityReport, parseSnapshotRecord, serializeSnapshotRecord } from "../src/publish/publication-record";
 import { planPublication, publicationPackageIdentity, serializeEntryFile } from "../src/publish/snapshot-files";
 import { BASELINE } from "../src/site/baseline";
-import { PRICE } from "./helpers";
+import { PRICE, editPrice } from "./helpers";
 
 const PUBLICATION_PACKAGE_IDENTITY = publicationPackageIdentity();
 const DISK = import.meta.glob("../../../content/entries/**/*.json", { query: "?raw", import: "default", eager: true }) as Record<string, string>;
@@ -34,7 +34,7 @@ describe("publication files", () => {
     expect(plan().writes).toEqual([]);
     const edited = structuredClone(BASELINE.project);
     const entries = edited.providers.content[0]!.entries;
-    entries.find((entry) => entry.id === "two-month")!.values[PRICE] = "¥55,000";
+    entries.find((entry) => entry.id === "two-month")!.values[PRICE] = editPrice(5);
     const removed = entries.findIndex((entry) => entry.modelId === "testimonial");
     const [gone] = entries.splice(removed, 1);
     entries.push({ ...structuredClone(gone!), id: "testimonial-new" });

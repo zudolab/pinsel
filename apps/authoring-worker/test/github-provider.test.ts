@@ -8,7 +8,7 @@ import { IDENTITY_CHECK_NAME, formatIdentityReport, parseSnapshotRecord, seriali
 import { publicationPackageIdentity } from "../src/publish/snapshot-files";
 import { BASELINE } from "../src/site/baseline";
 import { checkRun, checkRuns, createReplay, fixture, type Replay } from "./github-replay";
-import { PRICE } from "./helpers";
+import { PRICE, editPrice } from "./helpers";
 
 const PUBLICATION_PACKAGE_IDENTITY = publicationPackageIdentity();
 
@@ -22,7 +22,7 @@ const MERGE_SHA = "0e1d".repeat(10);
 const PR = 42;
 const AT = "2026-10-13T00:00:00.000Z";
 
-async function editedSnapshot(price = "¥55,000"): Promise<ContentSnapshotRecord> {
+async function editedSnapshot(price = editPrice(5)): Promise<ContentSnapshotRecord> {
   const project = structuredClone(BASELINE.project);
   project.providers.content[0]!.entries.find((entry) => entry.id === "two-month")!.values[PRICE] = price;
   return { snapshotId: await contentSnapshotId(project), project, draftRevision: 2, baselineRevision: BASE_SHA, createdAt: AT };
@@ -108,7 +108,7 @@ describe("GitHub provider: submit", () => {
     const before = diskEntry("course", "two-month").split("\n");
     const after = written[0]!.content!.split("\n");
     expect(after.length).toBe(before.length);
-    expect(after.filter((line, index) => line !== before[index])).toEqual([`    "course-price": "¥55,000",`]);
+    expect(after.filter((line, index) => line !== before[index])).toEqual([`    "course-price": "${editPrice(5)}",`]);
     expect(parseSnapshotRecord(written[1]!.content!)).toEqual(recordFor(snapshot));
     expect(commit!.body).toMatchObject({ tree: "7ee1".repeat(10), parents: [BASE_SHA] });
     expect(commit!.body.message).toContain(`Pinsel-Snapshot: ${snapshot.snapshotId}`);

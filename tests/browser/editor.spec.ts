@@ -1,31 +1,19 @@
-import { spawn, type ChildProcess } from "node:child_process";
-import { existsSync } from "node:fs";
-import { mkdir, rm } from "node:fs/promises";
+import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import { expect, test, type Browser, type Page } from "@playwright/test";
+import { editPrice, repoRoot, startLocalWorker, type LocalWorker } from "./local-worker";
 
-// #12 editor against `wrangler dev --env local` (workerd + local D1 with the
-// committed migrations), started the way scripts/gate1/wrangler-dev-proof.mjs
-// does. Prerequisites: `pnpm content:assemble && pnpm build:editor &&
+// #12 editor against `wrangler dev --env local` (tests/browser/local-worker.ts).
+// Prerequisites: `pnpm content:assemble && pnpm build:editor &&
 // pnpm assets:assemble-worker`. Run through heavy-guard: `pnpm test:browser`.
 // PINSEL_EDITOR_SCREENSHOTS=1 also writes the docs/editing.md screenshots.
 
-const repoRoot = path.resolve(import.meta.dirname, "../..");
-const worker = path.join(repoRoot, "apps/authoring-worker");
-const persist = path.join(worker, ".wrangler/editor-e2e-state");
 const port = Number(process.env.PINSEL_EDITOR_E2E_PORT ?? 8791);
 const origin = `http://127.0.0.1:${port}`;
 const screenshots = process.env.PINSEL_EDITOR_SCREENSHOTS === "1" ? path.join(repoRoot, "docs/images") : null;
 const PRICE = "#content-entry-course-price";
 
-let wrangler: ChildProcess | null = null;
-
-function run(args: string[]): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const child = spawn("corepack", ["pnpm", "exec", "wrangler", ...args], { cwd: worker, stdio: "inherit", env: { ...process.env, CI: "1", WRANGLER_SEND_METRICS: "false" } });
-    child.once("exit", (code) => (code === 0 ? resolve() : reject(new Error(`wrangler ${args.join(" ")} exited with ${code}`))));
-  });
-}
+let worker: LocalWorker | null = null;
 
 async function shot(page: Page, name: string): Promise<void> {
   if (screenshots) await page.screenshot({ path: path.join(screenshots, `${name}.png`), fullPage: false });
@@ -57,49 +45,26 @@ test.describe.configure({ mode: "serial", timeout: 90_000 });
 
 test.beforeAll(async () => {
   test.setTimeout(180_000);
-  if (!existsSync(path.join(worker, "dist-assets/editor/index.html"))) throw new Error("apps/authoring-worker/dist-assets/editor is missing: run pnpm build:editor && pnpm assets:assemble-worker");
-  await rm(persist, { recursive: true, force: true });
-  await mkdir(persist, { recursive: true });
   if (screenshots) await mkdir(screenshots, { recursive: true });
-  await run(["d1", "migrations", "apply", "pinsel-authoring", "--local", "--env", "local", "--persist-to", persist]);
-  wrangler = spawn("corepack", ["pnpm", "exec", "wrangler", "dev", "--env", "local", "--var", "PUBLISHER_PROVIDER:fake", "--port", String(port), "--ip", "127.0.0.1", "--persist-to", persist, "--log-level", "warn"], { cwd: worker, stdio: ["ignore", "inherit", "inherit"], env: { ...process.env, CI: "1", WRANGLER_SEND_METRICS: "false" } });
-  const started = Date.now();
-  while (Date.now() - started < 90_000) {
-    if (wrangler.exitCode !== null) throw new Error("wrangler dev exited early");
-    try {
-      if ((await fetch(`${origin}/api/v1/site`, { signal: AbortSignal.timeout(2000) })).status < 600) return;
-    } catch {
-      // not up yet
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500));
-  }
-  throw new Error("wrangler dev did not start within 90s");
+  worker = await startLocalWorker({ port, stateDir: "editor-e2e-state", vars: { PUBLISHER_PROVIDER: "fake" } });
 });
 
 test.afterAll(async () => {
-  if (!wrangler) return;
-  wrangler.kill("SIGTERM");
-  await new Promise((resolve) => {
-    wrangler!.once("exit", resolve);
-    setTimeout(() => {
-      wrangler!.kill("SIGKILL");
-      resolve(undefined);
-    }, 10_000);
-  });
+  await worker?.stop();
 });
 
 test("a saved price persists into a new browser context", async ({ browser }) => {
   const page = await openEditor(browser);
   await shot(page, "editor-overview");
   await openTwoMonthCourse(page);
-  await setPrice(page, "¥55,000");
+  await setPrice(page, editPrice(5));
   await expect(page.getByTestId("save-status")).toHaveText("保存済み（改訂 2）", { timeout: 30_000 });
   await shot(page, "editor-saved");
   await page.context().close();
 
   const second = await openEditor(browser);
   await openTwoMonthCourse(second);
-  await expect(second.locator(PRICE)).toHaveValue("¥55,000");
+  await expect(second.locator(PRICE)).toHaveValue(editPrice(5));
   await second.context().close();
 });
 
@@ -109,7 +74,7 @@ test("the preview shows the saved revision", async ({ browser }) => {
   await page.getByRole("button", { name: "保存済みの下書きをプレビュー" }).click();
   await expect(page.getByTestId("preview-status")).toHaveText("表示中: 改訂 2", { timeout: 30_000 });
   const frame = page.frameLocator(".sg-hosted-content-editor__frame");
-  await expect(frame.locator("article.pricing-card .price").nth(1)).toHaveText(/¥55,000/);
+  await expect(frame.locator("article.pricing-card .price").nth(1)).toHaveText(new RegExp(editPrice(5)));
   await expect(page.locator(".sg-hosted-content-editor__frame")).toHaveAttribute("sandbox", "allow-same-origin allow-scripts");
   await shot(page, "editor-preview");
   await page.context().close();
@@ -120,10 +85,10 @@ test("a second context that saved first produces a conflict", async ({ browser }
   await openTwoMonthCourse(first);
   const second = await openEditor(browser);
   await openTwoMonthCourse(second);
-  await setPrice(second, "¥56,000");
+  await setPrice(second, editPrice(6));
   await expect(second.getByTestId("save-status")).toHaveText("保存済み（改訂 3）", { timeout: 30_000 });
 
-  await setPrice(first, "¥57,000");
+  await setPrice(first, editPrice(7));
   await expect(first.getByTestId("save-status")).toHaveText("競合", { timeout: 30_000 });
   await expect(first.getByTestId("conflict-panel")).toBeVisible();
   await expect(first.getByRole("button", { name: "自分の変更を再適用" })).toBeVisible();

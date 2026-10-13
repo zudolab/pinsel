@@ -36,21 +36,21 @@ sequenceDiagram
 
 ## States
 
-`state` in every `/api/v1/publications` response. The Japanese label is the editor's (simple) wording; the evidence column is what the Worker requires before reporting the state.
+`state` in every `/api/v1/publications` response. The Japanese label is the editor's (simple) wording, `PUBLICATION_LABELS` in `apps/editor/src/publication.ts` (also in docs/editing.md); the evidence column is what the Worker requires before reporting the state.
 
 | API state | Label | Evidence required |
 | --- | --- | --- |
 | `draft-saved` | 下書き保存済み | A draft revision in D1. Never stored on a job; saving never publishes. |
-| `submitted` | 送信済み | The provider acknowledged the submission (GitHub: branch `content/<snapshotId>` and an open PR whose head is the commit the Worker wrote). |
-| `building` | 確認中 | Checks started, are pending, or passed without a matching identity report. Also the fallback whenever a stronger claim lacks proof. |
-| `validated` | 確認済み | Every required check run (default `content-validate`) **for the exact head commit** concluded `success`, and the `pinsel/publication-identity` check run from the `github-actions` app names this snapshot id, content digest, head commit and package identity. |
-| `integrated` | 反映済み（公開前） | The PR is merged and its merge commit carries this snapshot's `content/snapshot.json`. The stored baseline then advances to that commit. |
+| `submitted` | 公開申請済み | The provider acknowledged the submission (GitHub: branch `content/<snapshotId>` and an open PR whose head is the commit the Worker wrote). |
+| `building` | ビルド中 | Checks started, are pending, or passed without a matching identity report. Also the fallback whenever a stronger claim lacks proof. |
+| `validated` | 検証済み | Every required check run (default `content-validate`) **for the exact head commit** concluded `success`, and the `pinsel/publication-identity` check run from the `github-actions` app names this snapshot id, content digest, head commit and package identity. |
+| `integrated` | 反映済み | The PR is merged and its merge commit carries this snapshot's `content/snapshot.json`. The stored baseline then advances to that commit. |
 | `live` | 公開中 | Deployment evidence for the same commit. No provider produces it in this scope (no Cloudflare build is connected), so it is never reported. |
 | `failed` | 失敗 | A required check failed (or was skipped/cancelled), the PR was closed without merging, or the provider refused the submission. The draft and the live baseline are untouched. |
-| `conflict` | 競合 | The content branch head moved (someone pushed), `main` changed `content/**` since the recorded base, the stored baseline moved while the job was in flight, the PR was retargeted, or CI validated a different snapshot / head / package identity. |
+| `conflict` | 公開内容の競合 | The content branch head moved (someone pushed), `main` changed `content/**` since the recorded base, the stored baseline moved while the job was in flight, the PR was retargeted, or CI validated a different snapshot / head / package identity. |
 | `configuration-required` | 設定が必要 | `PUBLISHER_PROVIDER` is `disabled` (the default), unknown, or missing its inputs. Reported with `lastObservedState` for existing jobs. |
 
-Timeouts and unavailable answers never change the state: `providerFailures` counts consecutive ones and `message` says what happened. `reconcileAttempts` counts observations, `attempts` counts submissions (lookups included).
+Timeouts and unavailable answers never change the state: `providerFailures` counts consecutive ones and `message` says what happened. A provider with no record of the submission leaves the state too, unless the stored baseline has moved since the job's base: then the job is `conflict`, decided locally, because no later provider answer could settle it. `reconcileAttempts` counts observations, `attempts` counts submissions (lookups included).
 
 ## Invariants
 
@@ -84,7 +84,11 @@ Timeouts and unavailable answers never change the state: `providerFailures` coun
 
 No step deploys, merges or promotes.
 
-**Migration fixture split.** The historical strict checker (`scripts/check-content.sh`, the immutable 14-page seed fixture) runs only in ci.yml's `migration-baseline` job, which runs only while there is no `content/snapshot.json`. Once content has been published, ci.yml runs `publication-validate` instead: the record, `check-publication` against the committed entries and the public output check. The fixture itself is never edited or weakened, and a legitimate price edit passes the snapshot checks without touching it.
+**Migration fixture split.** The historical strict checker (`scripts/check-content.sh`, the immutable 14-page seed fixture) runs only in ci.yml's `migration-baseline` job, which runs only while there is no `content/snapshot.json`. There it is unconditional: no repository variable or other switch can turn it off. Once content has been published, ci.yml runs `publication-validate` instead: the record, `check-publication` against the committed entries and the public output check. The fixture itself is never edited or weakened, and a legitimate price edit passes the snapshot checks without touching it.
+
+**Fail-closed gate.** ci.yml's `content-gate` job always runs and fails unless `approved-seed` and `build` succeeded and the path selected by `content/snapshot.json` succeeded while the other one was skipped. A skipped, cancelled or failed selected path is a red run, not a silent skip.
+
+**Seed immutability.** `tests/approved-seed.sha256.json` lists the bytes and sha256 of all 83 files under `tests/fixtures/approved-seed/`, together with each file's path in the seed package (`README.md` is repository-authored and has no seed path). `pnpm check:approved-seed` (`scripts/check-approved-seed.mjs`) fails on any added, removed or changed file. The script also pins the manifest's own sha256, so a fixture edit cannot be hidden by regenerating the manifest alone. ci.yml runs it in the `approved-seed` job, which needs no install. `node scripts/check-approved-seed.mjs --seed <extracted seed package>` also checks the 82 seed-derived files against the package itself.
 
 ## Promotion policy
 

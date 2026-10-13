@@ -10,6 +10,7 @@
   "scripts": {
     "assets:sync": "node scripts/assets/sync.mjs",
     "assets:verify": "node scripts/assets/verify.mjs",
+    "check:approved-seed": "node scripts/check-approved-seed.mjs",
     "assets:assemble-worker": "node scripts/assets/assemble-worker.mjs",
     "content:assemble": "pnpm --filter @pinsel/content content:assemble && pnpm --filter @pinsel/authoring-worker styles:generate",
     "content:project": "pnpm --filter @pinsel/content content:project",
@@ -35,11 +36,13 @@
     "gate1:wrangler-dev": "node scripts/gate1/wrangler-dev-proof.mjs",
     "test:browser": "playwright test",
     "site:check-fragments": "node scripts/site/check-fragments.mjs",
-    "site:wrangler-dev": "node scripts/site/wrangler-dev-check.mjs"
+    "site:wrangler-dev": "node scripts/site/wrangler-dev-check.mjs",
+    "check:token-layers": "pnpm --filter @pinsel/styleguide check:token-layers"
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",
     "@types/node": "^22.20.5",
+    "axe-core": "4.14.0",
     "happy-dom": "20.14.6",
     "tsx": "4.23.15",
     "typescript": "^5.9.3",

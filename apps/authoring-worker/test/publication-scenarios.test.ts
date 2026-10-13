@@ -9,7 +9,7 @@ import { publicationPackageIdentity } from "../src/publish/snapshot-files";
 import { BASELINE, PINSEL_SITE } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
 import { checkRun, checkRuns, createReplay, fixture, type Replay } from "./github-replay";
-import { COMMIT_1, COMMIT_2, PRICE, app, call, canonicalWith, priceOf, readDraft, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
+import { COMMIT_1, COMMIT_2, PRICE, app, editPrice, call, canonicalWith, priceOf, readDraft, savePrice, snapshotNow, type Handler, type TestEnv } from "./helpers";
 
 const PUBLICATION_PACKAGE_IDENTITY = publicationPackageIdentity();
 
@@ -48,7 +48,7 @@ async function job(id: string, target = handler, callEnv: TestEnv = FAKE_ENV) {
 
 describe("publication scenarios (fake provider, local D1)", () => {
   it("(a) runs two consecutive publications; each integration advances the baseline from the provider's commit", async () => {
-    await savePrice(handler, "¥55,000");
+    await savePrice(handler, editPrice(5));
     const first = await published(await snapshotNow(handler));
     fake.advance(first.providerRef.operationId, "verified", GREEN("a".repeat(40)));
     expect((await job(first.publicationId)).state).toBe("validated");
@@ -59,7 +59,7 @@ describe("publication scenarios (fake provider, local D1)", () => {
     expect(await job(first.publicationId)).toMatchObject({ state: "integrated", baselineAdvance: { status: "advanced", gitSha: COMMIT_1, replayed: false } });
     expect((await call(handler, "/api/v1/site")).body.baselineRevision).toBe(COMMIT_1);
 
-    await savePrice(handler, "¥56,000", { entryId: "four-month" });
+    await savePrice(handler, editPrice(6), { entryId: "four-month" });
     const secondSnapshot = await snapshotNow(handler);
     expect(secondSnapshot.baselineRevision).toBe(COMMIT_1);
     const second = await published(secondSnapshot);
@@ -67,31 +67,31 @@ describe("publication scenarios (fake provider, local D1)", () => {
     expect(await job(second.publicationId)).toMatchObject({ state: "integrated", baselineAdvance: { status: "advanced", gitSha: COMMIT_2 } });
     const draft = await readDraft(handler);
     expect(draft.baselineRevision).toBe(COMMIT_2);
-    expect([priceOf(draft), priceOf(draft, "four-month")]).toEqual(["¥55,000", "¥56,000"]);
+    expect([priceOf(draft), priceOf(draft, "four-month")]).toEqual([editPrice(5), editPrice(6)]);
     // Re-reading an advanced job is a replay, not a second advance.
     expect(await job(first.publicationId)).toMatchObject({ baselineAdvance: { status: "advanced", replayed: true } });
   });
 
   it("(b) keeps an edit made while publication 1 is building, and publication 2 contains it", async () => {
-    await savePrice(handler, "¥55,000");
+    await savePrice(handler, editPrice(5));
     const first = await published(await snapshotNow(handler));
     fake.advance(first.providerRef.operationId, "building");
     expect((await job(first.publicationId)).state).toBe("building");
-    await savePrice(handler, "¥57,000", { entryId: "four-month" });
+    await savePrice(handler, editPrice(7), { entryId: "four-month" });
     fake.advance(first.providerRef.operationId, "integrated", GREEN(COMMIT_1));
     expect((await job(first.publicationId)).baselineAdvance.status).toBe("advanced");
     const draft = await readDraft(handler);
-    expect(priceOf(draft, "four-month")).toBe("¥57,000");
+    expect(priceOf(draft, "four-month")).toBe(editPrice(7));
     const secondSnapshot = await snapshotNow(handler);
     const second = await published(secondSnapshot);
     const frozen = await call(handler, `/api/v1/snapshots/${secondSnapshot.snapshotId}`);
-    expect(frozen.body.value.project.providers.content[0].entries.find((entry: { id: string }) => entry.id === "four-month").values[PRICE]).toBe("¥57,000");
+    expect(frozen.body.value.project.providers.content[0].entries.find((entry: { id: string }) => entry.id === "four-month").values[PRICE]).toBe(editPrice(7));
     expect(fake.submissions[1]!.submission).toMatchObject({ snapshotId: secondSnapshot.snapshotId, baselineRevision: COMMIT_1 });
     expect(second.publicationId).not.toBe(first.publicationId);
   });
 
   it("(c) a build failure leaves the live baseline unchanged and the draft intact; a retry re-arms the same job", async () => {
-    const saved = await savePrice(handler, "¥55,000");
+    const saved = await savePrice(handler, editPrice(5));
     const snapshot = await snapshotNow(handler);
     const failed = await published(snapshot);
     fake.advance(failed.providerRef.operationId, "failed", { evidence: { commit: "a".repeat(40), checks: [{ name: "content-validate", status: "failed" }] }, message: "content-validate failed" });
@@ -99,7 +99,7 @@ describe("publication scenarios (fake provider, local D1)", () => {
     expect((await call(handler, "/api/v1/baseline")).body.value).toMatchObject({ baselineRevision: BASELINE.baselineRevision, evidence: null });
     const draft = await readDraft(handler);
     expect(draft).toMatchObject({ draftRevision: saved, baselineRevision: BASELINE.baselineRevision });
-    expect(priceOf(draft)).toBe("¥55,000");
+    expect(priceOf(draft)).toBe(editPrice(5));
     // CI re-run on the provider side, then the editor asks again: same job, same key, no second submission.
     fake.advance(failed.providerRef.operationId, "verified", GREEN("a".repeat(40)));
     const retried = await publish(snapshot);
@@ -129,16 +129,16 @@ describe("publication scenarios (fake provider, local D1)", () => {
   });
 
   it("(f) an external canonical change marks the in-flight job conflict, the draft rebases, and the next publication goes out on the new base", async () => {
-    await savePrice(handler, "¥55,000");
+    await savePrice(handler, editPrice(5));
     const inFlight = await published(await snapshotNow(handler));
-    const external = app("editor@example.test", { site: { ...PINSEL_SITE, canonical: canonicalWith(COMMIT_2, { "four-month": "¥99,000" }) }, publishers: { fake: () => fake } });
+    const external = app("editor@example.test", { site: { ...PINSEL_SITE, canonical: canonicalWith(COMMIT_2, { "four-month": editPrice(49) }) }, publishers: { fake: () => fake } });
     const detected = await call(external, "/api/v1/baseline/reconcile", { method: "POST", json: {} });
     expect(detected.status).toBe(409);
     const rebased = await call(external, "/api/v1/baseline/reconcile", { method: "POST", json: { conflictId: detected.body.conflict.conflictId, expectedDraftRevision: detected.body.current.draftRevision } });
     expect(rebased.body.value).toMatchObject({ state: "rebased", baselineRevision: COMMIT_2 });
     expect(await job(inFlight.publicationId)).toMatchObject({ state: "conflict", message: expect.stringContaining(COMMIT_2) });
     const draft = await readDraft(handler);
-    expect([priceOf(draft), priceOf(draft, "four-month")]).toEqual(["¥55,000", "¥99,000"]);
+    expect([priceOf(draft), priceOf(draft, "four-month")]).toEqual([editPrice(5), editPrice(49)]);
     const next = await snapshotNow(external);
     expect(next.baselineRevision).toBe(COMMIT_2);
     const republished = await published(next, external);
@@ -146,6 +146,20 @@ describe("publication scenarios (fake provider, local D1)", () => {
     expect(fake.submissions.at(-1)!.submission.baselineRevision).toBe(COMMIT_2);
     // The conflicted job stays conflict; asking for its snapshot again does not resurrect it.
     expect((await job(inFlight.publicationId)).state).toBe("conflict");
+  });
+
+  it("(f2) a provider that lost the submission cannot keep a job in flight once the base moved", async () => {
+    await savePrice(handler, editPrice(5));
+    const inFlight = await published(await snapshotNow(handler));
+    // A provider without the record (another instance, a reset), and a canonical change rebased in the meantime.
+    const forgetful = createFakePublicationProvider({ now: () => "2026-10-13T00:00:00.000Z" });
+    const unchanged = app("editor@example.test", { publishers: { fake: () => forgetful } });
+    expect(await job(inFlight.publicationId, unchanged)).toMatchObject({ state: "submitted", message: "The provider has no record of this submission." });
+    const external = app("editor@example.test", { site: { ...PINSEL_SITE, canonical: canonicalWith(COMMIT_2, { "four-month": editPrice(49) }) }, publishers: { fake: () => forgetful } });
+    const detected = await call(external, "/api/v1/baseline/reconcile", { method: "POST", json: {} });
+    await call(external, "/api/v1/baseline/reconcile", { method: "POST", json: { conflictId: detected.body.conflict.conflictId, expectedDraftRevision: detected.body.current.draftRevision } });
+    expect(await job(inFlight.publicationId, external)).toMatchObject({ state: "conflict", message: expect.stringContaining(COMMIT_2) });
+    expect(forgetful.calls.submit).toBe(0);
   });
 
   it("(h) serializes concurrent reconciliations of one job: one provider observation, the other returns the stored job", async () => {
@@ -173,7 +187,7 @@ describe("publication scenarios (fake provider, local D1)", () => {
 
   it("promotes under PROMOTION_POLICY=auto only after every check passed, then advances from the provider's evidence", async () => {
     const auto = app("editor@example.test", { publishers: { fake: () => fake } });
-    await savePrice(auto, "¥55,000");
+    await savePrice(auto, editPrice(5));
     const created = await published(await snapshotNow(auto), auto, AUTO_ENV);
     fake.advance(created.providerRef.operationId, "verified", { evidence: { commit: "a".repeat(40), checks: [{ name: "content-validate", status: "pending" }] } });
     expect((await job(created.publicationId, auto, AUTO_ENV)).state).toBe("building");
@@ -196,9 +210,9 @@ describe("publication scenarios (fake provider, local D1)", () => {
     const original = await preview(before);
     expect(original.status).toBe(200);
     // Unsent draft edits never move it.
-    await savePrice(handler, "¥55,000");
+    await savePrice(handler, editPrice(5));
     expect(await site()).toEqual(before);
-    expect((await preview(before)).text).not.toContain("¥55,000");
+    expect((await preview(before)).text).not.toContain(editPrice(5));
 
     const created = await published(await snapshotNow(handler));
     fake.advance(created.providerRef.operationId, "integrated", GREEN(COMMIT_1));
@@ -208,7 +222,7 @@ describe("publication scenarios (fake provider, local D1)", () => {
     expect(after.snapshotId).not.toBe(before.snapshotId);
     const integrated = await preview(after);
     expect(integrated.status).toBe(200);
-    expect(integrated.text).toContain("¥55,000");
+    expect(integrated.text).toContain(editPrice(5));
     // The earlier baseline stays renderable, byte for byte.
     expect((await preview(before)).text).toBe(original.text);
     // Content-addressed: the integrated baseline is the published snapshot itself.
@@ -280,7 +294,7 @@ describe("publication scenarios (GitHub provider, recorded responses)", () => {
   }
 
   async function submitted() {
-    await savePrice(github, "¥55,000");
+    await savePrice(github, editPrice(5));
     const snapshot = await snapshotNow(github);
     const r = routes(snapshot.snapshotId);
     r.submit();
@@ -301,7 +315,7 @@ describe("publication scenarios (GitHub provider, recorded responses)", () => {
     const { r, created } = await submitted();
     r.open(r.green(), PUSHED_SHA);
     expect(await job(created.publicationId, github, GITHUB_ENV)).toMatchObject({ state: "conflict", message: expect.stringContaining(PUSHED_SHA) });
-    expect(priceOf(await readDraft(github))).toBe("¥55,000");
+    expect(priceOf(await readDraft(github))).toBe(editPrice(5));
   });
 
   it("(j) a PR closed without merging is failed with the reason, the draft stays, and a retry opens a new PR on the same branch", async () => {
@@ -309,7 +323,7 @@ describe("publication scenarios (GitHub provider, recorded responses)", () => {
     replay.on("GET", `/pulls/${PR}`, { status: 200, body: r.pull("closed") });
     expect(await job(created.publicationId, github, GITHUB_ENV)).toMatchObject({ state: "failed", message: expect.stringContaining("closed without merging") });
     const draft = await readDraft(github);
-    expect([draft.baselineRevision, priceOf(draft)]).toEqual([base, "¥55,000"]);
+    expect([draft.baselineRevision, priceOf(draft)]).toEqual([base, editPrice(5)]);
     // Retry: the closed PR is not reused; the branch is (it carries the snapshot).
     const branch = `content/${snapshot.snapshotId}`;
     const head = encodeURIComponent(`zudolab:${branch}`);

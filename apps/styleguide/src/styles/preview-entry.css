@@ -1,6 +1,7 @@
 /* Component previews render with the approved Pinsel CSS, byte-exact from pinsel-ui (the public site's `wind: false` stylesheet). */
+/* Wind declares its own `components` layer ahead of this file, so the Pinsel stack is nested in `pinsel` to keep its `tokens, reset, layout, components, responsive` order; the plain :root token files go into `pinsel.tokens` so `responsive` can override them. */
 @layer zw-reset;
 @import url("/assets/fonts/fonts.css");
-@import "@pinsel/ui/styles/tokens.css";
-@import "@pinsel/ui/styles/colors.css";
-@import "@pinsel/ui/styles/components.css";
+@import "@pinsel/ui/styles/tokens.css" layer(pinsel.tokens);
+@import "@pinsel/ui/styles/colors.css" layer(pinsel.tokens);
+@import "@pinsel/ui/styles/components.css" layer(pinsel);

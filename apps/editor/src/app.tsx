@@ -3,6 +3,7 @@ import { CONTENT_EDITOR_LABELS_JA, type ContentEditorHandle, type ContentEditorS
 import type { HostPreviewBridge, HostPreviewState } from "zudo-composer/preview-protocol";
 import { EditorMount } from "./editor-mount";
 import { groupsForPolicy, policyForGroup, routeLabel } from "./groups";
+import { translateChrome } from "./localize";
 import { PREVIEW_SANDBOX, attachComparisonFrame, previewFrameOf, reloadPreviewFrame } from "./preview-frame";
 import { PUBLICATION_LABELS, createPublicationAdapter, fetchPublicationStatus, publicationDisplay, type PublicationRequestSummary, type PublicationStatus } from "./publication";
 import { PublishDialog } from "./publish-dialog";
@@ -151,7 +152,7 @@ export function App({ site }: { site: SiteDescription }) {
       <header class="pinsel-editor__bar">
         <h1 class="pinsel-editor__title">Pinsel 編集</h1>
         <p class="pinsel-editor__status" role="status" aria-live="polite" data-save-status={status} data-testid="save-status">
-          {saveText}{editor?.message && status !== "conflict" ? ` — ${editor.message}` : ""}
+          {saveText}{editor?.message && status !== "conflict" ? ` — ${translateChrome(editor.message) ?? editor.message}` : ""}
         </p>
         <p class="pinsel-editor__preview-status" role="status" data-preview={preview?.kind ?? "idle"} data-testid="preview-status">{preview?.label ?? "プレビュー未表示"}</p>
         <div class="pinsel-editor__publication" data-testid="publication-status" data-publication-state={publicationView?.kind === "state" ? publicationView.state : publicationView ? "unverified" : "none"}>

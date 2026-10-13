@@ -1,0 +1,507 @@
+{
+  "root": "tests/fixtures/approved-seed",
+  "seedPackage": {
+    "file": "Pinsel-Implementation-Seed-2026-10-12.zip",
+    "sha256": "d9536f1b3a9fc982f6f99a64105b642db37025483be33e0f5b666a3f7f743bac"
+  },
+  "files": [
+    {
+      "path": "README.md",
+      "seedPath": null,
+      "bytes": 882,
+      "sha256": "63b172e142133211e36b65c4e83d629bf4a427332cce0c890062bb8698adc570"
+    },
+    {
+      "path": "asset-manifest.json",
+      "seedPath": "references/asset-manifest.json",
+      "bytes": 43357,
+      "sha256": "44241c758102e5b9b12e957721062e0f693d7d32cecf333ab5f12b589fc11f0a"
+    },
+    {
+      "path": "check-content.py",
+      "seedPath": "prototype/src/check-content.py",
+      "bytes": 8008,
+      "sha256": "80bb0336199b00b2eea3c2fad8ce55ed3e1cbbd6c55c2676e08a8c2765ce6fd6"
+    },
+    {
+      "path": "content.json",
+      "seedPath": "prototype/src/content.json",
+      "bytes": 271527,
+      "sha256": "013699fa892085253ac59b8ed7a0880a5b032dc2cc2451911cdac64469a79c6a"
+    },
+    {
+      "path": "expected-content.json",
+      "seedPath": "prototype/src/expected-content.json",
+      "bytes": 155932,
+      "sha256": "f011655180727aae8fdd9b128efaf5cd5a27e4a2e9a18761c1cd1e34d68586d3"
+    },
+    {
+      "path": "page-manifest.json",
+      "seedPath": "prototype/src/page-manifest.json",
+      "bytes": 2346,
+      "sha256": "d8b00db3f78956488933712df935647a1a933ec6a589708bb4890918f3d5beb3"
+    },
+    {
+      "path": "routes.json",
+      "seedPath": "references/routes.json",
+      "bytes": 3086,
+      "sha256": "25fcf5d2624620b34d10690db647604e5698c21cdaf3bba5fd8057f3b0fb1cd2"
+    },
+    {
+      "path": "source-baseline.json",
+      "seedPath": "references/source-baseline.json",
+      "bytes": 1196,
+      "sha256": "3d60aaa12abfa25d1aaebc926cee234b7787cb9cf4bf9c2878a2d9c2a6f9f044"
+    },
+    {
+      "path": "source-content/astro.config.mjs",
+      "seedPath": "prototype/src/source-content/astro.config.mjs",
+      "bytes": 613,
+      "sha256": "eb8f62e19b29ba868f578c193eacf3485c4eaaf2f736b2a5eb9664661f5a2051"
+    },
+    {
+      "path": "source-content/components/breadcrumb/breadcrumb.astro",
+      "seedPath": "prototype/src/source-content/components/breadcrumb/breadcrumb.astro",
+      "bytes": 2047,
+      "sha256": "e698c020b83870fbfad86e333000d35142253fe340fe06279ee02b699de70fe2"
+    },
+    {
+      "path": "source-content/components/career-timeline/career-timeline.astro",
+      "seedPath": "prototype/src/source-content/components/career-timeline/career-timeline.astro",
+      "bytes": 405,
+      "sha256": "10977b3bd496de737f419b62ff2c2fd955d0532fc56c7878e35e0ef19bee7a79"
+    },
+    {
+      "path": "source-content/components/carousel/carousel.astro",
+      "seedPath": "prototype/src/source-content/components/carousel/carousel.astro",
+      "bytes": 1022,
+      "sha256": "de6dd6e19716a392b020e175a65c94cbf26901f20aab53f7eb40f65c68c51c66"
+    },
+    {
+      "path": "source-content/components/color-panel/color-convert.ts",
+      "seedPath": "prototype/src/source-content/components/color-panel/color-convert.ts",
+      "bytes": 1424,
+      "sha256": "8717bd6564f6979d7f733f9b93dcaa6e583c730645aaf302cae2f20a367e7da0"
+    },
+    {
+      "path": "source-content/components/color-panel/color-panel-presets.ts",
+      "seedPath": "prototype/src/source-content/components/color-panel/color-panel-presets.ts",
+      "bytes": 4968,
+      "sha256": "d3525633a85d881b46d290374f98eb30189459fcf967e3b2d3622ddb0a6451e4"
+    },
+    {
+      "path": "source-content/components/color-panel/color-panel-types.ts",
+      "seedPath": "prototype/src/source-content/components/color-panel/color-panel-types.ts",
+      "bytes": 1982,
+      "sha256": "ca4e3d61138eb9684f5d79fed70cc020128b35c0eeaea088a425f95e0da74f2e"
+    },
+    {
+      "path": "source-content/components/color-panel/color-panel.tsx",
+      "seedPath": "prototype/src/source-content/components/color-panel/color-panel.tsx",
+      "bytes": 30903,
+      "sha256": "46db141e2e41411fd5172d13d45a9c5e2a89c40cf62d37af17eedf0cb2012a77"
+    },
+    {
+      "path": "source-content/components/contact-form/contact-form.tsx",
+      "seedPath": "prototype/src/source-content/components/contact-form/contact-form.tsx",
+      "bytes": 4635,
+      "sha256": "40840f83799128b348a6d836d38b4e3c8f06115d59d0a959d980a71767b429cc"
+    },
+    {
+      "path": "source-content/components/cta-button/cta-button.astro",
+      "seedPath": "prototype/src/source-content/components/cta-button/cta-button.astro",
+      "bytes": 592,
+      "sha256": "f4df87b047d0e6938330c45acdc6b3bc63f86ff5b5480efd09a2c6b98a66cd55"
+    },
+    {
+      "path": "source-content/components/cta-section/cta-section.astro",
+      "seedPath": "prototype/src/source-content/components/cta-section/cta-section.astro",
+      "bytes": 1491,
+      "sha256": "65231137dac08c0708025d331bfddf088e1e25d23b923de83a0bdf9e3b724b38"
+    },
+    {
+      "path": "source-content/components/divider/divider.astro",
+      "seedPath": "prototype/src/source-content/components/divider/divider.astro",
+      "bytes": 67,
+      "sha256": "9e870603b6ae3052c30189ce31e55e1f05592f5434aaac3802db400698b419bf"
+    },
+    {
+      "path": "source-content/components/faq-accordion/faq-accordion.tsx",
+      "seedPath": "prototype/src/source-content/components/faq-accordion/faq-accordion.tsx",
+      "bytes": 1505,
+      "sha256": "b7ce77a28280f73e493e9b2d09a1460afb9f508971fdaf0366ef0953dfe372c9"
+    },
+    {
+      "path": "source-content/components/feature-card/feature-card.astro",
+      "seedPath": "prototype/src/source-content/components/feature-card/feature-card.astro",
+      "bytes": 301,
+      "sha256": "5b63a2cf7585b32690a8a6b3d1829b3ca6da821040d8a8cc3ab70b09d1ff39be"
+    },
+    {
+      "path": "source-content/components/hero-section/hero-section.astro",
+      "seedPath": "prototype/src/source-content/components/hero-section/hero-section.astro",
+      "bytes": 947,
+      "sha256": "5109d1681aa7efa1cfe50df01ba7000d7de6746940ceb4288a086c4f47c35c18"
+    },
+    {
+      "path": "source-content/components/in-page-divider/in-page-divider.astro",
+      "seedPath": "prototype/src/source-content/components/in-page-divider/in-page-divider.astro",
+      "bytes": 79,
+      "sha256": "afced9990937caaba129be1b1339298982a3f2c0457bd5b60f525539c9155950"
+    },
+    {
+      "path": "source-content/components/info-card/info-card.astro",
+      "seedPath": "prototype/src/source-content/components/info-card/info-card.astro",
+      "bytes": 377,
+      "sha256": "4a2faafcbd3fe61a79927645de2a541b5c64554158d2c5261274d46b770e3713"
+    },
+    {
+      "path": "source-content/components/instagram-icon/instagram-icon.astro",
+      "seedPath": "prototype/src/source-content/components/instagram-icon/instagram-icon.astro",
+      "bytes": 1715,
+      "sha256": "28a88bd4ac12c7e34deb866653201fad3eada8bea28bc98fd034e083fee9bcb3"
+    },
+    {
+      "path": "source-content/components/instructor-profile/instructor-profile.astro",
+      "seedPath": "prototype/src/source-content/components/instructor-profile/instructor-profile.astro",
+      "bytes": 1468,
+      "sha256": "ed44daac0f2fae1badc4c02775b2f9ac9aeaefbd9f46e7b046cc8882b3233801"
+    },
+    {
+      "path": "source-content/components/layout-divide/layout-divide-item.astro",
+      "seedPath": "prototype/src/source-content/components/layout-divide/layout-divide-item.astro",
+      "bytes": 136,
+      "sha256": "7ae3fbe983fdea00f3d10b625397ef60e58eb2aeefa2ec059220217393686915"
+    },
+    {
+      "path": "source-content/components/layout-divide/layout-divide.astro",
+      "seedPath": "prototype/src/source-content/components/layout-divide/layout-divide.astro",
+      "bytes": 414,
+      "sha256": "3b10599abd9f96c500ecdaf5f49a839146457df3ba26df336e4f5e7551e73331"
+    },
+    {
+      "path": "source-content/components/logo/logo.astro",
+      "seedPath": "prototype/src/source-content/components/logo/logo.astro",
+      "bytes": 1665,
+      "sha256": "3a21deb9f53ad37df94bc3655c57d1d32de8865ed33a1b772a8c156c986256c6"
+    },
+    {
+      "path": "source-content/components/more-link-button/more-link-button.astro",
+      "seedPath": "prototype/src/source-content/components/more-link-button/more-link-button.astro",
+      "bytes": 499,
+      "sha256": "92d284f6a0c7c34141489978f11a5f818e8733659af2bf7e65c17c25fc05bc74"
+    },
+    {
+      "path": "source-content/components/nav-arrow-icon/nav-arrow-icon.astro",
+      "seedPath": "prototype/src/source-content/components/nav-arrow-icon/nav-arrow-icon.astro",
+      "bytes": 445,
+      "sha256": "0f979454a7f89ebb336dfd37de6395e0d2ec113aeaf0c9e373f9d874d80f1bc5"
+    },
+    {
+      "path": "source-content/components/note-body/note-body.astro",
+      "seedPath": "prototype/src/source-content/components/note-body/note-body.astro",
+      "bytes": 66,
+      "sha256": "89e06f1570fce03eeaaedd64a5268bb78ac6d068d66893feb369f4d2fdd9f8f7"
+    },
+    {
+      "path": "source-content/components/note-card/note-card.astro",
+      "seedPath": "prototype/src/source-content/components/note-card/note-card.astro",
+      "bytes": 656,
+      "sha256": "b3d6c8fa4ad992d25fef10ebeaf5089a626e30bd5375b8fed8a849961c9a26c0"
+    },
+    {
+      "path": "source-content/components/note-heading/note-h2.astro",
+      "seedPath": "prototype/src/source-content/components/note-heading/note-h2.astro",
+      "bytes": 270,
+      "sha256": "8d07440d7ff0f732952779c50b4a8d8c062275a654fbebd48c0b0f2bb3ea0bd0"
+    },
+    {
+      "path": "source-content/components/note-heading/note-h3.astro",
+      "seedPath": "prototype/src/source-content/components/note-heading/note-h3.astro",
+      "bytes": 228,
+      "sha256": "7e244608a29647ddfe362a19097c66d577ec7e076f1e6a1b6417732965df9dce"
+    },
+    {
+      "path": "source-content/components/note-heading/note-h4.astro",
+      "seedPath": "prototype/src/source-content/components/note-heading/note-h4.astro",
+      "bytes": 227,
+      "sha256": "4c8f206865bb92ac90fa92fcc63aa2acf770f5c943dfeae83eb44ff2eeadad48"
+    },
+    {
+      "path": "source-content/components/note-heading/note-h5.astro",
+      "seedPath": "prototype/src/source-content/components/note-heading/note-h5.astro",
+      "bytes": 230,
+      "sha256": "03cb42fd8af424dd5e644cc95ca17dedb132fa2dc24ce35f7a705d63940a16d5"
+    },
+    {
+      "path": "source-content/components/note-heading/note-h6.astro",
+      "seedPath": "prototype/src/source-content/components/note-heading/note-h6.astro",
+      "bytes": 230,
+      "sha256": "755d97856963ae498a54b7bf41406421852e4e0f984245eb8fd54f73af23085f"
+    },
+    {
+      "path": "source-content/components/note-heading/note-heading.astro",
+      "seedPath": "prototype/src/source-content/components/note-heading/note-heading.astro",
+      "bytes": 465,
+      "sha256": "83d1c185f3194c1387991b43bcf7960eb93d9cbd49e54ae3f7b82a4d51e83a51"
+    },
+    {
+      "path": "source-content/components/page-header/page-header.astro",
+      "seedPath": "prototype/src/source-content/components/page-header/page-header.astro",
+      "bytes": 484,
+      "sha256": "2ac19b76b0f11814bc58429e30d3f28a9787985b554d66dc08b1cdcee962940e"
+    },
+    {
+      "path": "source-content/components/page-loading-overlay/page-loading-overlay.astro",
+      "seedPath": "prototype/src/source-content/components/page-loading-overlay/page-loading-overlay.astro",
+      "bytes": 1859,
+      "sha256": "63597b8a524caff9c261118d6d470d40657bf31bcc74a1b55c7c04c0c7f9b7d0"
+    },
+    {
+      "path": "source-content/components/pricing-card/pricing-card.astro",
+      "seedPath": "prototype/src/source-content/components/pricing-card/pricing-card.astro",
+      "bytes": 844,
+      "sha256": "9a072492a9bf5bb1c526bef78abafca9f55e585444b75b4f40d50d78a6dee0aa"
+    },
+    {
+      "path": "source-content/components/pricing-section/pricing-section.astro",
+      "seedPath": "prototype/src/source-content/components/pricing-section/pricing-section.astro",
+      "bytes": 1078,
+      "sha256": "9f94d868a61ba9290e63b65eb4012daaa776249fd95deca369111d1f0fedf9d7"
+    },
+    {
+      "path": "source-content/components/result-card/result-card.astro",
+      "seedPath": "prototype/src/source-content/components/result-card/result-card.astro",
+      "bytes": 584,
+      "sha256": "b3465f8620ba981cac209af26f667c5fa9607b25bd4b890c7c8058f7700c98ce"
+    },
+    {
+      "path": "source-content/components/section-image/section-image.astro",
+      "seedPath": "prototype/src/source-content/components/section-image/section-image.astro",
+      "bytes": 322,
+      "sha256": "788bad9f6eb8abf3309ad2dbfdf2592d54c949ce91e608b58101ae9adbdac33a"
+    },
+    {
+      "path": "source-content/components/section/section.astro",
+      "seedPath": "prototype/src/source-content/components/section/section.astro",
+      "bytes": 535,
+      "sha256": "85cd77174271a15d87495f67f99a12e82befbcc9499c65d2307daae63df863f7"
+    },
+    {
+      "path": "source-content/components/shadow-divider/shadow-divider.astro",
+      "seedPath": "prototype/src/source-content/components/shadow-divider/shadow-divider.astro",
+      "bytes": 281,
+      "sha256": "28a76faa0025b3173265978ba5580b4032571999149142d400b763fdc412d7fe"
+    },
+    {
+      "path": "source-content/components/site-footer/site-footer.astro",
+      "seedPath": "prototype/src/source-content/components/site-footer/site-footer.astro",
+      "bytes": 4144,
+      "sha256": "26cd2da30bb10e4e9e188ae2b7d670021472bd5bda2cf36accdc84cd3355243a"
+    },
+    {
+      "path": "source-content/components/site-header/site-header.astro",
+      "seedPath": "prototype/src/source-content/components/site-header/site-header.astro",
+      "bytes": 4420,
+      "sha256": "251acc0f1a6169fe0f018075c5dd8281a6618b528a5be6f1ec5cd232a2183117"
+    },
+    {
+      "path": "source-content/components/stats-bar/stats-bar.astro",
+      "seedPath": "prototype/src/source-content/components/stats-bar/stats-bar.astro",
+      "bytes": 718,
+      "sha256": "4c53a0d2f5f06290b74c6750788457c16beae896be53aa0da48310b89258c2e4"
+    },
+    {
+      "path": "source-content/components/step-flow/step-flow.astro",
+      "seedPath": "prototype/src/source-content/components/step-flow/step-flow.astro",
+      "bytes": 3396,
+      "sha256": "6f46d4857cf623e08c9780625bc36921776656eb305df90a54da5940a4760c50"
+    },
+    {
+      "path": "source-content/components/target-checklist/target-checklist.astro",
+      "seedPath": "prototype/src/source-content/components/target-checklist/target-checklist.astro",
+      "bytes": 351,
+      "sha256": "392f9be791a2a13b204c70e5f4a81ee9aa4cfd37a19384feb47f8505fdcc55a9"
+    },
+    {
+      "path": "source-content/components/testimonial-card/testimonial-card.astro",
+      "seedPath": "prototype/src/source-content/components/testimonial-card/testimonial-card.astro",
+      "bytes": 521,
+      "sha256": "678948de37137cb0cd79058e282111077cebf16c9272a04435184381929bec9b"
+    },
+    {
+      "path": "source-content/components/voice-detail-card/voice-detail-card.astro",
+      "seedPath": "prototype/src/source-content/components/voice-detail-card/voice-detail-card.astro",
+      "bytes": 789,
+      "sha256": "d6aa9b01258acb9733a7092ed76aea346790312940b0ad9e09857bf937312631"
+    },
+    {
+      "path": "source-content/data/faq-data.ts",
+      "seedPath": "prototype/src/source-content/data/faq-data.ts",
+      "bytes": 8395,
+      "sha256": "7fa49dbfaf9260fceed081a7835c9726faec3f45decdeaef9775330b7667b04a"
+    },
+    {
+      "path": "source-content/data/results-data.ts",
+      "seedPath": "prototype/src/source-content/data/results-data.ts",
+      "bytes": 15648,
+      "sha256": "551ff0abf0f35beeb57b44161e68cd470bb79a340a26351ec58c10769e5287d5"
+    },
+    {
+      "path": "source-content/data/voices-data.ts",
+      "seedPath": "prototype/src/source-content/data/voices-data.ts",
+      "bytes": 6396,
+      "sha256": "cc75579c9642e0a4f376e3bb188611c2e8f0ec75421c851b9e122828ad623605"
+    },
+    {
+      "path": "source-content/package.json",
+      "seedPath": "prototype/src/source-content/package.json",
+      "bytes": 2076,
+      "sha256": "7b17aec5c2f311b62c7e0886241e7e6d975856c082f4843206700d4e73ed4e27"
+    },
+    {
+      "path": "source-content/src/content.config.ts",
+      "seedPath": "prototype/src/source-content/src/content.config.ts",
+      "bytes": 309,
+      "sha256": "b9ddeeb700407c5c9e81f530405475c2ef44783a61fbe62e52d9e0430d72cdb3"
+    },
+    {
+      "path": "source-content/src/env.d.ts",
+      "seedPath": "prototype/src/source-content/src/env.d.ts",
+      "bytes": 46,
+      "sha256": "1f46bd6c18afa396328159483b1c9016c788de553eeef99c806c3d1ba591aec8"
+    },
+    {
+      "path": "source-content/src/layouts/base-layout.astro",
+      "seedPath": "prototype/src/source-content/src/layouts/base-layout.astro",
+      "bytes": 2034,
+      "sha256": "2e5d39b29ab0bf35ca351a11410791af2d78b038708e4e6bc38f0b3b1598c68c"
+    },
+    {
+      "path": "source-content/src/notes/exam-schedule.mdx",
+      "seedPath": "prototype/src/source-content/src/notes/exam-schedule.mdx",
+      "bytes": 5246,
+      "sha256": "551b23fb60102fb479e3d7eb4bf17a30d6ee0eeb6ba03efaaf9cee771af2939d"
+    },
+    {
+      "path": "source-content/src/notes/free-tuition.mdx",
+      "seedPath": "prototype/src/source-content/src/notes/free-tuition.mdx",
+      "bytes": 5038,
+      "sha256": "1108c20933fe809ea7900cf946bd2a014586c5ee9258f1ab2d393abc6f3fbb6a"
+    },
+    {
+      "path": "source-content/src/notes/german-language.mdx",
+      "seedPath": "prototype/src/source-content/src/notes/german-language.mdx",
+      "bytes": 6252,
+      "sha256": "1e7152ffb4a3c204aa90de231c5ddef8e032a36c259078bbe53d6021d0c090ad"
+    },
+    {
+      "path": "source-content/src/notes/online-exam.mdx",
+      "seedPath": "prototype/src/source-content/src/notes/online-exam.mdx",
+      "bytes": 5754,
+      "sha256": "168a841416d52602d27e7fc90a4b5701599da473609a1579716077d433bf006a"
+    },
+    {
+      "path": "source-content/src/notes/what-is-mappe.mdx",
+      "seedPath": "prototype/src/source-content/src/notes/what-is-mappe.mdx",
+      "bytes": 5590,
+      "sha256": "d95be025fd98eaf10bbfe17acd72812c3b3a96bf5e244a0784fa8d46973738a1"
+    },
+    {
+      "path": "source-content/src/pages/404.astro",
+      "seedPath": "prototype/src/source-content/src/pages/404.astro",
+      "bytes": 806,
+      "sha256": "c0677b09ea206d39ed90001bf0a79ed0ed4ba09bdbd28bbde0d54a86be6f3b36"
+    },
+    {
+      "path": "source-content/src/pages/about/index.astro",
+      "seedPath": "prototype/src/source-content/src/pages/about/index.astro",
+      "bytes": 8526,
+      "sha256": "9dbdda81f8d03628b01dc011fd1dc66f16b14c78ac80216bd08b668587efcdff"
+    },
+    {
+      "path": "source-content/src/pages/contact/index.astro",
+      "seedPath": "prototype/src/source-content/src/pages/contact/index.astro",
+      "bytes": 3801,
+      "sha256": "0b967fc5540b9d0a77bc9ea03d4544d115155f137a20056d4a7dcdd44fffac27"
+    },
+    {
+      "path": "source-content/src/pages/faq/index.astro",
+      "seedPath": "prototype/src/source-content/src/pages/faq/index.astro",
+      "bytes": 1327,
+      "sha256": "9e7da8f2ac8fbb0404f8ec9bd10f55daa018dce0ac908334e1c99ca16db2f73c"
+    },
+    {
+      "path": "source-content/src/pages/index.astro",
+      "seedPath": "prototype/src/source-content/src/pages/index.astro",
+      "bytes": 6588,
+      "sha256": "2206a53dde141ddab28e77dfdd6b2b40569dbdd63f169b0e4391d5c70be51e7b"
+    },
+    {
+      "path": "source-content/src/pages/lessons/index.astro",
+      "seedPath": "prototype/src/source-content/src/pages/lessons/index.astro",
+      "bytes": 13242,
+      "sha256": "2708a36d2cb80e88a13b0978d44f1518a43fc2300dac03eab79099d63e56ffbb"
+    },
+    {
+      "path": "source-content/src/pages/notes/[slug].astro",
+      "seedPath": "prototype/src/source-content/src/pages/notes/[slug].astro",
+      "bytes": 11815,
+      "sha256": "b3af310b046a97c37634a8a4d31687331c920a341a802191f1209e1eb774f056"
+    },
+    {
+      "path": "source-content/src/pages/notes/index.astro",
+      "seedPath": "prototype/src/source-content/src/pages/notes/index.astro",
+      "bytes": 1940,
+      "sha256": "13116558348c765b79f7acd8ea3d66f743c3d815ebdc3c2281dac49cca462567"
+    },
+    {
+      "path": "source-content/src/pages/results/index.astro",
+      "seedPath": "prototype/src/source-content/src/pages/results/index.astro",
+      "bytes": 2774,
+      "sha256": "a7dbd35a473448b2650aa03e8aae4b180b7d9a118fc5c6f75c95b89ebc9ff1ca"
+    },
+    {
+      "path": "source-content/src/pages/robots.txt.ts",
+      "seedPath": "prototype/src/source-content/src/pages/robots.txt.ts",
+      "bytes": 285,
+      "sha256": "68fe22a4932bc68512c1d19fa49cad4cc39a6a51191eefac7bf55211a390ad08"
+    },
+    {
+      "path": "source-content/src/pages/voices/index.astro",
+      "seedPath": "prototype/src/source-content/src/pages/voices/index.astro",
+      "bytes": 1457,
+      "sha256": "c0111d09c0b044b76e3880c324bb8e1e92a247b82dabb9de15af6909da1ccc87"
+    },
+    {
+      "path": "source-content/src/styles/global.css",
+      "seedPath": "prototype/src/source-content/src/styles/global.css",
+      "bytes": 1507,
+      "sha256": "5bb640ce7b037cbb59cbf7a1e0d6f7610df3b440e35c3e05b586176f9847dd25"
+    },
+    {
+      "path": "source-content/src/styles/index.css",
+      "seedPath": "prototype/src/source-content/src/styles/index.css",
+      "bytes": 47,
+      "sha256": "aa6378285268436539fb59ba0d6a144cf352137b688e1bf535ebf3026996b7ce"
+    },
+    {
+      "path": "source-content/src/styles/theme.css",
+      "seedPath": "prototype/src/source-content/src/styles/theme.css",
+      "bytes": 7341,
+      "sha256": "7929cd50f011b13c8c6232e5a6ff626f15c4d9670c9705aeb6fb8ad53031f110"
+    },
+    {
+      "path": "source-content/src/styles/tokens.css",
+      "seedPath": "prototype/src/source-content/src/styles/tokens.css",
+      "bytes": 3381,
+      "sha256": "9d543e341ad085969f01f304949f4fc08eeda1790036d0bf3f5655b276875f11"
+    },
+    {
+      "path": "source-content/tsconfig.json",
+      "seedPath": "prototype/src/source-content/tsconfig.json",
+      "bytes": 380,
+      "sha256": "776db9be70aab00b6b5217a55e77d495fd7a38e4897bd1778ad1b74bd6b1d2b8"
+    }
+  ]
+}

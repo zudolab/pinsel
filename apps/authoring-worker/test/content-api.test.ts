@@ -6,7 +6,7 @@ import { CONTENT_STORAGE_CONFORMANCE_POLICY, createContentStorageConformanceBase
 import { localSeedHandler } from "../src/admin/seed";
 import type { AuthoringSite } from "../src/site/baseline";
 import { resetD1ContentDraftStorage } from "../src/storage/d1-content-draft-storage";
-import { COMMITTED_PRICE, app, call, priceOf, putPrice, readDraft, savePrice } from "./helpers";
+import { COMMITTED_PRICE, PRICE, app, editPrice, call, priceOf, putPrice, readDraft, savePrice } from "./helpers";
 
 beforeEach(async () => {
   await resetD1ContentDraftStorage(env.DB);
@@ -83,17 +83,36 @@ describe("unsafe values and concurrency", () => {
     expect((await readDraft(handler)).draftRevision).toBe(draft.draftRevision);
   });
 
+  it("refuses request bodies with keys beyond the documented ones (a file path is never ignored)", async () => {
+    const handler = app();
+    const draft = await readDraft(handler);
+    const base = { expectedRevision: draft.draftRevision, expectedBaselineRevision: draft.baselineRevision };
+    const attempts = [
+      call(handler, "/api/v1/content/course/two-month", { method: "PUT", headers: { "idempotency-key": "op-path" }, json: { ...base, values: { [PRICE]: "¥1" }, path: "apps/site/zfb.config.ts" } }),
+      call(handler, "/api/v1/content/course", { method: "POST", headers: { "idempotency-key": "op-files" }, json: { ...base, entryId: "two-month", values: {}, files: ["package.json"] } }),
+      call(handler, "/api/v1/content/course-step/reorder", { method: "POST", headers: { "idempotency-key": "op-reorder" }, json: { ...base, entryIds: [], patch: {} } }),
+      call(handler, "/api/v1/operations", { method: "POST", json: { operationId: "op-extra", request: putPrice(draft.draftRevision, "¥1"), expectedBaselineRevision: draft.baselineRevision, path: "content/entries" } }),
+    ];
+    for (const answer of await Promise.all(attempts)) {
+      expect(answer.status).toBe(422);
+      expect(answer.body.refusal).toMatchObject({ code: "malformed-request", message: expect.stringMatching(/^Unexpected field "(path|files|patch)"\.$/) });
+    }
+    expect((await call(handler, "/api/v1/snapshots", { method: "POST", json: { expectedDraftRevision: draft.draftRevision, project: {} } })).status).toBe(422);
+    expect(await readDraft(handler)).toMatchObject({ draftRevision: draft.draftRevision });
+    expect(priceOf(await readDraft(handler))).toBe(COMMITTED_PRICE);
+  });
+
   it("lets exactly one of two concurrent sessions win the same revision; the other gets a recoverable conflict", async () => {
     const a = app("editor@example.test");
     const b = app("second@example.test");
     const draft = await readDraft(a);
     const [left, right] = await Promise.all([
-      call(a, "/api/v1/operations", { method: "POST", json: { operationId: "op-left", request: putPrice(draft.draftRevision, "¥51,000"), expectedBaselineRevision: draft.baselineRevision } }),
-      call(b, "/api/v1/operations", { method: "POST", json: { operationId: "op-right", request: putPrice(draft.draftRevision, "¥52,000"), expectedBaselineRevision: draft.baselineRevision } }),
+      call(a, "/api/v1/operations", { method: "POST", json: { operationId: "op-left", request: putPrice(draft.draftRevision, editPrice(1)), expectedBaselineRevision: draft.baselineRevision } }),
+      call(b, "/api/v1/operations", { method: "POST", json: { operationId: "op-right", request: putPrice(draft.draftRevision, editPrice(2)), expectedBaselineRevision: draft.baselineRevision } }),
     ]);
     const statuses = [left.body.status, right.body.status].sort();
     expect(statuses).toEqual(["conflict", "ok"]);
-    const winner = left.body.status === "ok" ? "¥51,000" : "¥52,000";
+    const winner = left.body.status === "ok" ? editPrice(1) : editPrice(2);
     const after = await readDraft(a);
     expect(after.draftRevision).toBe(draft.draftRevision + 1);
     expect(priceOf(after)).toBe(winner);
@@ -103,13 +122,13 @@ describe("unsafe values and concurrency", () => {
     const handler = app();
     const draft = await readDraft(handler);
     const body = (price: string) => ({ expectedRevision: draft.draftRevision, expectedBaselineRevision: draft.baselineRevision, values: { [fieldId("course", "price")]: price } });
-    expect((await call(handler, "/api/v1/content/course/two-month", { method: "PUT", headers: { "idempotency-key": "op-key" }, json: body("¥53,000") })).body.status).toBe("ok");
-    const replay = await call(handler, "/api/v1/content/course/two-month", { method: "PUT", headers: { "idempotency-key": "op-key" }, json: body("¥53,000") });
+    expect((await call(handler, "/api/v1/content/course/two-month", { method: "PUT", headers: { "idempotency-key": "op-key" }, json: body(editPrice(3)) })).body.status).toBe("ok");
+    const replay = await call(handler, "/api/v1/content/course/two-month", { method: "PUT", headers: { "idempotency-key": "op-key" }, json: body(editPrice(3)) });
     expect(replay.body.value.replayed).toBe(true);
-    const reused = await call(handler, "/api/v1/content/course/two-month", { method: "PUT", headers: { "idempotency-key": "op-key" }, json: body("¥54,000") });
+    const reused = await call(handler, "/api/v1/content/course/two-month", { method: "PUT", headers: { "idempotency-key": "op-key" }, json: body(editPrice(4)) });
     expect(reused.status).toBe(409);
     expect(reused.body).toMatchObject({ status: "conflict", reason: "operation-id" });
-    expect(priceOf(await readDraft(handler))).toBe("¥53,000");
+    expect(priceOf(await readDraft(handler))).toBe(editPrice(3));
   });
 });
 
@@ -121,10 +140,10 @@ describe("local seed endpoint", () => {
     const local = app("local-dev@example.test", { admin: localSeedHandler });
     const first = await call(local, "/admin/seed", { method: "POST", json: {} });
     expect(first.body.value).toMatchObject({ seeded: true, draftRevision: 1 });
-    await savePrice(local, "¥59,000");
+    await savePrice(local, editPrice(9));
     const again = await call(local, "/admin/seed", { method: "POST", json: {} });
     expect(again.body.value).toMatchObject({ seeded: false, draftRevision: 2 });
-    expect(priceOf(await readDraft(local))).toBe("¥59,000");
+    expect(priceOf(await readDraft(local))).toBe(editPrice(9));
     expect((await call(local, "/admin/seed", { method: "POST", origin: null, json: {} })).status).toBe(403);
   });
 });

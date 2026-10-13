@@ -96,6 +96,20 @@ export const CHROME_TEXT: Readonly<Record<string, string>> = {
   "Reapplying your draft over the latest provider records…": "最新の内容に自分の変更を再適用しています…",
   "Loading Content library…": "読み込み中…",
   "Content library unavailable": "コンテンツを読み込めません",
+  // Session messages (`ContentEditorState.message`), also shown in the host status line
+  "Confirming the last save…": "直前の保存を確認しています…",
+  "The save is not confirmed yet.": "保存をまだ確認できていません。",
+  "The save was recorded, but the latest version could not be loaded.": "保存は記録されましたが、最新の内容を読み込めませんでした。",
+  "The save may have reached the server, but its outcome is not confirmed yet. Retry to confirm it; your changes are kept.":
+    "保存がサーバーに届いた可能性がありますが、結果をまだ確認できていません。再試行して確認してください（変更は残っています）。",
+  "The previous save is not confirmed yet. Retry to confirm it; your changes are kept.": "前回の保存をまだ確認できていません。再試行して確認してください（変更は残っています）。",
+  "No draft exists for this site.": "このサイトの下書きがありません。",
+  "The draft belongs to another Content provider.": "この下書きは別のコンテンツのものです。開発者に連絡してください。",
+  "The stored draft was made for a different site version. A developer must reconcile it before editing continues.": "保存されている下書きは別のサイト版のものです。編集を続ける前に開発者が調整する必要があります。",
+  // The browser's network error when a request never reaches the Worker (Chromium, Firefox, Safari wording)
+  "Failed to fetch": "編集サーバーに接続できませんでした。",
+  "NetworkError when attempting to fetch resource.": "編集サーバーに接続できませんでした。",
+  "Load failed": "編集サーバーに接続できませんでした。",
 };
 
 const PATTERNS: readonly [RegExp, (...groups: string[]) => string][] = [
