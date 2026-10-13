@@ -1,0 +1,3398 @@
+{
+  "source": {
+    "repository": "Takazudo/yuko-site",
+    "pr": 4,
+    "head": "ce2ec05b9549c8f4b50a9ba01c201d8f88992348",
+    "url": "https://github.com/Takazudo/yuko-site/pull/4",
+    "note": "Exact source literals. Runtime dates and interpolated component values are not synthesized."
+  },
+  "normalization": "HTML entities decoded; all whitespace removed; no paraphrase/fuzzy matching. Section kicker wording and decorative symbols are not required. Repeated data records use occurrence checks.",
+  "shared": {
+    "footer": [
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-title",
+        "text": "オンラインクラス"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-description",
+        "text": "マッペ制作から出願まで完全マンツーマンサポート"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-title",
+        "text": "ドイツ美大受験ノート"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-description",
+        "text": "ドイツ美大受験に関する情報まとめ"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-title",
+        "text": "合格実績"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-description",
+        "text": "11年間で123件以上、30校以上の合格実績"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-title",
+        "text": "生徒の声"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-description",
+        "text": "受講生の合格体験談をご紹介"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-title",
+        "text": "講師紹介"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-description",
+        "text": "東京芸大卒・ミュンヘン芸術アカデミー修了"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-title",
+        "text": "よくある質問"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-description",
+        "text": "レッスンや受験に関するQ&A"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-title",
+        "text": "お問い合わせ"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "footer-description",
+        "text": "まずはお気軽にご相談ください"
+      },
+      {
+        "source": "components/site-footer/site-footer.astro",
+        "kind": "instagram-label",
+        "text": "yuko_takatsudo"
+      }
+    ],
+    "destinations": [
+      {
+        "label": "Lessons",
+        "title": "オンラインクラス",
+        "description": "マッペ制作から出願まで完全マンツーマンサポート",
+        "href": "/lessons/"
+      },
+      {
+        "label": "Notes",
+        "title": "ドイツ美大受験ノート",
+        "description": "ドイツ美大受験に関する情報まとめ",
+        "href": "/notes/"
+      },
+      {
+        "label": "Results",
+        "title": "合格実績",
+        "description": "11年間で123件以上、30校以上の合格実績",
+        "href": "/results/"
+      },
+      {
+        "label": "Voices",
+        "title": "生徒の声",
+        "description": "受講生の合格体験談をご紹介",
+        "href": "/voices/"
+      },
+      {
+        "label": "About",
+        "title": "講師紹介",
+        "description": "東京芸大卒・ミュンヘン芸術アカデミー修了",
+        "href": "/about/"
+      },
+      {
+        "label": "FAQ",
+        "title": "よくある質問",
+        "description": "レッスンや受験に関するQ&A",
+        "href": "/faq/"
+      },
+      {
+        "label": "Contact",
+        "title": "お問い合わせ",
+        "description": "まずはお気軽にご相談ください",
+        "href": "/contact/"
+      }
+    ],
+    "instagram": "https://www.instagram.com/yuko_takatsudo"
+  },
+  "pages": [
+    {
+      "route": "/",
+      "source": "src/pages/index.astro",
+      "metadata": {
+        "title": "Pinsel - ドイツ美大受験オンラインクラス",
+        "description": "ドイツ美大受験をマンツーマンでサポート。123件以上の合格実績。"
+      },
+      "body": [
+        {
+          "source": "src/pages/index.astro",
+          "kind": "static-p",
+          "text": "初心者の方も美大卒の方も、どなたでも１対１のオンライン個人レッスンでドイツ美大留学を目指して頂けます。"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "MoreLinkButton.text",
+          "text": "クラスの詳細はこちら"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "InstructorProfile.name",
+          "text": "高津戸 優子"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "InstructorProfile.title",
+          "text": "東京芸大卒 / ミュンヘン芸術アカデミー修了"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "InstructorProfile.bio",
+          "text": "ドイツ美大受験は情報が少なく、不安に感じる方が多いと思います。私自身の経験をもとに、進路相談からポートフォリオ作成、出願準備まで、一人ひとりに寄り添ったサポートをしています。"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "Carousel.moreText",
+          "text": "もっと見る"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "CtaSection.text",
+          "text": "お問い合わせ"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "CtaSection.subCopy",
+          "text": "まずはお気軽にご相談ください。ささいなことでも構いません。"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "2025"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "ベルリン芸術大学"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "Visuelle Kommunikation"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "ミュンヘン芸術大学"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "Freie Kunst: Bildhauerei"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "ハンブルク美術大学"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "Design"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "ニュルンベルク美術大学"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "Freie Kunst: Malerei"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "2024"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "ウィーン応用美術大学"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-results",
+          "text": "Bildende Kunst"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-voices",
+          "text": "知識0の状態から合格をいただけました。クリエイティブ面でのアドバイスも沢山いただけたことは今でも役に立っています。"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-voices",
+          "text": "Rさん"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-voices",
+          "text": "ハンブルク芸術アカデミー 合格"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-voices",
+          "text": "先生からとりあえず受けてみようと提案していただき、夜中でも休日でもレッスンやメールでたくさんのアドバイスをいただきました。"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-voices",
+          "text": "Kさん"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-voices",
+          "text": "ニュルンベルク芸術アカデミー 合格"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-voices",
+          "text": "ポートフォリオとしてまとめる方法や、自分のコンセプトをどう伝えるかについて多くのアドバイスをいただきました。"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-voices",
+          "text": "Yさん"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-voices",
+          "text": "ミュンヘン芸術大学 合格"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-faqItems",
+          "text": "年齢制限はありますか？"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-faqItems",
+          "text": "大学・専攻により異なりますが、目安として35歳程度です。受験生は18〜30歳が多いですが、ファインアート学科では35歳以上の学生もいます。"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-faqItems",
+          "text": "専攻が決まっていなくても大丈夫ですか？"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-faqItems",
+          "text": "はい。受講開始時に検討中の方も多くいらっしゃいます。基礎的な授業から始まり、受講中にご検討いただけます。"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-faqItems",
+          "text": "ドイツ語ができなくても受験は可能ですか？"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-faqItems",
+          "text": "語学力の証明が不要な大学も数校ありますが、年々語学力が求められる傾向にあります。余裕を持ってドイツ語学習を始めることをお勧めします。"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-faqItems",
+          "text": "準備期間はどのくらい必要ですか？"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-faqItems",
+          "text": "初心者の方や高校卒業直後の方は1年〜、美大卒の方は半年〜を目安にお考えください。"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-targetItems",
+          "text": "ドイツ美大に興味があるが、何から始めればいいかわからない"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-targetItems",
+          "text": "海外の美大に興味があるが、学費についてお悩みの方"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-targetItems",
+          "text": "マッペ（ポートフォリオ）制作や受験についてアドバイスが欲しい方"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-targetItems",
+          "text": "美大卒で、ドイツ美大への進学を検討している方"
+        },
+        {
+          "source": "src/pages/index.astro",
+          "kind": "literal-targetItems",
+          "text": "ドイツ美大受験の最中で、まとめとしてのサポートを必要とする方"
+        },
+        {
+          "source": "components/hero-section/hero-section.astro",
+          "kind": "static-p",
+          "text": "ドイツ美大受験部 オンラインクラス"
+        },
+        {
+          "source": "components/hero-section/hero-section.astro",
+          "kind": "static-p",
+          "text": "あなただけのドイツ美大受験準備を個別指導で。"
+        },
+        {
+          "source": "components/hero-section/hero-section.astro",
+          "kind": "static-p",
+          "text": "東京藝術大学、ミュンヘン芸術アカデミー修了の講師が\n\nあなたの受験をサポートします。\n\n普段の作品制作、マッペ（ポートフォリオ）制作はもちろん\n\n進路相談、応募する大学のスケジュールや詳細\n\nドイツ語学習の進め方まで、すべてオンラインで！"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "static-p",
+          "text": "※ お問い合わせ後にコースをお選びいただけます"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "進路相談"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "¥10,000"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "1回"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "有料面談 / 1.5〜2時間"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "2ヶ月コース"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "¥50,000"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "全4回（月2回）"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "ポートフォリオ制作指導"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "4ヶ月コース"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "¥92,000"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "全8回（月2回）"
+        },
+        {
+          "source": "components/pricing-section/pricing-section.astro",
+          "kind": "literal-pricingData",
+          "text": "出願準備までフルサポート"
+        },
+        {
+          "source": "components/instructor-profile/instructor-profile.astro",
+          "kind": "static-a",
+          "text": "詳しく見る"
+        },
+        {
+          "source": "components/cta-section/cta-section.astro",
+          "kind": "static-p",
+          "text": "まずはお気軽にご相談ください。"
+        }
+      ],
+      "recordGroups": [
+        {
+          "label": "Home result cards",
+          "source": "src/pages/index.astro",
+          "items": [
+            {
+              "year": "2025",
+              "school": "ベルリン芸術大学",
+              "detail": "Visuelle Kommunikation"
+            },
+            {
+              "year": "2025",
+              "school": "ミュンヘン芸術大学",
+              "detail": "Freie Kunst: Bildhauerei"
+            },
+            {
+              "year": "2025",
+              "school": "ハンブルク美術大学",
+              "detail": "Design"
+            },
+            {
+              "year": "2025",
+              "school": "ニュルンベルク美術大学",
+              "detail": "Freie Kunst: Malerei"
+            },
+            {
+              "year": "2024",
+              "school": "ミュンヘン芸術大学",
+              "detail": "Freie Kunst: Malerei"
+            },
+            {
+              "year": "2024",
+              "school": "ウィーン応用美術大学",
+              "detail": "Bildende Kunst"
+            }
+          ]
+        },
+        {
+          "label": "Home voice excerpts",
+          "source": "src/pages/index.astro",
+          "items": [
+            {
+              "quote": "知識0の状態から合格をいただけました。クリエイティブ面でのアドバイスも沢山いただけたことは今でも役に立っています。",
+              "author": "Rさん",
+              "school": "ハンブルク芸術アカデミー 合格"
+            },
+            {
+              "quote": "先生からとりあえず受けてみようと提案していただき、夜中でも休日でもレッスンやメールでたくさんのアドバイスをいただきました。",
+              "author": "Kさん",
+              "school": "ニュルンベルク芸術アカデミー 合格"
+            },
+            {
+              "quote": "ポートフォリオとしてまとめる方法や、自分のコンセプトをどう伝えるかについて多くのアドバイスをいただきました。",
+              "author": "Yさん",
+              "school": "ミュンヘン芸術大学 合格"
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "href": "/#pricing",
+          "kind": "pricing-anchor"
+        }
+      ]
+    },
+    {
+      "route": "/lessons/",
+      "source": "src/pages/lessons/index.astro",
+      "metadata": {
+        "title": "オンラインクラス - Pinsel",
+        "description": "ドイツ美大受験のためのオンラインマンツーマンレッスン。マッペ制作から出願まで完全サポート。"
+      },
+      "body": [
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-h2",
+          "text": "このような方に受講をお勧めします"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "高津戸 優子"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "ドイツに10年間滞在し日本とドイツで美大を卒業、現在も東京とベルリンを拠点にアーティスト活動中。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-h3",
+          "text": "経歴"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-h2",
+          "text": "ドイツ美術大学 専攻分野一例"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "どの学科の生徒さんも、今までドイツ美大進学をサポートをさせて頂きました。専攻に迷っている方もご安心ください。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-h2",
+          "text": "オンラインクラス授業内容"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "２ヶ月コースまたは４ヶ月コースからお選びいただけます。授業は1対1のオンライン通話で、1授業につき約1時間半〜2時間です。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-h2",
+          "text": "オンラインクラス価格"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "2ヶ月コース"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "¥50,000"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "税込 / 1ヶ月あたり25,000円"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "4ヶ月コース"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "¥92,000"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "税込 / 1ヶ月あたり23,000円"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "レッスンスケジュール：\n土日祝日を除く平日10時、14時、19時スタート（週末レッスンも時々あり）"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "引き続き受講希望の場合は、新たにコースをお申し込みいただけます。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "お支払いは銀行振り込みとなります。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-h2",
+          "text": "オンライン有料進路相談"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "進路相談"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "¥10,000"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "税込 / 1時間半〜2時間のオンライン通話"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-h3",
+          "text": "面談で話す内容"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-h3",
+          "text": "よくある質問"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-h2",
+          "text": "美大卒の方へ"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "日本で美大を卒業された方にもドイツ美大進学はおすすめです。学生ビザの取得、大学のアトリエの利用、学割、現地でのコネクション作り、新たなインスピレーションなど、多くのメリットがあります。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "講師自身も、芸大在学中にドイツに行くきっかけができました。ミュンヘンで学生となり、結局10年もドイツに滞在することになりました。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "今までのスタイルにこだわらず、新たな試みで制作すると良い結果につながることが多いです。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "static-p",
+          "text": "受験そのものが目的ではなく、作品制作の継続・発展が本来の目的です。ドイツでの学びを通じて、アーティストとしての新たな一歩を踏み出しましょう。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "PageHeader.title",
+          "text": "ドイツ美大受験オンラインクラス"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "PageHeader.description",
+          "text": "将来的にドイツ美大受験を目指す方や、ドイツの美大に興味があるけれど何から始めたらいいのかわからない！という方を対象とした、マンツーマンレッスンのオンラインクラスです。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "InfoCard.title",
+          "text": "1〜4授業目（2ヶ月・4ヶ月共通）"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "InfoCard.description",
+          "text": "課題の作品制作、受験情報の共有、合格者ポートフォリオの紹介を行います。まず合格した生徒さんのマッペを見せて、基礎的なこと（構図・抽象と具象）を学びます。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "InfoCard.title",
+          "text": "5〜8授業目（4ヶ月コースのみ）"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "InfoCard.description",
+          "text": "進行具合により引き続き課題制作を行い、自分のテーマでの作品制作に入ります。専攻やテーマに沿った内容で制作を進めます。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "InfoCard.title",
+          "text": "受講終了後"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "InfoCard.description",
+          "text": "多くの方が受験の時期までクラスを延長して受講されています。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "CtaSection.text",
+          "text": "お問い合わせ"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "CtaSection.subCopy",
+          "text": "まずはお気軽にご相談ください。ささいなことでも構いません。"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-recommendedItems",
+          "text": "クリエイティブなことが好きな方"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-recommendedItems",
+          "text": "海外の美大に興味があるが、学費についてお悩みの方"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-recommendedItems",
+          "text": "初心者・経験者問わず、ドイツ美大進学を目指す方"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-recommendedItems",
+          "text": "学生さん（高校、大学、専門）、社会人 問わず、ドイツ美大進学を目指す方"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-recommendedItems",
+          "text": "将来的にドイツでのアーティスト活動や就職に興味がある方"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-recommendedItems",
+          "text": "マッペ（ポートフォリオ）制作や受験についてアドバイスが欲しい方"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-recommendedItems",
+          "text": "ドイツ美大受験の最中・直前で、まとめとしてのアドバイス・サポートを必要とする方"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "Malerei und Grafik"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "絵画とグラフィック"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "Bildhauerei"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "彫刻とインスタレーション"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "Visuelle Kommunikation"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "ヴィジュアルコミュニケーション/デザイン"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "Kunst und Medien"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "メディアアート"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "Innenarchitektur"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "インテリアデザイン"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "Modedesign"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "モードデザイン・ファッション"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "Produktdesign"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "プロダクトデザイン"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "Illustration und Buchdesign"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "イラストレーション・ブックデザイン"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "Textil und Flächendesign"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-specializations",
+          "text": "テキスタイル・平面デザイン"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "1987"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "埼玉県生まれ"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "2006〜2010"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "東京芸術大学 美術学部 絵画科 油画専攻 卒業"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "2010〜2016"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "ミュンヘン芸術アカデミー 自由芸術科 マイスターシューラーとして卒業"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "2010〜2014"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "ミュンヘン滞在"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "2014〜2020"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "ベルリン滞在、Atelier HY+ 経営"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "2020"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "日本に帰国、Pinsel ドイツ美大受験オンラインクラス 開始"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "2020〜2023"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-careerTimeline",
+          "text": "創形美術学校 海外美術留学準備コース ドイツ対策クラス担当"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-knowledgeCards",
+          "text": "ドイツの美大は学費が無料"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-knowledgeCards",
+          "text": "ドイツ国立美大の学費無料の仕組みと生活費の目安"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-knowledgeCards",
+          "text": "マッペ（ポートフォリオ）とは"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-knowledgeCards",
+          "text": "ドイツ美大受験に必須のマッペについて解説"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-knowledgeCards",
+          "text": "ドイツ美大受験の時期とスケジュール"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-knowledgeCards",
+          "text": "受験スケジュールと準備開始の目安"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-knowledgeCards",
+          "text": "オンラインでのドイツ美大受験について"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-knowledgeCards",
+          "text": "日本にいながらオンラインで受験する方法"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-knowledgeCards",
+          "text": "ドイツ語学習について"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "literal-knowledgeCards",
+          "text": "受験に必要なドイツ語レベルと学習方法"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "ドイツの美術大学の学位システムについて"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "受験までのスケジュール"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "ドイツ語学習の方法"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "専攻について"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "学費や現地での生活費"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "応募資格の確認"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "ドイツでアートを勉強する利点"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "初心者でも進学可能か"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "複数の専攻で迷っている"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "卒業後の進路"
+        },
+        {
+          "source": "src/pages/lessons/index.astro",
+          "kind": "inline-list",
+          "text": "就職を考えるとどの専攻が良いか"
+        },
+        {
+          "source": "components/cta-section/cta-section.astro",
+          "kind": "static-p",
+          "text": "まずはお気軽にご相談ください。"
+        }
+      ],
+      "recordGroups": [],
+      "links": []
+    },
+    {
+      "route": "/about/",
+      "source": "src/pages/about/index.astro",
+      "metadata": {
+        "title": "講師紹介 - Pinsel",
+        "description": "東京芸大卒・ミュンヘン芸術アカデミー修了の講師が指導。"
+      },
+      "body": [
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-p",
+          "text": "高津戸 優子"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-p",
+          "text": "1987年 埼玉県生まれ"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-h2",
+          "text": "経歴"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-h2",
+          "text": "学歴"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-h2",
+          "text": "メッセージ"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-p",
+          "text": "ドイツの美術大学は、日本の美大とは入試の仕組みも評価基準も大きく異なります。しかし日本にはまだまだ情報が少なく、何から始めればいいかわからないという方が多いのが現状です。"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-p",
+          "text": "私自身、東京芸術大学を卒業後、ドイツに渡り、ミュンヘン芸術アカデミーでマイスターシューラーとして学びました。ドイツでの10年以上にわたる経験の中で、現地の美術教育の考え方や、受験で求められるものを肌で感じてきました。"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-p",
+          "text": "また、ベルリンでアートスクールを経営していた時期には、多くの日本人受験生の相談に乗り、合格までサポートしてきました。その中で、受験生一人ひとりの個性や作品に合わせたアドバイスの大切さを実感しています。"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-p",
+          "text": "2014年から2020年までベルリンで運営していたAtelier HY+では、日本人だけでなく多国籍の学生たちと向き合い、それぞれの文化的背景や個性に合わせた指導を行ってきました。その経験は、現在のレッスンにも大きく活かされています。"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-p",
+          "text": "2020年に日本に帰国してからは、Pinselとしてオンラインでの指導に専念しています。オンラインのみで受講された生徒さんも多数合格されており、対面と変わらない質の指導が可能です。"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-p",
+          "text": "ドイツの美術大学が求めるのは、画力やテクニックだけではありません。創造性、興味関心、制作への姿勢——そうした本人の内面にあるものを大切にしています。レッスンでは対話を重視し、受講生の方が自分自身の表現を見つけていけるようサポートしています。"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-p",
+          "text": "Pinselでは、その経験を活かし、受講生の皆さんが自分の力を最大限に発揮できるよう、全力でサポートいたします。ドイツ美大受験に興味をお持ちの方は、まずはお気軽にご相談ください。"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "static-h2",
+          "text": "レッスンの特長"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "PageHeader.title",
+          "text": "講師紹介"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "CtaSection.text",
+          "text": "お問い合わせ"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "CtaSection.subCopy",
+          "text": "ドイツ・オーストリアの美大受験について"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-education",
+          "text": "2006〜2010　東京芸術大学 美術学部 絵画科 油画専攻 卒業"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-education",
+          "text": "2010〜2016　ミュンヘン芸術アカデミー 自由芸術科 マイスターシューラーとして卒業"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-career",
+          "text": "2010〜2014　ミュンヘン滞在"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-career",
+          "text": "2014〜2020　ベルリン滞在"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-career",
+          "text": "2014〜2020　ベルリンアートスクール Atelier HY+ 経営"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-career",
+          "text": "2020　日本に帰国"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-career",
+          "text": "2020〜2023　創形美術学校 海外美術留学準備コース ドイツ対策クラス担当"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-career",
+          "text": "2020〜現在　Pinsel ドイツ美大受験オンラインクラス 主宰"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-features",
+          "text": "完全マンツーマン"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-features",
+          "text": "お一人おひとりに合わせた個別カリキュラムで、きめ細やかな指導を行います。作品制作だけでなく、進路相談やドイツでの生活、卒業後のキャリアについても、マンツーマンだからこそじっくりお話しできます。"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-features",
+          "text": "オンライン完結"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-features",
+          "text": "すべてのレッスンをオンラインで実施。日本全国・海外からも受講可能です。コロナ以降、多くの大学がオンラインでの受験に対応しており、日本にいながら出願から合格まで完結できるケースも増えています。お仕事をされている方のために19時以降のレッスンにも対応しています。"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-features",
+          "text": "実体験に基づく指導"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-features",
+          "text": "ドイツでの10年以上の留学・制作・アートスクール経営の経験をもとにした実践的なアドバイスを提供します。ベルリンで6年間Atelier HY+を運営し、多国籍の学生をサポートしてきた経験が指導の土台です。"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-features",
+          "text": "最新情報の共有"
+        },
+        {
+          "source": "src/pages/about/index.astro",
+          "kind": "literal-features",
+          "text": "ドイツ美大受験の最新の動向や、各大学の特徴、入試の傾向などを常にアップデートしてお伝えします。受講生にはGoogleスプレッドシートで各大学の受験情報をまとめた資料を共有しており、志望校選びの参考にしていただけます。"
+        },
+        {
+          "source": "components/cta-section/cta-section.astro",
+          "kind": "static-p",
+          "text": "まずはお気軽にご相談ください。"
+        }
+      ],
+      "recordGroups": [],
+      "links": []
+    },
+    {
+      "route": "/results/",
+      "source": "src/pages/results/index.astro",
+      "metadata": {
+        "title": "合格実績 - Pinsel",
+        "description": "2015年から11年間のドイツ美大合格実績。30校以上に合格者を輩出。"
+      },
+      "body": [
+        {
+          "source": "src/pages/results/index.astro",
+          "kind": "PageHeader.title",
+          "text": "ドイツ美大合格実績"
+        },
+        {
+          "source": "src/pages/results/index.astro",
+          "kind": "PageHeader.description",
+          "text": "Pinselの受講生の合格実績です。2015年から11年間、ドイツ・オーストリアの美術大学へ多数の合格者を送り出しています。"
+        },
+        {
+          "source": "src/pages/results/index.astro",
+          "kind": "CtaSection.text",
+          "text": "お問い合わせ"
+        },
+        {
+          "source": "src/pages/results/index.astro",
+          "kind": "CtaSection.subCopy",
+          "text": "ドイツ美大受験に興味がある方、まずはお気軽にご相談ください。"
+        },
+        {
+          "source": "src/pages/results/index.astro",
+          "kind": "literal-stats",
+          "text": "123+"
+        },
+        {
+          "source": "src/pages/results/index.astro",
+          "kind": "literal-stats",
+          "text": "合格実績"
+        },
+        {
+          "source": "src/pages/results/index.astro",
+          "kind": "literal-stats",
+          "text": "30+"
+        },
+        {
+          "source": "src/pages/results/index.astro",
+          "kind": "literal-stats",
+          "text": "合格校数"
+        },
+        {
+          "source": "components/cta-section/cta-section.astro",
+          "kind": "static-p",
+          "text": "まずはお気軽にご相談ください。"
+        }
+      ],
+      "recordGroups": [
+        {
+          "label": "2025年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ベルリン芸術大学",
+              "department": "Visuelle Kommunikation"
+            },
+            {
+              "school": "ミュンヘン芸術大学",
+              "department": "Freie Kunst: Bildhauerei"
+            },
+            {
+              "school": "ハンブルク美術大学",
+              "department": "Bildende Künste: Bildhauerei"
+            },
+            {
+              "school": "ハンブルク美術大学",
+              "department": "Design"
+            },
+            {
+              "school": "ニュルンベルク美術大学",
+              "department": "Freie Kunst: Malerei"
+            },
+            {
+              "school": "ブレーメン美術大学",
+              "department": "Freie Kunst: Malerei"
+            },
+            {
+              "school": "ドレスデン美術大学",
+              "department": "Bildende Kunst: Malerei"
+            },
+            {
+              "school": "マインツ美術大学",
+              "department": "Freie Bildende Kunst: Malerei"
+            },
+            {
+              "school": "マインツ応用科学大学",
+              "department": "Kommunikationsdesign"
+            }
+          ],
+          "declaredCount": 9,
+          "year": "2025年度"
+        },
+        {
+          "label": "2024年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ベルリン・ヴァイセンゼー美術大学",
+              "department": "Textil- und Material-Design"
+            },
+            {
+              "school": "ベルリン技術経済大学",
+              "department": "Kommunikationsdesign"
+            },
+            {
+              "school": "ミュンヘン芸術大学",
+              "department": "Freie Kunst: Malerei"
+            },
+            {
+              "school": "オーストリア・ウィーン応用美術大学",
+              "department": "Bildende Kunst: Malerei"
+            },
+            {
+              "school": "ハンブルク美術大学",
+              "department": "Design"
+            },
+            {
+              "school": "フランクフルト美術大学・シュテーデルシューレ",
+              "department": "Freie Bildende Kunst: Bildhauerei"
+            },
+            {
+              "school": "ブレーメン美術大学",
+              "department": "Integriertes Design"
+            },
+            {
+              "school": "マインツ応用科学大学",
+              "department": "Kommunikationsdesign"
+            },
+            {
+              "school": "ビーレフェルト専門大学",
+              "department": "Kommunikationsdesign"
+            },
+            {
+              "school": "カッセル芸術大学",
+              "department": "Visuelle Kommunikation"
+            },
+            {
+              "school": "バウハウス大学ワイマール",
+              "department": "Visuelle Kommunikation"
+            },
+            {
+              "school": "カールスルーエ芸術デザイン大学",
+              "department": "Kommunikationsdesign"
+            },
+            {
+              "school": "ヴッパタール大学",
+              "department": "Public Interest Design（大学院）"
+            }
+          ],
+          "declaredCount": 13,
+          "year": "2024年度"
+        },
+        {
+          "label": "2023年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ベルリン・ヴァイセンゼー美術大学",
+              "department": "Freie Kunst: Malerei"
+            },
+            {
+              "school": "ハンブルク美術大学",
+              "department": "Bildende Künste: Bildhauerei"
+            },
+            {
+              "school": "ハンブルク美術大学",
+              "department": "Bildende Künste: Malerei"
+            },
+            {
+              "school": "ミュンスター芸術大学",
+              "department": "Freie Kunst: Bildhauerei"
+            },
+            {
+              "school": "ミュンスター芸術大学",
+              "department": "Freie Kunst: Malerei"
+            },
+            {
+              "school": "ドルトムント応用科学大学",
+              "department": "Kommunikationsdesign"
+            },
+            {
+              "school": "オーストリア・リンツ工科造形芸術大学",
+              "department": "Bildende Kunst（2名）"
+            },
+            {
+              "school": "オーストリア・リンツ工科造形芸術大学",
+              "department": "Grafik-Design und Fotografie"
+            },
+            {
+              "school": "オーストリア・リンツ工科造形芸術大学",
+              "department": "Architektur"
+            }
+          ],
+          "declaredCount": 10,
+          "year": "2023年度"
+        },
+        {
+          "label": "2022年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ハンブルク美術大学",
+              "department": "Bildende Künste: Malerei/Zeichnen"
+            },
+            {
+              "school": "ミュンヘン芸術大学",
+              "department": "Freie Kunst: Bildhauerei"
+            },
+            {
+              "school": "オーストリア・ウィーン芸術大学",
+              "department": "Bildende Kunst"
+            },
+            {
+              "school": "バウハウス大学ワイマール",
+              "department": "Visuelle Kommunikation"
+            },
+            {
+              "school": "ブレーメン美術大学",
+              "department": "Integriertes Design"
+            },
+            {
+              "school": "マインツ応用科学大学",
+              "department": "Kommunikationsdesign（2名）"
+            },
+            {
+              "school": "ケルンインターナショナルスクールオブデザイン",
+              "department": "Integrated Design"
+            },
+            {
+              "school": "MSD/ミュンスタースクールオブデザイン",
+              "department": "Kommunikationsdesign"
+            },
+            {
+              "school": "オーストリア・リンツ工科造形芸術大学",
+              "department": "Architektur"
+            }
+          ],
+          "declaredCount": 10,
+          "year": "2022年度"
+        },
+        {
+          "label": "2021年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ミュンヘン美術大学",
+              "department": "Freie Kunst: Malerei und Grafik（2名）"
+            },
+            {
+              "school": "バウハウス大学ワイマール",
+              "department": "Visuelle Kommunikation"
+            },
+            {
+              "school": "ブルク・ギービヒェンシュタイン芸術デザイン大学ハレ",
+              "department": "Textile Künste"
+            },
+            {
+              "school": "オーストリア・リンツ工科造形芸術大学",
+              "department": "Bildende Kunst（2名）"
+            },
+            {
+              "school": "ブレーメン美術大学",
+              "department": "Freie Kunst（高学期からの入学）"
+            },
+            {
+              "school": "ブレーメン美術大学",
+              "department": "Integriertes Design"
+            }
+          ],
+          "declaredCount": 8,
+          "year": "2021年度"
+        },
+        {
+          "label": "2020年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ベルリン芸術大学",
+              "department": "Kunst und Medien"
+            },
+            {
+              "school": "ベルリン・ヴァイセンゼー美術大学",
+              "department": "Bildhauerei"
+            },
+            {
+              "school": "ベルリン技術経済大学",
+              "department": "Kommunikationsdesign"
+            },
+            {
+              "school": "ベルリン技術経済大学",
+              "department": "Industrial Design"
+            },
+            {
+              "school": "ハンブルク美術大学",
+              "department": "Design"
+            },
+            {
+              "school": "ミュンスター専門大学",
+              "department": "Produktdesign"
+            },
+            {
+              "school": "ライプツィヒ版画製本芸術大学",
+              "department": "Buchkunst/Grafik-Design"
+            },
+            {
+              "school": "キール・ムテジウス美術大学",
+              "department": "Visuelle Kommunikation"
+            },
+            {
+              "school": "ブルク・ギービヒェンシュタイン芸術デザイン大学ハレ",
+              "department": "Malerei/Grafik"
+            }
+          ],
+          "declaredCount": 9,
+          "year": "2020年度"
+        },
+        {
+          "label": "2019年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ベルリン芸術大学",
+              "department": "Lehramt Bildende Kunst"
+            },
+            {
+              "school": "ベルリン芸術大学",
+              "department": "Bildende Kunst（絵画）"
+            },
+            {
+              "school": "ベルリン芸術大学",
+              "department": "Visuelle Kommunikation"
+            },
+            {
+              "school": "ベルリン・ヴァイセンゼー美術大学",
+              "department": "Visuelle Kommunikation"
+            },
+            {
+              "school": "ベルリン技術経済大学",
+              "department": "Modedesign"
+            },
+            {
+              "school": "ベルリン技術経済大学",
+              "department": "Kommunikationsdesign"
+            },
+            {
+              "school": "ベルリン技術経済大学",
+              "department": "Produktdesign"
+            },
+            {
+              "school": "ミュンスター芸術大学",
+              "department": "Freie Kunst: Malerei（2名）"
+            },
+            {
+              "school": "キール・ムテジウス美術大学",
+              "department": "Raumstrategien"
+            },
+            {
+              "school": "カールスルーへ造形大学",
+              "department": "Medienkunst"
+            },
+            {
+              "school": "ブレーメン芸術大学",
+              "department": "Integriertes Design"
+            },
+            {
+              "school": "ニュルンベルク芸術大学",
+              "department": "Gold- und Silberschmieden"
+            },
+            {
+              "school": "ポツダム専門大学",
+              "department": "Visuelle Kommunikation"
+            },
+            {
+              "school": "マグデブルク大学",
+              "department": "Industrial Design"
+            }
+          ],
+          "declaredCount": 14,
+          "year": "2019年度"
+        },
+        {
+          "label": "2018年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ベルリン芸術大学",
+              "department": "Lehramt Bildende Kunst"
+            },
+            {
+              "school": "ベルリン・ヴァイセンゼー美術大学",
+              "department": "Modedesign、Produktdesign、Bildhauerei"
+            },
+            {
+              "school": "ベルリン技術経済大学",
+              "department": "Modedesign"
+            },
+            {
+              "school": "ミュンヘン美術大学",
+              "department": "Freie Kunst: Malerei und Grafik"
+            },
+            {
+              "school": "オーストリア・ウィーン美術大学",
+              "department": "Bildende Kunst: Malerei"
+            },
+            {
+              "school": "ブラウンシュバイク美術大学",
+              "department": "Freie Kunst: Malerei"
+            },
+            {
+              "school": "ミュンスター美術大学",
+              "department": "Lehramt Bildende Kunst"
+            },
+            {
+              "school": "ブレーメン美術大学",
+              "department": "Freie Kunst（2名）"
+            },
+            {
+              "school": "オーストリア・リンツ芸術産業デザイン大学",
+              "department": "Zeitbasierte und Interaktive Medien（2名）"
+            },
+            {
+              "school": "カッセル大学",
+              "department": "プロダクトデザイン科"
+            },
+            {
+              "school": "アーヘン応用科学大学",
+              "department": "Produktdesign"
+            },
+            {
+              "school": "ザールブリュッケン芸術大学",
+              "department": "Freie Kunst: Malerei、Produktdesign"
+            },
+            {
+              "school": "ヴィスマール大学",
+              "department": "Produktdesign"
+            }
+          ],
+          "declaredCount": 16,
+          "year": "2018年度"
+        },
+        {
+          "label": "2017年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ベルリン芸術大学",
+              "department": "Kunst und Medien、Lehramt Bildende Kunst"
+            },
+            {
+              "school": "オーストリア・ウィーン美術大学",
+              "department": "Bildende Kunst: Malerei"
+            },
+            {
+              "school": "スペイン・バルセロナ ヨーロッパデザイン学院",
+              "department": "Modedesign"
+            },
+            {
+              "school": "ミュンヘン美術大学",
+              "department": "Freie Kunst: Malerei und Grafik、Freie Kunst: Keramik und Glas"
+            },
+            {
+              "school": "ブレーメン美術大学",
+              "department": "Freie Kunst: Malerei（2名）"
+            },
+            {
+              "school": "ワイマール・バウハウス大学",
+              "department": "Freie Kunst: Malerei"
+            },
+            {
+              "school": "ハンブルク応用科学大学",
+              "department": "Kostümdesign"
+            },
+            {
+              "school": "ハンブルク芸術大学",
+              "department": "Design"
+            },
+            {
+              "school": "ベルリン・ヴァイセンゼー美術大学",
+              "department": "Modedesign、Produktdesign（2名）、Bühnen- und Kostümbild"
+            },
+            {
+              "school": "ブルク・ギービヒェンシュタイン芸術デザイン大学ハレ",
+              "department": "Modedesign、Industriedesign（2名）、Kommunikationsdesign"
+            }
+          ],
+          "declaredCount": 17,
+          "year": "2017年度"
+        },
+        {
+          "label": "2016年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ベルリン芸術大学",
+              "department": "Bildende Kunst"
+            },
+            {
+              "school": "ベルリン技術経済大学",
+              "department": "Visuelle Kommunikation"
+            },
+            {
+              "school": "ミュンヘン美術大学",
+              "department": "Bildhauerei"
+            },
+            {
+              "school": "ハンブルク美術大学",
+              "department": "Freie Kunst: Malerei"
+            },
+            {
+              "school": "シュトゥットガルト美術大学",
+              "department": "Intermediales Gestalten"
+            },
+            {
+              "school": "キール・ムテジウス美術大学",
+              "department": "Kommunikationsdesign"
+            },
+            {
+              "school": "ベルリン・ヴァイセンゼー美術大学",
+              "department": "Textildesign、MA Raumstrategien、Visuelle Kommunikation"
+            },
+            {
+              "school": "ブラウンシュバイク美術大学",
+              "department": "Bildhauerei、Freie Kunst: Malerei"
+            },
+            {
+              "school": "ブルク・ギービヒェンシュタイン芸術デザイン大学ハレ",
+              "department": "Textildesign、Visuelle Kommunikation"
+            }
+          ],
+          "declaredCount": 13,
+          "year": "2016年度"
+        },
+        {
+          "label": "2015年度",
+          "source": "data/results-data.ts",
+          "items": [
+            {
+              "school": "ミュンヘン美術大学",
+              "department": "Freie Kunst 自由芸術・絵画科"
+            },
+            {
+              "school": "ニュルンベルク美術大学",
+              "department": "Freie Kunst 自由芸術・絵画科"
+            },
+            {
+              "school": "カールスルーエ美術大学",
+              "department": "Freie Kunst 自由芸術・絵画科"
+            },
+            {
+              "school": "アーヘン応用科学大学",
+              "department": "Produktdesign プロダクトデザイン科"
+            }
+          ],
+          "declaredCount": 4,
+          "year": "2015年度"
+        }
+      ],
+      "links": []
+    },
+    {
+      "route": "/voices/",
+      "source": "src/pages/voices/index.astro",
+      "metadata": {
+        "title": "生徒の声 - Pinsel",
+        "description": "Pinsel受講生の合格体験談。ドイツ美大受験の実体験をご紹介。"
+      },
+      "body": [
+        {
+          "source": "src/pages/voices/index.astro",
+          "kind": "PageHeader.title",
+          "text": "生徒の声"
+        },
+        {
+          "source": "src/pages/voices/index.astro",
+          "kind": "PageHeader.description",
+          "text": "Pinselの受講生の合格体験談です。ドイツ美大受験を経験された生徒さんの声をご紹介します。"
+        },
+        {
+          "source": "src/pages/voices/index.astro",
+          "kind": "CtaSection.text",
+          "text": "お問い合わせ"
+        },
+        {
+          "source": "src/pages/voices/index.astro",
+          "kind": "CtaSection.subCopy",
+          "text": "あなたも一緒にドイツ美大合格を目指しませんか？"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "Rさん"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "2025年度合格"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "ハンブルク芸術アカデミー"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "ファインアート科（彫刻・インスタレーション）"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "ドイツ美大受験に関しての知識が本当に0の状態でレッスンに申し込ませていただきました。\nそのような状態の自分に、必要な基礎知識から実用的なポートフォリオのアドバイス、実際に現地で高津戸さんが感じられたこと、これまでの生徒さんのサポートで得られた知識など本当に様々な面で根気よくサポートしていただいたと感じています。大学の情報などを一人で細かく一人で調べるとなると、情報の多さに疲弊しきって実際に行動に移すことが\"億劫\"になってしまうこともあると思うので、重要な情報や期限などを表にまとめて下さって共有していただいたのは非常に助かりました。美術などのクリエイティブなことに関わる受験というのは、答案を導き出す練習のようなものとは違い、本人の中にある創造性を見出さなければいけない有機的な作業だと思います。受講している時には、自分の性格や作家としてのタイプも分析していただき、高津戸さんが実際に経験なされたことからなる、クリエイティブ面でのアドバイスも沢山いただけたことは今でも役に立っています。"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "Kさん"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "ニュルンベルク芸術アカデミー"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "ファインアート科（絵画）"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "2024年の春からドイツ・オーストリアの美大を目指しており、高津戸先生と約一年半ほどコンタクトをとりながら勉強しました。自身のドイツ語やマッペの出来具合に自信がなく2025年度は受験をしようとは考えておりませんでしたが、年明けに先生からとりあえず受けてみようと提案していただき、複数校受験いたしました。マッペを作り上げるのは正直しんどかったですが、夜中でも休日でもレッスンやメールで先生からたくさんのアドバイスをいただいたりして、徐々にマッペが完成していきました。結果、ニュルンベルク芸術アカデミーから合格をいただき、今年受験して本当によかったと思いました。このような経験から、自信がなくても、当たって砕けろ精神でやれば大学から認めてくれることもあるかもしれません。また、寛大にもニュルンベルクアカデミーからドイツ語の証明をとるために入学を延期してもらい、現在絵も描きながら、ドイツ語を重点的に活動しています。ドイツの大学には少なからずそのような対応をしていただけるところがあるかもしれないので、受ける気がなくても受ける価値はあると思いました。"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "Yさん"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "ミュンヘン芸術アカデミー"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "もともと作品は制作していましたが、それをどのようにポートフォリオとしてまとめるか、また自分のコンセプトをどう伝えればよいのかについて多くのアドバイスをいただきました。レッスンを重ねる中で、自分の作品を客観的に見つめ直すことができ、結果的に自信を持って提出できる形に仕上がったと思います。また、過去の実績から得られた各大学の特徴や受験に関する豊富な情報を教えていただけたことで、大学選びの判断材料となり、実際の受験時にも大いに役立ちました。今回合格できたのは、作品への指導だけでなく、受験全体を見据えた具体的なサポートのおかげです。これからも制作活動を続け、新しい環境で学びを深めていきたいと思います。"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "マインツ美術大学"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "ドイツの美大を目指し始めた頃から、レッスンを受けています。作品のフィードバックでは、今の作品をより一層発展させるにはどうしたらよいかを一緒に考えてくださるので、アイデアを豊かに膨らませることができました。一人で制作していると、不安に押しつぶされそうになることもありましたが、レッスン以外にメールでも相談に乗ってくださったので、安心して準備を進めることができました。これからも制作活動を続けていきたいです。本当にお世話になりました！"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "Hさん"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "ハンブルク美術大学 / ベルリン芸術大学 / マインツ応用科学大学"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "デザイン科 / ヴィジュアルコミュニケーション科 / コミュニケーションデザイン科"
+        },
+        {
+          "source": "data/voices-data.ts",
+          "kind": "testimonial",
+          "text": "ドイツ美大受験に関する情報をたくさん教えていただけたことで、レッスンを通して進むべき道筋が見えてきました。また、ポートフォリオは、レッスンを重ねる中で最終的に満足のいく形に仕上げることができて嬉しかったです。テーマ、デザインや構成などの細かいところまで丁寧に見て指導していただきありがたく思っています。受験中は周りで同じようにドイツの美大を目指している人がいなかったため不安もありましたが、先生とのレッスンやメールでのやりとりに本当に支えられました。制作では新しいテーマや制作方法に挑戦でき、受験後の今もレッスンで得た考え方を活かして制作を続けています。"
+        },
+        {
+          "source": "components/cta-section/cta-section.astro",
+          "kind": "static-p",
+          "text": "まずはお気軽にご相談ください。"
+        }
+      ],
+      "recordGroups": [
+        {
+          "label": "Five full testimonials",
+          "source": "data/voices-data.ts",
+          "items": [
+            {
+              "author": "Rさん",
+              "year": "2025年度合格",
+              "school": "ハンブルク芸術アカデミー",
+              "department": "ファインアート科（彫刻・インスタレーション）",
+              "quote": "ドイツ美大受験に関しての知識が本当に0の状態でレッスンに申し込ませていただきました。\nそのような状態の自分に、必要な基礎知識から実用的なポートフォリオのアドバイス、実際に現地で高津戸さんが感じられたこと、これまでの生徒さんのサポートで得られた知識など本当に様々な面で根気よくサポートしていただいたと感じています。大学の情報などを一人で細かく一人で調べるとなると、情報の多さに疲弊しきって実際に行動に移すことが\"億劫\"になってしまうこともあると思うので、重要な情報や期限などを表にまとめて下さって共有していただいたのは非常に助かりました。美術などのクリエイティブなことに関わる受験というのは、答案を導き出す練習のようなものとは違い、本人の中にある創造性を見出さなければいけない有機的な作業だと思います。受講している時には、自分の性格や作家としてのタイプも分析していただき、高津戸さんが実際に経験なされたことからなる、クリエイティブ面でのアドバイスも沢山いただけたことは今でも役に立っています。"
+            },
+            {
+              "author": "Kさん",
+              "year": "2025年度合格",
+              "school": "ニュルンベルク芸術アカデミー",
+              "department": "ファインアート科（絵画）",
+              "quote": "2024年の春からドイツ・オーストリアの美大を目指しており、高津戸先生と約一年半ほどコンタクトをとりながら勉強しました。自身のドイツ語やマッペの出来具合に自信がなく2025年度は受験をしようとは考えておりませんでしたが、年明けに先生からとりあえず受けてみようと提案していただき、複数校受験いたしました。マッペを作り上げるのは正直しんどかったですが、夜中でも休日でもレッスンやメールで先生からたくさんのアドバイスをいただいたりして、徐々にマッペが完成していきました。結果、ニュルンベルク芸術アカデミーから合格をいただき、今年受験して本当によかったと思いました。このような経験から、自信がなくても、当たって砕けろ精神でやれば大学から認めてくれることもあるかもしれません。また、寛大にもニュルンベルクアカデミーからドイツ語の証明をとるために入学を延期してもらい、現在絵も描きながら、ドイツ語を重点的に活動しています。ドイツの大学には少なからずそのような対応をしていただけるところがあるかもしれないので、受ける気がなくても受ける価値はあると思いました。"
+            },
+            {
+              "author": "Yさん",
+              "year": "2025年度合格",
+              "school": "ミュンヘン芸術アカデミー",
+              "department": "ファインアート科（彫刻・インスタレーション）",
+              "quote": "もともと作品は制作していましたが、それをどのようにポートフォリオとしてまとめるか、また自分のコンセプトをどう伝えればよいのかについて多くのアドバイスをいただきました。レッスンを重ねる中で、自分の作品を客観的に見つめ直すことができ、結果的に自信を持って提出できる形に仕上がったと思います。また、過去の実績から得られた各大学の特徴や受験に関する豊富な情報を教えていただけたことで、大学選びの判断材料となり、実際の受験時にも大いに役立ちました。今回合格できたのは、作品への指導だけでなく、受験全体を見据えた具体的なサポートのおかげです。これからも制作活動を続け、新しい環境で学びを深めていきたいと思います。"
+            },
+            {
+              "author": "Yさん",
+              "year": "2025年度合格",
+              "school": "マインツ美術大学",
+              "department": "ファインアート科（絵画）",
+              "quote": "ドイツの美大を目指し始めた頃から、レッスンを受けています。作品のフィードバックでは、今の作品をより一層発展させるにはどうしたらよいかを一緒に考えてくださるので、アイデアを豊かに膨らませることができました。一人で制作していると、不安に押しつぶされそうになることもありましたが、レッスン以外にメールでも相談に乗ってくださったので、安心して準備を進めることができました。これからも制作活動を続けていきたいです。本当にお世話になりました！"
+            },
+            {
+              "author": "Hさん",
+              "year": "2025年度合格",
+              "school": "ハンブルク美術大学 / ベルリン芸術大学 / マインツ応用科学大学",
+              "department": "デザイン科 / ヴィジュアルコミュニケーション科 / コミュニケーションデザイン科",
+              "quote": "ドイツ美大受験に関する情報をたくさん教えていただけたことで、レッスンを通して進むべき道筋が見えてきました。また、ポートフォリオは、レッスンを重ねる中で最終的に満足のいく形に仕上げることができて嬉しかったです。テーマ、デザインや構成などの細かいところまで丁寧に見て指導していただきありがたく思っています。受験中は周りで同じようにドイツの美大を目指している人がいなかったため不安もありましたが、先生とのレッスンやメールでのやりとりに本当に支えられました。制作では新しいテーマや制作方法に挑戦でき、受験後の今もレッスンで得た考え方を活かして制作を続けています。"
+            }
+          ]
+        }
+      ],
+      "links": []
+    },
+    {
+      "route": "/faq/",
+      "source": "src/pages/faq/index.astro",
+      "metadata": {
+        "title": "よくある質問 - Pinsel",
+        "description": "ドイツ美大受験・Pinselのレッスンについてのよくある質問。"
+      },
+      "body": [
+        {
+          "source": "src/pages/faq/index.astro",
+          "kind": "PageHeader.title",
+          "text": "よくある質問"
+        },
+        {
+          "source": "src/pages/faq/index.astro",
+          "kind": "PageHeader.description",
+          "text": "Pinselのオンラインクラスやドイツ美大受験に関して、よくいただくご質問をまとめました。"
+        },
+        {
+          "source": "src/pages/faq/index.astro",
+          "kind": "CtaSection.text",
+          "text": "お問い合わせ"
+        },
+        {
+          "source": "src/pages/faq/index.astro",
+          "kind": "CtaSection.subCopy",
+          "text": "上記以外のご質問もお気軽にお問い合わせください。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "受験について"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "ドイツの美術大学の受験時期はいつ頃ですか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "大学により異なりますが、多くの大学は冬学期（10月開始）への入学を受け付けており、出願締切は2月〜5月頃に集中しています。一部の大学では夏学期（4月開始）の募集もあります。志望大学の公式サイトで最新の日程を確認することが大切です。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "マッペ（ポートフォリオ）とは何ですか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "マッペ（Mappe）はドイツ語でポートフォリオのことです。ドイツの美術大学受験では、自分の作品をまとめたマッペの提出が求められます。絵画、彫刻、デザインなど志望する分野に応じた作品を20〜40点程度まとめ、自分の芸術的な方向性や技術力を示します。大学や学科によって求められる内容は異なります。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "日本の美大を出ていなくても受験できますか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "はい、可能です。ドイツの美術大学の入学審査では、学歴よりもマッペ（ポートフォリオ）や実技試験の結果が重視されます。日本で美術系の教育を受けていない方でも、十分な作品力があれば合格できます。実際にPinselの受講生の中にも、美術系以外の大学出身で合格された方がいらっしゃいます。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "複数の大学を同時に受験することは可能ですか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "はい、可能です。出願時期が重ならない限り、複数の大学に出願することができます。むしろ、合格の可能性を高めるために複数校の受験をお勧めしています。レッスンでは、志望校の選定から各大学に合わせたマッペの調整までサポートいたします。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "受験にはどのくらいの準備期間が必要ですか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "一般的には6ヶ月〜1年程度の準備期間を推奨しています。ただし、既にある程度の作品制作経験がある方は、より短い期間でも準備が可能な場合があります。マッペの完成度に加え、ドイツ語の習得にも時間がかかるため、早めに準備を始めることをお勧めします。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "高校卒業後の渡独、応募資格について"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "ドイツの美術大学は応募資格について一定の規定がなく、各大学・専攻する科により規定が異なります。ケースバイケースですので明確にお答えする事はできませんが、お問い合わせいただいた方の経歴をお伺いした上でアドバイスをさせていただいております。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "志望校はいつ決めたら良いですか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "受講前に志望校や専攻も定まっていない方が殆どで、志望校はみなさん受験の直前、秋冬ごろにお決めになります。受験直前の作品スタイル、受験中の結果次第でもみなさんの志望校は変わっていきます。受講中は大学のリストや各大学の受験情報について最新の情報を共有しています。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "レッスンについて"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "レッスンはどのように行われますか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "すべてオンライン（Zoom）で行います。完全マンツーマンの個別指導で、お一人おひとりの状況や目標に合わせてカリキュラムを組みます。マッペの添削、コンセプトの相談、志望校選びの相談など、受験に関するあらゆるサポートを行います。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "レッスンの頻度はどのくらいですか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "コースにより異なりますが、基本的には週1回〜2週に1回程度です。受験直前は頻度を上げることも可能です。レッスン以外でも、メールでの質問やマッペの添削を随時受け付けています。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "海外からでも受講できますか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "はい、オンラインレッスンですので世界中どこからでも受講可能です。すでにドイツに渡航されている方も、日本にいながら準備を進めたい方も、同じように受講いただけます。時差のある地域の方にも柔軟に対応いたします。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "レッスンの振り替えはできますか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "はい、事前にご連絡いただければ振り替えが可能です。急な予定変更にも柔軟に対応いたしますので、お気軽にご相談ください。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "ドイツ美大受験を目指していなくても、クラスは受講できますか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "はい、美術を学びたい方はどなたでもご参加いただけます。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "ドイツ語について"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "受験にはどのくらいのドイツ語力が必要ですか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "大学や学科によって異なりますが、出願時にB1〜B2レベルのドイツ語証明を求められることが一般的です。ファインアート系は比較的語学要件が緩やかで、デザイン系はやや高い語学力を求められる傾向があります。入学後にドイツ語をさらに学ぶことを条件に入学許可が出るケースもあります。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "Pinselでドイツ語のレッスンは受けられますか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "Pinselは美大受験のための実技（マッペ）指導に特化しています。ドイツ語については、志望大学で必要な語学レベルの情報提供や、語学学校の紹介などは行っていますが、ドイツ語そのもののレッスンは行っておりません。信頼できるドイツ語学校をご紹介することは可能です。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "ドイツ語がまったくできなくても受講を始められますか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "はい、始められます。レッスンはすべて日本語で行いますので、ドイツ語の知識がなくても問題ありません。受験準備と並行してドイツ語の学習を進めていくことをお勧めしています。必要なドイツ語レベルや学習の進め方についてもアドバイスいたします。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "費用・申し込みについて"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "受講料の支払い方法を教えてください。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "お申し込み確定後、請求書をお送りいたします。お支払いは銀行振込でお願いしております。コースの詳細や料金については、お問い合わせいただいた後にご案内いたします。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "キャンセルや返金は可能ですか？"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "契約成立日から2週間後まで返金を受け付けております。詳しくはお問い合わせページの特定商取引法に基づく表記をご確認ください。"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "個人的に受験までのスケジュールを相談をしたい"
+        },
+        {
+          "source": "data/faq-data.ts",
+          "kind": "faq",
+          "text": "興味があるドイツ美大について知りたい・ドイツ美大の学位のシステムなどを知りたい・個人的に疑問点などを相談してみたいという方には有料進路相談のご利用をお勧めいたします。お話を伺いながら、ご自身のお仕事や学業にあった渡独計画のアドバイスをします。"
+        },
+        {
+          "source": "components/cta-section/cta-section.astro",
+          "kind": "static-p",
+          "text": "まずはお気軽にご相談ください。"
+        }
+      ],
+      "recordGroups": [],
+      "links": []
+    },
+    {
+      "route": "/contact/",
+      "source": "src/pages/contact/index.astro",
+      "metadata": {
+        "title": "お問い合わせ - Pinsel",
+        "description": "ドイツ美大受験オンラインクラスPinselへのお問い合わせ。まずはお気軽にご相談ください。"
+      },
+      "body": [
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "static-h2",
+          "text": "お申し込みの流れ"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "static-summary",
+          "text": "特定商取引法に基づく表記"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "PageHeader.title",
+          "text": "お問い合わせ"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "PageHeader.description",
+          "text": "クラス受講をご検討中の方、ドイツ美大受験に関するご質問がおありの方は、ささいなことでも是非お気軽にお問い合わせください。"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-steps",
+          "text": "フォームからご連絡ください"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-steps",
+          "text": "ご返信"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-steps",
+          "text": "通常2〜3営業日以内にメールにてご返信"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-steps",
+          "text": "コース選択"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-steps",
+          "text": "ご希望に応じてコースをお選びいただけます"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-steps",
+          "text": "お支払い"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-steps",
+          "text": "お申し込み確定後、請求書をお送りします"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-steps",
+          "text": "レッスン開始"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-steps",
+          "text": "日程を調整し、レッスンスタートです"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "名称"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "ドイツ美大受験準備オンラインクラス Pinsel"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "URL"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "https://pinsel-germany.com"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "代表者名"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "高津戸 優子"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "所在地"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "〒150-0043 東京都渋谷区道玄坂1丁目10番8号 渋谷道玄坂東急ビル2F-C"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "電話番号"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "050-6863-1645"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "価格"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "HP記載の税込価格"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "お支払方法"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "銀行振り込み"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "キャンセル"
+        },
+        {
+          "source": "src/pages/contact/index.astro",
+          "kind": "literal-tokushoho",
+          "text": "契約成立日から2週間後まで返金受付"
+        },
+        {
+          "source": "components/contact-form/contact-form.tsx",
+          "kind": "form-label",
+          "text": "お名前"
+        },
+        {
+          "source": "components/contact-form/contact-form.tsx",
+          "kind": "form-label",
+          "text": "メールアドレス"
+        },
+        {
+          "source": "components/contact-form/contact-form.tsx",
+          "kind": "form-label",
+          "text": "ご希望のコース"
+        },
+        {
+          "source": "components/contact-form/contact-form.tsx",
+          "kind": "form-label",
+          "text": "ご相談内容"
+        },
+        {
+          "source": "components/contact-form/contact-form.tsx",
+          "kind": "form-option",
+          "text": "未定"
+        },
+        {
+          "source": "components/contact-form/contact-form.tsx",
+          "kind": "form-option",
+          "text": "有料進路相談"
+        },
+        {
+          "source": "components/contact-form/contact-form.tsx",
+          "kind": "form-option",
+          "text": "2ヶ月コース"
+        },
+        {
+          "source": "components/contact-form/contact-form.tsx",
+          "kind": "form-option",
+          "text": "4ヶ月コース"
+        },
+        {
+          "source": "components/contact-form/contact-form.tsx",
+          "kind": "form-ui",
+          "text": "必須"
+        },
+        {
+          "source": "components/contact-form/contact-form.tsx",
+          "kind": "form-ui",
+          "text": "送信する"
+        }
+      ],
+      "recordGroups": [],
+      "links": []
+    },
+    {
+      "route": "/notes/",
+      "source": "src/pages/notes/index.astro",
+      "metadata": {
+        "title": "Notes - Pinsel",
+        "description": "ドイツ美大受験に関するノート・記事一覧"
+      },
+      "body": [
+        {
+          "source": "src/pages/notes/index.astro",
+          "kind": "PageHeader.description",
+          "text": "ドイツ美大受験に関する情報をまとめたノートです。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-card",
+          "text": "ドイツ美大受験の時期"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-card",
+          "text": "ドイツの美大受験はいつ頃行われるのか？受験スケジュール、準備の目安、入学時期について詳しく解説します。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-card",
+          "text": "ドイツの美大は学費が無料"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-card",
+          "text": "ドイツの国立美術大学は学費がほぼ無料。ゼメスターチケットの仕組み、生活費の目安、オーストリアの美大についても解説します。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-card",
+          "text": "ドイツ語学習について"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-card",
+          "text": "ドイツ美大受験に必要なドイツ語について解説。必要な語学レベル、習得の目安時間、学習方法、語学学校の選び方を紹介します。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-card",
+          "text": "オンラインでのドイツ美大受験"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-card",
+          "text": "コロナ以降、ドイツの美大受験はオンラインで可能に。オンライン受験の仕組み、メリット、日本にいながら準備する方法を解説します。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-card",
+          "text": "マッペ（ポートフォリオ）とは"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-card",
+          "text": "ドイツ美大受験に必須の「マッペ（Mappe）」について解説。日本のポートフォリオとの違い、求められる内容、準備のポイントを紹介します。"
+        }
+      ],
+      "recordGroups": [],
+      "links": [
+        {
+          "href": "/notes/exam-schedule/",
+          "kind": "article-link"
+        },
+        {
+          "href": "/notes/free-tuition/",
+          "kind": "article-link"
+        },
+        {
+          "href": "/notes/german-language/",
+          "kind": "article-link"
+        },
+        {
+          "href": "/notes/online-exam/",
+          "kind": "article-link"
+        },
+        {
+          "href": "/notes/what-is-mappe/",
+          "kind": "article-link"
+        }
+      ]
+    },
+    {
+      "route": "/notes/exam-schedule/",
+      "source": "src/pages/notes/[slug].astro",
+      "metadata": {
+        "title": "ドイツ美大受験の時期 - Pinsel Notes",
+        "description": "ドイツの美大受験はいつ頃行われるのか？受験スケジュール、準備の目安、入学時期について詳しく解説します。"
+      },
+      "body": [
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-title",
+          "text": "ドイツ美大受験の時期"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-description",
+          "text": "ドイツの美大受験はいつ頃行われるのか？受験スケジュール、準備の目安、入学時期について詳しく解説します。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美大受験を検討している方から、「受験はいつ頃ですか？」「いつから準備を始めればいいですか？」というご質問をよくいただきます。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "日本の大学受験とは時期もプロセスも大きく異なるため、最初は戸惑うことが多いかもしれません。この記事では、ドイツの美大受験のスケジュールと準備の目安についてお伝えします。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "受験時期は11月〜6月"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美大受験は、通常11月頃から始まり、一番遅い大学では翌年6月頃まで実施されます。日本のように「1月〜3月に集中する」というわけではなく、大学ごとに受験時期が異なるのが特徴です。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "ドイツの大学は10月に入学（冬学期開始）が基本ですので、受験から入学までのおおまかな流れは以下のようになります。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "11月〜翌2月頃: 早めの大学の出願・書類選考\n2月〜4月頃: 多くの大学の出願締め切り・実技試験\n4月〜6月頃: 遅い大学の受験・合格発表\n10月: 入学（冬学期開始）"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "ただし、これはあくまで一般的な目安であり、大学や専攻によってスケジュールは異なります。志望校のウェブサイトで最新の日程を確認することが大切です。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "複数校の併願が一般的"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美大受験では、複数の大学を併願することが一般的です。受験時期が大学ごとに異なるため、スケジュールを上手に組み合わせれば、複数の大学を受験できます。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "自分の経験やこれまで指導してきた生徒さんの例からいうと、3〜5校程度を併願する方が多い印象です。志望度の高い大学だけに絞るのではなく、複数校を受けることで合格の可能性を高めることができます。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "また、ドイツの大学とオーストリアの大学を併願することも可能です。受験時期が異なる場合が多いため、選択肢を広げる良い方法だと考えています。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "いつから準備を始めるべきか"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "「ドイツ美大受験の準備はいつから始めればいいのか」という問いに対しては、「早ければ早いほど良い」というのが正直な感想です。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "理想をいえば、受験の1年〜1年半前から準備を始めることをお勧めします。マッペ（ポートフォリオ）の制作とドイツ語の学習を並行して進める必要があるため、余裕のあるスケジュールが重要です。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "具体的な目安としては、以下のようなイメージです。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "美術初心者の方、高校卒業直後の方: 1年〜1年半前から準備開始\n美大卒の方、制作経験のある方: 半年〜1年前から準備開始\nドイツ語をゼロから始める方: さらに余裕を持ったスケジュールが必要"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "受験前年の年末までに目指したい状態"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "受験のスケジュールを逆算すると、受験前年の年末（12月頃）までには、以下の状態になっているのが理想的です。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "マッペの作品の方向性がある程度固まっていること\nドイツ語でコミュニケーションが取れる状態になっていること（最低A2〜B1レベル）\n志望校の候補が絞られていること"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "もちろん、これは理想であり、すべてが完璧に整っている必要はありません。受験の直前まで作品を改善し続けることは珍しくありませんし、志望校が受験中に変わることもあります。大切なのは、早めに動き始めて、余裕を持って準備を進めることです。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "志望校はいつ決めるのか"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "Pinselの受講生の中で、受講前から志望校が明確に決まっている方は少数です。多くの方は、レッスンを通じて自分の作品の方向性を見つけながら、徐々に志望校を絞っていきます。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "志望校は受験の直前、秋冬ごろに最終決定する方が多い印象です。また、受験中に結果を見ながら受験校を調整することもあります。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "最初から志望校を一つに決める必要はありません。まずはドイツの美大全体について知り、自分の作品の方向性を探りながら、少しずつ志望校を絞っていくのが自然な流れだと考えています。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "受験の準備で大切なこと"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "受験のスケジュールを把握して早めに動き始めること、これが最も大切なことだと日々感じています。ドイツ美大受験は日本の受験とはプロセスが大きく異なるため、「まだ先のことだから」と後回しにしてしまうと、準備が間に合わなくなることもあります。"
+        },
+        {
+          "source": "src/notes/exam-schedule.mdx",
+          "kind": "article-block",
+          "text": "ドイツ美大受験のスケジュールや準備について、個別にご相談されたい方は、ぜひお問い合わせください。"
+        }
+      ],
+      "recordGroups": [],
+      "links": [
+        {
+          "href": "/notes/free-tuition/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/german-language/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/online-exam/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/what-is-mappe/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/contact/",
+          "kind": "article-contact"
+        }
+      ]
+    },
+    {
+      "route": "/notes/free-tuition/",
+      "source": "src/pages/notes/[slug].astro",
+      "metadata": {
+        "title": "ドイツの美大は学費が無料 - Pinsel Notes",
+        "description": "ドイツの国立美術大学は学費がほぼ無料。ゼメスターチケットの仕組み、生活費の目安、オーストリアの美大についても解説します。"
+      },
+      "body": [
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-title",
+          "text": "ドイツの美大は学費が無料"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-description",
+          "text": "ドイツの国立美術大学は学費がほぼ無料。ゼメスターチケットの仕組み、生活費の目安、オーストリアの美大についても解説します。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美術大学に興味を持つ方の多くが、最初に驚かれるのが「学費が無料」という点ではないでしょうか。海外の美大で学びたいけれど、年間何百万円もの学費は現実的ではない——そのように感じている方にとって、ドイツは非常に魅力的な選択肢です。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "この記事では、ドイツの美大の学費の仕組みや、実際にかかる費用について詳しくお伝えします。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "ドイツの国立美大は学費が無料"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "ドイツの国立の美術大学は、学費が無料です。正確にいうと、学期ごとに「ゼメスターチケット」と呼ばれる費用を支払いますが、これは半年で約3万円程度です。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "「え？ これが学費？」と思われるかもしれませんが、このゼメスターチケットには多くの特典が含まれています。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "市内の公共交通機関（バス・電車・トラム）の乗り放題パス\n市内の美術館への無料・割引入場\n大学の施設（図書館、工房、アトリエなど）の利用"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "日本の美大の学費が年間100万円〜200万円程度かかることを考えると、ドイツの美大の費用はほぼ無料といっても過言ではないと感じています。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "なぜ学費が無料なのか"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "ドイツでは、教育は「公共の利益」として位置づけられています。大学教育は州が運営しており、学費を徴収しないことが基本方針となっています。これはドイツ国籍の学生だけでなく、留学生にも適用されます。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "ただし、バーデン＝ヴュルテンベルク州のみ、2017年からEU圏外の留学生に対して学費（1学期あたり約1,500ユーロ）を設定しています。それでも、他の国の美大と比較すると非常に安い水準です。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "ドイツでの生活費の目安"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "学費が無料とはいえ、現地での生活費は当然かかります。生活費の目安としては、以下のようなイメージです。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "家賃: 月400〜700ユーロ程度（都市により異なる）\n食費: 月200〜300ユーロ程度\n健康保険: 月約110ユーロ（学生向け公的保険）"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "合計すると月800〜1,100ユーロ程度が一般的かと思います。ベルリンやミュンヘンなど大都市は家賃が高めですが、それでも東京と比較すると同程度か、やや安い印象があります。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "また、ドイツでは学生ビザを持っていればアルバイト（ミニジョブ）が可能です。月額約450ユーロ程度まで非課税で働くことができるため、生活費の一部を現地で補うこともできます。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "ドイツの暮らしやすさ"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "自分がドイツに10年間住んでいた経験からいうと、ドイツは欧州の中でも比較的物価が安く、治安も良いため、留学先として非常に住みやすい国だと感じています。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "美術館やギャラリーが数多くあり、常に国際的なアート作品に触れることができます。また、ドイツはヨーロッパの中央に位置しているため、隣国への旅行も手軽にできます。フランス、オランダ、イタリア、チェコなど、様々な国の文化やアートに触れられることは、アーティストにとって大きな刺激になるのではないでしょうか。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "オーストリアの美大も選択肢に"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "ドイツ語圏であるオーストリアの美術大学も、学費が非常に安いことをご存じでしょうか。ウィーン芸術大学やリンツ工科造形芸術大学など、優れた美術大学があり、Pinselからも毎年進学者がいます。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "オーストリアの美大は、ドイツの美大と受験時期が異なることも多いため、ドイツの美大と併願しやすいという利点もあります。選択肢を広げる意味でも、オーストリアの美大を検討してみることをお勧めします。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "学費を理由に諦めないでほしい"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "海外の美大で美術を学んで経験を積みたいけれど、年間何百万円もの学費を払うのは現実的ではない——そのような方にこそ、ドイツ美大進学をお勧めしたいと考えています。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "学費がほぼ無料であること、生活費も他の欧米諸国と比較して抑えられること、そしてアートが盛んな環境で学べること。これらの条件が揃っているドイツは、美術を学びたい方にとって理想的な留学先ではないかと感じています。"
+        },
+        {
+          "source": "src/notes/free-tuition.mdx",
+          "kind": "article-block",
+          "text": "ドイツ美大受験に興味をお持ちの方は、ぜひお気軽にお問い合わせください。"
+        }
+      ],
+      "recordGroups": [],
+      "links": [
+        {
+          "href": "/notes/exam-schedule/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/german-language/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/online-exam/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/what-is-mappe/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/contact/",
+          "kind": "article-contact"
+        }
+      ]
+    },
+    {
+      "route": "/notes/german-language/",
+      "source": "src/pages/notes/[slug].astro",
+      "metadata": {
+        "title": "ドイツ語学習について - Pinsel Notes",
+        "description": "ドイツ美大受験に必要なドイツ語について解説。必要な語学レベル、習得の目安時間、学習方法、語学学校の選び方を紹介します。"
+      },
+      "body": [
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-title",
+          "text": "ドイツ語学習について"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-description",
+          "text": "ドイツ美大受験に必要なドイツ語について解説。必要な語学レベル、習得の目安時間、学習方法、語学学校の選び方を紹介します。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美大に興味を持った方が最初に気になることの一つが、「ドイツ語ができないと受験できないのか？」という点ではないでしょうか。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "結論からいうと、僅かな例外を除き、ドイツ美大の受験にはドイツ語の習得が必須です。この記事では、ドイツ語の必要性、求められるレベル、学習方法についてお伝えします。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "ドイツ語はなぜ必要なのか"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美大を受験し、現地で学び生活するためには、ドイツ語ができることが大前提となります。各大学の情報をチェックすること、試験を受けること、教授や学生とコミュニケーションを取ること——すべてにおいてドイツ語が必要です。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "「英語ができれば大丈夫では？」と思われる方もいらっしゃるかもしれませんが、年々、語学力が入学条件として厳しく求められる傾向にあります。語学証明が提出できなければ、英語ができても応募資格がない大学がほとんどです。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "ドイツ語ができればできるほど選択肢は広がりますので、余裕を持ってドイツ語の勉強を開始することをお勧めします。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "ドイツ語のレベル体系"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "ドイツ語にはA1からC2までの6段階のレベルがあります。A1が初心者レベル、C2が最上級レベルです。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "A1: 基本的な挨拶や自己紹介ができるレベル\nA2: 日常生活の簡単な会話ができるレベル\nB1: 日常的な話題について会話や文章作成ができるレベル\nB2: 専門的な話題についてもある程度理解・議論できるレベル\nC1: 高度な文章や議論に対応できるレベル\nC2: ネイティブに近い能力を持つレベル"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "ドイツの一般大学を受験するにはC1やC2レベルが必要になり、語学の勉強だけに2〜3年かかる方もいらっしゃるほどです。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "美大受験に必要な語学レベル"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "美大受験の場合は、一般大学ほど高い語学力が求められないことが多いです。とはいえ、大学・専攻によって求められるレベルは様々です。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "おおまかに分類すると、以下のような傾向があります。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "英語やドイツ語でコミュニケーションが取れれば、語学証明が不要な大学（僅か）\n受験時はA2、入学時にB1レベルの証明があれば良い大学\nC1レベルのドイツ語証明が必要な大学"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "一般的に、ファインアート（絵画、彫刻など）よりもデザイン系の専攻の方が、高い語学力を求められる傾向があります。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "受験時と入学時で求められるレベルが異なる場合もあり、「受験時にはA2で受験できるが、入学までにB1を取得する必要がある」というケースも少なくありません。合格後に語学レベルの証明を提出するまでの猶予期間が設けられている大学もあります。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "ドイツ語習得の目安時間"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "それでは、具体的にドイツ語の習得にはどのくらいの時間が必要なのでしょうか。現地の語学学校の授業時間を目安にすると、以下のようなイメージです。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "グループレッスン（現地の語学学校にオンラインで参加する場合）では、1つのレベルを修了するまでに約120時間かかります。1日3時間の授業を週5日受けて、約2ヶ月間（7〜8週間）が目安です。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "マンツーマンレッスンであれば、もう少し短い時間で各レベルを修了できることもあります。ただし、実際の習得速度は個人差が大きいため、あくまで目安として考えていただければと思います。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "A1からB1まで到達するには、集中的に学習しても半年程度はかかると考えておいた方が良いでしょう。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "現地の語学学校にオンラインで参加"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "コロナ以降、ドイツ現地の語学学校がオンラインでの受講を受け入れるようになりました。日本にいながら、ドイツの語学学校のグループレッスンに参加できます。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "時差の関係で日本時間の夕方〜夜の授業になることが多いですが、学業やお仕事をしながら受講できるスケジュールです。現地の語学学校で学ぶメリットは、ドイツの文化や生活に関する情報も得られることです。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "マンツーマンのオンラインレッスン"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "自分のペースで学びたい方には、マンツーマンのオンラインレッスンもお勧めです。グループレッスンよりも費用は高くなりますが、自分の弱点に集中して効率的に学習できます。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "独学との組み合わせ"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "語学学校やオンラインレッスンだけでなく、教材やアプリを使った独学と組み合わせることも大切です。特に語彙の学習や文法の復習は、自習の時間を確保することで定着が早まります。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "ドイツ語学習と受験準備の両立"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "ドイツ美大受験の準備では、マッペ（ポートフォリオ）の制作とドイツ語の学習を並行して進めることが求められます。どちらか一方に偏ってしまうと、受験直前に慌てることになりかねません。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "Pinselの受講生には、ドイツ語の学習計画についてもアドバイスをしています。ご本人の状況に合わせて、語学学校の紹介（紹介料無料）も行っていますので、ドイツ語の学習にお悩みの方もお気軽にご相談ください。"
+        },
+        {
+          "source": "src/notes/german-language.mdx",
+          "kind": "article-block",
+          "text": "余裕を持ってドイツ語の勉強を始めることが、ドイツ美大受験成功への大きな一歩だと考えています。ドイツ語学習について個別にご相談されたい方は、ぜひお問い合わせください。"
+        }
+      ],
+      "recordGroups": [],
+      "links": [
+        {
+          "href": "/notes/exam-schedule/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/free-tuition/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/online-exam/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/what-is-mappe/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/contact/",
+          "kind": "article-contact"
+        }
+      ]
+    },
+    {
+      "route": "/notes/online-exam/",
+      "source": "src/pages/notes/[slug].astro",
+      "metadata": {
+        "title": "オンラインでのドイツ美大受験 - Pinsel Notes",
+        "description": "コロナ以降、ドイツの美大受験はオンラインで可能に。オンライン受験の仕組み、メリット、日本にいながら準備する方法を解説します。"
+      },
+      "body": [
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-title",
+          "text": "オンラインでのドイツ美大受験"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-description",
+          "text": "コロナ以降、ドイツの美大受験はオンラインで可能に。オンライン受験の仕組み、メリット、日本にいながら準備する方法を解説します。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "以前はドイツの美大を受験するためには現地に行く必要がありましたが、コロナ以降、多くの大学でオンライン受験が可能になりました。この変化は、日本からドイツ美大進学を目指す方にとって、非常に大きな追い風だと感じています。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "この記事では、オンラインでのドイツ美大受験の仕組みや、日本にいながら準備を進める方法についてお伝えします。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "コロナがもたらした大きな変化"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "2020年以前、ドイツの美大受験は基本的に現地で行われていました。マッペ（ポートフォリオ）のオリジナル作品をドイツに持参または郵送し、実技試験や面接も大学のキャンパスで受ける必要がありました。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "そのため、受験のためだけにドイツへ渡航する必要があり、費用面でも時間面でもハードルが高かったのです。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "しかし、コロナ禍を機に多くの大学がオンラインでの受験を導入しました。そして、コロナが収束した現在でも、オンライン受験の仕組みを継続している大学が多くあります。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "オンライン受験の一般的な流れ"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "オンライン受験の具体的な流れは大学によって異なりますが、多くの場合、以下のようなプロセスです。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "マッペ（ポートフォリオ）をPDFで提出\n書類選考（出願書類、志望動機書など）\nオンラインでの面接・プレゼンテーション\n場合によっては、自宅での実技課題の提出"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "以前はオリジナル作品の実物をドイツに郵送する必要がありましたが、PDFでの提出が認められるようになったことで、準備の手間やコストが大幅に削減されました。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "ただし、すべての大学がオンライン受験に対応しているわけではありません。一部の大学では、いまだに現地での受験を求める場合もあるため、志望校の最新の応募要項を確認することが重要です。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "日本にいながら準備できる環境"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "オンライン受験の普及に加えて、ドイツ語の学習もオンラインで可能になっています。現地ベルリンの語学学校にオンラインで参加できるプログラムや、マンツーマンのオンラインレッスンなど、日本にいながらドイツ語を学ぶ選択肢が増えています。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "つまり、マッペの制作、ドイツ語の学習、そして受験そのものまで、日本にいながらすべてを完結できる環境が整ったということです。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "Pinselも2020年からオンラインクラスを本格的に開始し、早5年が経ちました。この間、多くの生徒さんが日本にいながらドイツの美術大学に合格しています。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "オンライン面接で気をつけること"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "オンライン受験の中で、多くの方が緊張されるのが面接（Interview）です。面接はドイツ語で行われることがほとんどで、自分の作品について説明し、教授からの質問に答える必要があります。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "面接で重視されるのは、完璧なドイツ語ではなく、自分の作品や制作への考え方を伝えられるかどうかです。教授たちは、受験者が外国人であることを理解していますので、多少のドイツ語の間違いよりも、制作に対する情熱や考え方の方を重視していると感じています。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "とはいえ、最低限のコミュニケーション能力は必要です。作品についての基本的な説明や、「なぜこの大学で学びたいのか」「どのような制作をしたいのか」といった質問に答えられるよう、事前に準備しておくことをお勧めします。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "デッサン力より大切なこと"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "ドイツ美大受験では、デッサン力や技術力よりも、その人のクリエイティブさ、興味、制作への取り組み方が重視されます。これは日本の美大受験とは大きく異なる点です。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "「美術の経験がないから受験できないのでは？」と心配される方もいらっしゃいますが、経験の有無に関わらずチャレンジする価値があると考えています。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "実際に、美術の専門教育を受けていない方がドイツの美大に合格した例は少なくありません。大切なのは、自分なりの視点を持ち、制作に真摯に取り組む姿勢です。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "オンラインだからこそ広がる可能性"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "オンライン受験の普及により、ドイツ美大受験のハードルは以前よりも確実に下がったと感じています。渡航費用、長期滞在の必要性、オリジナル作品の郵送リスク——これらの障壁が取り除かれたことで、より多くの方がドイツ美大受験に挑戦できるようになりました。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "一方で、オンラインだからこそ、マッペの質やプレゼンテーション能力がより重視される傾向にあるとも感じています。実物の作品を見せる機会が減った分、PDFのポートフォリオでいかに自分の作品の魅力を伝えるかが重要になっています。"
+        },
+        {
+          "source": "src/notes/online-exam.mdx",
+          "kind": "article-block",
+          "text": "オンラインでのドイツ美大受験について詳しく知りたい方は、ぜひお問い合わせください。"
+        }
+      ],
+      "recordGroups": [],
+      "links": [
+        {
+          "href": "/notes/exam-schedule/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/free-tuition/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/german-language/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/what-is-mappe/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/contact/",
+          "kind": "article-contact"
+        }
+      ]
+    },
+    {
+      "route": "/notes/what-is-mappe/",
+      "source": "src/pages/notes/[slug].astro",
+      "metadata": {
+        "title": "マッペ（ポートフォリオ）とは - Pinsel Notes",
+        "description": "ドイツ美大受験に必須の「マッペ（Mappe）」について解説。日本のポートフォリオとの違い、求められる内容、準備のポイントを紹介します。"
+      },
+      "body": [
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-title",
+          "text": "マッペ（ポートフォリオ）とは"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-description",
+          "text": "ドイツ美大受験に必須の「マッペ（Mappe）」について解説。日本のポートフォリオとの違い、求められる内容、準備のポイントを紹介します。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美大受験について調べていると、「マッペ（Mappe）」という言葉に出会うかと思います。マッペとは、ポートフォリオ・作品集のことで、ドイツの美大受験では最も重要な提出物の一つです。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "この記事では、マッペとは何か、日本のポートフォリオとどう違うのか、そしてどのように準備すればいいのかについてお伝えします。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "マッペとは"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "マッペ（Mappe）はドイツ語で「フォルダー」「ファイル」を意味する言葉ですが、美大受験の文脈では「ポートフォリオ」「作品集」のことを指します。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美大受験では、ほぼすべての大学・専攻でマッペの提出が求められます。日本の美大受験のように試験当日に描いた作品のみで合否が決まるわけではなく、事前に提出するマッペの内容が合否に大きく影響します。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "日本のポートフォリオとの違い"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "日本の美大受験をご経験された方は、「ポートフォリオなら作ったことがある」と思われるかもしれません。ただ、ドイツの美大で求められるマッペは、日本のポートフォリオとはかなり異なるものです。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "日本のポートフォリオは、完成度の高い作品を見栄えよくまとめるという印象があるかと思います。一方、ドイツのマッペでは、完成作品だけでなく、制作のプロセスや思考の過程を見せることが重視される傾向があります。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "つまり、「きれいにまとまった作品集」というよりも、「この人がどのように考え、どのような興味を持ち、どのように制作に取り組んでいるのか」が伝わるものが求められるということです。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "大学・専攻によって求められる内容が異なる"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美大受験で注意すべき点として、大学や専攻ごとに求められるマッペの内容が大きく異なるということが挙げられます。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "たとえば、絵画科であればスケッチやドローイング、油彩作品などが中心になりますし、デザイン科であればプロジェクトの企画から完成までのプロセスを示すことが求められることもあります。彫刻やインスタレーション系の専攻であれば、立体作品の写真や制作過程のドキュメントが重要になります。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "また、マッペの形式も大学によって異なります。A3やA2サイズの紙にまとめて実物を郵送する大学もあれば、PDFで提出する大学もあります。各大学のウェブサイトで応募要項を確認することが大切です。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "コロナ以降の変化"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "コロナ禍前は、オリジナル作品の実物をドイツに郵送して提出することが一般的でした。しかし、2020年以降、多くの大学でPDFポートフォリオの提出が認められるようになりました。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "この変化により、日本にいながらマッペを提出できるようになったことは、受験生にとって大きなメリットだと感じています。郵送の手間やコスト、作品の破損リスクなどを心配する必要がなくなりました。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "ただし、一部の大学ではいまだにオリジナル作品の提出を求める場合もあるため、志望校の最新の応募要項を確認することが重要です。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "マッペ準備のポイント"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "マッペの準備で大切なのは、自分の作品の方向性やテーマを見つけることです。技術的な完成度だけを追い求めるのではなく、「自分は何に興味があるのか」「どのような表現をしたいのか」を自分自身と向き合いながら探っていく作業が求められます。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "Pinselのオンラインクラスでは、まず過去に合格した生徒さんのマッペを見ながら、ドイツの美大が何を求めているのかを理解するところから始めます。そこから基礎的な課題（構図の取り方、抽象と具象の考え方など）を通じて、少しずつ自分のテーマを見つけていきます。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "マッペの制作は一朝一夕にできるものではありません。余裕を持って準備を始めることをお勧めします。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "デッサン力だけでは合格できない"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美大受験で日本の受験と大きく異なる点の一つが、デッサン力や技術力だけでは合格できないということです。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "ドイツの美大は、受験者のクリエイティブさ、独自の視点、制作への取り組み方を重視します。「上手に描ける」ことよりも、「何を考えて描いているのか」「なぜそれを作りたいのか」が問われます。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "これは、これまで美術の経験がない方にとっても良いニュースです。技術的なスキルは練習で身につきますが、ドイツの美大受験では、その人自身の個性や興味が最も大切にされるからです。"
+        },
+        {
+          "source": "src/notes/what-is-mappe.mdx",
+          "kind": "article-block",
+          "text": "ドイツ美大受験やマッペの準備について詳しく知りたい方は、ぜひお問い合わせください。"
+        }
+      ],
+      "recordGroups": [],
+      "links": [
+        {
+          "href": "/notes/exam-schedule/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/free-tuition/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/german-language/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/notes/online-exam/",
+          "kind": "all-notes-link"
+        },
+        {
+          "href": "/contact/",
+          "kind": "article-contact"
+        }
+      ]
+    },
+    {
+      "route": "/404.html",
+      "source": "src/pages/404.astro",
+      "metadata": {
+        "title": "ページが見つかりません - Pinsel"
+      },
+      "body": [
+        {
+          "source": "src/pages/404.astro",
+          "kind": "static-h1",
+          "text": "ページが見つかりません"
+        },
+        {
+          "source": "src/pages/404.astro",
+          "kind": "static-p",
+          "text": "お探しのページは存在しないか、移動した可能性があります。"
+        },
+        {
+          "source": "src/pages/404.astro",
+          "kind": "static-a",
+          "text": "トップページに戻る"
+        }
+      ],
+      "recordGroups": [],
+      "links": [
+        {
+          "href": "/",
+          "kind": "return-home"
+        }
+      ]
+    }
+  ]
+}

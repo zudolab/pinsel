@@ -1,0 +1,102 @@
+---
+export type Step = {
+  number: number;
+  title: string;
+  description: string;
+};
+
+interface Props {
+  steps: Step[];
+}
+
+const { steps } = Astro.props;
+---
+<>
+  {/* Mobile: vertical list */}
+  <div class="lg:hidden flex flex-col">
+    {steps.map((step, i) => (
+      <div
+        class:list={[
+          'flex items-center gap-hgap-sm py-vgap-sm',
+          i !== steps.length - 1 && 'border-b border-pd-border/30',
+        ]}
+      >
+        {/* Mobile StepCircle */}
+        {i === steps.length - 1 ? (
+          <div
+            class="flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full shadow-lg"
+            style="background: linear-gradient(135deg, var(--pd-theme-accent), var(--pd-theme-link));"
+          >
+            <span class="font-montserrat text-sm font-black leading-none text-pd-bg">
+              {step.number}
+            </span>
+          </div>
+        ) : (
+          <div class="relative flex h-[36px] w-[36px] shrink-0 items-center justify-center rounded-full bg-white shadow-md">
+            <span
+              class:list={[
+                'font-montserrat text-sm font-black leading-none',
+                i < 2 ? 'text-pd-accent' : 'text-pd-link',
+                i % 2 === 1 && 'opacity-70',
+              ]}
+            >
+              {step.number}
+            </span>
+          </div>
+        )}
+        <div>
+          <p class="text-sm font-bold text-pd-fg">{step.title}</p>
+          <p class="text-xs text-pd-fg">{step.description}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  {/* Desktop: horizontal circles */}
+  <div class="hidden lg:flex relative items-start justify-center">
+    {/* Connector line */}
+    <div
+      class="absolute h-px bg-pd-border/40"
+      style="top: 48px; left: 10%; right: 10%;"
+    ></div>
+
+    {steps.map((step, i) => (
+      <div class="relative z-[1] flex-1 text-center">
+        <div class="mx-auto mb-vgap-sm flex justify-center">
+          {/* Desktop StepCircle */}
+          {i === steps.length - 1 ? (
+            <div
+              class="flex h-[96px] w-[96px] shrink-0 items-center justify-center rounded-full shadow-lg"
+              style="background: linear-gradient(135deg, var(--pd-theme-accent), var(--pd-theme-link));"
+            >
+              <span class="font-montserrat text-xl font-black leading-none text-pd-bg">
+                {step.number}
+              </span>
+            </div>
+          ) : (
+            <div class="relative flex h-[96px] w-[96px] shrink-0 items-center justify-center rounded-full bg-white shadow-md">
+              <span
+                class:list={[
+                  'font-montserrat text-xl font-black leading-none',
+                  i < 2 ? 'text-pd-accent' : 'text-pd-link',
+                  i % 2 === 1 && 'opacity-70',
+                ]}
+              >
+                {step.number}
+              </span>
+              <div
+                class:list={[
+                  'absolute bottom-[4px] right-[4px] h-[16px] w-[16px] rounded-full',
+                  i < 2 ? 'bg-pd-accent' : 'bg-pd-link',
+                  i % 2 === 1 && 'opacity-70',
+                ]}
+              ></div>
+            </div>
+          )}
+        </div>
+        <p class="text-sm font-bold text-pd-fg mb-vgap-2xs">{step.title}</p>
+        <p class="text-xs text-pd-fg leading-relaxed px-hgap-2xs">{step.description}</p>
+      </div>
+    ))}
+  </div>
+</>

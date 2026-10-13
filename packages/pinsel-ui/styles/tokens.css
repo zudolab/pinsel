@@ -1,0 +1,31 @@
+/* Pinsel approved tokens (seed 2026-10-12, prototype/src/styles.css @layer tokens). Values are exact; split so zudo-sg gen-token-manifest reads two files. */
+:root {
+  --font-body: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  --font-display: 'Noto Serif JP', 'Yu Mincho', serif;
+  --font-latin: Georgia, 'Times New Roman', 'Noto Serif JP', serif;
+  --size-caption: .75rem;
+  --size-small: .875rem;
+  --size-body: 1rem;
+  --size-lead: 1.0625rem;
+  --size-subheading: clamp(1.1875rem, 1.1rem + .45vw, 1.5rem);
+  --size-heading: clamp(1.625rem, 1.4rem + 1vw, 2.25rem);
+  --size-title: clamp(2rem, 1.6rem + 2.05vw, 3.375rem);
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4.5rem;
+  --space-9: 6rem;
+  --space-section: clamp(3.5rem, 2.8rem + 3vw, 6rem);
+  --gutter: clamp(1.25rem, .5rem + 3.2vw, 3.5rem);
+  --page-width: 76rem;
+  --reading-width: 43rem;
+  --radius: 0;
+  --header-height: 5.75rem;
+  --header-offset: var(--header-height);
+  --z-header: 20;
+  --z-overlay: 40;
+}

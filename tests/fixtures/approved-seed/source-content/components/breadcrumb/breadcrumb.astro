@@ -1,0 +1,64 @@
+---
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{items.length > 0 && (
+  <nav class="-mt-vgap-md mb-vgap-lg text-xs" aria-label="パンくずリスト">
+    <ol class="flex flex-wrap items-center gap-x-hgap-xs">
+      {items.map((item, i) => (
+        <li class="flex items-center gap-x-hgap-xs">
+          {i > 0 && (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-[1.26rem] w-[1.26rem] shrink-0 text-pd-border"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+              aria-hidden="true"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+            </svg>
+          )}
+          {item.href ? (
+            <a
+              href={item.href}
+              class="flex items-center gap-x-hgap-2xs text-pd-border transition-colors hover:text-pd-muted hover:underline"
+              {...(i === 0 && !item.label ? { 'aria-label': 'ホーム' } : {})}
+            >
+              {i === 0 && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-[1.56rem] w-[1.56rem] shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z"
+                  />
+                </svg>
+              )}
+              {item.label}
+            </a>
+          ) : (
+            <span class="text-pd-muted" aria-current="page">{item.label}</span>
+          )}
+        </li>
+      ))}
+    </ol>
+  </nav>
+)}

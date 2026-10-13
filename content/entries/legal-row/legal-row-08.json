@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "legal-row-08",
+  "modelId": "legal-row",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "legal-row-key": "キャンセル",
+    "legal-row-value": "契約成立日から2週間後まで返金受付",
+    "legal-row-order": 8
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

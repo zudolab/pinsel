@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "nav-lessons",
+  "modelId": "nav-link",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "nav-link-href": "/lessons/",
+    "nav-link-label": "Lessons",
+    "nav-link-header-label": "オンラインクラス",
+    "nav-link-footer-title": "オンラインクラス",
+    "nav-link-footer-description": "マッペ制作から出願まで完全マンツーマンサポート",
+    "nav-link-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

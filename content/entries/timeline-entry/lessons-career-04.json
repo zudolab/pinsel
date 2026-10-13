@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "lessons-career-04",
+  "modelId": "timeline-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "timeline-entry-timeline": "lessons-career",
+    "timeline-entry-year": "2010〜2014",
+    "timeline-entry-text": "ミュンヘン滞在",
+    "timeline-entry-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

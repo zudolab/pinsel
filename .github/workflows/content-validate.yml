@@ -1,0 +1,83 @@
+name: content-validate
+
+# Validates one content publication PR (branch `content/<snapshotId>`, written
+# by the authoring Worker's Git publisher) and reports what it validated.
+# Build-only: nothing here deploys, merges or promotes (docs/publication.md).
+on:
+  pull_request:
+    # The TARGET branch. The head filter is the job-level `if` below:
+    # `branches: [content/**]` would filter the base branch instead.
+    branches: [main]
+
+permissions:
+  contents: read
+
+env:
+  COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+
+concurrency:
+  group: content-validate-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  content-validate:
+    if: startsWith(github.head_ref, 'content/')
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      # Only for the identity check run of the last step.
+      checks: write
+    env:
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    steps:
+      # The exact snapshot commit, not the merge preview: its only parent is the recorded base.
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+          # setup-node v5 auto-enables the pnpm cache from packageManager before corepack puts pnpm on PATH
+          package-manager-cache: false
+      - name: Enable corepack (pnpm from packageManager)
+        run: |
+          corepack enable
+          test "$(pnpm --version)" = "11.5.2"
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm no-deploy:check
+      - name: Changed paths stay inside the publish allowlist
+        run: node scripts/publication/check-snapshot.mjs paths --base "$BASE_SHA" --head "$HEAD_SHA"
+      - name: Snapshot record, package identity and base commit
+        run: node scripts/publication/check-snapshot.mjs record --head "$HEAD_SHA"
+      - run: pnpm assets:sync
+      - run: pnpm content:validate
+      - run: pnpm content:assemble
+      - name: The committed entries are exactly the snapshot
+        run: node scripts/publication/check-snapshot.mjs digest
+      - run: pnpm content:project
+      - name: zfb check
+        run: pnpm --filter @pinsel/site exec zfb check
+      - name: zfb build
+        run: pnpm build:site
+      # Snapshot-based publication checks (routes, fragments, assets, metadata, protected fields).
+      # The historical strict checker belongs to the migration-baseline job of ci.yml, never here.
+      - name: Publication checker against the snapshot
+        run: node scripts/content/check-publication.mjs --dist apps/site/dist
+      - name: Public output exclusions
+        run: node scripts/publication/check-public-output.mjs --dist apps/site/dist
+      - name: Report the validated identity for the head commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          node scripts/publication/check-snapshot.mjs report --head "$HEAD_SHA" --out "$RUNNER_TEMP/identity.md"
+          gh api --method POST "repos/$GITHUB_REPOSITORY/check-runs" \
+            -f name=pinsel/publication-identity \
+            -f head_sha="$HEAD_SHA" \
+            -f status=completed \
+            -f conclusion=success \
+            -f "output[title]=Publication identity" \
+            -F "output[summary]=@$RUNNER_TEMP/identity.md"

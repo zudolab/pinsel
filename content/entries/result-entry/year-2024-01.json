@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2024-01",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2024"
+    },
+    "result-entry-school": "ベルリン・ヴァイセンゼー美術大学",
+    "result-entry-department": "Textil- und Material-Design",
+    "result-entry-url": "https://kh-berlin.de/",
+    "result-entry-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

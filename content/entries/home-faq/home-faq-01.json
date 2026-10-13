@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "home-faq-01",
+  "modelId": "home-faq",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "home-faq-question": "年齢制限はありますか？",
+    "home-faq-answer": "大学・専攻により異なりますが、目安として35歳程度です。受験生は18〜30歳が多いですが、ファインアート学科では35歳以上の学生もいます。",
+    "home-faq-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

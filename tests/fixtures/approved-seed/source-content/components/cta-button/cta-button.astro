@@ -1,0 +1,25 @@
+---
+export type CtaButtonVariant = 'primary' | 'secondary';
+
+interface Props {
+  text: string;
+  href: string;
+  variant?: CtaButtonVariant;
+}
+
+const variantStyles: Record<CtaButtonVariant, string> = {
+  primary: 'bg-pd-accent text-pd-bg hover:opacity-90',
+  secondary: 'bg-pd-link text-pd-bg hover:opacity-90',
+};
+
+const { text, href, variant = 'primary' } = Astro.props;
+---
+<a
+  href={href}
+  class:list={[
+    'inline-block no-underline px-hgap-md py-vgap-xs rounded-[3px] text-sm font-bold tracking-[1px] text-center transition-opacity',
+    variantStyles[variant],
+  ]}
+>
+  {text}
+</a>

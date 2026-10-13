@@ -1,0 +1,37 @@
+---
+import MoreLinkButton from '@components/more-link-button/more-link-button.astro';
+
+interface Props {
+  title: string;
+  moreHref?: string;
+  moreText?: string;
+  lgCols?: 2 | 3;
+}
+
+const { title, moreHref, moreText = 'もっと見る', lgCols } = Astro.props;
+
+const lgColsClass = lgCols === 2 ? 'lg:grid-cols-2' : lgCols === 3 ? 'lg:grid-cols-3' : '';
+---
+
+<section class="py-vgap-xl">
+  <div class="mx-auto flex max-w-5xl items-center justify-between px-hgap-sm">
+    <h2 class="text-sm font-bold tracking-[3px] text-pd-muted">{title}</h2>
+    {moreHref && <MoreLinkButton text={moreText} href={moreHref} />}
+  </div>
+  <div
+    class:list={[
+      'mt-vgap-md -mx-hgap-sm pl-hgap-sm overflow-x-auto',
+      lgCols && 'lg:mx-auto lg:max-w-5xl lg:px-hgap-sm lg:overflow-visible',
+    ]}
+  >
+    <div
+      class:list={[
+        'flex gap-hgap-xs pr-hgap-sm',
+        lgCols && `lg:grid lg:pr-0 ${lgColsClass}`,
+      ]}
+      style="scroll-snap-type: x mandatory;"
+    >
+      <slot />
+    </div>
+  </div>
+</section>

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2022-08",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2022"
+    },
+    "result-entry-school": "MSD/ミュンスタースクールオブデザイン",
+    "result-entry-department": "Kommunikationsdesign",
+    "result-entry-url": "https://www.fh-muenster.de/msd/",
+    "result-entry-order": 8
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

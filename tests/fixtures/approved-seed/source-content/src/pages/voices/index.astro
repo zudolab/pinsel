@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/base-layout.astro';
+import Section from '@components/section/section.astro';
+import CtaSection from '@components/cta-section/cta-section.astro';
+import PageHeader from '@components/page-header/page-header.astro';
+import Breadcrumb from '@components/breadcrumb/breadcrumb.astro';
+import VoiceDetailCard from '@components/voice-detail-card/voice-detail-card.astro';
+import { voicesData } from '@/data/voices-data';
+
+const title = '生徒の声 - Pinsel';
+const description = 'Pinsel受講生の合格体験談。ドイツ美大受験の実体験をご紹介。';
+---
+
+<BaseLayout title={title} description={description}>
+  <Section>
+    <Breadcrumb items={[{ label: '', href: '/' }, { label: '生徒の声' }]} />
+    <PageHeader
+      title="生徒の声"
+      description="Pinselの受講生の合格体験談です。ドイツ美大受験を経験された生徒さんの声をご紹介します。"
+    />
+  </Section>
+
+  <Section>
+    <div class="flex flex-col gap-vgap-lg">
+      {voicesData.map((voice) => (
+        <VoiceDetailCard
+          author={voice.author}
+          year={voice.year}
+          school={voice.school}
+          department={voice.department}
+          quote={voice.quote}
+        />
+      ))}
+    </div>
+  </Section>
+
+  <CtaSection
+    text="お問い合わせ"
+    href="/contact/"
+    subCopy="あなたも一緒にドイツ美大合格を目指しませんか？"
+  />
+</BaseLayout>

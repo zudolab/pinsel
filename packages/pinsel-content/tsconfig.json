@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "types": [
+      "node"
+    ],
+    "jsx": "react-jsx",
+    "jsxImportSource": "@takazudo/zfb/zudo-react",
+    "allowImportingTsExtensions": true
+  },
+  "include": [
+    "src"
+  ]
+}

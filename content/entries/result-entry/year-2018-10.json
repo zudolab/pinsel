@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2018-10",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2018"
+    },
+    "result-entry-school": "カッセル大学",
+    "result-entry-department": "プロダクトデザイン科",
+    "result-entry-url": "https://www.uni-kassel.de/",
+    "result-entry-order": 10
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

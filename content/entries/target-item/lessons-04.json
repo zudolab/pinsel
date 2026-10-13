@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "lessons-04",
+  "modelId": "target-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "target-item-page": "lessons",
+    "target-item-text": "学生さん（高校、大学、専門）、社会人 問わず、ドイツ美大進学を目指す方",
+    "target-item-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

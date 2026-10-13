@@ -1,0 +1,17 @@
+---
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 317.28 383.52"
+  fill="currentColor"
+  class:list={['inline-block h-[0.75em] w-auto', className]}
+  aria-hidden="true"
+>
+  <path d="M121.2 0 317.28 191.76 121.2 383.52 85.5 347.6 245.15 191.76 85.5 35.92Z" />
+  <path d="M0 287.04 97.06 191.76 0 96.48 34.9 60.3 169.27 191.76 34.9 323.22Z" />
+</svg>

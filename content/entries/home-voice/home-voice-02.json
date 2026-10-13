@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "home-voice-02",
+  "modelId": "home-voice",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "home-voice-quote": "先生からとりあえず受けてみようと提案していただき、夜中でも休日でもレッスンやメールでたくさんのアドバイスをいただきました。",
+    "home-voice-author": "Kさん",
+    "home-voice-school": "ニュルンベルク芸術アカデミー 合格",
+    "home-voice-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

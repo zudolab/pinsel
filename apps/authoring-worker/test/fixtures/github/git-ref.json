@@ -1,0 +1,6 @@
+{
+  "ref": "refs/heads/{{BRANCH}}",
+  "node_id": "REF_kwDOPinsel",
+  "url": "https://api.github.com/repos/zudolab/pinsel/git/refs/heads/{{BRANCH}}",
+  "object": { "sha": "{{HEAD_SHA}}", "type": "commit", "url": "https://api.github.com/repos/zudolab/pinsel/git/commits/{{HEAD_SHA}}" }
+}

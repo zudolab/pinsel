@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "lessons-career-06",
+  "modelId": "timeline-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "timeline-entry-timeline": "lessons-career",
+    "timeline-entry-year": "2020",
+    "timeline-entry-text": "日本に帰国、Pinsel ドイツ美大受験オンラインクラス 開始",
+    "timeline-entry-order": 6
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

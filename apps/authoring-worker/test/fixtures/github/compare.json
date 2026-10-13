@@ -1,0 +1,11 @@
+{
+  "url": "https://api.github.com/repos/zudolab/pinsel/compare/{{BASE_SHA}}...main",
+  "status": "{{COMPARE_STATUS}}",
+  "ahead_by": {{AHEAD_BY}},
+  "behind_by": 0,
+  "total_commits": {{AHEAD_BY}},
+  "base_commit": { "sha": "{{BASE_SHA}}" },
+  "merge_base_commit": { "sha": "{{BASE_SHA}}" },
+  "commits": [],
+  "files": {{FILES}}
+}

@@ -1,0 +1,6 @@
+/* Component previews render with the approved Pinsel CSS, byte-exact from pinsel-ui (the public site's `wind: false` stylesheet). */
+@layer zw-reset;
+@import url("/assets/fonts/fonts.css");
+@import "@pinsel/ui/styles/tokens.css";
+@import "@pinsel/ui/styles/colors.css";
+@import "@pinsel/ui/styles/components.css";

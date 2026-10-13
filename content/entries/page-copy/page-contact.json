@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "page-contact",
+  "modelId": "page-copy",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "page-copy-route": "/contact/",
+    "page-copy-meta-title": "お問い合わせ - Pinsel",
+    "page-copy-meta-description": "ドイツ美大受験オンラインクラスPinselへのお問い合わせ。まずはお気軽にご相談ください。",
+    "page-copy-header-title": "お問い合わせ",
+    "page-copy-header-description": "クラス受講をご検討中の方、ドイツ美大受験に関するご質問がおありの方は、ささいなことでも是非お気軽にお問い合わせください。",
+    "page-copy-order": 8
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

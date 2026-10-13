@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2024-04",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2024"
+    },
+    "result-entry-school": "オーストリア・ウィーン応用美術大学",
+    "result-entry-department": "Bildende Kunst: Malerei",
+    "result-entry-url": "https://www.dieangewandte.at/",
+    "result-entry-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

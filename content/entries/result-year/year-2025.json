@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2025",
+  "modelId": "result-year",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-year-label": "2025年度",
+    "result-year-declared-count": 9,
+    "result-year-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

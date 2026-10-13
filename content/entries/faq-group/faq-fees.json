@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-fees",
+  "modelId": "faq-group",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-group-title": "費用・申し込みについて",
+    "faq-group-order": 4
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "feature-card-01",
+  "modelId": "feature-card",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "feature-card-title": "完全マンツーマン",
+    "feature-card-description": "お一人おひとりに合わせた個別カリキュラムで、きめ細やかな指導を行います。作品制作だけでなく、進路相談やドイツでの生活、卒業後のキャリアについても、マンツーマンだからこそじっくりお話しできます。",
+    "feature-card-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

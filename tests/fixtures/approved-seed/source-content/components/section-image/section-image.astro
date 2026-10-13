@@ -1,0 +1,19 @@
+---
+interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+}
+
+const { src, alt, width = 960, height = 540 } = Astro.props;
+---
+<div class="overflow-hidden rounded-md">
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    class="h-auto w-full object-cover"
+  />
+</div>

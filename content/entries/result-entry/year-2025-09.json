@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2025-09",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2025"
+    },
+    "result-entry-school": "マインツ応用科学大学",
+    "result-entry-department": "Kommunikationsdesign",
+    "result-entry-url": "https://www.hs-mainz.de/",
+    "result-entry-order": 9
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

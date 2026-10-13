@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-exam-07",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-exam"
+    },
+    "faq-item-question": "志望校はいつ決めたら良いですか？",
+    "faq-item-answer": "受講前に志望校や専攻も定まっていない方が殆どで、志望校はみなさん受験の直前、秋冬ごろにお決めになります。受験直前の作品スタイル、受験中の結果次第でもみなさんの志望校は変わっていきます。受講中は大学のリストや各大学の受験情報について最新の情報を共有しています。",
+    "faq-item-order": 7
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

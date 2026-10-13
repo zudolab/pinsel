@@ -1,0 +1,17 @@
+{
+  "name": "@pinsel/site",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "zfb dev",
+    "build": "zfb build",
+    "preview": "zfb preview",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@pinsel/ui": "workspace:*",
+    "@takazudo/zfb": "4.3.3",
+    "@takazudo/zfb-runtime": "4.3.3"
+  }
+}

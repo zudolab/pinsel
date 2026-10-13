@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "specialization-02",
+  "modelId": "specialization",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "specialization-de": "Bildhauerei",
+    "specialization-ja": "彫刻とインスタレーション",
+    "specialization-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

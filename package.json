@@ -1,0 +1,48 @@
+{
+  "name": "pinsel",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@11.5.2",
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "assets:sync": "node scripts/assets/sync.mjs",
+    "assets:verify": "node scripts/assets/verify.mjs",
+    "assets:assemble-worker": "node scripts/assets/assemble-worker.mjs",
+    "content:assemble": "pnpm --filter @pinsel/content content:assemble && pnpm --filter @pinsel/authoring-worker styles:generate",
+    "content:project": "pnpm --filter @pinsel/content content:project",
+    "content:import": "pnpm --filter @pinsel/content content:import",
+    "content:validate": "pnpm --filter @pinsel/content content:validate",
+    "content:check": "pnpm --filter @pinsel/content content:check",
+    "typecheck": "tsc --noEmit -p tsconfig.json && pnpm -r --no-bail run typecheck",
+    "test": "vitest run",
+    "build:site": "pnpm --filter @pinsel/site build",
+    "build:sg": "pnpm --filter @pinsel/styleguide build",
+    "build:editor": "pnpm --filter @pinsel/editor build",
+    "worker:dry-run": "pnpm --filter @pinsel/authoring-worker dry-run",
+    "worker:types": "pnpm --filter @pinsel/authoring-worker types",
+    "worker:types:check": "pnpm --filter @pinsel/authoring-worker types:check",
+    "check": "pnpm assets:verify && pnpm content:assemble && pnpm content:project && pnpm typecheck && pnpm test",
+    "check:content": "bash scripts/check-content.sh",
+    "no-deploy:check": "node scripts/no-deploy-check.mjs",
+    "check:boundaries": "node scripts/check-boundaries.mjs",
+    "worker:bundle:check": "node scripts/check-worker-bundle.mjs",
+    "worker:check-preview": "node scripts/check-worker-bundle-preview.mjs",
+    "sg:check": "pnpm --filter @pinsel/styleguide check:generated",
+    "verify:external-install": "node scripts/verify/external-install.mjs",
+    "gate1:wrangler-dev": "node scripts/gate1/wrangler-dev-proof.mjs",
+    "test:browser": "playwright test",
+    "site:check-fragments": "node scripts/site/check-fragments.mjs",
+    "site:wrangler-dev": "node scripts/site/wrangler-dev-check.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.0",
+    "@types/node": "^22.20.5",
+    "happy-dom": "20.14.6",
+    "tsx": "4.23.15",
+    "typescript": "^5.9.3",
+    "vitest": "4.1.11"
+  }
+}

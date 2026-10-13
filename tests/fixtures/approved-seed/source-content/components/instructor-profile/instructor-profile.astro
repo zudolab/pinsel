@@ -1,0 +1,53 @@
+---
+import NavArrowIcon from '@components/nav-arrow-icon/nav-arrow-icon.astro';
+
+interface Props {
+  name: string;
+  title: string;
+  bio: string;
+  imageSrc?: string;
+  detailHref?: string;
+}
+
+const { name, title, bio, imageSrc, detailHref } = Astro.props;
+---
+<div class="flex flex-col gap-vgap-sm sm:flex-row sm:items-start sm:gap-hgap-sm">
+  <div class="mx-auto h-[80px] w-[80px] shrink-0 overflow-hidden rounded-full border border-pd-border bg-pd-border sm:mx-0">
+    {imageSrc ? (
+      <img
+        src={imageSrc}
+        alt={name}
+        width="80"
+        height="80"
+        class="h-full w-full object-cover"
+      />
+    ) : (
+      <div class="flex h-full w-full items-center justify-center text-pd-muted">
+        <svg
+          width="32"
+          height="32"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+        >
+          <circle cx="12" cy="8" r="4" />
+          <path d="M4 20c0-4 4-7 8-7s8 3 8 7" />
+        </svg>
+      </div>
+    )}
+  </div>
+  <div class="flex-1">
+    <p class="font-bold text-pd-fg">{name}</p>
+    <p class="mt-vgap-2xs text-sm text-pd-muted">{title}</p>
+    <p class="mt-vgap-xs text-sm text-pd-fg">{bio}</p>
+    {detailHref && (
+      <a
+        href={detailHref}
+        class="mt-vgap-xs inline-block text-sm font-medium text-pd-link no-underline hover:text-pd-accent"
+      >
+        詳しく見る <NavArrowIcon />
+      </a>
+    )}
+  </div>
+</div>

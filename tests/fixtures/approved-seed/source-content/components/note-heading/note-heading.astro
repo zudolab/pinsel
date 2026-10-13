@@ -1,0 +1,22 @@
+---
+interface Props {
+  as: 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+  id?: string;
+  class?: string;
+}
+
+const { as: Tag, id, class: className = '' } = Astro.props;
+const Element = Tag;
+---
+<Element id={id} class:list={['group relative', className]}>
+  <slot />
+  {id && (
+    <a
+      href={`#${id}`}
+      aria-hidden="true"
+      class="ml-[0.3em] no-underline text-pd-border opacity-0 group-hover:opacity-100 transition-opacity"
+    >
+      #
+    </a>
+  )}
+</Element>

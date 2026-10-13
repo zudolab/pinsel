@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-exam-06",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-exam"
+    },
+    "faq-item-question": "高校卒業後の渡独、応募資格について",
+    "faq-item-answer": "ドイツの美術大学は応募資格について一定の規定がなく、各大学・専攻する科により規定が異なります。ケースバイケースですので明確にお答えする事はできませんが、お問い合わせいただいた方の経歴をお伺いした上でアドバイスをさせていただいております。",
+    "faq-item-order": 6
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

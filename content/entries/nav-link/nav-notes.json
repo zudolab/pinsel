@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "id": "nav-notes",
+  "modelId": "nav-link",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "nav-link-href": "/notes/",
+    "nav-link-label": "Notes",
+    "nav-link-header-label": "Notes",
+    "nav-link-footer-title": "ドイツ美大受験ノート",
+    "nav-link-footer-description": "ドイツ美大受験に関する情報まとめ",
+    "nav-link-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

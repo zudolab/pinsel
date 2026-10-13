@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "specialization-01",
+  "modelId": "specialization",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "specialization-de": "Malerei und Grafik",
+    "specialization-ja": "絵画とグラフィック",
+    "specialization-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

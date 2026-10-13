@@ -1,0 +1,27 @@
+packages:
+  - apps/*
+  - packages/*
+
+# Peers are declared explicitly by each workspace package; auto-installing them
+# would hide a missing pin (and would try to fetch the git-only
+# @zudo-composer/component-contract from the npm registry).
+autoInstallPeers: false
+
+allowBuilds:
+  esbuild: true
+  workerd: true
+  '@zudo-composer/component-contract': true
+
+minimumReleaseAgeExclude:
+  - '@takazudo/zfb'
+  - '@takazudo/zfb-runtime'
+  - '@takazudo/zfb-md-wasm'
+  - '@takazudo/zudo-doc'
+  - '@takazudo/zudo-sg'
+  - '@takazudo/zdtp'
+  - '@takazudo/zfb-darwin-arm64@4.3.3'
+  - '@takazudo/zfb-darwin-x64@4.3.3'
+  - '@takazudo/zfb-linux-arm64-gnu@4.3.3'
+  - '@takazudo/zfb-linux-x64-gnu@4.3.3'
+  - '@takazudo/zfb-slugify@4.3.3'
+  - '@takazudo/zfb-win32-x64-msvc@4.3.3'

@@ -1,0 +1,60 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "pinsel-authoring",
+  "main": "./src/index.ts",
+  "compatibility_date": "2026-10-12",
+  // Never deployed from this repository: CI only runs `wrangler deploy --dry-run`.
+  "workers_dev": false,
+  "preview_urls": false,
+  "assets": {
+    // Written only by scripts/assets/assemble-worker.mjs.
+    "directory": "./dist-assets/",
+    "binding": "ASSETS",
+    "not_found_handling": "404-page",
+    // Every request, including navigations, must pass the Worker's auth gate.
+    "run_worker_first": true
+  },
+  // Launch inputs (docs/launch-inputs.md): empty values fail closed with 503 configuration-required.
+  "vars": {
+    "TEAM_DOMAIN": "",
+    "POLICY_AUD": "",
+    "EDITOR_ALLOWLIST": "",
+    // Publication stays off until launch: "disabled" answers configuration-required.
+    "PUBLISHER_PROVIDER": "disabled",
+    // "manual" leaves integration to a human; "auto" lets the provider promote after all checks pass.
+    "PROMOTION_POLICY": "manual"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "pinsel-authoring",
+      // Placeholder until `wrangler d1 create` runs at launch; local dev and tests key on the name only.
+      "database_id": "00000000-0000-4000-8000-000000000000",
+      "migrations_dir": "./migrations"
+    }
+  ],
+  "observability": { "enabled": true },
+  "env": {
+    // `wrangler dev --env local`: the fixture identity entry instead of Access JWT verification.
+    "local": {
+      "main": "./src/local-dev.ts",
+      "vars": {
+        "TEAM_DOMAIN": "",
+        "POLICY_AUD": "",
+        "EDITOR_ALLOWLIST": "",
+        // `--var PUBLISHER_PROVIDER:fake` selects the in-memory fake provider of src/local-dev.ts.
+        "PUBLISHER_PROVIDER": "disabled",
+        "PROMOTION_POLICY": "manual",
+        "LOCAL_DEV_SUBJECT": "local-dev@example.test"
+      },
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "pinsel-authoring",
+          "database_id": "00000000-0000-4000-8000-000000000000",
+          "migrations_dir": "./migrations"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "paths": {
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"]
+    }
+  },
+  "include": ["src/env.d.ts", "**/*.ts", "**/*.tsx", "**/*.astro", ".astro/types.d.ts"],
+  "exclude": [
+    "node_modules", "_bk", "sub-packages", "worktrees", "dist",
+    "src/content.config.ts"
+  ]
+}

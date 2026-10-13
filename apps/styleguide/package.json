@@ -1,0 +1,35 @@
+{
+  "name": "@pinsel/styleguide",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync-assets": "node scripts/sync-assets.mjs",
+    "predev": "node scripts/sync-assets.mjs",
+    "dev": "zfb dev",
+    "prebuild": "node scripts/sync-assets.mjs",
+    "build": "zfb build",
+    "gen-registry": "zudo-sg gen-registry",
+    "gen-token-manifest": "zudo-sg gen-token-manifest",
+    "gen-story-shims": "node scripts/gen-story-shims.mjs",
+    "check:generated": "node scripts/gen-story-shims.mjs --check && zudo-sg gen-registry --check && zudo-sg gen-token-manifest --check",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "check": "pnpm check:generated && pnpm typecheck"
+  },
+  "dependencies": {
+    "@pinsel/ui": "workspace:*",
+    "@takazudo/zdtp": "0.8.6",
+    "@takazudo/zfb": "4.3.3",
+    "@takazudo/zfb-md-wasm": "4.3.3",
+    "@takazudo/zfb-runtime": "4.3.3",
+    "@takazudo/zudo-doc": "6.1.1",
+    "@takazudo/zudo-sg": "0.5.2",
+    "@tailwindcss/browser": "4.3.2",
+    "culori": "^4.0.2",
+    "diff": "^8.0.4",
+    "katex": "^0.16.38",
+    "preact": "^10.29.8",
+    "tailwind-merge": "3.6.0",
+    "zod": "^4.3.6"
+  }
+}

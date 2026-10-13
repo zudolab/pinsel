@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "course-step-02",
+  "modelId": "course-step",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "course-step-title": "5〜8授業目（4ヶ月コースのみ）",
+    "course-step-description": "進行具合により引き続き課題制作を行い、自分のテーマでの作品制作に入ります。専攻やテーマに沿った内容で制作を進めます。",
+    "course-step-order": 2
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "id": "year-2019-14",
+  "modelId": "result-entry",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "result-entry-year": {
+      "providerId": "content-filesystem",
+      "modelId": "result-year",
+      "recordId": "year-2019"
+    },
+    "result-entry-school": "マグデブルク大学",
+    "result-entry-department": "Industrial Design",
+    "result-entry-url": "https://www.ovgu.de/",
+    "result-entry-order": 14
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

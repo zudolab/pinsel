@@ -1,0 +1,86 @@
+[
+  {
+    "route": "",
+    "title": "Pinsel - ドイツ美大受験オンラインクラス",
+    "file": "index.html",
+    "source": "src/pages/index.astro"
+  },
+  {
+    "route": "lessons/",
+    "title": "オンラインクラス - Pinsel",
+    "file": "lessons/index.html",
+    "source": "src/pages/lessons/index.astro"
+  },
+  {
+    "route": "about/",
+    "title": "講師紹介 - Pinsel",
+    "file": "about/index.html",
+    "source": "src/pages/about/index.astro"
+  },
+  {
+    "route": "results/",
+    "title": "合格実績 - Pinsel",
+    "file": "results/index.html",
+    "source": "src/pages/results/index.astro"
+  },
+  {
+    "route": "voices/",
+    "title": "生徒の声 - Pinsel",
+    "file": "voices/index.html",
+    "source": "src/pages/voices/index.astro"
+  },
+  {
+    "route": "faq/",
+    "title": "よくある質問 - Pinsel",
+    "file": "faq/index.html",
+    "source": "src/pages/faq/index.astro"
+  },
+  {
+    "route": "notes/",
+    "title": "Notes - Pinsel",
+    "file": "notes/index.html",
+    "source": null
+  },
+  {
+    "route": "notes/exam-schedule/",
+    "title": "ドイツ美大受験の時期 - Pinsel Notes",
+    "file": "notes/exam-schedule/index.html",
+    "source": "src/notes/exam-schedule.mdx"
+  },
+  {
+    "route": "notes/free-tuition/",
+    "title": "ドイツの美大は学費が無料 - Pinsel Notes",
+    "file": "notes/free-tuition/index.html",
+    "source": "src/notes/free-tuition.mdx"
+  },
+  {
+    "route": "notes/german-language/",
+    "title": "ドイツ語学習について - Pinsel Notes",
+    "file": "notes/german-language/index.html",
+    "source": "src/notes/german-language.mdx"
+  },
+  {
+    "route": "notes/online-exam/",
+    "title": "オンラインでのドイツ美大受験 - Pinsel Notes",
+    "file": "notes/online-exam/index.html",
+    "source": "src/notes/online-exam.mdx"
+  },
+  {
+    "route": "notes/what-is-mappe/",
+    "title": "マッペ（ポートフォリオ）とは - Pinsel Notes",
+    "file": "notes/what-is-mappe/index.html",
+    "source": "src/notes/what-is-mappe.mdx"
+  },
+  {
+    "route": "contact/",
+    "title": "お問い合わせ - Pinsel",
+    "file": "contact/index.html",
+    "source": "src/pages/contact/index.astro"
+  },
+  {
+    "route": "404.html",
+    "title": "ページが見つかりません - Pinsel",
+    "file": "404.html",
+    "source": null
+  }
+]

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "id": "course-step-03",
+  "modelId": "course-step",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "course-step-title": "受講終了後",
+    "course-step-description": "多くの方が受験の時期までクラスを延長して受講されています。",
+    "course-step-order": 3
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

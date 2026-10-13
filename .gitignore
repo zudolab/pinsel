@@ -1,0 +1,32 @@
+node_modules/
+.pnpm-store/
+
+# build outputs
+dist/
+apps/editor/dist/
+apps/authoring-worker/dist-assets/
+apps/site/public/
+.reports/
+*.generated.ts
+packages/pinsel-content/.site-project/
+
+# ZFB temp files
+.zfb-build/
+.zfb-esbuild-entry-*.tsx
+.zfb-islands-tsconfig-*.json
+.zfb-worker-tsconfig-*.json
+.zfb-virtual-*.mjs
+**/.zfb-plugin-bundle-*.mjs
+
+# wrangler
+.wrangler/
+.dev.vars*
+
+# tooling
+*.tsbuildinfo
+test-results/
+playwright-report/
+.DS_Store
+
+# zudo-doc copies package-owned route sources here during builds
+.zudo-doc/

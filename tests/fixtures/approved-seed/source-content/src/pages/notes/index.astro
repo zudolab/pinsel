@@ -1,0 +1,55 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/base-layout.astro';
+import Section from '@components/section/section.astro';
+import PageHeader from '@components/page-header/page-header.astro';
+import Breadcrumb from '@components/breadcrumb/breadcrumb.astro';
+
+const notes = await getCollection('notes');
+notes.sort((a, b) => a.data.title.localeCompare(b.data.title));
+---
+
+<BaseLayout title="Notes - Pinsel" description="ドイツ美大受験に関するノート・記事一覧">
+  <Section>
+    <Breadcrumb items={[{ label: '', href: '/' }, { label: 'Notes' }]} />
+    <PageHeader
+      title="Notes"
+      description="ドイツ美大受験に関する情報をまとめたノートです。"
+    />
+  </Section>
+
+  <Section>
+    <div class="grid grid-cols-1 gap-hgap-sm md:grid-cols-2">
+      {
+        notes.map((note) => (
+          <a
+            href={`/notes/${note.id}/`}
+            class="flex items-center justify-between gap-hgap-xs rounded-md border border-pd-border px-hgap-sm py-vgap-sm no-underline transition-all hover:border-pd-link hover:shadow-md"
+          >
+            <div>
+              <p class="pb-vgap-xs font-medium text-pd-link">{note.data.title}</p>
+              <p class="mt-vgap-2xs text-sm font-extralight text-pd-muted">
+                {note.data.description}
+              </p>
+            </div>
+            <span class="shrink-0 text-pd-link">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </span>
+          </a>
+        ))
+      }
+    </div>
+  </Section>
+</BaseLayout>

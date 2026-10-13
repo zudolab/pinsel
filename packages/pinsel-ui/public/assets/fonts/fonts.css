@@ -1,0 +1,4 @@
+/* Noto Sans JP and Noto Serif JP: see adjacent OFL and provenance files. */
+@import url('./noto-serif-jp-400.css');
+@font-face { font-family: 'Noto Sans JP'; font-style: normal; font-weight: 400; font-display: swap; src: url('./noto-sans-jp-japanese-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Noto Sans JP'; font-style: normal; font-weight: 700; font-display: swap; src: url('./noto-sans-jp-japanese-700-normal.woff2') format('woff2'); }

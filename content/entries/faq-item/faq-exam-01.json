@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "id": "faq-exam-01",
+  "modelId": "faq-item",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "faq-item-group": {
+      "providerId": "content-filesystem",
+      "modelId": "faq-group",
+      "recordId": "faq-exam"
+    },
+    "faq-item-question": "ドイツの美術大学の受験時期はいつ頃ですか？",
+    "faq-item-answer": "大学により異なりますが、多くの大学は冬学期（10月開始）への入学を受け付けており、出願締切は2月〜5月頃に集中しています。一部の大学では夏学期（4月開始）の募集もあります。志望大学の公式サイトで最新の日程を確認することが大切です。",
+    "faq-item-order": 1
+  },
+  "lifecycle": "published",
+  "generation": 0
+}

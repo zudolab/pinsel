@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "page-notes",
+  "modelId": "page-copy",
+  "createdAt": "2026-09-12T00:00:00.000Z",
+  "updatedAt": "2026-09-12T00:00:00.000Z",
+  "values": {
+    "page-copy-route": "/notes/",
+    "page-copy-meta-title": "Notes - Pinsel",
+    "page-copy-meta-description": "ドイツ美大受験に関するノート・記事一覧",
+    "page-copy-order": 7
+  },
+  "lifecycle": "published",
+  "generation": 0
+}
