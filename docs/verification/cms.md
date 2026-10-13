@@ -209,3 +209,11 @@ git status                                               clean
 - Restart recovery against the in-memory fake cannot show a provider that keeps its records across a Worker restart. That is covered in workerd with a shared fake and by the GitHub replay tests, as noted in step 6.6.
 - No Composer change was needed. The only upstream copy gap is that Composer's session messages are English; Pinsel's host handles them in `localize.ts`, as with the other entries under "Known Composer gaps" in docs/dependencies.md. No Composer #901/#902 flake was reproduced, so neither is cited.
 - Live tests (Access, D1, GitHub, Workers Builds) were not performed and are out of scope.
+
+## Addendum — preview token layer (from #17)
+
+`apps/authoring-worker/scripts/generate-preview-styles.mjs` concatenated the plain `:root` token files unlayered, so the `@layer responsive` overrides never applied in the Worker preview. It now wraps `tokens.css` and `colors.css` in `@layer tokens { … }`, the same as `apps/site/styles/global.css`.
+
+- `test/preview-styles.test.ts` asserts that no top-level block of `PREVIEW_STYLES` is unlayered and that the `:root` token blocks sit in the first-declared `@layer tokens`. The authoring-worker suite passes 13 files / 101 tests, parity included; parity compares body HTML only, so the CSS change does not touch it.
+- `node apps/styleguide/scripts/check-token-layers.mjs` on the generated preview CSS: 44 tokens layered. On the old concatenation: `--font-body is declared outside any @layer`, among others.
+- An ad-hoc Playwright comparison of the baseline preview (`wrangler dev --env local`) against the public `apps/site/dist` gives identical computed `--header-height` / `--gutter` / `--space-section` and header box heights: 92 px at 1440, 80 px at 1000, 76 px at 600.
