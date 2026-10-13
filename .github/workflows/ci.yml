@@ -156,7 +156,7 @@ jobs:
   # selected by content/snapshot.json ran and succeeded. A skipped selected path is a failure.
   content-gate:
     needs: [approved-seed, build, migration-baseline, publication-validate]
-    if: always()
+    if: ${{ !cancelled() }}
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
