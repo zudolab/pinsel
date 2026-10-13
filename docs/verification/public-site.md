@@ -2,6 +2,8 @@
 
 Independent verification of the public site (`apps/site/dist`) against the approved prototype (`$SEED/prototype/dist`, seed 2026-10-12) and the brief.
 
+> **Historical local results.** Sections 1–8 below were recorded on the local branch `pinsel-site-cms/confirm-site` (base `532bb8d`, fixes verified at `6b1199f`) before PR #20 was merged. They are not results for PR #27 or for `main`. For the post-merge state, see "Post-merge integration (PR #27)" at the end.
+
 - Tested branch `pinsel-site-cms/confirm-site`, base `base/pinsel-site-cms` @ `532bb8d`.
 - The fixes below are verified at `6b1199f`.
 - Machine: Linux WSL2, Node 24.13.1, pnpm 11.5.2, Playwright 1.64.0 (chromium).
@@ -37,6 +39,7 @@ site:check-fragments                           exit=0
 ```
 
 The worktree run after the fixes (`6b1199f`) gives the same results.
+
 - Strict checker: `{'pages': 14, 'passed': 14, 'missingFiles': 0, 'missingCopy': 0, 'recordIssues': 0, 'linkIssues': 0, 'sharedIssues': 0, 'metadataIssues': 0}`.
 - `pnpm test`: 36 files, 357 passed, 15 skipped.
 
@@ -49,6 +52,7 @@ flock …port-8788.lock flock …port-8000.lock node scripts/site/visual-compare
 ```
 
 How the comparison runs:
+
 - `wrangler dev` serves the public Worker (`apps/site/wrangler.jsonc`). `python3 -m http.server` serves the prototype.
 - Both sides use `reducedMotion: reduce` and a fixed `Date` (`2026-10-13T00:01:30Z`), so the pigment clock paints the same colours. Lazy images are forced to load.
 - Screenshots are full-page.
@@ -68,6 +72,7 @@ Pixel diff in % (rows: pages; columns: widths in px). Every pair also has the sa
 \* The first run showed 0.38% / 0.27%. In both, the site's lazy R7-10 illustration had not loaded yet when the screenshot was taken. A recheck (`--pages /lessons/ --widths 1030,770`) gives 0.00%.
 
 The widths cover these boundaries:
+
 - 76rem container: 1440 / 1280;
 - 70rem header collapse: 1130 / 1110;
 - 64rem rail collapse: 1030 / 1020;
@@ -108,3 +113,49 @@ Result: 83 passed. `tests/browser/public-site.spec.ts` is new. The existing `gat
 - A named-by-visible-text check covers the brand links (header and footer: `Pinsel ART STUDY IN GERMANY`) and the motion toggle (name follows `動き ON` / `動き OFF`, description `装飾の動きと色の変化`).
 - `tests/browser/token-layers.spec.ts` measures the real cascade at 1440, 1121, 1119, 769, 767 and 390px on the three render surfaces: the public site, the Worker preview of a saved snapshot (`wrangler dev --env local`) and the styleguide component preview (`Pages: Home: hero + pricing`). It checks the resolved `--header-height`, `--gutter`, `--space-section` and `--space-8`, the `.site-header__inner` min-block-size, the header box, and the `#pricing` section's padding and `.container` width. Expected values are the approved prototype CSS (`@layer tokens` defaults with the `@layer responsive` overrides at 70rem / 47.99rem / 23rem). The three surfaces must agree. In the styleguide, the zudo-sg canvas pads the story by 16px per side, so at 390px the header gets 358px and wraps the motion toggle onto a second row. The header box is not compared there; the cascade values still are.
 - Reference-only checks (they need `PINSEL_REFERENCE_DIST` and skip with that reason when it is absent, as in CI): the 14 no-JS copy-parity checks, and the token-layers check that measures the prototype dist itself. The zoom / text-size checks use the reference when it is served. Without it they use `PROTOTYPE_OVERFLOW`, which was measured from the reference (#26). No baseline is generated from the changed output.
+
+## Post-merge integration (PR #27)
+
+PR #20 merged into `main` as `597d2fc`. The follow-up integration branch `fix/pinsel-post-merge-confirmation` (draft PR #27) is `main` plus the work below. Nothing is deployed. The public site is still only built and served locally (`zfb build`, `wrangler dev`).
+
+### Recovered, not reconstructed
+
+The original checkout's local-only commits were merged as-is (`5b95a24`, `325321e`). Their test counts in sections 1–8 are historical and are not claimed for PR #27.
+
+| Commit | Change |
+| --- | --- |
+| `ae767f0` (with `68c5c5b`, `3624008`) | #17: token files in `layer(tokens)` on the site; brand and motion toggle named by their visible text; `tests/browser/public-site.spec.ts`; this report |
+| `3f31dc0` | styleguide preview nests the Pinsel stack in `pinsel.*` layers; `check-token-layers.mjs` |
+| `4b328fa`, `f28bbdb` | Worker preview wraps the inlined token files in `@layer tokens` |
+| `41d79d1` | `pnpm check:token-layers` in the root scripts and in CI after `build:sg` |
+
+### Added in PR #27
+
+| Commit | Change |
+| --- | --- |
+| `5919ebb` | `axe-core` 4.14.0 as an exact root devDependency |
+| `b8c9c5e` | axe loads from the pinned package (`createRequire(…).resolve("axe-core/axe.min.js")`, version asserted). `PINSEL_AXE` is removed, so the six axe checks always run, CI included. Adds a visible-text name check |
+| `43917cb` | `tests/browser/token-layers.spec.ts`: the resolved cascade on the site, the Worker preview and the styleguide preview at 1440/1121/1119/769/767/390px, against the approved prototype values. It fails when any of the three layer fixes is removed (negative proof on #17) |
+| `9d003e3` | the zoom and text-size overflow checks fall back to the recorded prototype overflow (`PROTOTYPE_OVERFLOW`, #26) when no reference dist is served |
+| `64afe4f` | zfb family 4.4.0, zudo-sg 0.5.4 (`docs/dependencies.md`). The upstream impact assessment found no change to the public output |
+
+### Lane results (lane commits, not the final head)
+
+- `43917cb` (public lane, on #17): `pnpm test:browser` 81 passed, 15 skipped. With `PINSEL_REFERENCE_DIST=$SEED/prototype/dist`, `public-site.spec.ts` + `token-layers.spec.ts` gave 62 passed. axe returned `[]` on the six pages.
+- `64afe4f` (dependency lane, on #19): clean frozen install, `dedupe --check`, the full CI-order pipeline, strict checker 14/14, `pnpm check` 365 passed / 15 skipped, `pnpm test:browser` 81 passed / 15 skipped, `verify:external-install` passed.
+
+### Skips and their reasons
+
+- 15 browser tests are reference-only: the 14 no-JS copy-parity checks and the token-layers measurement of the prototype dist. They need `PINSEL_REFERENCE_DIST` (the extracted seed's `prototype/dist`) and skip with that reason when it is absent, as in CI. No baseline is ever generated from the changed output.
+- The 84-pair pixel comparison (`scripts/site/visual-compare.mjs --reference …`) also needs the reference. It was not part of the post-merge lane runs, so its 0.00% result above is historical.
+
+### Still open
+
+- zudolab/pinsel#26: `/contact/` at 390px with 150% text overflows by 8px, as the prototype does. The approved contact CSS is unchanged, and the regression guard stays.
+
+### Final-head results
+
+> **Placeholder — filled in by the manager after the final run on the PR #27 head.** Record the head SHA and each command with its result and skips. Do not copy lane or historical numbers.
+
+- Head: `TBD`
+- Results: `TBD`

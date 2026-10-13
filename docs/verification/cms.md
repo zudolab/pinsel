@@ -7,6 +7,8 @@ An independent, adversarial run of the hosted CMS slice on the merged base: the 
 - Machine: Linux WSL2, Node 24.13.1, pnpm 11.5.2, wrangler 4.149.0, Playwright 1.64.0 (Chromium). Heavy steps ran through `heavy-guard`.
 - The prerequisites ran before any Worker run: `pnpm assets:sync && pnpm content:assemble && pnpm content:project && pnpm build:site && pnpm build:editor && pnpm assets:assemble-worker`.
 
+> **Historical local results.** Everything from "Verdict per check" to "Addendum — preview token layer" was recorded on the local branch `pinsel-site-cms/confirm-cms` (base `532bb8d`) before PR #20 was merged. None of it is a result for PR #27 or for `main`. For the post-merge state, see "Post-merge integration (PR #27)" at the end.
+
 ## Verdict per check
 
 | # | Check | Verdict | Evidence |
@@ -217,3 +219,77 @@ git status                                               clean
 - `test/preview-styles.test.ts` asserts that no top-level block of `PREVIEW_STYLES` is unlayered and that the `:root` token blocks sit in the first-declared `@layer tokens`. The authoring-worker suite passes 13 files / 101 tests, parity included; parity compares body HTML only, so the CSS change does not touch it.
 - `node apps/styleguide/scripts/check-token-layers.mjs` on the generated preview CSS: 44 tokens layered. On the old concatenation: `--font-body is declared outside any @layer`, among others.
 - An ad-hoc Playwright comparison of the baseline preview (`wrangler dev --env local`) against the public `apps/site/dist` gives identical computed `--header-height` / `--gutter` / `--space-section` and header box heights: 92 px at 1440, 80 px at 1000, 76 px at 600.
+
+## Post-merge integration (PR #27)
+
+PR #20 merged into `main` as `597d2fc`. The follow-up integration branch `fix/pinsel-post-merge-confirmation` (draft PR #27) is `main` plus the work below. Nothing is deployed. Publication ran only through the local Worker and the fake provider or recorded fixtures. No token was used, and nothing was sent to GitHub.
+
+### Recovered, not reconstructed
+
+The original checkout's local-only commits were merged as-is (`5b95a24`, `325321e`). The counts above (360 / 34 / 100 / 31 / 58) are historical and are not claimed for PR #27.
+
+| Commit | Change |
+| --- | --- |
+| `a96eaed` | #18: F1 (exact-key request bodies → 422, nothing written), F2 (provider `not-found` + moved base → `conflict`), F3 (Japanese session and network messages), F4 (publication labels in the docs); `tests/browser/cms-confirm.spec.ts`, `tests/browser/local-worker.ts`, `/admin/fake-publisher` (local entry only), `scripts/verify/worker-auth-probe.mjs`, `scripts/publication/write-snapshot-files.ts`; this report |
+| `4b328fa`, `f28bbdb` | Worker preview token files inside `@layer tokens`, plus `test/preview-styles.test.ts` |
+
+### Added in PR #27 that touches this slice
+
+| Commit | Change |
+| --- | --- |
+| `fdf463c` | `tests/approved-seed.sha256.json` + `pnpm check:approved-seed`: all 83 fixture files hash-pinned, and the manifest's own sha256 is pinned too |
+| `4b42013`, `f9b7047` | `migration-baseline` runs the strict checker unconditionally while there is no `content/snapshot.json`. The `PINSEL_MIGRATION_CHECKER` switch is gone. A new `content-gate` job (`if: !cancelled()`) fails unless `approved-seed` and `build` succeeded and exactly the selected content path succeeded |
+| `64afe4f` | zfb 4.4.0. The snapshot record's `packageIdentity.zfb` follows the Worker's pin |
+
+### Changed-snapshot path, re-run on `03e7518` (the integration head with every lane merged)
+
+The edit went through the real publisher path, in a temporary detached worktree outside the repository's worktrees. The local commit was never pushed, and the worktree was removed afterwards. The real branch's `content/` and `tests/` are unchanged (`git diff 03e7518 -- content tests` is empty).
+
+1. **Baseline build in the temporary worktree** (`git worktree add <scratch>/snapshot-wt 03e7518 --detach`, then `pnpm install --frozen-lockfile`): `assets:sync`, `content:assemble` (baseline `03e751878c180bfca68584316861f2939e5efe01`, project digest `a56eb8f7…`), `content:project`, `build:site`, `build:editor`, `assets:assemble-worker`. All exit 0.
+2. **Edit and snapshot through the real Worker.** `wrangler d1 migrations apply --local --env local` (0001–0003), then `wrangler dev --env local` on 127.0.0.1:8871 (flock), driven with `fetch` and a same-origin `Origin`:
+   ```
+   GET  /api/v1/site                          200 ok  baselineRevision 03e75187…, pack pinsel@0.2.0
+   GET  /api/v1/draft                         200 ok  revision 1
+   PUT  /api/v1/content/course/two-month      200 ok  course-price ¥50,000 → ¥65,000
+   PUT  /api/v1/content/faq-item/faq-exam-01  200 ok  faq-item-answer → 大学により異なりますが、多くの大学は冬学期（10月開始）の入学を受け付けています。…
+   POST /api/v1/snapshots                     200 ok  snapshot ad64c4535b7a…90db, draftRevision 3
+   GET  /api/v1/snapshots/ad64c453…           200 ok  (written to snapshot-edited.json)
+   ```
+3. **Publisher files.** `pnpm exec tsx scripts/publication/write-snapshot-files.ts snapshot-edited.json` reported `2 entries written (content/entries/faq-item/faq-exam-01.json, content/entries/course/two-month.json), 0 removed, content/snapshot.json for ad64c453… on 03e75187…`. Each entry diff is the edited value plus `updatedAt` and `generation`. It was committed locally as `bbc2f7d82d0499fc51804c9c9a211daeee36b34a`, whose only parent is `03e7518`.
+4. **content-validate.yml steps, in order** (one heavy-guard run, `verdict=PASS`, after deleting `apps/site/dist`, `apps/site/public` and `.site-project`):
+   ```
+   pnpm install --frozen-lockfile / pnpm no-deploy:check                 exit 0
+   check-snapshot.mjs paths --base 03e7518 --head bbc2f7d                exit 0  3 changed path(s), all inside the publish allowlist
+   check-snapshot.mjs record --head bbc2f7d                              exit 0  snapshot ad64c453… on base 03e75187…
+   pnpm assets:sync / content:validate / content:assemble                exit 0
+   check-snapshot.mjs digest                                             exit 0  content/entries assemble to snapshot ad64c453…
+   pnpm content:project / zfb check / pnpm build:site                    exit 0
+   check-publication.mjs --dist apps/site/dist                           exit 0  246 entries against apps/site/dist (14 routes)
+   check-public-output.mjs --dist apps/site/dist                         exit 0  153 files, no repository-only material
+   check-snapshot.mjs report --head bbc2f7d                              exit 0  identity {snapshotId ad64c453…, headSha bbc2f7d…, zfb 4.4.0, composer 547b532e…, contract c0b452da…}
+   ```
+
+   The `gh api …/check-runs` post of the last workflow step was not run. It needs GitHub, and the report it would post was produced locally.
+5. **ci.yml on that commit.** In the `build` job, `dedupe --check`, `content:check` (`plan structure equals tests/golden/routes.snapshot.json (content/snapshot.json present: values are checked by check-publication)`), `site:check-fragments` and `check:approved-seed` (83 files, manifest `eecacda9…987e`) all exited 0. `pnpm check` first failed with 3 workerd publication tests timing out at 60s (71–77s each) during a 284s run under memory contention. An immediate re-run passed, 38 files / 363 passed / 17 skipped (the migration-baseline tests skip when a snapshot is present), so the failure was environmental. The `publication-validate` job steps (`record --any-identity`, `check-publication`, `check-public-output`) all exited 0. `pnpm test:browser` was not run on the edited commit.
+6. **The edited values are on every page that renders them, and the old values are gone** (grep over `apps/site/dist`):
+   - `¥65,000`: `index.html` (the 2ヶ月コース `pricing-card`, `<p class="price">¥65,000<span>税込</span></p>`) and `lessons/index.html` (`#pricing` → `price-detail__card` `<h3>2ヶ月コース</h3><p class="price">¥65,000</p>`). `¥50,000` appears nowhere.
+   - The new answer appears only in `faq/index.html`, inside `<details id="category-1-1" open>` with its unchanged question. The old answer appears nowhere. The home page's four FAQs are separate `home-faq` records and are unchanged.
+   - The Lessons card keeps its separately authored note `税込 / 1ヶ月あたり25,000円` (`course-lessons-note`). The monthly-equivalent wording is its own field, and nothing derives it from the price.
+7. **The historical strict checker is correctly not the gate.** `bash scripts/check-content.sh` exits 1 on this build: 11 of 14 pages pass, `missingCopy: 3` (`/` and `/lessons/` `¥50,000`, `/faq/` the original answer). With `content/snapshot.json` present, ci.yml runs `publication-validate` instead of `migration-baseline`, and `content-gate` requires exactly that. `tests/fixtures/` and `tests/golden/` were untouched (`git diff 03e7518 bbc2f7d -- tests/` is empty).
+
+### Finding: a published price equal to a test literal turns `pnpm check` red
+
+A first run of the same procedure with `¥58,000` (snapshot `f13529b0…`, local commit `ba54ceb`) passed every content-validate and publication-validate step. `pnpm check` failed in `scripts/edit-literals.test.mjs`: `content/entries/course/two-month.json price ¥58,000 was published over the migrated value and is also an edit literal in the tests`. The guard keeps edit tests from becoming no-ops, and its literals cover ¥51,000–¥63,000 and ¥91,000–¥99,999. So a legitimate owner price change in those ranges passes the content PR gate (`content-validate`), but then makes the `build` job, and with it `content-gate`, red on the merge into `main`, until the test literals are changed. The re-run above used `¥65,000` to stay outside them.
+
+### Limitations that still apply
+
+- The in-memory fake provider loses its records on a Worker restart, so restart recovery against a provider that keeps its state is covered only in workerd (`publication.test.ts`, the GitHub replay tests).
+- `cms-confirm.spec.ts` ran inside `pnpm test:browser` in the post-merge lanes (81 passed / 15 skipped at `43917cb` and at `64afe4f`). The production-entry auth probe (`worker-auth-probe.mjs`) was not re-run in those lanes. Both belong in the final-head run below.
+- No live test (Access, remote D1, GitHub, Workers Builds) was performed.
+
+### Final-head results
+
+> **Placeholder — filled in by the manager after the final run on the PR #27 head.** Record the head SHA and each command with its result and skips, including `cms-confirm.spec.ts`, `worker-auth-probe.mjs`, the Worker and editor suites, and `verify:external-install`. Do not copy lane or historical numbers.
+
+- Head: `TBD`
+- Results: `TBD`
