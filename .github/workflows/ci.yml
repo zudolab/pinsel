@@ -15,6 +15,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Byte-exact immutability of tests/fixtures/approved-seed/ against tests/approved-seed.sha256.json.
+  # Independent of the build so it reports even when the build is red.
+  approved-seed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+          # setup-node v5 auto-enables the pnpm cache from packageManager before corepack puts pnpm on PATH
+          package-manager-cache: false
+      # Node built-ins only: no install, so nothing the fixtures could depend on runs first.
+      - run: node scripts/check-approved-seed.mjs
+
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
@@ -75,29 +92,25 @@ jobs:
           if-no-files-found: error
           retention-days: 3
 
-  # Content still equals the approved migration baseline (no published snapshot yet).
+  # Content still equals the approved migration baseline (no published snapshot yet):
+  # the historical strict checker is unconditionally required. Never gate or delete it to get green.
   migration-baseline:
-    needs: build
+    needs: [approved-seed, build]
     if: needs.build.outputs.snapshot == 'false'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
       - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
           name: site-dist
           path: apps/site/dist
-      # The projection golden step joins here with the content-migration sub-issue.
-      # Gated by a repository variable until the routes sub-issue renders all 14 outputs;
-      # never delete this step to get green.
       - name: Historical strict content checker (14/14)
-        if: vars.PINSEL_MIGRATION_CHECKER == 'enabled'
         run: bash scripts/check-content.sh
-      - name: Historical checker gate
-        if: vars.PINSEL_MIGRATION_CHECKER != 'enabled'
-        run: echo "::notice::Historical content checker is gated off (repository variable PINSEL_MIGRATION_CHECKER != enabled)."
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
-        if: always() && vars.PINSEL_MIGRATION_CHECKER == 'enabled'
+        if: always()
         with:
           name: content-parity-report
           path: .reports/content-parity.json
@@ -138,3 +151,28 @@ jobs:
         run: node scripts/content/check-publication.mjs --dist apps/site/dist
       - name: Public output exclusions
         run: node scripts/publication/check-public-output.mjs --dist apps/site/dist
+
+  # Fail-closed content gate: the build passed, the seed is intact, and exactly the content path
+  # selected by content/snapshot.json ran and succeeded. A skipped selected path is a failure.
+  content-gate:
+    needs: [approved-seed, build, migration-baseline, publication-validate]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check the selected content path
+        env:
+          SEED: ${{ needs.approved-seed.result }}
+          BUILD: ${{ needs.build.result }}
+          SNAPSHOT: ${{ needs.build.outputs.snapshot }}
+          MIGRATION: ${{ needs.migration-baseline.result }}
+          PUBLICATION: ${{ needs.publication-validate.result }}
+        run: |
+          echo "approved-seed=$SEED build=$BUILD snapshot=$SNAPSHOT migration-baseline=$MIGRATION publication-validate=$PUBLICATION"
+          test "$SEED" = success
+          test "$BUILD" = success
+          case "$SNAPSHOT" in
+            false) test "$MIGRATION" = success; test "$PUBLICATION" = skipped ;;
+            true) test "$PUBLICATION" = success; test "$MIGRATION" = skipped ;;
+            *) echo "::error::build did not report the content snapshot state"; exit 1 ;;
+          esac
