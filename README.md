@@ -6,8 +6,8 @@ Website for Pinsel (online preparation classes for German art universities). It 
 
 ## Stack
 
-- **Public site** (`apps/site`): [ZFB](https://github.com/Takazudo/zudo-front-builder) 4.4.0 with zudo-react. It emits static HTML with no JS by default, plus three visitor scripts (`*.client.ts`). It is served as Cloudflare Workers Static Assets (`apps/site/wrangler.jsonc`, no `main`).
-- **Styleguide** (`apps/styleguide`): a zudo-sg 0.5.4 host (zudo-doc 6.1.1, zdtp 0.8.6) over `packages/pinsel-ui`. It is for developers only and is never part of the public output.
+- **Public site** (`apps/site`): [ZFB](https://github.com/Takazudo/zudo-front-builder) 4.5.2 with zudo-react. It emits static HTML with no JS by default, plus three visitor scripts (`*.client.ts`). It is served as Cloudflare Workers Static Assets (`apps/site/wrangler.jsonc`, no `main`).
+- **Styleguide** (`apps/styleguide`): a zudo-sg 0.5.4 host (zudo-doc 6.2.0, zdtp 0.8.6) over `packages/pinsel-ui`. It is for developers only and is never part of the public output.
 - **Editor** (`apps/editor`): Vite and Preact. It hosts the Composer content-only editor (`zudo-composer/content-editor`) and shows the Japanese save and publication states.
 - **Authoring Worker** (`apps/authoring-worker`): a private Cloudflare Worker (wrangler 4.149.0). It provides Access JWT checks with jose, D1 drafts, revisions, immutable snapshots and publication jobs, the JSON content API, server-side preview rendering and the GitHub publication adapter. It is never deployed from this repository.
 - **Shared packages**: `packages/pinsel-ui` holds the zudo-react components, the approved CSS and assets, and the `renderRouteDocument` bridge. `packages/pinsel-content` holds the content models, the editable-field policy, the site structure and the assemble, project and check scripts.
