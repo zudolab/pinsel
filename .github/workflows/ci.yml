@@ -73,7 +73,21 @@ jobs:
       - run: pnpm worker:bundle:check
       - run: pnpm worker:check-preview
       - run: pnpm worker:types:check
-      - name: No-JS home page (Playwright, chromium)
+      - name: Production-entry authentication (local JWKS and D1)
+        run: pnpm verify:auth
+      - name: Edited-snapshot publication rehearsal (local only)
+        run: pnpm verify:publication
+      - name: Sanitized local verification reports
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: local-verification-reports
+          path: |
+            .reports/worker-auth-probe.json
+            .reports/publication-rehearsal.json
+          if-no-files-found: ignore
+          retention-days: 7
+      - name: Full browser suite (Playwright, Chromium)
         run: |
           pnpm exec playwright install --with-deps chromium
           pnpm test:browser
