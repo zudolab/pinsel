@@ -27,11 +27,11 @@ Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `n
 | `@tailwindcss/browser` | `4.3.2` | 4.3.2 | `apps/styleguide` | `sha512-R6hewP9HHwLAY88bFkgAYFIQMRGi9bqx6sR1anI3IThTJtwhPlAm4aHIzDKrnJ8Ct4M3d5A9PCsah8Z5+EjLiQ==` |
 | `@takazudo/zdtp` | `0.8.6` | 0.8.6 | `apps/styleguide` | `sha512-powstLG6d4tkEroYbT6iAJk1Da4xAYS8+enW/bcn6IupkzQQf3agAtXrlJ8XVoWs43puOsCR5/hgpMDFKP3d3g==` |
 | `@takazudo/zfb-md-wasm` | `4.6.0` | 4.6.0 | `apps/styleguide` | `sha512-c+utBVahgdUUpboQv3CyQLrwYYhOfzSGezgiysa9QiioHX9AE6ra2ZO1BZc+MSt008NeeiuAGNQHPhPZzQ1QNA==` |
-| `@takazudo/zudo-doc` | `6.2.0` | 6.2.0 | `apps/styleguide` | `sha512-K8nfgSsZ48oKaK+osy21UgOWpuEw8XuPx9L5ZkyPTDCivwH5NCuli9nHW2zOfb9nQ7BRQblkmZFwgHM07YWQBQ==` |
+| `@takazudo/zudo-doc` | `7.0.0` | 7.0.0 | `apps/styleguide` | `sha512-IzIomqb1x/XLl+QpIJyKqlG/RYFVYNYTqFGdkGZTM5krWsabAzj1jAn8ESLwMRuRhNu1/QeBd0TAz1O1b39UbQ==` |
 | `@takazudo/zudo-sg` | `0.5.6` | 0.5.6 | `apps/styleguide` | `sha512-ygen9s5fIjLfC95YV6H4Ny16WhNojWcneJYN69/kMujiZM0+7d8Np66WrKtutECmqfU0J+iy95EZ9Z1gOZciew==` |
 | `culori` | `^4.0.2` | 4.0.2 | `apps/styleguide` | `sha512-1+BhOB8ahCn4O0cep0Sh2l9KCOfOdY+BXJnKMHFFzDEouSr/el18QwXEMRlOj9UY5nCeA8UN3a/82rUWRBeyBw==` |
 | `diff` | `^8.0.4` | 8.0.4 | `apps/styleguide` | `sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw==` |
-| `katex` | `^0.16.38` | 0.16.47 | `apps/styleguide` | `sha512-Eeo8Ys1doU1z+x8AZsPpQu+p/QcZBI5PeOo7QGQdy2x2m0MU/hYagBbGOmXwr5KVbEfVuWv9LpnQWeehogurjg==` |
+| `katex` | `^0.19.0` | 0.19.0 | `apps/styleguide` | `sha512-v6Tznz3zJ7u3niRCoDTsumM2+HA2XXcCu+WAacCeHD2z3p9A9Ks987o5FzfTGBN0e8A0vjEgIDvLbICrXpdw/Q==` |
 | `tailwind-merge` | `3.6.0` | 3.6.0 | `apps/styleguide` | `sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==` |
 
 Both Composer packages are git-hosted (`resolution: { gitHosted: true }`), so pnpm records no integrity for them; their identity is the full commit SHA. The `zudo-composer` tarball digest above is `sha512` of `https://codeload.github.com/Takazudo/zudo-composer/tar.gz/<sha>`, for reference only. (Before #16 this row showed `zwitch@2.0.4`'s integrity by mistake.)
@@ -66,6 +66,17 @@ Base: `main` at `9c75580ba8650dcfcc4d18ba538106731becf2f8`. The channel-preservi
 - Composer git pins and third-party dependency resolutions remain unchanged. Release-age exemptions for ZFB native/slugify packages now name exactly 4.6.0; the old-or-new allowance was used only during install. `corepack pnpm` selects the project-pinned 11.5.2. Frozen install and `pnpm dedupe --check` pass.
 
 Verification on 2026-10-22: frozen install, dedupe, approved-seed hashes, no-deploy guard, content assembly/projection/checks, site/styleguide/editor builds, workspace typechecks, generated styleguide checks, token layers, asset assembly/verification, boundaries, Worker dry-run/bundle/preview/types and local authentication probes passed. Vitest reports 38 files / 412 tests passed and 1 file / 15 tests skipped. The initial publication rehearsal stopped at its clean-working-tree precondition; committed-head verification runs separately after the dependency commit. Chromium reports 81 tests passed and 15 skipped (guard verdict PASS). No check was weakened.
+
+## Node 24 and zudo-doc 7 migration — 2026-10-22
+
+This separately authorized migration supersedes the earlier doc 7 hold. The workspace now declares Node `>=24 <25`, matching zudo-doc 7's supported runtime. `.nvmrc` already selects 24, `.node-version` already selects 24.13.1, and CI already runs Node 24; none requires a change. The existing Node type declarations remain compatible and are not upgraded unnecessarily.
+
+- `@takazudo/zudo-doc` **6.2.0 → 7.0.0**, exact stable pin. Compared published tarballs and changelog; verified target tag `zudo-doc-v7.0.0` is `82049856397927077c5288465db34e44d0939260`. Public transition events are additive. Header/sidebar snapshots now remain stationary when appropriate; loading feedback covers content instead of chrome and clears on completion/cancellation. Prose wrapping improves at narrow widths. This host enables transition styling but intentionally omits the router bootstrap and overlay in its customized BodyEndIslands. Desktop/mobile browser coverage preserves document navigation and Back; a test-only fixture exercises the public loading bootstrap with the shipped CSS, checking chrome exclusion and cleanup on swap/cancellation. No SPA router is introduced.
+- `katex` **^0.16.38 (locked 0.16.47) → ^0.19.0 (locked 0.19.0)**, preserving the range operator. Doc 7 raises its optional peer to `^0.18.2 || ^0.19.0` for the upstream security-patch floor. The host has no math configuration or local KaTeX CSS import, so this migration does not enable math or introduce new visual features. The installed peer is kept compatible rather than removed.
+- ZFB 4.6.0, zudo-sg 0.5.6, zdtp 0.8.6 and the existing zod/diff peers satisfy doc 7. Optional history-server/MCP peers are unused and remain absent. KaTeX’s required CLI dependency moves from commander 8.3.0 to 15.0.0. Composer pins, approved assets, immutable fixtures and unrelated dependency versions remain unchanged. The root lockfile is the only lockfile.
+- Scaffold files and local customizations are unchanged; the existing provenance pin already covers the current generator release. No regeneration is needed.
+
+Validation for this migration: frozen pnpm 11.5.2 install and dedupe passed; all 21 normal local build/type/content/Worker/authentication gates passed. Vitest: 412 passed / 15 skipped. Chromium: 83 passed / 15 skipped, including the two new styleguide checks. Independent review found no blocking issues. Committed-head publication rehearsal and CI run after the migration commit.
 
 ## Historical pin decisions
 
