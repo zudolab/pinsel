@@ -1,5 +1,6 @@
 import { canonicalSerialize, createContentAiService, createHostedContentEditorial, createHostedSiteProjector, EditorialError, type ContentAiProposalRecord, type ContentAiProposalStore, type ContentAiProposer, type ContentAiService, type HostedActor, type HostedIdentities, type HostedSnapshot } from "zudo-composer/hosted-content";
 import { pinselPack } from "@pinsel/ui";
+import { checkNoteMarkdown, NOTE_FORBIDDEN_CODES } from "@pinsel/content";
 import { digest, PROJECT, serviceFor } from "../site/baseline";
 const owner = "pinsel:note-ai:v1";
 export async function noteAiService(db: D1Database, actor: HostedActor, proposer: ContentAiProposer | null) {
@@ -22,7 +23,18 @@ export async function noteAiService(db: D1Database, actor: HostedActor, proposer
   },
   async read(id) { const row = await db.prepare("SELECT record FROM pinsel_ai_proposal WHERE id = ?").bind(id).first<{ record: string }>(); return row ? JSON.parse(row.record) as ContentAiProposalRecord : null; },
  };
- const ai = createContentAiService({ actor, owner, proposer, store, createId: () => crypto.randomUUID(), boundary: provenance => createHostedContentEditorial({ provenance, service: () => service }) });
+ const checkedProposer: ContentAiProposer | null = proposer && { label: proposer.label, async propose(input) {
+  const output = await proposer.propose(input);
+  if (output.kind === "proposal" && typeof output.values.body === "string") {
+   const issues = checkNoteMarkdown(output.values.body).filter(issue=>NOTE_FORBIDDEN_CODES.includes(issue.code));
+   if(issues.length){
+    const classifications = issues.slice(0,20).map(issue=>`${issue.code} (line ${issue.line})`).join(", ");
+    throw new EditorialError("invalid-value", `Note本文のMarkdown制約に適合しないため提案を保存しませんでした: ${classifications}。この操作は本文・提案・receiptを書き込んでいません。対応記法を確認して指示を見直してください。`, [{fieldId:"note-body",code:"invalid-value",message:`note-markdown: ${classifications}`}]);
+   }
+  }
+  return output;
+ } };
+ const ai = createContentAiService({ actor, owner, proposer: checkedProposer, store, createId: () => crypto.randomUUID(), boundary: provenance => createHostedContentEditorial({ provenance, service: () => service }) });
  const checkNote = (modelId: string) => { if (modelId !== "note") throw new EditorialError("forbidden", "Only Note title/body are supported by Content-AI."); };
  const bounded: ContentAiService = { ...ai,
   async scope(entry) { checkNote(entry.modelId); return ai.scope(entry); },

@@ -5,6 +5,7 @@ import { mkdtemp, copyFile, chmod, readFile, rm, access } from "node:fs/promises
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { aiProviderConfig } from "./ai-provider-config.mjs";
+import { NOTE_AI_BODY_CONSTRAINTS } from "../packages/pinsel-content/src/richtext-policy";
 
 it("requires explicit real settings and rejects malformed or misleading settings", () => {
  expect(aiProviderConfig({})).toEqual({ provider: "fake" });
@@ -43,11 +44,14 @@ it.each(["claude-cli", "codex-cli"])("forwards explicit %s settings through actu
   const injected = await fetch(`${message.origin}/propose`, { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ instruction: "shorter", fields: [], model: "other", effort: "high", serviceTier: "priority" }) });
   expect(injected.status).toBe(400);
   await expect(access(record)).rejects.toThrow();
-  const response = await fetch(`${message.origin}/propose`, { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ instruction: "shorter", fields: [{ key: "title", kind: "text", label: "Title", value: "Original" }] }) });
+  const response = await fetch(`${message.origin}/propose`, { method: "POST", headers: { authorization: `Bearer ${token}`, "content-type": "application/json" }, body: JSON.stringify({ instruction: "shorter", fields: [{ key: "title", kind: "text", label: "Title", value: "Original" }, {key:"body",kind:"markdown",label:"本文",value:"## 見出し\n\n- 項目"}] }) });
   expect(await response.json()).toEqual({ kind: "proposal", values: { title: "Fixture title" }, summary: "Offline argv verification" });
   expect(response.status).toBe(200);
-  const { args, tokenInherited } = JSON.parse(await readFile(record, "utf8"));
+  const { args, tokenInherited, toolBodyDescription, messageBodyLabel, originalInstruction, originalTitleLabel } = JSON.parse(await readFile(record, "utf8"));
   expect(tokenInherited).toBe(false);
+  expect(toolBodyDescription).toBe(`New 本文. ${NOTE_AI_BODY_CONSTRAINTS} (markdown).`);
+  expect(messageBodyLabel).toBe(`本文. ${NOTE_AI_BODY_CONSTRAINTS}`);
+  expect(originalInstruction).toBe(true);expect(originalTitleLabel).toBe(true);
   if (kind === "codex-cli") {
    expect(args.slice(args.indexOf("-m"), args.indexOf("-m") + 2)).toEqual(["-m", "gpt-6-astra"]);
    expect(args).toEqual(expect.arrayContaining(['model_reasoning_effort="medium"', 'service_tier="default"', "--ignore-user-config", "--strict-config", "--sandbox", "read-only"]));

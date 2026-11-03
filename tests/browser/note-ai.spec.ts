@@ -102,3 +102,13 @@ test("misbound AI recovery pointer remains untouched on read and Apply",async({p
  const record=await page.evaluate(id=>{const hosted=Object.keys(localStorage).find(k=>k.startsWith("pinsel:hosted:v1:"))!;const scope=hosted.split(":").slice(3,-1).join(":");const key=`pinsel:note-ai:${scope}:${id}:apply`;const raw=JSON.stringify({version:1,proposalId:id,action:"apply",entry:{providerId:"wrong",modelId:"note",recordId:"other"}});localStorage.setItem(key,raw);return{key,raw};},id);
  await page.locator("#ai-read").click();await preview(page);const before=await state(page);await page.locator("#ai-apply").click();await expect(page.locator("#ai-status")).toContainText("回復記録を保持");expect(await state(page)).toEqual(before);expect(await page.evaluate(key=>localStorage.getItem(key),record.key)).toBe(record.raw);
 });
+
+test("invalid Markdown fake proposal is classified safely and leaves canonical content and proposal list unchanged",async({page})=>{
+ test.setTimeout(180000);
+ await stop();fakeField="body";await start();await open(page);const before=await state(page),ids=await page.locator("#ai-proposals option").evaluateAll(nodes=>nodes.map(node=>(node as HTMLOptionElement).value));
+ let prepares=0;page.on("request",request=>{if(request.url().endsWith("/api/hosted/ai")&&request.postDataJSON()?.operation==="content-ai-prepare")prepares++;});
+ await page.locator("#ai-instruction").fill("### PRIVATE_CANDIDATE\n\n[private](http://private.example.test/secret)");await page.locator("#ai-prepare").click();
+ await expect(page.locator("#ai-status")).toContainText("invalid-value");await expect(page.locator("#ai-status")).toContainText("heading-3-plus");await expect(page.locator("#ai-status")).toContainText("unsafe-link");await expect(page.locator("#ai-status")).not.toContainText("PRIVATE_CANDIDATE");await expect(page.locator("#ai-status")).not.toContainText("private.example");
+ expect(await state(page)).toEqual(before);expect(await page.locator("#ai-proposals option").evaluateAll(nodes=>nodes.map(node=>(node as HTMLOptionElement).value))).toEqual(ids);await expect(page.locator("#ai-apply")).toBeDisabled();expect(prepares).toBe(1);
+ await prepare(page,"## 日本語見出し\n\n- 項目\n- **強調**");await preview(page);expect(await state(page)).toEqual(before);await expect(page.frameLocator("#preview").getByRole("heading",{name:"日本語見出し"})).toBeVisible();
+});

@@ -57,3 +57,34 @@ it.each([{configured:false},{configured:true,inference:{state:"unknown",message:
  expect(await(await call("content-ai-read",{proposalId:proposal.id}))!.json()).toMatchObject({ok:true});expect(await(await call("content-ai-undo",{proposalId:proposal.id}))!.json()).toMatchObject({ok:true});
  }finally{remote.mockRestore();}
 });
+
+it("classifies rejected Note Markdown without writing or exposing candidate text",async()=>{
+ const service=await serviceFor(env.DB),before=await service.readState(actor),entry=note(before);
+ const local=await noteAiService(env.DB,actor,{label:"offline invalid fixture",async propose(){return {kind:"proposal",values:{body:"### PRIVATE_CANDIDATE\n\n[private](http://private.example.test/secret)"},summary:"fixture"};}});
+ let failure:any;try{await local.ai.prepare({entry,instruction:"本文だけ"});}catch(error){failure=error;}
+ expect(failure).toMatchObject({code:"invalid-value"});
+ expect(failure.message).toContain("heading-3-plus");expect(failure.message).toContain("unsafe-link");
+ expect(JSON.stringify(failure)).not.toContain("PRIVATE_CANDIDATE");expect(JSON.stringify(failure)).not.toContain("private.example");
+ expect(await service.readState(actor)).toEqual(before);
+ for(const table of ["pinsel_ai_proposal","pinsel_hosted_receipt","pinsel_hosted_revision"])expect((await env.DB.prepare(`SELECT COUNT(*) AS count FROM ${table}`).first<{count:number}>())!.count).toBe(0);
+});
+
+it("keeps safe Markdown rejection classification through the HTTP wire envelope",async()=>{
+ const service=await serviceFor(env.DB),before=await service.readState(actor),entry=note(before);
+ const remote=vi.spyOn(globalThis,"fetch").mockImplementation(async(url)=>new Response(JSON.stringify(String(url).endsWith("/status")?{configured:true,provider:"fixture",canApply:true,inference:{state:"ready",detail:"fixture"}}:{kind:"proposal",values:{body:"### PRIVATE_CANDIDATE\n\n[private](http://private.example.test/secret)"},summary:"fixture"}),{headers:{"content-type":"application/json"}}));
+ const localEnv={...env,PINSEL_AI_ORIGIN:"http://127.0.0.1:12345",PINSEL_AI_TOKEN:"fixture",PINSEL_AI_PROVIDER:"fake"};
+ try {
+ const response=await localAiHandler(new Request("http://localhost/api/hosted/ai",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({operation:"content-ai-prepare",payload:{entry,instruction:"本文だけ"}})}),localEnv,actor);
+ expect(response!.status).toBe(200);const body=await response!.json() as any;
+ expect(body).toMatchObject({ok:false,error:{code:"invalid-value",diagnostics:[{fieldId:"note-body",code:"invalid-value",message:"note-markdown: heading-3-plus (line 1), unsafe-link (line 3)"}]}});
+ expect(JSON.stringify(body)).not.toMatch(/PRIVATE_CANDIDATE|private\.example/);expect(remote.mock.calls.filter(([url])=>String(url).endsWith("/propose"))).toHaveLength(1);
+ expect(await service.readState(actor)).toEqual(before);for(const table of ["pinsel_ai_proposal","pinsel_hosted_receipt","pinsel_hosted_revision"])expect((await env.DB.prepare(`SELECT COUNT(*) AS count FROM ${table}`).first<{count:number}>())!.count).toBe(0);
+ }finally{remote.mockRestore();}
+});
+
+it("accepts valid heading and flat list body without normalizing it",async()=>{
+ const body="## 日本語の見出し\n\n- 一つ目\n- **二つ目**と[参考](/notes/free-tuition/)";
+ const service=await serviceFor(env.DB),before=await service.readState(actor),entry=note(before);
+ const local=await noteAiService(env.DB,actor,{label:"offline body fixture",async propose(){return {kind:"proposal",values:{body},summary:"fixture"};}});
+ const result=await local.ai.prepare({entry,instruction:"本文だけ"});expect(result.status).toBe("proposed");if(result.status!=="proposed")throw new Error("proposal");expect(result.proposal.values).toEqual({"note-body":body});expect(await service.readState(actor)).toEqual(before);
+});

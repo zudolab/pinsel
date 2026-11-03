@@ -27,3 +27,11 @@ rootで `pnpm exec playwright test tests/browser/note-ai.spec.ts`。重い検証
 6. 10分到達、2回のPrepare、最初の不一致/失敗、応答不明のいずれかで新規推論を止めます。応答不明は提案一覧/receiptの読み取りだけで確認し、自動再送しません。Ctrl+Cでlauncherを終了し、控えた両portを `nc -z 127.0.0.1 PORT` で調べ、接続拒否とOSのLISTEN消滅を確認します。残存時は今回記録したPIDだけを停止し、受け入れをFAILにします。
 
 記録はsource/package/contract SHA、Node/pnpm、provider名、開始終了時刻、Prepare回数、前/Apply後/Undo後revision、結果PASS/FAIL/NOT_RUN、停止port検証の真偽だけ。token・環境変数全体・HAR・提案全文・元本文・ユーザー情報は残しません。失敗stateは勝手に削除せず保留します。記録後もfixture stateの削除は明示したテストディレクトリだけを対象にします。
+
+## Markdown拒否の扱い
+
+生成側にはhostが所有するNote本文の制約をbodyのtool descriptionとfield labelへ付加します。`## `見出し、段落、平坦な`- `リスト、inline強調・リンクだけを使い、リンク先は内部パスかHTTPSです。元の利用者指示・model・effortは変更しません。fakeは意味を解釈しないため、この説明を付加せず同じvalidatorで結果を検査します。
+
+HTTP 200だけで成功判定せず、必ずJSONの`ok`を確認してください。本文の対応記法違反は`ok:false` / `invalid-value`のまま、`heading-3-plus (line N)`などの分類と行番号だけを表示します。候補本文・URLはエラーへ含めず、無効な候補の自動修正・再生成・保存はしません。proposal/receipt数とdraftRevisionが不変であることを確認し、分類・行番号だけを受け入れ記録へ追加できます。その他のinvalid-valueをMarkdown違反と推測してはいけません。
+
+x0xの旧head `21e263cac3d7ca97fc2a8ea960aacea3c60cffff`ではClaude opus/mediumの本文Prepareがinvalid-valueで拒否され、proposal/receiptが0、revision不変でした。実出力は保持していないため具体的違反は不明です。人工的な`###`候補による再現と、この分類改善は確認できますが、実出力の原因確定や修正後の実CLI成功を意味しません。新headでの再受け入れも上記10分・Prepare2回の上限を守り、最初の拒否で停止します。

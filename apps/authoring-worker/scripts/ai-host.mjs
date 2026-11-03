@@ -3,6 +3,7 @@ import { aiProviderConfig } from "../../../scripts/ai-provider-config.mjs";
 import { createServer } from "node:http";
 import { timingSafeEqual } from "node:crypto";
 import { createContentAiProvider } from "zudo-composer/hosted-content/node";
+import { NOTE_AI_BODY_CONSTRAINTS } from "../../../packages/pinsel-content/src/richtext-policy.ts";
 if (Number(process.versions.node.split(".")[0]) !== 24) throw new Error("Content-AI host requires Node24");
 const token = process.env.PINSEL_AI_TOKEN;
 if (!token || token.length < 32) throw new Error("Per-launch AI host authentication is required");
@@ -35,7 +36,9 @@ const server = createServer(async (request, response) => {
   busy = true;
   const controller = new AbortController();
   response.on("close", () => controller.abort());
-  try { send(200, await provider.proposer.propose({ ...input, fields: config.provider==="fake" && process.env.PINSEL_AI_FAKE_FIELD ? input.fields.filter((/** @type {{key:string}} */ field)=>field.key===process.env.PINSEL_AI_FAKE_FIELD) : input.fields, signal: controller.signal })); } finally { busy = false; }
+  const scopedFields = config.provider==="fake" && process.env.PINSEL_AI_FAKE_FIELD ? input.fields.filter((/** @type {{key:string}} */ field)=>field.key===process.env.PINSEL_AI_FAKE_FIELD) : input.fields;
+  const fields = scopedFields.map((/** @type {{key:string;label:string}} */ field)=>config.provider !== "fake" && field.key === "body" ? {...field,label:`${field.label}. ${NOTE_AI_BODY_CONSTRAINTS}`} : field);
+  try { send(200, await provider.proposer.propose({ ...input, fields, signal: controller.signal })); } finally { busy = false; }
  } catch { send(400, { error: "The bounded proposal request could not complete" }); }
 });
 server.listen(0, "127.0.0.1", () => {
