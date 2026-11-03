@@ -17,24 +17,24 @@ Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `n
 | `zod` | `^4.3.6` | 4.6.5 | `apps/authoring-worker`, `apps/styleguide`, `packages/pinsel-content` | `sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==` |
 | `@cloudflare/vitest-plugin` | `1.4.0` | 1.4.0 | `apps/authoring-worker` | `sha512-SgIhyhpVH+2MVSJxidG8gosqrpzF25IwKevQhPykwulTgAFe4s0Nkj71pNzqCkwV2+A4NKkHJP2ReyyRsoIxsg==` |
 | `wrangler` | `4.149.0` | 4.149.0 | `apps/authoring-worker` | `sha512-OzK7xmB5r5iLKb3cIT3783g13fe6T7xyeKu9LEdUyl+DKAM2KP/jkjnE0OUhyw+mB/XJM9ycjgF3MWm8PR9amg==` |
-| `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | 1.0.0 (git `c0b452da075b66757c60bd0d721a47062d4354d0`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `git-hosted, no integrity recorded` |
+| `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | 1.0.0 (git `c0b452da075b66757c60bd0d721a47062d4354d0`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-cGk7w+sB/cAKH90K93MH9jWlQtKcbjru9bQIFuNUIBZ13oC/qALeZyxNfmIaCPpQJknY6W8S73GLJ2eMn0gHVA==` |
 | `preact` | `^10.29.8` | 10.29.8 | `apps/authoring-worker` (dev, peer only), `apps/editor`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==` |
-| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#547b532eb56dfecaec1e2bd9060f8d579ad8862c` | 0.0.0 (git `547b532eb56dfecaec1e2bd9060f8d579ad8862c`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `git-hosted, no integrity recorded` (codeload tarball `sha512-ftScClSN77f5t6ij1nvoJpblXdEnHTfgqTO/jNFnNPx1r5rCMzcxpRy4xtbDHlO2IOTDNBDsVqQB3CnzHbgx1Q==`) |
+| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#547b532eb56dfecaec1e2bd9060f8d579ad8862c` | 0.0.0 (git `547b532eb56dfecaec1e2bd9060f8d579ad8862c`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-ftScClSN77f5t6ij1nvoJpblXdEnHTfgqTO/jNFnNPx1r5rCMzcxpRy4xtbDHlO2IOTDNBDsVqQB3CnzHbgx1Q==` |
 | `tsx` | `4.23.15` | 4.23.15 | `.` | `sha512-Yiex1Ovn8z2xPpOWckIiysV1SSyRMY9BkLF++q0yKiDxCqRhosKfMg3janKkiLBwZ5c/YryloKwGZcrEmtwxKw==` |
 | `vite` | `^8.2.2` | 8.3.4 | `apps/editor` | `sha512-IftLE8phJhdNRIGNEV4JCCvfNScoZQVfcXaN8TQropWGJtOHcu+iAB9pHcuGvmEb/kddw0LBe/jS8ztdC6xdiQ==` |
-| `@takazudo/zfb` | `4.6.0` | 4.6.0 | `apps/authoring-worker`, `apps/site`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-yi48dlk7U/k8nkTpE6Mbc1Tjn4M+QB/BlHNAhqbP7pZXwXUaQUukEdyluvQtwVvnPpBjPxkqxsM3zkbo1r/ekA==` |
-| `@takazudo/zfb-runtime` | `4.6.0` | 4.6.0 | `apps/site`, `apps/styleguide` | `sha512-wJsYyK8UVZVbvn2qAVfgob2R4voTsgitituqkmNRWZfad7Ur4aM+9JrAwX2W3VxG7b3lrq3HP5f2RQhV0AGOPQ==` |
+| `@takazudo/zfb` | `5.1.5` | 5.1.5 | `apps/authoring-worker`, `apps/site`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-V8czYQoiwa2N19gb9MwcgE0Re6TV5ea9yfIrL4casySOzkh8kM/TRKNL0I5Ix1T9LjyqBcaNP59v/PorJZnuTg==` |
+| `@takazudo/zfb-runtime` | `5.1.5` | 5.1.5 | `apps/site`, `apps/styleguide` | `sha512-zKB8rhkxgvYa44vXtlxn8hR7fIir5wsCe+8C8NKWHHYkgb654yXD0+myiLPqkEQhtifvpn54PwUhCJBmcG6eiQ==` |
 | `@tailwindcss/browser` | `4.3.2` | 4.3.2 | `apps/styleguide` | `sha512-R6hewP9HHwLAY88bFkgAYFIQMRGi9bqx6sR1anI3IThTJtwhPlAm4aHIzDKrnJ8Ct4M3d5A9PCsah8Z5+EjLiQ==` |
-| `@takazudo/zdtp` | `0.8.6` | 0.8.6 | `apps/styleguide` | `sha512-powstLG6d4tkEroYbT6iAJk1Da4xAYS8+enW/bcn6IupkzQQf3agAtXrlJ8XVoWs43puOsCR5/hgpMDFKP3d3g==` |
-| `@takazudo/zfb-md-wasm` | `4.6.0` | 4.6.0 | `apps/styleguide` | `sha512-c+utBVahgdUUpboQv3CyQLrwYYhOfzSGezgiysa9QiioHX9AE6ra2ZO1BZc+MSt008NeeiuAGNQHPhPZzQ1QNA==` |
-| `@takazudo/zudo-doc` | `7.0.0` | 7.0.0 | `apps/styleguide` | `sha512-IzIomqb1x/XLl+QpIJyKqlG/RYFVYNYTqFGdkGZTM5krWsabAzj1jAn8ESLwMRuRhNu1/QeBd0TAz1O1b39UbQ==` |
-| `@takazudo/zudo-sg` | `0.5.6` | 0.5.6 | `apps/styleguide` | `sha512-ygen9s5fIjLfC95YV6H4Ny16WhNojWcneJYN69/kMujiZM0+7d8Np66WrKtutECmqfU0J+iy95EZ9Z1gOZciew==` |
+| `@takazudo/zdtp` | `0.9.0` | 0.9.0 | `apps/styleguide` | `sha512-8kXEoi+K82v7akI1jOzuBqnoy6P4z6tMB0dtd6N1nBxppogkIX0MhjiToFwyBye0QL9bQFwmzSG3/M3eYtCaHQ==` |
+| `@takazudo/zfb-md-wasm` | `5.1.5` | 5.1.5 | `apps/styleguide` | `sha512-Nu1Llw5Buai9JPuDIdI73VEglKUbRaEod9XpY52jpk7Z98T3MYd4xK09VVQ1pBzSwGLFmVFauHywm1XzdAlKNQ==` |
+| `@takazudo/zudo-doc` | `9.1.1` | 9.1.1 | `apps/styleguide` | `sha512-lHnpKM8gDnt2dUC8BCdZcF69fQhH3uSlKtJ39SgRqKSecxOSCoE0MQFl+pNK1vz2tf5IctYJDqCNgkxjTjK7dQ==` |
+| `@takazudo/zudo-sg` | `0.8.1` | 0.8.1 | `apps/styleguide` | `sha512-kopYbrMriwE76wBNgpykz+VpTpt7sGGgXZzEvtebW7UqXHzYmRxpzClaG5xEOjd1zBeby7KbOdaIO+FxuILKiw==` |
 | `culori` | `^4.0.2` | 4.0.2 | `apps/styleguide` | `sha512-1+BhOB8ahCn4O0cep0Sh2l9KCOfOdY+BXJnKMHFFzDEouSr/el18QwXEMRlOj9UY5nCeA8UN3a/82rUWRBeyBw==` |
 | `diff` | `^8.0.4` | 8.0.4 | `apps/styleguide` | `sha512-DPi0FmjiSU5EvQV0++GFDOJ9ASQUVFh5kD+OzOnYdi7n3Wpm9hWWGfB/O2blfHcMVTL5WkQXSnRiK9makhrcnw==` |
 | `katex` | `^0.19.0` | 0.19.0 | `apps/styleguide` | `sha512-v6Tznz3zJ7u3niRCoDTsumM2+HA2XXcCu+WAacCeHD2z3p9A9Ks987o5FzfTGBN0e8A0vjEgIDvLbICrXpdw/Q==` |
 | `tailwind-merge` | `3.6.0` | 3.6.0 | `apps/styleguide` | `sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==` |
 
-Both Composer packages are git-hosted (`resolution: { gitHosted: true }`), so pnpm records no integrity for them; their identity is the full commit SHA. The `zudo-composer` tarball digest above is `sha512` of `https://codeload.github.com/Takazudo/zudo-composer/tar.gz/<sha>`, for reference only. (Before #16 this row showed `zwitch@2.0.4`'s integrity by mistake.)
+Both Composer packages retain their full git commit identities. The 2026-11-03 pnpm install also records codeload tarball SHA-512 integrity in the lockfile, shown above. Earlier lockfiles recorded only `gitHosted: true`; the source pins have not changed.
 
 ## Composer pins
 
@@ -44,6 +44,22 @@ Both Composer packages are git-hosted (`resolution: { gitHosted: true }`), so pn
 | `@zudo-composer/component-contract` | `c0b452da075b66757c60bd0d721a47062d4354d0` | Package-root handoff commit (`package/component-contract-v1`). |
 
 Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<full-sha>`. There is no npm release of `zudo-composer`.
+
+## Published dependency refresh — 2026-11-03
+
+Base main: `96506d51e089ffaa1facd4ef1ff0402abac263ab`. The specified channel-preserving resolver scanned all eight manifests (seven active workspace manifests and one historical approved-seed manifest). Write-back was restricted to the six active first-party package names; the fixture was excluded. Only the root lockfile exists. All active packages use exact stable pins; no channel warnings were emitted.
+
+- ZFB/runtime/MD WASM **4.6.0 → 5.1.5**. Published tarballs and release notes were compared. Verified release tags: `febb20e74833db11d69df7d6d07a8c7df4089aa9` → `526bcc552f04d21e8662f8df6c5eb5df0354238a`. Node 24 is now required; the native engine uses direct V8 and Rolldown, including lazy-island chunk fixes. Public wrapper/runtime types and exports remain; WASM binaries/digests change. This host pins no WASM digests. Runtime's exact ZFB peer is satisfied.
+- zdtp **0.8.6 → 0.9.0** (`183daa8edd4c460126763e9a7b6a45a6c7684e93` → `81344f8d429de30d24f3768ba39af7fe8b99a41b`). The panel bundles zudo-react; the new dashboard/client entry uses host ZFB. SG supplies the migrated dashboard adapter. Preact remains required by the unchanged Composer pins.
+- zudo-doc **7.0.0 → 9.1.1** (`82049856397927077c5288465db34e44d0939260` → `81e0e97f6a11185202e63a647a55df3e0cffc50a`). Adopt the new default Graphite theme. The 9.1 loading scrim intentionally covers the viewport, including chrome; browser assertions now prove viewport coverage and preserve completion/cancellation checks. This supersedes the doc 7 geometry decision below. Optional MCP/history peers remain unused.
+- zudo-sg **0.5.6 → 0.8.1** (`a800c0adbaaf0584ee5089b0d853322c3bc39b33` → `6e14088dbdc6138bcfe38fcc2a17c9cd7a580f71`). Public exports remain; dashboard integration/error handling changed. Published peers accept the complete selected family. All six packages omit npm gitHead; exact release tags were used, with tarballs as the primary consumer evidence.
+- The local verification harness forwards `XDG_CONFIG_HOME` alongside its existing cache/data paths, so Wrangler can use a writable task config directory when the machine home is read-only. Its credential environment filtering remains intact.
+- Node runtime stays **24.x**, pnpm stays **11.5.2**. Root engines, `.nvmrc`, `.node-version` and CI already select Node 24. README's contradictory Node 22 minimum is corrected; the external-consumer probe now asserts Node 24, declares the host engines and reports its actual runtime.
+- Scaffold provenance advances to create-zudo-sg-v0.2.9 (`73165555cbce448a6ce2c3f9431c177b2811ffa9`). Only upstream template package metadata changed since the recorded v0.2.5; no listed scaffold source or local customization needed editing. Styleguide build, generated artifacts and token-layer checks pass.
+- The lockfile refresh also resolves compatible transitive updates (including zdtp tooling and inquirer); unrelated direct dependency specifiers remain unchanged.
+- Both Composer git pins remain unchanged. No approved-seed, user draft, deployment or remote D1 data is modified.
+
+Verification: Node 24.19.0 / pnpm 11.5.2 frozen install and dedupe passed; all workspace typechecks, 412 Vitest tests (15 existing skips), site/styleguide/editor builds, generated/token checks, Worker dry-run/bundle/preview/types and local authentication probes passed. Chromium: 83 passed / 15 existing skips. Independent consumer clean install, frozen reinstall and public exports passed. Publication rehearsal and CI are checked on the committed PR head.
 
 ## Published dependency refresh — 2026-10-15
 

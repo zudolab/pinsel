@@ -14,6 +14,7 @@ import { promisify } from "node:util";
 const execFile = promisify(execFileCallback);
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const root = JSON.parse(await readFile(path.join(repoRoot, "package.json"), "utf8"));
+assert.equal(process.versions.node.split(".")[0], "24", "external consumer must run on Node 24.x");
 const content = JSON.parse(await readFile(path.join(repoRoot, "packages/pinsel-content/package.json"), "utf8"));
 const toolSpec = content.dependencies["zudo-composer"];
 const contractSpec = content.dependencies["@zudo-composer/component-contract"];
@@ -29,7 +30,7 @@ const pnpm = (args) => execFile("corepack", ["pnpm", ...args], { cwd: host, enco
 try {
   await execFile("mkdir", ["-p", host]);
   await writeFile(path.join(host, "package.json"), `${JSON.stringify({
-    name: "pinsel-external-install", private: true, version: "0.0.0", type: "module", packageManager: root.packageManager,
+    name: "pinsel-external-install", private: true, version: "0.0.0", type: "module", packageManager: root.packageManager, engines: root.engines,
     dependencies: { "zudo-composer": toolSpec, "@zudo-composer/component-contract": contractSpec, preact: content.dependencies.preact },
   }, null, 2)}\n`);
   await writeFile(path.join(host, "pnpm-workspace.yaml"), "packages: []\nautoInstallPeers: false\nallowBuilds:\n  '@zudo-composer/component-contract': true\n  esbuild: true\n");
@@ -54,7 +55,7 @@ try {
   ];
   for (const [subpath, expected] of expectations) for (const name of expected) assert.ok(names[subpath]?.includes(name), `${subpath} must export ${name}`);
   const installed = JSON.parse(await readFile(path.join(host, "node_modules/zudo-composer/package.json"), "utf8"));
-  console.log(JSON.stringify({ host, toolSpec, contractSpec, installedVersion: installed.version, subpaths: Object.fromEntries(Object.entries(names).map(([k, v]) => [k, v.length])) }, null, 2));
+  console.log(JSON.stringify({ host, nodeVersion: process.versions.node, toolSpec, contractSpec, installedVersion: installed.version, subpaths: Object.fromEntries(Object.entries(names).map(([k, v]) => [k, v.length])) }, null, 2));
   console.log("external-install: fresh lockfile, frozen reinstall and every public subpath import passed outside the repository.");
 } finally {
   await rm(temporary, { recursive: true, force: true });

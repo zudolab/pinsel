@@ -11,7 +11,7 @@ const dist = path.join(repoRoot, "apps/styleguide/dist");
 const hostRequire = createRequire(path.join(repoRoot, "apps/styleguide/package.json"));
 
 for (const width of [1440, 390]) {
-  test(`styleguide document navigation and doc 7 loading CSS at ${width}px`, async ({ page }) => {
+  test(`styleguide document navigation and doc 9 loading CSS at ${width}px`, async ({ page }) => {
     const { buildPageLoadingOverlayBootstrap } = await import(pathToFileURL(hostRequire.resolve("@takazudo/zudo-doc/page-loading")).href);
     await page.setViewportSize({ width, height: 900 });
     await serveRoot(page, origin, dist);
@@ -40,10 +40,11 @@ for (const width of [1440, 390]) {
       await expect(overlay).toHaveAttribute("aria-hidden", "false");
       await expect(overlay).toHaveCSS("opacity", "1");
       const loadingBox = await overlay.boundingBox();
-      const headerBox = await header.boundingBox();
-      expect(loadingBox!.y).toBeGreaterThanOrEqual(headerBox!.y + headerBox!.height - 1);
-      const contentBox = await page.locator(".zd-sidebar-content-wrapper").boundingBox();
-      expect(loadingBox!.x).toBeGreaterThanOrEqual(contentBox!.x - 1);
+      // zudo-doc 9.1 intentionally covers chrome as well as content.
+      expect(loadingBox!.x).toBeCloseTo(0, 0);
+      expect(loadingBox!.y).toBeCloseTo(0, 0);
+      expect(loadingBox!.width).toBeCloseTo(width, 0);
+      expect(loadingBox!.height).toBeCloseTo(900, 0);
       await page.evaluate((event) => document.dispatchEvent(new Event(event)), completion);
       await expect(overlay).toHaveAttribute("aria-hidden", "true");
       await expect(overlay).toHaveCSS("opacity", "0");

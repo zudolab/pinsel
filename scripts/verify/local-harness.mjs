@@ -24,7 +24,7 @@ export async function freePort() {
 // baseline overrides, NODE_OPTIONS or caller .dev.vars enter these probes.
 /** @param {NodeJS.ProcessEnv} extra */
 export function localEnv(extra = {}) {
-  const names = ["PATH", "HOME", "TMPDIR", "SystemRoot", "COREPACK_HOME", "XDG_CACHE_HOME", "XDG_DATA_HOME", "npm_config_cache", "PNPM_HOME"];
+  const names = ["PATH", "HOME", "TMPDIR", "SystemRoot", "COREPACK_HOME", "XDG_CACHE_HOME", "XDG_DATA_HOME", "XDG_CONFIG_HOME", "npm_config_cache", "PNPM_HOME"];
   return { ...Object.fromEntries(names.filter((key) => process.env[key]).map((key) => [key, process.env[key]])), CI: "1", WRANGLER_SEND_METRICS: "false", CLOUDFLARE_LOAD_DEV_VARS_FROM_DOT_ENV: "false", CLOUDFLARE_INCLUDE_PROCESS_ENV: "false", ...extra };
 }
 
