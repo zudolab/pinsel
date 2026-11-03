@@ -21,7 +21,7 @@ const contractSpec = content.dependencies["@zudo-composer/component-contract"];
 assert.match(toolSpec, /^git\+https:\/\/github\.com\/Takazudo\/zudo-composer\.git#[0-9a-f]{40}$/, "zudo-composer must be pinned to a full git SHA");
 assert.match(contractSpec, /^git\+https:\/\/github\.com\/Takazudo\/zudo-composer\.git#[0-9a-f]{40}$/, "component-contract must be pinned to a full git SHA");
 
-const SUBPATHS = ["zudo-composer/content", "zudo-composer/site-build", "zudo-composer/preview-protocol", "zudo-composer/export", "zudo-composer/host-storage", "zudo-composer/authoring", "@zudo-composer/component-contract"];
+const SUBPATHS = ["zudo-composer/hosted-content", "zudo-composer/hosted-content/preview", "zudo-composer/site-build", "zudo-composer/authoring", "@zudo-composer/component-contract"];
 
 const temporary = await mkdtemp(path.join(tmpdir(), "pinsel-external-install-"));
 const host = path.join(temporary, "host");
@@ -46,10 +46,8 @@ try {
   const names = JSON.parse(probe.stdout);
   /** @type {[string, string[]][]} */
   const expectations = [
-    ["zudo-composer/content", ["compileSiteProjectPlan", "authorizeContentMutation", "validateSiteProject", "validateContentEntryRecord"]],
-    ["zudo-composer/host-storage", ["applyHostContentRequest", "runContentStorageConformance", "createMemoryContentDraftStorage"]],
-    ["zudo-composer/preview-protocol", ["createHostPreviewBridge", "readPreviewToHost"]],
-    ["zudo-composer/export", ["validateContentExportSubmission", "createFakeContentExportAdapter"]],
+    ["zudo-composer/hosted-content", ["createHostedContentService", "projectHostedSite", "canonicalSerialize"]],
+    ["zudo-composer/hosted-content/preview", ["createHostedPreviewController", "createHostedPreviewHost"]],
     ["zudo-composer/site-build", ["compileStaticSite"]],
     ["@zudo-composer/component-contract", ["defineComponentPack", "defineComponent"]],
   ];

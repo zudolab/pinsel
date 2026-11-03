@@ -1,6 +1,6 @@
 import type { Child } from "@takazudo/zfb/zudo-react";
 import type { ComponentManifest } from "@zudo-composer/component-contract";
-import type { SiteProjectPlanRoute } from "zudo-composer/content";
+import type { HostedProjectedRoute as SiteProjectPlanRoute } from "zudo-composer/hosted-content";
 import type { RenderRegistry, RouteContext, SlotPosition } from "./types";
 
 // The one bridge from a compiled Composer route to Pinsel HTML. It walks

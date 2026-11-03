@@ -1,3 +1,5 @@
+> Historical pre-Hosted implementation notes. The current S4 runtime, commands, disabled publication behavior and migration are documented in [dogfooding](dogfooding.md). Old API examples below are not the active API.
+
 # サイトの文章・料金を編集する
 
 **現在の状態：編集画面とログインはまだ公開・設置されていません。** 以下は、今後ホスト名や認証などの設定を完了した環境での操作ガイドです。現在はローカル検証のみで、標準の公開機能（`PUBLISHER_PROVIDER=disabled`）では実際の公開申請を送信できません。保存・検証・反映の完了は、本番サイトへの公開を意味しません。未確定の設定は [launch-inputs.md](launch-inputs.md) にまとめています。

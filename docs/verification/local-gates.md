@@ -1,3 +1,5 @@
+> Historical pre-Hosted implementation notes. The current S4 runtime, commands, disabled publication behavior and migration are documented in [dogfooding](../dogfooding.md). Old API examples below are not the active API.
+
 # Local authentication and edited-publication gates
 
 Issue [#28](https://github.com/zudolab/pinsel/issues/28) adds maintained checks to every ordinary CI `build` job. The historical #27 results in [cms.md](cms.md) and [the completed #1 report](https://github.com/zudolab/pinsel/issues/1#issuecomment-6139039236) are separate evidence.

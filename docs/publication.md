@@ -1,3 +1,5 @@
+> Historical pre-Hosted implementation notes. The current S4 runtime, commands, disabled publication behavior and migration are documented in [dogfooding](dogfooding.md). Old API examples below are not the active API.
+
 # Publication pipeline
 
 How a saved draft becomes integrated content. Everything here is implemented and tested against the fake provider and recorded GitHub responses. Nothing is connected: publication is off (`PUBLISHER_PROVIDER=disabled`), no GitHub token exists, no cron trigger is configured, and Cloudflare Workers Builds is not connected to the repository. The launch inputs are at the end.

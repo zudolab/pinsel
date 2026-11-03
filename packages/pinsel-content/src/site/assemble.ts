@@ -6,8 +6,8 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
 import type { TrustedComponentPack } from "@zudo-composer/component-contract";
-import { serializeSiteProject, validateSiteProject } from "zudo-composer/content";
-import { sha256Hex } from "zudo-composer/host-storage";
+import { canonicalSerialize } from "zudo-composer/hosted-content";
+import { createHash } from "node:crypto";
 import type { ContentEntryRecord } from "zudo-composer/site-project";
 
 import { readContentEntries, BASELINE_PATH, REPO_ROOT, SITE_PROJECT_DIR, SITE_PROJECT_PATH } from "./entries";
@@ -30,16 +30,14 @@ async function gitHead(): Promise<string> {
 /** Entries + structure → the canonical site-project.json text; throws on any validation diagnostic. */
 export function assembleProjectText(entries: readonly ContentEntryRecord[], pack: TrustedComponentPack): string {
   const { project } = buildPinselSite(entries, pack);
-  const validated = validateSiteProject(project, { componentPack: pack.manifest });
-  if (!validated.ok) throw new Error(`site project is invalid:\n${validated.diagnostics.map((d) => `  ${d.code} ${d.path}: ${d.message}`).join("\n")}`);
-  return serializeSiteProject(validated.project);
+  return canonicalSerialize(project);
 }
 
 export async function assemble(): Promise<AssembledBaseline> {
   const text = assembleProjectText(await readContentEntries(), structurePack());
   const baseline: AssembledBaseline = {
     baselineRevision: process.env.PINSEL_BASELINE_REVISION ?? (await gitHead()),
-    projectDigest: await sha256Hex(text),
+    projectDigest: createHash("sha256").update(text).digest("hex"),
     assembledAt: new Date().toISOString(),
   };
   await mkdir(SITE_PROJECT_DIR, { recursive: true });

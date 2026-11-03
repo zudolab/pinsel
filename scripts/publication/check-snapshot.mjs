@@ -31,8 +31,8 @@ export function changedPathProblems(changed, isPublishablePath) {
 }
 
 /**
- * @param {import("../../apps/authoring-worker/src/publish/publication-record").SnapshotRecordFile | null} record
- * @param {import("../../apps/authoring-worker/src/publish/publication-record").PublicationPackageIdentity | null} expected null: any identity
+ * @param {import("./legacy-record").SnapshotRecordFile | null} record
+ * @param {import("./legacy-record").PublicationPackageIdentity | null} expected null: any identity
  * @returns {string[]}
  */
 export function recordProblems(record, expected) {

@@ -1,3 +1,7 @@
+## Current Composer Hosted Content pin (2026-11-03)
+
+Source main `afa76a0cd95ee06c407dd4d79e66bdb0c8bbfdea`; installable package-root `a66424d2edcfc2cc146b8240091e9040dc105338`; contract package-root remains `c0b452da075b66757c60bd0d721a47062d4354d0`. The root lockfile contains the installable package tarball and integrity. Old pin observations below describe history, not the active Hosted Content import surface. No npm release.
+
 # Dependencies
 
 Every direct dependency is pinned in the workspace `package.json` files and resolved once in `pnpm-lock.yaml` (pnpm 11.5.2, `autoInstallPeers: false`). Only the lockfile owners named in `CLAUDE.md` change these pins.

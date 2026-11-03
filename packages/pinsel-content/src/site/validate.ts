@@ -5,8 +5,8 @@
 import { fileURLToPath } from "node:url";
 import type { JsonValue, TrustedComponentPack } from "@zudo-composer/component-contract";
 import { pinselPack } from "@pinsel/ui";
-import { compileSiteProjectPlan, serializeSiteProject, validateSiteProject } from "zudo-composer/content";
-import type { SiteProjectPlanRoute } from "zudo-composer/content";
+import { projectHostedSite, canonicalSerialize } from "zudo-composer/hosted-content";
+import type { HostedProjectedRoute as SiteProjectPlanRoute } from "zudo-composer/hosted-content";
 import type { ContentEntryRecord } from "zudo-composer/site-project";
 
 import {
@@ -139,19 +139,15 @@ export interface ValidationReport {
 export async function validateContent(entries: readonly ContentEntryRecord[], pack: TrustedComponentPack): Promise<ValidationReport> {
   const issues = checkEntries(entries);
   const { project } = buildPinselSite(entries, pack);
-  const validated = validateSiteProject(project, { componentPack: pack.manifest });
-  for (const diagnostic of validated.diagnostics) issues.push(`validateSiteProject ${diagnostic.code} ${diagnostic.path}: ${diagnostic.message}`);
-  if (!validated.ok) return { issues, routes: [] };
-  // Compile the canonical form, exactly what site-project.json and a Worker snapshot carry.
-  const compiled = await compileSiteProjectPlan(JSON.parse(serializeSiteProject(validated.project)), pack.manifest);
+  const compiled = await projectHostedSite({ project: JSON.parse(canonicalSerialize(project)), componentPack: pack.manifest }, []);
   if (compiled.status !== "ready") {
     const diagnostics = "diagnostics" in compiled ? (compiled.diagnostics as unknown as readonly { code: string; message: string; pathname?: string }[]) : [];
     for (const diagnostic of diagnostics) issues.push(`compile ${diagnostic.code} ${diagnostic.pathname ?? ""}: ${diagnostic.message}`);
     if (diagnostics.length === 0) issues.push(`compile status ${compiled.status}`);
     return { issues, routes: [] };
   }
-  issues.push(...checkPlan(compiled.plan.routes, entries));
-  return { issues, routes: compiled.plan.routes };
+  issues.push(...checkPlan(compiled.routes, entries));
+  return { issues, routes: compiled.routes };
 }
 
 async function main(): Promise<void> {

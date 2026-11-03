@@ -30,3 +30,6 @@ playwright-report/
 
 # zudo-doc copies package-owned route sources here during builds
 .zudo-doc/
+
+# Persistent local artifacts (never user content source)
+.dogfood/

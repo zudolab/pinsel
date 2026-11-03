@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { Window } from "happy-dom";
 import { describe, expect, it } from "vitest";
-import { compileSiteProjectPlan } from "zudo-composer/content";
+import { projectHostedSite } from "zudo-composer/hosted-content";
 import type { ContentEntryRecord } from "zudo-composer/site-project";
 
 import { CONTENT_BASELINE_PATH, type ContentBaseline } from "../import-rules";
@@ -24,9 +24,9 @@ const baseline = JSON.parse(await readFile(join(DEFAULT_IMPORT_ROOT, CONTENT_BAS
 const window = new Window({ settings: { disableJavaScriptEvaluation: true, disableJavaScriptFileLoading: true, disableCSSFileLoading: true } });
 
 async function dist(from: readonly ContentEntryRecord[]): Promise<Map<PinselRoute, DomDocument>> {
-  const compiled = await compileSiteProjectPlan(JSON.parse(assembleProjectText(from, pack)), pack.manifest);
+  const compiled = await projectHostedSite({ project: JSON.parse(assembleProjectText(from, pack)), componentPack: pack.manifest }, []);
   if (compiled.status !== "ready") throw new Error(compiled.status);
-  return new Map(compiled.plan.routes.map((route) => [routeForPlanPathname(route.pathname)!, new window.DOMParser().parseFromString(referenceDocument(route, from), "text/html") as unknown as DomDocument]));
+  return new Map(compiled.routes.map((route) => [routeForPlanPathname(route.pathname)!, new window.DOMParser().parseFromString(referenceDocument(route, from), "text/html") as unknown as DomDocument]));
 }
 
 const edit = (from: readonly ContentEntryRecord[], id: string, fieldId: string, value: unknown) =>
