@@ -1,11 +1,12 @@
 import { mountHostedContentEditor, createHostedPreviewController, buildHostedPreviewLocation, hostedEditorLabelsJa, hostedErrorMessagesJa, type HostedContentEditorHandle, type HostedRecoveryCheckpoint } from "zudo-composer/hosted-content/editor";
 import type { ContentEntryRef, HostedPolicy, HostedSnapshot } from "zudo-composer/hosted-content";
+import { mountNoteAi } from "./note-ai";
 import { transport, AuthenticationExpired } from "./transport";
 import "zudo-composer/hosted-content/editor.css";
 import "./host.css";
 
 const root = document.querySelector<HTMLElement>("#editor")!;
-root.innerHTML = `<header class="pinsel-header"><h1>Pinsel 編集</h1><p>ローカルの下書きと履歴。公開配信は停止中です。</p></header><main class="pinsel-workspace"><section class="pinsel-controls"><label>編集する項目 <select id="entry"></select></label><label>プレビューページ <select id="route"></select></label><p id="host-status" role="status"></p><div id="composer"></div><section class="pinsel-history"><h2>変更履歴</h2><button id="history-refresh">履歴を読み込む</button><div id="history"></div></section><p><a id="snapshot-download" hidden>確定スナップショットを保存</a></p><p>配信は無効です。スナップショットをダウンロードし、<code>pnpm build:snapshot -- &lt;file&gt;</code> でローカル出力できます。</p></section><section class="pinsel-preview"><h2>保存済みスナップショットのプレビュー</h2><p id="preview-status" role="status">未確認</p><iframe id="preview" title="Pinsel 実プレビュー" sandbox="allow-scripts allow-same-origin"></iframe></section></main>`;
+root.innerHTML = `<header class="pinsel-header"><h1>Pinsel 編集</h1><p>ローカルの下書きと履歴。公開配信は停止中です。</p></header><main class="pinsel-workspace"><section class="pinsel-controls"><label>編集する項目 <select id="entry"></select></label><label>プレビューページ <select id="route"></select></label><p id="host-status" role="status"></p><div id="composer"></div><section id="note-ai" class="pinsel-ai"></section><section class="pinsel-history"><h2>変更履歴</h2><button id="history-refresh">履歴を読み込む</button><div id="history"></div></section><p><a id="snapshot-download" hidden>確定スナップショットを保存</a></p><p>配信は無効です。スナップショットをダウンロードし、<code>pnpm build:snapshot -- &lt;file&gt;</code> でローカル出力できます。</p></section><section class="pinsel-preview"><h2>保存済みスナップショットのプレビュー</h2><p id="preview-status" role="status">未確認</p><iframe id="preview" title="Pinsel 実プレビュー" sandbox="allow-scripts allow-same-origin"></iframe></section></main>`;
 const status = document.querySelector<HTMLElement>("#host-status")!;
 const showError = (error: unknown) => { status.textContent = error instanceof Error ? error.message : String(error); };
 try {
@@ -48,9 +49,13 @@ try {
  const readRecovery = (): HostedRecoveryCheckpoint | undefined => { const saved = localStorage.getItem(recoveryKey); return saved ? JSON.parse(saved) : undefined; };
  let handle: HostedContentEditorHandle | undefined;
  let controller: ReturnType<typeof createHostedPreviewController> | undefined;
+ const noteAi = mountNoteAi({ recoveryKey: `pinsel:note-ai:${config.siteId}:${config.actorId}`, onBusy(value) { entrySelect.disabled = value; routeSelect.disabled = value; }, element: document.querySelector<HTMLElement>("#note-ai")!, editor: () => handle!, preview: () => controller! });
  let selected = Number(entrySelect.value), selectedRoute = routeSelect.value;
  const initialRecovery = readRecovery();
- const recoveryEntry = initialRecovery?.edits[0]?.entry ?? (initialRecovery?.pending && "entry" in initialRecovery.pending.request ? initialRecovery.pending.request.entry : undefined);
+ const pendingAiKey = Object.keys(localStorage).find(key => key.startsWith(`pinsel:note-ai:${config.siteId}:${config.actorId}:`));
+ let pendingAiEntry: ContentEntryRef | undefined;
+ try { pendingAiEntry = pendingAiKey ? JSON.parse(localStorage.getItem(pendingAiKey)!).entry : undefined; } catch { /* Keep malformed recovery records for inspection. */ }
+ const recoveryEntry = initialRecovery?.edits[0]?.entry ?? (initialRecovery?.pending && "entry" in initialRecovery.pending.request ? initialRecovery.pending.request.entry : undefined) ?? pendingAiEntry;
  if (recoveryEntry) {
   const index = refs.findIndex(entry => entry.providerId === recoveryEntry.providerId && entry.modelId === recoveryEntry.modelId && entry.recordId === recoveryEntry.recordId);
   if (index >= 0) { selected = index; selectedRoute = guessRoute(recoveryEntry); entrySelect.value = String(index); routeSelect.value = selectedRoute; }
@@ -67,7 +72,7 @@ try {
   handle?.dispose(); controller?.dispose();
   const frame = document.querySelector<HTMLIFrameElement>("#preview")!;
   controller = createHostedPreviewController({ frame, hostWindow: window, location: buildHostedPreviewLocation("/preview/", location.origin), pack: config.pack, renderer: config.renderer,
-   onState(preview) { document.querySelector("#preview-status")!.textContent = preview.status === "rendered" ? `確認済み ${preview.result.snapshotId}` : preview.status; },
+   onState(preview) { if(preview.status !== "rendered") noteAi.invalidate(); document.querySelector("#preview-status")!.textContent = preview.status === "rendered" ? `確認済み ${preview.result.snapshotId}` : preview.status; },
   });
   frame.src = "/preview/";
   const entry = refs[selected]!;
@@ -79,8 +84,9 @@ try {
    isAuthenticationExpired: error => error instanceof AuthenticationExpired, onAuthenticationExpired: showError,
    labels: { ...hostedEditorLabelsJa, submit: "公開は無効です" }, errorMessages: hostedErrorMessagesJa,
   });
-  handle.subscribe(next => { status.textContent = `保存状態: ${next.phase}${next.error ? ` — ${next.error instanceof Error ? next.error.message : String(next.error)}` : ""}`; if (next.reviewedSnapshot) showSnapshot(next.reviewedSnapshot); });
+  handle.subscribe(next => { if(next.dirty || next.pending) noteAi.invalidate(); status.textContent = `保存状態: ${next.phase}${next.error ? ` — ${next.error instanceof Error ? next.error.message : String(next.error)}` : ""}`; if (next.reviewedSnapshot) showSnapshot(next.reviewedSnapshot); });
   await handle.ready;
+  await noteAi.select(entry);
   document.querySelector("#history")!.replaceChildren();
  }
  async function switchSelection() {

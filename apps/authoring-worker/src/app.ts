@@ -1,10 +1,10 @@
-import { HostedContentError } from "zudo-composer/hosted-content";
+import { HostedContentError, type HostedActor } from "zudo-composer/hosted-content";
 import { checkMutationRequest, type IdentityResolver } from "./auth/identity";
 import { POLICY, PACK, RENDERER, ROUTES, serviceFor } from "./site/baseline";
 import { previewShellDocument, renderPreviewDocument } from "./preview/preview";
 
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { "content-type": "application/json", "cache-control": "private, no-store" } });
-export function createApp(options: { identity: IdentityResolver }) {
+export function createApp(options: { identity: IdentityResolver; localAi?: (request: Request, env: Env, actor: HostedActor) => Promise<Response | null> }) {
  return { async fetch(request: Request, env: Env): Promise<Response> {
   const identity = await options.identity(request);
   if (!identity.ok) return json({ error: { code: identity.code, message: identity.message } }, identity.status);
@@ -16,6 +16,8 @@ export function createApp(options: { identity: IdentityResolver }) {
   try {
    if (url.pathname === "/") return Response.redirect(`${url.origin}/editor/`, 302);
    if (url.pathname === "/api/hosted/config") return json({ actorId: actor.id, siteId: "pinsel", policy: POLICY, pack: PACK, renderer: RENDERER, routes: ROUTES, publication: "disabled" });
+   const aiResponse = await options.localAi?.(request, env, actor);
+   if (aiResponse) return aiResponse;
    if (url.pathname.startsWith("/api/hosted/") || url.pathname.startsWith("/preview")) {
     const service = await serviceFor(env.DB);
     if (url.pathname === "/api/hosted/state" && request.method === "GET") return json(await service.readState(actor));

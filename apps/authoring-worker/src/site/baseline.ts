@@ -45,11 +45,11 @@ export async function ensureHostedSeeded(db: D1Database): Promise<void> {
  ];
  await db.batch(statements);
 }
-export async function serviceFor(db: D1Database) {
+export async function serviceFor(db: D1Database, source: "pinsel-editor" | "content-ai" = "pinsel-editor") {
  await ensureHostedSeeded(db);
  const service = createHostedContentService({ siteId: PROJECT_ID, definition: await definition(), policy: POLICY, storage: new PinselHostedStorage(db),
   authorize(actor) { if (!actor.id) throw new HostedContentError("forbidden", "Authenticated editor required"); },
-  digest, createId: () => crypto.randomUUID(), now: () => new Date().toISOString(), source: "pinsel-editor",
+  digest, createId: () => crypto.randomUUID(), now: () => new Date().toISOString(), source,
   project: createHostedSiteProjector({ project: PROJECT, componentPack: pinselPack.manifest }),
   validateMarkdown(value) { const issue = checkNoteMarkdown(value)[0]; if(issue) throw new HostedContentError("invalid-value", issue.message); },
   validateSubmission() { throw new HostedContentError("configuration-required", "Publication is disabled. Capture a snapshot for local build instead."); },
