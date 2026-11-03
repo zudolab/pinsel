@@ -38,8 +38,38 @@ D1 migration0004はhost専用 `pinsel_hosted_*` テーブルを追加します�
 
 ## 今回の範囲
 
-publication/deliveryは**実装経路を停止**しています。公開操作はconfiguration-requiredとなり、GitHub provider・scheduled deliveryはWorkerへ組み込みません。画面にも公開無効と表示します。旧publication記録のread-only CI検証は `scripts/publication/legacy-record.ts` に残しますが、新snapshotのid=digestとは扱いません。本番deploy、npm release、remote D1、実メール送信は行いません。Note AIは後続S5です。
+publication/deliveryは**実装経路を停止**しています。公開操作はconfiguration-requiredとなり、GitHub provider・scheduled deliveryはWorkerへ組み込みません。画面にも公開無効と表示します。旧publication記録のread-only CI検証は `scripts/publication/legacy-record.ts` に残しますが、新snapshotのid=digestとは扱いません。本番deploy、npm release、remote D1、実メール送信は行いません。Note AIの現在の動作は下のS5節を参照してください。
 
 旧API固有のfixture/mock/providerテストは新Hosted契約のreal D1/browser/production auth/snapshotA-build-draftB検証へ置き換えました。public site・renderer・static fidelity・approved-seed・content型/参照/route検証は保持。golden planは新public projectionのstatus/metadata形へ更新し、Node release compilerとWorker-safe projectionのroute一致を引き続き確認します。historical baseline digestの末尾改行は保持しています。
 
 検証コマンド: `pnpm typecheck`, `pnpm test`, `pnpm verify:auth`, `pnpm verify:publication`, `pnpm test:browser`。`verify:publication` は現在、local snapshotのbuild/restart保存検証であり、公開配信を行いません。
+
+## Note Content-AI (S5)
+
+`pnpm dev:dogfood` はNode24推論hostとreal Worker/D1を一緒に起動・停止します。既定は **fake (offline deterministic)**。画面のprovider表示には、選択済みproviderとavailabilityを分けて表示します。fake成功は実CLI/model成功ではありません。
+
+1. Noteを選択し、通常編集に未保存内容があれば先に「保存」する。
+2. 「変更の指示」→「提案を作る」。タイトル・本文のみが候補となり、この段階では下書きは変わらない。
+3. 変更前／提案の差分を確認し、「候補を実プレビュー」で実サイトrendererによる表示を確認する。
+4. 「明示的に適用して保存」。同じD1の通常編集policy/revision/receipt経路で保存される。
+5. 必要なら「適用をUndo」。Apply後に別の手動編集があると競合として拒否し、その編集を保持する。
+
+候補previewはproposal ID/candidate digestに加えてsnapshot ID/digest、revision、definition、route、pack、rendererを結び付けます。Workerはこれらが正確に一致した場合のみpublic ApplyへcandidateDigestを渡します。preview失敗・reload・別提案・通常編集で承認を無効化します。提案後の手動保存はstale Applyとなり、新しい内容を上書きしません。
+
+提案とimmutable候補previewは同じD1の `pinsel_ai_proposal` にcreate-onlyで保存します。Content正本は従来どおり `pinsel_hosted_head` のみで、Article用SQLiteや同期処理はありません。Apply/Undoは `content-ai` sourceの履歴を通常のatomic commitで追加します。description/slug/order/別Entry/FAQ/料金はAI対象外です。
+
+応答喪失時は「保存済み提案」→「提案・結果を再確認」でreceiptを読みます。Apply/Undo前にproposal/actionごとの回復pointerをlocalStorageへ保存するため、同じactorの別タブの操作を上書きしません。browser再起動後は対象Noteを復元し、未完了proposalのreceiptを先に確認します。必要なら同じproposalを再試行します。**commit済みのApply/Undo回復は、再度の推論やfresh previewを要求しません。** 推論hostが停止・未認証でも、保存済みproposalとreceiptの読み取りやUndoは維持されます。
+
+実CLIを使う場合だけ、既存の認証済みCLIがある環境で明示選択します。
+
+```sh
+PINSEL_AI_PROVIDER=claude-cli pnpm dev:dogfood
+# または
+PINSEL_AI_PROVIDER=codex-cli pnpm dev:dogfood
+```
+
+CLIは別Node24 processで動き、workerd内では実行しません。選択はstartupのみ。model/effort/課金設定・資格情報を変更せず、CLIの現在の既定設定を使用します。別providerへの暗黙fallbackもありません。ブラウザからprovider/executable/model/file/shell操作を渡せません。Nodeは127.0.0.1のランダムport、毎回生成するsecretで認証し、Origin付きbrowser直通を拒否します。secretはprivate temporary `.dev.vars` とNode envにだけ渡し、CLIには継承しません。通常停止でWorker/Node両方のprocess groupを終了し、temporary configを削除します。
+
+2026-11-03のCloudでの実CLI確認: Codex CLI0.159.0はComposerの安全な制限に必要な最低0.164.0未満で `unsupported-version`、Claude CLIは未インストール。model呼び出しは **NOT_RUN**。管理されたCLI/configのupgradeや資格情報変更は行っていません。対応済み・認証済みのローカル環境でS6実CLI確認を行います。
+
+回帰検証: `apps/authoring-worker/test/content-ai.test.ts` はreal D1でscope、immutable候補、Apply/Undo、receipt回復、actor分離、stale競合とpreview bindingを確認します。`tests/browser/note-ai.spec.ts` は日常launcherを隔離stateで起動し、fake→実preview→Apply→実restart→Undoと応答喪失回復を確認します。

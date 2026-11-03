@@ -2,7 +2,7 @@
 
 Website for Pinsel (online preparation classes for German art universities). It is built as static HTML with ZFB, and a constrained Composer-based CMS lets editors change content only.
 
-**Status: local Hosted Content dogfooding; not deployed.** Run `pnpm dev:dogfood` and open **http://127.0.0.1:8787/editor/**. Persistent local D1 is `apps/authoring-worker/.wrangler/dogfood/`; normal startup never resets it. Note/FAQ/pricing editing, exact snapshot preview, history, conflict/recovery and immutable local snapshot builds use the current public Composer API. Publication/delivery remains disabled. [Daily commands, recovery and migration details](docs/dogfooding.md).
+**Status: local Hosted Content dogfooding; not deployed.** Run `pnpm dev:dogfood` and open **http://127.0.0.1:8787/editor/**. Persistent local D1 is `apps/authoring-worker/.wrangler/dogfood/`; normal startup never resets it. Note/FAQ/pricing editing, exact snapshot preview, history, conflict/recovery, Note title/body Content-AI (fake by default; explicit Apply and guarded Undo), and immutable local snapshot builds use the current public Composer API. Publication/delivery remains disabled. [Daily commands, recovery and migration details](docs/dogfooding.md).
 
 ## Stack
 

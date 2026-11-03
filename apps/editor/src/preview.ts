@@ -3,7 +3,9 @@ const config = JSON.parse(document.querySelector("#pinsel-preview-config")!.text
 const host = createHostedPreviewHost({ hostWindow: window, parent: window.parent, origin: location.origin, ...config, frameSession: crypto.randomUUID(),
  async render(request, context) {
   const params = new URLSearchParams({ snapshot: request.snapshotId, digest: request.snapshotDigest, route: request.routeId });
-  const response = await fetch(`/preview/document?${params}`, { signal: context.signal });
+  if (request.snapshotId.startsWith("ai-")) params.set("proposal", request.snapshotId.slice(3));
+  const endpoint = request.snapshotId.startsWith("ai-") ? "/preview/ai-document" : "/preview/document";
+  const response = await fetch(`${endpoint}?${params}`, { signal: context.signal });
   if (!response.ok) throw new Error(`Preview failed (${response.status})`);
   const parsed = new DOMParser().parseFromString(await response.text(), "text/html");
   const identity = JSON.parse(parsed.querySelector("#pinsel-rendered-identity")?.textContent ?? "null");
