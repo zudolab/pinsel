@@ -1,5 +1,6 @@
 // Foreground Node24 provider + workerd/D1. Runtime secrets live in a private,
 // per-launch temporary config and never in browser assets or process arguments.
+import { aiProviderConfig } from "./ai-provider-config.mjs";
 import { spawn } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { mkdir, mkdtemp, readFile, writeFile, rm } from "node:fs/promises";
@@ -9,8 +10,7 @@ const root = path.resolve(import.meta.dirname, ".."), worker = path.join(root, "
 if (Number(process.versions.node.split(".")[0]) !== 24) throw new Error("Use Node.js 24.x for dogfooding");
 const state = path.resolve(process.env.PINSEL_DOGFOOD_STATE ?? path.join(worker, ".wrangler/dogfood"));
 const port = process.env.PINSEL_DOGFOOD_PORT ?? "8787";
-const provider = process.env.PINSEL_AI_PROVIDER ?? "fake";
-if (!["fake","claude-cli","codex-cli"].includes(provider)) throw new Error("PINSEL_AI_PROVIDER must be fake, claude-cli or codex-cli");
+const { provider } = aiProviderConfig(process.env);
 await mkdir(state, { recursive: true });
 const runtime = await mkdtemp(path.join(tmpdir(), "pinsel-dogfood-"));
 /** @type {Set<import("node:child_process").ChildProcess>} */

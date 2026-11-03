@@ -1,15 +1,15 @@
 // Node-only inference host: no content database, shell routes, paths or browser credentials.
+import { aiProviderConfig } from "../../../scripts/ai-provider-config.mjs";
 import { createServer } from "node:http";
 import { timingSafeEqual } from "node:crypto";
 import { createContentAiProvider } from "zudo-composer/hosted-content/node";
 if (Number(process.versions.node.split(".")[0]) !== 24) throw new Error("Content-AI host requires Node24");
 const token = process.env.PINSEL_AI_TOKEN;
 if (!token || token.length < 32) throw new Error("Per-launch AI host authentication is required");
-const kind = process.env.PINSEL_AI_PROVIDER ?? "fake";
-if (!["fake", "claude-cli", "codex-cli"].includes(kind)) throw new Error("PINSEL_AI_PROVIDER must be fake, claude-cli or codex-cli");
+const config = aiProviderConfig(process.env);
 const { PINSEL_AI_TOKEN: withheld, ...providerEnv } = process.env;
 void withheld;
-const provider = await createContentAiProvider({ provider: /** @type {"fake"|"claude-cli"|"codex-cli"} */ (kind) }, { env: providerEnv });
+const provider = await createContentAiProvider(config, { env: providerEnv });
 let busy = false;
 const server = createServer(async (request, response) => {
  const send = (/** @type {number} */ code, /** @type {unknown} */ body) => { response.writeHead(code, { "content-type": "application/json", "cache-control": "no-store" }); response.end(JSON.stringify(body)); };

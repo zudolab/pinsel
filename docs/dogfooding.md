@@ -63,13 +63,15 @@ publication/deliveryは**実装経路を停止**しています。公開操作�
 実CLIを使う場合だけ、既存の認証済みCLIがある環境で明示選択します。
 
 ```sh
-PINSEL_AI_PROVIDER=claude-cli pnpm dev:dogfood
+PINSEL_AI_PROVIDER=claude-cli PINSEL_AI_MODEL=opus PINSEL_AI_EFFORT=medium pnpm dev:dogfood
 # または
-PINSEL_AI_PROVIDER=codex-cli pnpm dev:dogfood
+PINSEL_AI_PROVIDER=codex-cli PINSEL_AI_MODEL=gpt-6-astra PINSEL_AI_EFFORT=medium PINSEL_AI_SERVICE_TIER=default pnpm dev:dogfood
 ```
 
-CLIは別Node24 processで動き、workerd内では実行しません。選択はstartupのみ。model/effort/課金設定・資格情報を変更せず、CLIの現在の既定設定を使用します。別providerへの暗黙fallbackもありません。ブラウザからprovider/executable/model/file/shell操作を渡せません。Nodeは127.0.0.1のランダムport、毎回生成するsecretで認証し、Origin付きbrowser直通を拒否します。secretはprivate temporary `.dev.vars` とNode envにだけ渡し、CLIには継承しません。通常停止でWorker/Node両方のprocess groupを終了し、temporary configを削除します。
+CLIは別Node24 processで動き、workerd内では実行しません。選択はstartupのみ。Composerの隔離CLIは個人設定を読み込みません。上記はx0xで確認済みの設定をその呼び出しに明示するcommandです。model/effortは両CLIで必須、service tierはCodexだけ必須です。欠落・空値・不正値は準備やDB作成前に拒否し、既定値を推測しません。Claudeへのtier指定、fakeへのmodel/effort/tier指定も拒否します。個人の設定ファイル・資格情報は変更しません。別環境では本人が確認した設定値を明示してください。別providerへの暗黙fallbackもありません。ブラウザからprovider/executable/model/file/shell操作を渡せません。Nodeは127.0.0.1のランダムport、毎回生成するsecretで認証し、Origin付きbrowser直通を拒否します。secretはprivate temporary `.dev.vars` とNode envにだけ渡し、CLIには継承しません。通常停止でWorker/Node両方のprocess groupを終了し、temporary configを削除します。
 
 2026-11-03のCloudでの実CLI確認: Codex CLI0.159.0はComposerの安全な制限に必要な最低0.164.0未満で `unsupported-version`、Claude CLIは未インストール。model呼び出しは **NOT_RUN**。管理されたCLI/configのupgradeや資格情報変更は行っていません。対応済み・認証済みのローカル環境でS6実CLI確認を行います。
 
 回帰検証: `apps/authoring-worker/test/content-ai.test.ts` はreal D1でscope、immutable候補、Apply/Undo、receipt回復、actor分離、stale競合とpreview bindingを確認します。`tests/browser/note-ai.spec.ts` は日常launcherを隔離stateで起動し、fake→実preview→Apply→実restart→Undoと応答喪失回復を確認します。
+
+CLI設定の回帰検証は独立したoffline executableをPATHに配置し、実際のNode host → 公開provider → 制限付きCLI launcherのargvを確認します。Claude `--model opus --effort medium` とCodex `-m gpt-6-astra` / `model_reasoning_effort="medium"` / `service_tier="default"`、設定隔離とtoken非継承を検証します。これは実CLI・有料推論成功の証拠ではありません。
