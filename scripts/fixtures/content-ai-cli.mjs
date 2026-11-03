@@ -9,8 +9,14 @@ if (args[0] === "--help") {
 }
 if (args[0] === "login") { console.error("Logged in using ChatGPT"); process.exit(0); }
 if (args[0] === "auth") { emit({ loggedIn: true, authMethod: "claude.ai", apiProvider: "firstParty" }); process.exit(0); }
-for await (const chunk of process.stdin) { void chunk; }
-writeFileSync(process.env.PINSEL_TEST_ARGV ?? "", JSON.stringify({ args, tokenInherited: process.env.PINSEL_AI_TOKEN !== undefined }));
+let input = "";
+for await (const chunk of process.stdin) { input += chunk.toString(); }
+const request = JSON.parse(input.match(/<request_json>(.*?)<\/request_json>/s)?.[1] ?? "null");
+const author = JSON.parse(request.messages[0].content[0].text);
+writeFileSync(process.env.PINSEL_TEST_ARGV ?? "", JSON.stringify({ args, tokenInherited: process.env.PINSEL_AI_TOKEN !== undefined,
+ toolBodyDescription: request.tools[0].input_schema.properties.body.description,
+ messageBodyLabel: author.fields.find((/** @type {{key:string}} */ field)=>field.key==="body").label,
+ originalInstruction: author.instruction === "shorter", originalTitleLabel: author.fields.find((/** @type {{key:string}} */ field)=>field.key==="title").label === "Title" }));
 const reply = { text: "", tool_calls: [{ id: "fixture", name: "propose_article_fields", input_json: JSON.stringify({ title: "Fixture title", summary: "Offline argv verification" }) }], stop: "tool_use" };
 if (codex) {
  emit({ type: "thread.started", thread_id: "fixture" }); emit({ type: "turn.started" });

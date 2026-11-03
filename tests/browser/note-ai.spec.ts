@@ -1,12 +1,15 @@
+import { createConnection } from "node:net";
 import { test, expect, type Page } from "@playwright/test";
-import { spawn, type ChildProcess } from "node:child_process";
-import { mkdtemp, rm } from "node:fs/promises";
+import { spawn, spawnSync, type ChildProcess } from "node:child_process";
+import { mkdtemp, rm, readFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 const root=path.resolve(import.meta.dirname,"../.."),origin="http://127.0.0.1:8797";
-let directory:string,process_:ChildProcess|undefined;
-async function stop(){const child=process_;process_=undefined;if(!child||child.exitCode!==null)return;await new Promise<void>((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error("Dogfood shutdown timeout")),15000);child.once("exit",()=>{clearTimeout(timer);resolve();});child.kill("SIGTERM");});}
-async function start(){let log="";const child=spawn(process.execPath,["scripts/dev-dogfood.mjs"],{cwd:root,env:{...process.env,CI:"true",PINSEL_AI_PROVIDER:"fake",PINSEL_DOGFOOD_PORT:"8797",PINSEL_DOGFOOD_STATE:directory},stdio:["ignore","pipe","pipe"]});process_=child;child.stdout?.on("data",data=>{log=(log+String(data)).slice(-6000);});child.stderr?.on("data",data=>{log=(log+String(data)).slice(-6000);});const deadline=Date.now()+120000;while(Date.now()<deadline){if(child.exitCode!==null)throw new Error(log);try{if((await fetch(`${origin}/api/hosted/state`)).ok)return;}catch{}await new Promise(resolve=>setTimeout(resolve,250));}throw new Error(`Dogfood startup timeout\n${log}`);}
+let directory:string,process_:ChildProcess|undefined,fakeField:string|undefined,aiOrigin:string|undefined;
+async function closed(){expect(aiOrigin,"per-launch Node host port was reported").toMatch(/^http:\/\/127\.0\.0\.1:\d+$/);for(const target of [origin,aiOrigin!] ){await expect.poll(()=>new Promise<boolean>(resolve=>{const socket=createConnection({host:"127.0.0.1",port:Number(new URL(target).port)});socket.once("connect",()=>{socket.destroy();resolve(false);});socket.once("error",(error:NodeJS.ErrnoException)=>{socket.destroy();resolve(error.code==="ECONNREFUSED");});socket.setTimeout(500,()=>{socket.destroy();resolve(false);});})).toBe(true);}}
+
+async function stop(){const child=process_;process_=undefined;if(!child)return;if(child.exitCode!==null){await closed();return;}await new Promise<void>((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error("Dogfood shutdown timeout")),15000);child.once("exit",()=>{clearTimeout(timer);resolve();});child.kill("SIGTERM");});await closed();}
+async function start(){aiOrigin=undefined;let log="";const child=spawn(process.execPath,["scripts/dev-dogfood.mjs"],{cwd:root,env:{...process.env,CI:"true",PINSEL_AI_PROVIDER:"fake",PINSEL_AI_MODEL:undefined,PINSEL_AI_EFFORT:undefined,PINSEL_AI_SERVICE_TIER:undefined,PINSEL_AI_FAKE_FIELD:fakeField,PINSEL_DOGFOOD_PORT:"8797",PINSEL_DOGFOOD_STATE:directory},stdio:["ignore","pipe","pipe","ipc"]});process_=child;child.on("message",(message:any)=>{if(message?.type==="dogfood-ports")aiOrigin=message.aiOrigin;});child.stdout?.on("data",data=>{log=(log+String(data)).slice(-6000);});child.stderr?.on("data",data=>{log=(log+String(data)).slice(-6000);});const deadline=Date.now()+120000;while(Date.now()<deadline){if(child.exitCode!==null)throw new Error(log);try{if((await fetch(`${origin}/api/hosted/state`)).ok&&aiOrigin)return;}catch{}await new Promise(resolve=>setTimeout(resolve,250));}throw new Error(`Dogfood startup timeout\n${log}`);}
 test.beforeAll(async()=>{test.setTimeout(180000);directory=await mkdtemp(path.join(tmpdir(),"pinsel-ai-browser-"));await start();});
 test.afterAll(async()=>{await stop();await rm(directory,{recursive:true,force:true});});
 async function open(page:Page){await page.goto(`${origin}/editor/`);await expect(page.locator("#ai-provider")).toContainText("Fake provider");}
@@ -49,4 +52,63 @@ test("a delayed proposal list from another Note cannot replace the current Note 
  let release!:()=>void;const blocked=new Promise<void>(resolve=>{release=resolve;});let reached=false,held=false;
  await page.route("**/api/hosted/ai",async route=>{const request=route.request().postDataJSON();if(request.operation==="pinsel-ai-list"&&!held){held=true;reached=true;const response=await route.fetch();await blocked;await route.fulfill({response});}else await route.continue();});
  await first.selectOption(firstValue);await expect.poll(()=>reached).toBe(true);await first.selectOption(secondValue);await expect(page.locator("#ai-proposals option")).toHaveCount(1);release();await page.waitForTimeout(100);await expect(page.locator("#ai-proposals option")).toHaveCount(1);await expect(page.locator("#ai-apply")).toBeDisabled();
+});
+
+test("provider status failure blocks only new Prepare and can be rechecked",async({page})=>{
+ await page.route("**/api/hosted/ai",async route=>{if(route.request().postDataJSON().operation==="content-ai-status")await route.fulfill({status:503,json:{ok:false}});else await route.continue();});
+ await page.goto(`${origin}/editor/`);await expect(page.locator('[data-hosted-field="note-title"] input')).toBeVisible();
+ await expect(page.locator("#ai-prepare")).toBeDisabled();await expect(page.locator("#ai-read")).toBeEnabled();
+ await page.unroute("**/api/hosted/ai");await page.getByRole("button",{name:"providerを再確認"}).click();await expect(page.locator("#ai-prepare")).toBeEnabled();
+});
+test("malformed current recovery does not destroy editor or original checkpoint",async({page})=>{
+ await open(page);const key=await page.evaluate(()=>Object.keys(localStorage).find(k=>k.startsWith("pinsel:hosted:v1:"))!);
+ await page.evaluate(key=>localStorage.setItem(key,'{"version":999,"edits":null}'),key);await page.reload();
+ await expect(page.locator('[data-hosted-field="note-title"] input')).toBeVisible();await expect(page.locator("#recovery-warning")).toContainText("保持");
+ expect(await page.evaluate(key=>localStorage.getItem(key),key)).toBe('{"version":999,"edits":null}');
+});
+
+for(const field of ["body","title"]){
+ test(`Japanese Markdown ${field}-only fixture: exact preview, persistent Apply, guarded Undo`,async({page})=>{
+  test.setTimeout(240000);await stop();fakeField=field;await start();await open(page);const before=await state(page);const selectedId=(await page.locator("#entry option:checked").textContent())!.split(" · ")[1];
+  const instruction="日本語の見出し\n\n- 留学の準備\n- **制作の記録**\n\n[参考リンク](https://example.test/guide)";
+  const id=await prepare(page,instruction);expect(await state(page)).toEqual(before);await preview(page);expect(await state(page)).toEqual(before);
+  if(field==="body"){await expect(page.frameLocator("#preview").getByRole("link",{name:"参考リンク"})).toHaveAttribute("href","https://example.test/guide");await expect(page.frameLocator("#preview").locator("strong").filter({hasText:"制作の記録"})).toBeVisible();}
+  else await expect(page.frameLocator("#preview").locator("h1")).toContainText("日本語の見出し");
+  await page.locator("#ai-apply").click();await expect(page.locator("#ai-status")).toContainText("適用・保存済み");const after=await state(page);
+  let changes=0;for(const p of before.providers)for(const e of p.entries){const next=after.providers.find((x:any)=>x.providerId===p.providerId).entries.find((x:any)=>x.id===e.id);if(e.id===selectedId && e.modelId==="note"){expect(next.values).toEqual({...e.values,[`note-${field}`]:next.values[`note-${field}`]});expect(next.values[`note-${field}`]).not.toEqual(e.values[`note-${field}`]);changes++;}else expect(next).toEqual(e);}expect(changes).toBe(1);
+
+  await stop();await start();await page.reload();await expect(page.locator("#ai-provider")).toContainText("Fake provider");await page.locator("#ai-proposals").selectOption(id);await expect(page.locator("#ai-status")).toContainText("適用・保存済み");expect((await state(page)).draftRevision).toBe(after.draftRevision);
+  await page.locator("#ai-undo").click();await expect(page.locator("#ai-status")).toContainText("Undo保存済み");const undone=await state(page);for(const p of before.providers)for(const e of p.entries)expect(undone.providers.find((x:any)=>x.providerId===p.providerId).entries.find((x:any)=>x.id===e.id).values).toEqual(e.values);
+  await test.info().attach("sanitized-identities",{body:JSON.stringify({source:spawnSync("git",["rev-parse","HEAD"],{cwd:root,encoding:"utf8"}).stdout.trim(),package:JSON.parse(await readFile(path.join(root,"packages/pinsel-content/package.json"),"utf8")).dependencies["zudo-composer"],contract:JSON.parse(await readFile(path.join(root,"packages/pinsel-content/package.json"),"utf8")).dependencies["@zudo-composer/component-contract"],dirty:spawnSync("git",["status","--porcelain"],{cwd:root,encoding:"utf8"}).stdout.length>0,scope:field,before:before.draftRevision,applied:after.draftRevision,undone:undone.draftRevision}),contentType:"application/json"});
+  await prepare(page,"手動編集と競合");await preview(page);if(field==="body"){await page.locator("#ai-apply").click();await expect(page.locator("#ai-status")).toContainText("適用・保存済み");}await page.locator('[data-hosted-field="note-description"] textarea').fill(`手動保存 ${field}`);await save(page);if(field==="body")await page.locator("#ai-undo").click();else{await preview(page);await page.locator("#ai-apply").click();}await expect(page.locator("#ai-status")).toContainText("revision-conflict");await expect(page.locator('[data-hosted-field="note-description"] textarea')).toHaveValue(`手動保存 ${field}`);
+ });
+}
+
+for(const inference of [{state:"unknown",message:"認証を確認できません"},{state:"unavailable",code:"not-authenticated",message:"未認証"}])test(`saved proposal recovery and Undo survive ${inference.state} provider`,async({page})=>{
+ await open(page);const id=await prepare(page,"保存済み回復");await preview(page);let applied=false;
+ await page.route("**/api/hosted/ai",async route=>{const op=route.request().postDataJSON().operation;if(op==="content-ai-status")await route.fulfill({json:{ok:true,value:{configured:true,provider:"Test unavailable",canApply:true,inference}}});else if(op==="content-ai-apply"){const response=await route.fetch();expect(response.status()).toBe(200);applied=true;await route.abort();}else await route.continue();});
+ await page.locator("#ai-apply").click();await expect.poll(()=>applied).toBe(true);await page.reload();await expect(page.locator("#ai-prepare")).toBeDisabled();await expect(page.locator("#ai-proposals")).toHaveValue(id);await expect(page.locator("#ai-status")).toContainText("適用・保存済み");await page.locator("#ai-undo").click();await expect(page.locator("#ai-status")).toContainText("Undo保存済み");await expect(page.locator('[data-hosted-field="note-title"] input')).toBeEditable();
+});
+
+test("malformed AI pointers and empty checkpoint survive edit/save/reload without automatic sends",async({page})=>{
+ await open(page);const keys=await page.evaluate(()=>{const current=Object.keys(localStorage).find(k=>k.startsWith("pinsel:hosted:v1:"))!;const prefix=current.split(":").slice(3,-1).join(":");const ai=`pinsel:note-ai:${prefix}:invalid:apply`;localStorage.setItem(current,"");localStorage.setItem(ai,"null");return{current,ai};});
+ let mutations=0;page.on("request",request=>{if(request.method()==="POST"&&/\/api\/hosted\/(rpc|ai)$/.test(request.url())){const value=request.postDataJSON();if(value.method==="execute" || (value.operation && !["content-ai-status","pinsel-ai-list","content-ai-read"].includes(value.operation)))mutations++;}});
+ await page.reload();await expect(page.locator('[data-hosted-field="note-title"] input')).toBeVisible();await expect(page.locator("#ai-recovery-warning")).toContainText("保持");expect(mutations).toBe(0);
+ await page.locator('[data-hosted-field="note-title"] input').fill("通常編集は継続できます");await save(page);await page.reload();await expect(page.locator('[data-hosted-field="note-title"] input')).toHaveValue("通常編集は継続できます");expect(await page.evaluate(({current,ai})=>[localStorage.getItem(current),localStorage.getItem(ai)],keys)).toEqual(["","null"]);
+});
+
+test("misbound AI recovery pointer remains untouched on read and Apply",async({page})=>{
+ await open(page);const id=await prepare(page,"pointer binding");await preview(page);
+ const record=await page.evaluate(id=>{const hosted=Object.keys(localStorage).find(k=>k.startsWith("pinsel:hosted:v1:"))!;const scope=hosted.split(":").slice(3,-1).join(":");const key=`pinsel:note-ai:${scope}:${id}:apply`;const raw=JSON.stringify({version:1,proposalId:id,action:"apply",entry:{providerId:"wrong",modelId:"note",recordId:"other"}});localStorage.setItem(key,raw);return{key,raw};},id);
+ await page.locator("#ai-read").click();await preview(page);const before=await state(page);await page.locator("#ai-apply").click();await expect(page.locator("#ai-status")).toContainText("回復記録を保持");expect(await state(page)).toEqual(before);expect(await page.evaluate(key=>localStorage.getItem(key),record.key)).toBe(record.raw);
+});
+
+test("invalid Markdown fake proposal is classified safely and leaves canonical content and proposal list unchanged",async({page})=>{
+ test.setTimeout(180000);
+ await stop();fakeField="body";await start();await open(page);const before=await state(page),ids=await page.locator("#ai-proposals option").evaluateAll(nodes=>nodes.map(node=>(node as HTMLOptionElement).value));
+ let prepares=0;page.on("request",request=>{if(request.url().endsWith("/api/hosted/ai")&&request.postDataJSON()?.operation==="content-ai-prepare")prepares++;});
+ await page.locator("#ai-instruction").fill("### PRIVATE_CANDIDATE\n\n[private](http://private.example.test/secret)");await page.locator("#ai-prepare").click();
+ await expect(page.locator("#ai-status")).toContainText("invalid-value");await expect(page.locator("#ai-status")).toContainText("heading-3-plus");await expect(page.locator("#ai-status")).toContainText("unsafe-link");await expect(page.locator("#ai-status")).not.toContainText("PRIVATE_CANDIDATE");await expect(page.locator("#ai-status")).not.toContainText("private.example");
+ expect(await state(page)).toEqual(before);expect(await page.locator("#ai-proposals option").evaluateAll(nodes=>nodes.map(node=>(node as HTMLOptionElement).value))).toEqual(ids);await expect(page.locator("#ai-apply")).toBeDisabled();expect(prepares).toBe(1);
+ await prepare(page,"## 日本語見出し\n\n- 項目\n- **強調**");await preview(page);expect(await state(page)).toEqual(before);await expect(page.frameLocator("#preview").getByRole("heading",{name:"日本語見出し"})).toBeVisible();
 });

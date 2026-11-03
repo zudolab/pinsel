@@ -68,3 +68,9 @@ describe("isAllowedLinkHref", () => {
     expect(isAllowedLinkHref(href)).toBe(false);
   });
 });
+
+it("generation guidance covers exactly the runtime forbidden classifications",async()=>{
+ const {NOTE_AI_BODY_RULES,NOTE_AI_BODY_CONSTRAINTS,NOTE_FORBIDDEN_CODES}=await import("../richtext-policy");
+ expect(Object.keys(NOTE_AI_BODY_RULES).sort()).toEqual([...NOTE_FORBIDDEN_CODES].sort());
+ for(const rule of Object.values(NOTE_AI_BODY_RULES))expect(NOTE_AI_BODY_CONSTRAINTS).toContain(rule);
+});

@@ -7,6 +7,30 @@
 export const NOTE_ALLOWED_BLOCKS = ["heading-2", "paragraph", "bullet-list"] as const;
 export const NOTE_ALLOWED_INLINES = ["link", "emphasis", "strong"] as const;
 
+export const NOTE_AI_BODY_RULES = {
+  "raw-html": "Do not use raw HTML.",
+  image: "Do not use images.",
+  "heading-1": "Do not use # headings; the title owns h1.",
+  "heading-3-plus": "Do not use ### or deeper headings; only ## headings are supported.",
+  "empty-heading": "Headings must not be empty.",
+  code: "Do not use code blocks, indented code or backticks.",
+  table: "Do not use tables.",
+  blockquote: "Do not use blockquotes.",
+  "ordered-list": "Do not use numbered lists.",
+  "bullet-marker": "Bullet lists must start '- ', not '* ' or '+ '.",
+  "nested-list": "Lists must be flat and start at column 1, without indentation.",
+  "thematic-break": "Do not use thematic breaks.",
+  "link-reference": "Use inline links, not reference links.",
+  "unsafe-link": "Link targets must be site-relative paths starting a single '/' or https:// URLs, without spaces or backslashes.",
+} satisfies Record<NoteMarkdownIssueCode, string>;
+
+// This trusted host description also becomes the public AI tool's body property description.
+export const NOTE_AI_BODY_CONSTRAINTS = [
+  "Pinsel Note Markdown contract: only nonempty level-2 headings ('## '), paragraphs and flat '- ' bullet lists; inline emphasis, strong and inline links are allowed.",
+  ...Object.values(NOTE_AI_BODY_RULES),
+  "Preserve existing meaning and change only the requested field. Return complete body text without Markdown fences. If unsupported syntax is required, decline instead.",
+].join(" ");
+
 export type NoteMarkdownIssueCode =
   | "raw-html"
   | "image"

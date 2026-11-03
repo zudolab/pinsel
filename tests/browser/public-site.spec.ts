@@ -243,7 +243,7 @@ test.describe("contact", () => {
 
 // Overflow the approved prototype measured with PINSEL_REFERENCE_DIST set, used when the reference is not served (CI).
 // /contact/ at 390px with 150% text overflows 8px in the prototype too (tracked in #26).
-const PROTOTYPE_OVERFLOW: Record<string, number> = { "150% text, narrow /contact/": 8 };
+const PROTOTYPE_OVERFLOW: Record<string, number> = {}; // #26 is fixed in current output; historical seed remains unchanged.
 
 test.describe("robustness", () => {
   for (const width of WIDTHS) {
@@ -284,6 +284,7 @@ test.describe("robustness", () => {
       for (const route of SIX) {
         const site = await inspect(`${ORIGIN}${route}`);
         expect(site.clipped, route).toEqual([]);
+        if(route==="/contact/") expect(site.overflow,"current contact must fit without prototype allowance").toBe(0);
         if (site.overflow === 0) continue;
         const reference = REFERENCE ? await inspect(`${REF_ORIGIN}${route}`) : { overflow: PROTOTYPE_OVERFLOW[`${name} ${route}`] ?? 0 };
         console.log(`overflow ${name} ${route}: site ${site.overflow}px, prototype ${reference.overflow}px`);
@@ -334,4 +335,10 @@ test.describe("robustness", () => {
       expect(violations.filter((violation) => violation.impact === "serious" || violation.impact === "critical")).toEqual([]);
     });
   }
+});
+
+for(const scale of [100,150,200]) test(`contact fits 390px at ${scale}% text without inherited overflow allowance`, async ({page})=>{
+ await page.setViewportSize({width:390,height:844});await serve(page);await page.goto(`${ORIGIN}/contact/`);
+ await page.addStyleTag({content:`html{font-size:${scale}%}`});await page.evaluate(()=>document.fonts.ready);
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth)).toBeLessThanOrEqual(390);
 });

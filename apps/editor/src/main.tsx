@@ -1,3 +1,4 @@
+import { readCheckpoint, readAiPointer } from "./recovery";
 import { mountHostedContentEditor, createHostedPreviewController, buildHostedPreviewLocation, hostedEditorLabelsJa, hostedErrorMessagesJa, type HostedContentEditorHandle, type HostedRecoveryCheckpoint } from "zudo-composer/hosted-content/editor";
 import type { ContentEntryRef, HostedPolicy, HostedSnapshot } from "zudo-composer/hosted-content";
 import { mountNoteAi } from "./note-ai";
@@ -46,15 +47,22 @@ try {
  sessionStorage.setItem("pinsel-editor-tab", tab!);
  window.addEventListener("pagehide", () => releaseSession?.(), { once: true });
  let recoveryKey = `pinsel:hosted:v1:${config.siteId}:${config.actorId}:${tab}`;
- const readRecovery = (): HostedRecoveryCheckpoint | undefined => { const saved = localStorage.getItem(recoveryKey); return saved ? JSON.parse(saved) : undefined; };
+ const warning=document.createElement("p");warning.id="recovery-warning";warning.setAttribute("role","status");document.querySelector(".pinsel-controls")!.prepend(warning);
+ const readRecovery = (): HostedRecoveryCheckpoint | undefined => { const saved = localStorage.getItem(recoveryKey); return saved !== null ? readCheckpoint(saved,state) : undefined; };
+ async function preserveInvalidRecovery() {
+  try { readRecovery(); } catch {
+   warning.textContent="不正または未対応の回復記録を元のキーに保持しました。自動送信・削除は行いません。新しいセッションで通常編集できます。ブラウザデータを消さず、管理者に回復記録の調査を依頼してください。";
+   const fresh=crypto.randomUUID(),release=await claimSession(fresh);if(!release)throw new Error("新しい編集セッションを取得できません");
+   releaseSession?.();releaseSession=release;recoveryKey=`pinsel:hosted:v1:${config.siteId}:${config.actorId}:${fresh}`;sessionStorage.setItem("pinsel-editor-tab",fresh);
+  }
+ }
+ await preserveInvalidRecovery();
  let handle: HostedContentEditorHandle | undefined;
  let controller: ReturnType<typeof createHostedPreviewController> | undefined;
  const noteAi = mountNoteAi({ recoveryKey: `pinsel:note-ai:${config.siteId}:${config.actorId}`, onBusy(value) { entrySelect.disabled = value; routeSelect.disabled = value; }, element: document.querySelector<HTMLElement>("#note-ai")!, editor: () => handle!, preview: () => controller! });
  let selected = Number(entrySelect.value), selectedRoute = routeSelect.value;
  const initialRecovery = readRecovery();
- const pendingAiKey = Object.keys(localStorage).find(key => key.startsWith(`pinsel:note-ai:${config.siteId}:${config.actorId}:`));
- let pendingAiEntry: ContentEntryRef | undefined;
- try { pendingAiEntry = pendingAiKey ? JSON.parse(localStorage.getItem(pendingAiKey)!).entry : undefined; } catch { /* Keep malformed recovery records for inspection. */ }
+ const pendingAiEntry = Object.keys(localStorage).filter(key=>key.startsWith(`pinsel:note-ai:${config.siteId}:${config.actorId}:`)).map(key=>readAiPointer(localStorage.getItem(key)!,key,`pinsel:note-ai:${config.siteId}:${config.actorId}`)?.entry).find(Boolean);
  const recoveryEntry = initialRecovery?.edits[0]?.entry ?? (initialRecovery?.pending && "entry" in initialRecovery.pending.request ? initialRecovery.pending.request.entry : undefined) ?? pendingAiEntry;
  if (recoveryEntry) {
   const index = refs.findIndex(entry => entry.providerId === recoveryEntry.providerId && entry.modelId === recoveryEntry.modelId && entry.recordId === recoveryEntry.recordId);
@@ -117,13 +125,14 @@ try {
  for (let index = 0; index < localStorage.length; index++) {
   const key = localStorage.key(index)!;
   if (!key.startsWith(prefix) || key === recoveryKey) continue;
-  try { const checkpoint = JSON.parse(localStorage.getItem(key)!); if (checkpoint.pending || checkpoint.edits?.length) recoverySelect.add(new Option(`${key.slice(prefix.length)} · ${checkpoint.pending ? "応答回復待ち" : "未保存"}`, key)); } catch { /* Retain malformed records for manual export. */ }
+  try { const checkpoint = readCheckpoint(localStorage.getItem(key)!,state); if (checkpoint.pending || checkpoint.edits?.length) recoverySelect.add(new Option(`${key.slice(prefix.length)} · ${checkpoint.pending ? "応答回復待ち" : "未保存"}`, key)); } catch { warning.textContent="不正または未対応の回復記録を保持しています。自動送信・削除は行いません。ブラウザデータを消さず管理者に調査を依頼してください。"; }
  }
  recoveryButton.textContent = "このセッションを回復";
  recoveryButton.onclick = async () => {
   if (!recoverySelect.value) return;
   try {
    if (handle?.state.dirty || handle?.state.pending) throw new Error("現在のタブの保存・回復を先に完了してください");
+   readCheckpoint(localStorage.getItem(recoverySelect.value)!,state);
    const release = await claimSession(recoverySelect.value.slice(prefix.length));
    if (!release) throw new Error("このセッションは別のタブで開いています。そのタブを閉じてから回復してください。");
    releaseSession?.(); releaseSession = release;
