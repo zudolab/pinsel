@@ -15,7 +15,7 @@ Website for Pinsel (online preparation classes for German art universities). It 
 
 ## Commands
 
-Requires Node 24 (`>=22.13.0`) and pnpm 11.5.2 through corepack (`corepack enable`).
+Requires Node 24.x (`>=24 <25`) and pnpm 11.5.2 through corepack (`corepack enable`).
 
 CI runs these in this order (`.github/workflows/ci.yml`, job `build`). `pnpm build:site` must come before `pnpm check`, because the Worker tests compare their in-workerd render with `apps/site/dist/index.html`.
 
