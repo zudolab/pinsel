@@ -4,7 +4,13 @@ let worker:LocalWorker;
 test.beforeAll(async()=>{test.setTimeout(180000);worker=await startLocalWorker({port:8796,stateDir:"hosted-e2e"});});
 test.afterAll(async()=>{await worker?.stop();});
 async function open(page:Page){await page.goto(`${worker.origin}/editor/`);await expect(page.locator('[data-hosted-field="note-title"] input')).toBeVisible();}
-async function choose(page:Page,model:string){const value=await page.locator("#entry option").evaluateAll((options,model)=>{const option=options.find(option=>option.textContent?.includes(model));return (option as HTMLOptionElement)?.value;},model);await page.locator("#entry").selectOption(value);}
+async function choose(page:Page,model:string){
+ const option=page.locator("#entry option").filter({hasText:model});
+ // Config/state are fetched after navigation. Wait for the actual target option
+ // instead of sampling an empty select immediately after Worker restart/reload.
+ await expect(option).toHaveCount(1);
+ await page.locator("#entry").selectOption(await option.getAttribute("value") as string);
+}
 async function save(page:Page){await page.getByRole("button",{name:"保存",exact:true}).click();await expect(page.locator("#host-status")).toContainText("saved");}
 test("real Note/FAQ/pricing editing, exact preview, history and restart",async({page})=>{
  await open(page);
