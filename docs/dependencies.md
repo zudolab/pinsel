@@ -1,6 +1,6 @@
 ## Current Composer Hosted Content pin (2026-11-03)
 
-Source main `afa76a0cd95ee06c407dd4d79e66bdb0c8bbfdea`; installable package-root `a66424d2edcfc2cc146b8240091e9040dc105338`; contract package-root remains `c0b452da075b66757c60bd0d721a47062d4354d0`. The root lockfile contains the installable package tarball and integrity. Old pin observations below describe history, not the active Hosted Content import surface. No npm release.
+Source main `2a004217283d5ddebe009b105070650246a9c3a3`; installable package-root `fba434aaa96af8b4dbc2a086638180f71a2da741`; contract package-root remains `c0b452da075b66757c60bd0d721a47062d4354d0`. The root lockfile contains the installable package tarball and integrity. Old pin observations below describe history, not the active Hosted Content import surface. No npm release.
 
 # Dependencies
 
