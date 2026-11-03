@@ -1,101 +1,61 @@
-import { createD1ContentDraftStorage, seedD1ContentDraftStorage } from "./storage/d1-content-draft-storage";
+import { HostedContentError } from "zudo-composer/hosted-content";
 import { checkMutationRequest, type IdentityResolver } from "./auth/identity";
-import { API_PREFIX, handleApi, handlePreview, json, type ApiContext } from "./api/handlers";
-import { selectPublisher, type PublisherEnv, type PublisherFactory } from "./publish/port";
-import { PINSEL_SITE, type AuthoringSite } from "./site/baseline";
+import { POLICY, PACK, RENDERER, ROUTES, serviceFor } from "./site/baseline";
+import { previewShellDocument, renderPreviewDocument } from "./preview/preview";
 
-// Request pipeline: identity -> refused authoring surfaces -> CSRF for
-// mutations -> API / preview / injected admin routes -> private static assets
-// (editor bundle, fonts, images). Nothing is served to an unverified request,
-// assets included.
-
-/** Composer authoring surfaces and structural APIs the content role never reaches, even by URL. */
-export const REFUSED_PATHS = /^\/(?:composer|mapping|sitemapper|content\/schema|api\/(?:models|schema|upload|assets)|api\/v1\/(?:models|schema|upload|assets))(?:\/|$)/;
-
-export interface AppEnv extends PublisherEnv {
-  DB: D1Database;
-  ASSETS: Fetcher;
-}
-
-/** A route only some entries compile in (the local seed endpoint); returns null when the path is not its own. */
-export type AdminHandler = (request: Request, url: URL, context: ApiContext) => Promise<Response | null>;
-
-export interface AppOptions {
-  identity: IdentityResolver;
-  /** Defaults to Pinsel; tests inject other sites. */
-  site?: AuthoringSite;
-  /** Providers this build can select through `PUBLISHER_PROVIDER`; production registers none until the GitHub provider lands. */
-  publishers?: Readonly<Record<string, PublisherFactory>>;
-  admin?: AdminHandler;
-}
-
-function escapeHtml(text: string): string {
-  return text.replace(/[&<>"']/g, (character) => `&#${character.charCodeAt(0)};`);
-}
-
-function identityPage(status: number, code: string, message: string): Response {
-  const body = `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="robots" content="noindex"><title>${status} ${escapeHtml(code)}</title></head><body><h1>アクセスできません</h1><p>${escapeHtml(message)}</p><p><code>${status} ${escapeHtml(code)}</code></p></body></html>`;
-  return new Response(body, { status, headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex" } });
-}
-
-export function createApp(options: AppOptions) {
-  const site = options.site ?? PINSEL_SITE;
-  const publishers = options.publishers ?? {};
-  let seeded: Promise<void> | null = null;
-  const ensureSeeded = (db: D1Database) =>
-    (seeded ??= seedD1ContentDraftStorage(db, site.canonical, { projectId: site.projectId })
-      .then(() => undefined)
-      .catch((error: unknown) => {
-        seeded = null;
-        throw error;
-      }));
-
-  return {
-    async fetch(request: Request, env: AppEnv): Promise<Response> {
-      const url = new URL(request.url);
-      const identity = await options.identity(request);
-      if (!identity.ok) {
-        if (url.pathname.startsWith("/api/")) return json({ status: "unauthorized", code: identity.code, message: identity.message }, identity.status);
-        return identityPage(identity.status, identity.code, identity.message);
-      }
-      if (REFUSED_PATHS.test(url.pathname)) return json({ status: "forbidden", code: "forbidden", message: `${url.pathname} is not available to the content editor.` }, 403);
-      if (request.method !== "GET" && request.method !== "HEAD") {
-        const csrf = checkMutationRequest(request);
-        if (!csrf.ok) return json({ status: "forbidden", code: csrf.code, message: csrf.message }, csrf.code === "unsupported-media-type" ? 415 : 403);
-      }
-      if (url.pathname === "/") return Response.redirect(`${url.origin}/editor/`, 302);
-      const isApi = url.pathname.startsWith(API_PREFIX);
-      const isAdmin = url.pathname.startsWith("/admin/");
-      if (isApi || isAdmin || url.pathname.startsWith("/preview")) {
-        try {
-          const context: ApiContext = {
-            db: env.DB,
-            adapter: createD1ContentDraftStorage(env.DB, { projectId: site.projectId }),
-            actor: identity.actor,
-            origin: url.origin,
-            site,
-            publisher: selectPublisher(env as AppEnv & Record<string, unknown>, publishers),
-          };
-          // The admin seed decides for itself whether to seed; every other route reads a seeded store.
-          if (isAdmin) {
-            const handled = options.admin ? await options.admin(request, url, context) : null;
-            return handled ?? json({ status: "not-found" }, 404);
-          }
-          await ensureSeeded(env.DB);
-          const handled = isApi ? await handleApi(request, url, context) : await handlePreview(url, context);
-          if (handled) return handled;
-        } catch (error) {
-          // Storage failures (for example unapplied migrations) are reported, never left as an opaque 500.
-          return json({ status: "unavailable", message: error instanceof Error ? error.message : String(error) }, 503);
-        }
-        if (isApi) return json({ status: "not-found" }, 404);
-      }
-      if (request.method !== "GET" && request.method !== "HEAD") return json({ status: "not-found" }, 404);
-      const asset = await env.ASSETS.fetch(request);
-      const headers = new Headers(asset.headers);
-      headers.set("cache-control", "private, no-store");
-      headers.set("x-robots-tag", "noindex");
-      return new Response(asset.body, { status: asset.status, headers });
-    },
-  };
+const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { "content-type": "application/json", "cache-control": "private, no-store" } });
+export function createApp(options: { identity: IdentityResolver }) {
+ return { async fetch(request: Request, env: Env): Promise<Response> {
+  const identity = await options.identity(request);
+  if (!identity.ok) return json({ error: { code: identity.code, message: identity.message } }, identity.status);
+  const url = new URL(request.url), actor = identity.actor;
+  if (request.method !== "GET" && request.method !== "HEAD") {
+   const csrf = checkMutationRequest(request);
+   if (!csrf.ok) return json({ error: { code: "forbidden", message: csrf.message } }, 403);
+  }
+  try {
+   if (url.pathname === "/") return Response.redirect(`${url.origin}/editor/`, 302);
+   if (url.pathname === "/api/hosted/config") return json({ actorId: actor.id, siteId: "pinsel", policy: POLICY, pack: PACK, renderer: RENDERER, routes: ROUTES, publication: "disabled" });
+   if (url.pathname.startsWith("/api/hosted/") || url.pathname.startsWith("/preview")) {
+    const service = await serviceFor(env.DB);
+    if (url.pathname === "/api/hosted/state" && request.method === "GET") return json(await service.readState(actor));
+    if (url.pathname === "/api/hosted/snapshot" && request.method === "GET") return json(await service.readSnapshot(actor, url.searchParams.get("id") ?? ""));
+    if (url.pathname === "/api/hosted/rpc" && request.method === "POST") {
+     const input = await request.json() as { method: string; argument?: unknown };
+     // Explicit bounded dispatch: no caller-selected object method or host tools.
+     switch (input.method) {
+      case "execute": return json(await service.execute(actor, input.argument));
+      case "readState": return json(await service.readState(actor));
+      case "readReceipt": return json(await service.readReceipt(actor, input.argument as string));
+      case "getPublication": return json(await service.getPublication(actor, input.argument as string));
+      case "listModels": return json(await service.listModels(actor));
+      case "listEntries": return json(await service.listEntries(actor, input.argument as Parameters<typeof service.listEntries>[1]));
+      case "readEntry": return json(await service.readEntry(actor, input.argument as Parameters<typeof service.readEntry>[1]));
+      case "listRevisions": return json(await service.listRevisions(actor, input.argument as Parameters<typeof service.listRevisions>[1]));
+      case "readRevision": return json(await service.readRevision(actor, input.argument as string));
+      case "compareRevisions": return json(await service.compareRevisions(actor, input.argument as Parameters<typeof service.compareRevisions>[1]));
+      case "previewFields": return json(await service.previewFields(actor, input.argument as Parameters<typeof service.previewFields>[1]));
+      case "readPublicationStatus": return json(await service.readPublicationStatus(actor));
+      default: throw new HostedContentError("invalid-request", "Unknown hosted operation");
+     }
+    }
+    if (url.pathname === "/preview/" && request.method === "GET") return new Response(previewShellDocument(), { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+    if (url.pathname === "/preview/document" && request.method === "GET") {
+     const snapshot = await service.readSnapshot(actor, url.searchParams.get("snapshot") ?? "");
+     if (url.searchParams.get("digest") !== snapshot.digest) throw new HostedContentError("invalid-request", "Snapshot digest mismatch");
+     const html = renderPreviewDocument(snapshot, url.searchParams.get("route") ?? "");
+     return new Response(html, { headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" } });
+    }
+    return json({ error: { code: "not-found", message: "Unknown route" } }, 404);
+   }
+   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/admin/")) return json({ error: { code: "forbidden", message: "This API is unavailable" } }, 403);
+   const response = await env.ASSETS.fetch(request);
+   const headers = new Headers(response.headers); headers.set("cache-control", "private, no-store"); headers.set("x-content-type-options", "nosniff");
+   return new Response(response.body, { status: response.status, headers });
+  } catch(error) {
+   if (error instanceof HostedContentError) return json({ error: { code: error.code, message: error.message, diagnostics: error.diagnostics, restoreDiagnostics: error.restoreDiagnostics } }, error.code === "not-found" ? 404 : error.code === "forbidden" ? 403 : /conflict|reuse/.test(error.code) ? 409 : 400);
+   console.error("Hosted request failed", error);
+   return json({ error: { code: "unavailable", message: "Request outcome uncertain. Retry Save with the same operation key to recover." } }, 503);
+  }
+ } };
 }

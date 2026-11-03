@@ -34,7 +34,7 @@ describe("Cloudflare Access identity", () => {
 
   it("accepts a valid assertion for an allowlisted editor", async () => {
     const result = await identity(request(await token()));
-    expect(result).toEqual({ ok: true, actor: { subject: "editor@example.test" } });
+    expect(result).toEqual({ ok: true, actor: { id: "editor@example.test" } });
   });
 
   it("rejects a missing header with 401 and bad assertions with 403", async () => {
@@ -57,12 +57,12 @@ describe("Cloudflare Access identity", () => {
     for (const path of ["/api/v1/draft", "/api/v1/publications", "/api/v1/baseline"]) {
       const response = await app.fetch(new Request(`https://authoring.example${path}`), env);
       expect(response.status, path).toBe(401);
-      expect(await response.json()).toMatchObject({ status: "unauthorized", code: "missing-assertion" });
+      expect(await response.json()).toMatchObject({ error: { code: "missing-assertion" } });
     }
     for (const path of ["/editor/", "/preview/", "/assets/fonts/fonts.css", "/admin/seed"]) {
       const response = await app.fetch(new Request(`https://authoring.example${path}`, { headers: { [ACCESS_ASSERTION_HEADER]: await token({ aud: "other" }) } }), env);
       expect(response.status, path).toBe(403);
-      expect(response.headers.get("content-type")).toContain("text/html");
+      expect(response.headers.get("content-type")).toContain("application/json");
       expect(await response.text()).toContain("invalid-assertion");
     }
   });

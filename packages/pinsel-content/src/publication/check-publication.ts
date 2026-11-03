@@ -1,6 +1,6 @@
 import { parseMarkdown, type InlineNode } from "@pinsel/ui/src/markdown/safe-markdown.ts";
 import type { JsonValue } from "@zudo-composer/component-contract";
-import { compileSiteProjectPlan, serializeSiteProject } from "zudo-composer/content";
+import { projectHostedSite } from "zudo-composer/hosted-content";
 import type { ContentEntryRecord } from "zudo-composer/site-project";
 
 import { baselineKey, type ContentBaseline } from "../import-rules";
@@ -259,9 +259,9 @@ async function structureChecks(input: PublicationInput, pages: Map<PinselRoute, 
   const issues: string[] = [];
   const pack = contractPack();
   const { project } = buildPinselSite(input.entries, pack);
-  const compiled = await compileSiteProjectPlan(JSON.parse(serializeSiteProject(project)), pack.manifest);
+  const compiled = await projectHostedSite({ project, componentPack: pack.manifest }, []);
   if (compiled.status !== "ready") return [`structure: the snapshot's project does not compile (${compiled.status})`];
-  for (const route of compiled.plan.routes) {
+  for (const route of compiled.routes) {
     const output = routeForPlanPathname(route.pathname);
     const page = output && pages.get(output);
     if (!output || !page) continue;

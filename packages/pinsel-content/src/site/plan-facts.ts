@@ -1,6 +1,6 @@
 // The markdown tree module itself, not the @pinsel/ui index: this file must load without the zudo-react JSX setup.
 import { parseMarkdown } from "@pinsel/ui/src/markdown/safe-markdown.ts";
-import type { SiteProjectPlanRoute } from "zudo-composer/content";
+import type { HostedProjectedRoute as SiteProjectPlanRoute } from "zudo-composer/hosted-content";
 import type { ContentEntryRecord } from "zudo-composer/site-project";
 
 import { CONTACT_HREF, INSTAGRAM_URL, ROUTE_FRAGMENTS, resultYearFragment, type PinselRoute } from "../invariants";

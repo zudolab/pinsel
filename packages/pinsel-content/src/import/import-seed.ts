@@ -3,7 +3,8 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { JsonValue } from "@zudo-composer/component-contract";
-import { canonicalStringifyJson, validateContentEntryRecord } from "zudo-composer/content";
+import { canonicalSerialize } from "zudo-composer/hosted-content";
+import { validateContentEntryRecord } from "../records";
 import type { ContentEntryRecord } from "zudo-composer/site-project";
 
 import {
@@ -16,10 +17,14 @@ import {
   type ImportDecision,
 } from "../import-rules";
 import { PINSEL_MODELS, modelById } from "../models";
-import { PINSEL_CONTENT_POLICY } from "../policy";
+import { PINSEL_EDITABLE_FIELDS } from "../policy";
+import { fieldId, type PinselModelId } from "../models";
 import { FIXTURE_DIR, buildSeedEntries } from "./seed-entries";
 
 export const DEFAULT_IMPORT_ROOT = resolve(fileURLToPath(new URL("../../../..", import.meta.url)));
+
+// Historical content/baseline.json digests include a trailing newline.
+const canonicalStringifyJson = (value: unknown) => `${canonicalSerialize(value)}\n`;
 
 export function sha256(text: string): string {
   return createHash("sha256").update(text).digest("hex");
@@ -34,7 +39,7 @@ export function valuesDigest(values: ContentEntryRecord["values"]): string {
 export function protectedValues(entry: Pick<ContentEntryRecord, "modelId" | "values">): Record<string, JsonValue> {
   const model = modelById(entry.modelId);
   if (!model) throw new Error(`Unknown model ${entry.modelId}`);
-  const writable = new Set(PINSEL_CONTENT_POLICY.models[entry.modelId]?.fields ?? []);
+  const writable = new Set([...(PINSEL_EDITABLE_FIELDS[entry.modelId as PinselModelId]?.fields ?? []), ...(PINSEL_EDITABLE_FIELDS[entry.modelId as PinselModelId]?.operations.includes("reorder") ? ["order"] : [])].map(key => fieldId(entry.modelId, key)));
   const result: Record<string, JsonValue> = {};
   for (const field of model.document.fields) {
     if (!writable.has(field.id) && field.id in entry.values) result[field.id] = entry.values[field.id] as JsonValue;

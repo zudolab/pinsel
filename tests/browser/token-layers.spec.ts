@@ -118,11 +118,12 @@ test.beforeAll(async () => {
   test.setTimeout(180_000);
   if (!existsSync(path.join(sgDist, "components/preview/index.html"))) throw new Error("apps/styleguide/dist is missing: run pnpm build:sg");
   worker = await startLocalWorker({ port, stateDir: "token-layers" });
-  const draft = (await (await fetch(`${worker.origin}/api/v1/draft`, { headers: { accept: "application/json" } })).json()) as { value: { draftRevision: number } };
-  const response = await fetch(`${worker.origin}/api/v1/snapshots`, { method: "POST", headers: { accept: "application/json", "content-type": "application/json", origin: worker.origin }, body: JSON.stringify({ expectedDraftRevision: draft.value.draftRevision }) });
-  const snapshot = (await response.json()) as { status: string; value: { snapshotId: string; draftRevision: number } };
-  expect(snapshot.status, JSON.stringify(snapshot)).toBe("ok");
-  previewUrl = `${worker.origin}/preview/${snapshot.value.snapshotId}/?revision=${snapshot.value.draftRevision}`;
+  const state = await (await fetch(`${worker.origin}/api/hosted/state`)).json();
+  const response = await fetch(`${worker.origin}/api/hosted/rpc`, { method: "POST", headers: { "content-type": "application/json", origin: worker.origin }, body: JSON.stringify({ method: "execute", argument: { kind: "capture-snapshot", operationKey: crypto.randomUUID(), expected: { draftRevision: state.draftRevision, baseline: state.baseline, definition: state.definition } } }) });
+  const result = await response.json();
+  expect(response.status, JSON.stringify(result)).toBe(200);
+  previewUrl = `${worker.origin}/preview/document?${new URLSearchParams({ snapshot: result.snapshot.id, digest: result.snapshot.digest, route: "/" })}`;
+
 });
 
 test.afterAll(async () => {

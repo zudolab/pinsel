@@ -1,13 +1,10 @@
 {
+  "status": "ready",
   "projectId": "pinsel",
   "navigation": {
     "primary": [],
     "footer": [],
     "diagnostics": []
-  },
-  "activeSitemap": {
-    "providerId": "sitemap-filesystem",
-    "recordId": "main"
   },
   "routes": [
     {

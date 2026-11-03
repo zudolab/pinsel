@@ -39,7 +39,9 @@
     "test:browser": "playwright test",
     "site:check-fragments": "node scripts/site/check-fragments.mjs",
     "site:wrangler-dev": "node scripts/site/wrangler-dev-check.mjs",
-    "check:token-layers": "pnpm --filter @pinsel/styleguide check:token-layers"
+    "check:token-layers": "pnpm --filter @pinsel/styleguide check:token-layers",
+    "dev:dogfood": "node scripts/dev-dogfood.mjs",
+    "build:snapshot": "pnpm --filter @pinsel/content exec tsx --tsconfig tsconfig.scripts.json src/site/build-snapshot.ts"
   },
   "devDependencies": {
     "@playwright/test": "1.64.0",

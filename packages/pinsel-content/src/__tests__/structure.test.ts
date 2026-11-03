@@ -3,7 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, describe, expect, it } from "vitest";
 import type { JsonValue } from "@zudo-composer/component-contract";
-import { canonicalStringifyJson, compileSiteProjectPlan, serializeSiteProject } from "zudo-composer/content";
+import { canonicalSerialize as canonicalStringifyJson, canonicalSerialize as serializeSiteProject, projectHostedSite } from "zudo-composer/hosted-content";
 
 import { PINSEL_ROUTES, ROUTE_FRAGMENTS, planPathname } from "../invariants";
 import { assembleProjectText } from "../site/assemble";
@@ -38,10 +38,10 @@ describe("site structure (against the component contract)", () => {
     const node = await projectSite(projectPath, pack);
     const again = await projectSite(projectPath, pack);
     expect(canonical(again.plan)).toBe(canonical(node.plan));
-    const portable = await compileSiteProjectPlan(JSON.parse(text), pack.manifest);
+    const portable = await projectHostedSite({ project: JSON.parse(text), componentPack: pack.manifest }, []);
     expect(portable.status).toBe("ready");
     if (portable.status !== "ready") return;
-    expect(canonical(portable.plan.routes)).toBe(canonical(node.plan.routes));
+    expect(canonical(portable.routes)).toBe(canonical(node.plan.routes));
     const golden = await readFile(GOLDEN_PATH, "utf8");
     expect(canonical(planStructure(node.plan))).toBe(canonical(planStructure(JSON.parse(golden))));
     // Byte for byte, values included, only while the content is the migration baseline.
@@ -49,9 +49,9 @@ describe("site structure (against the component contract)", () => {
   });
 
   it("carries the prototype's fragments, links and art windows", async () => {
-    const compiled = await compileSiteProjectPlan(JSON.parse(serializeSiteProject(buildPinselSite(entries, pack).project)), pack.manifest);
+    const compiled = await projectHostedSite({ project: JSON.parse(serializeSiteProject(buildPinselSite(entries, pack).project)), componentPack: pack.manifest }, []);
     if (compiled.status !== "ready") throw new Error(compiled.status);
-    const facts = new Map(compiled.plan.routes.map((route) => [route.pathname, routeFacts(route)]));
+    const facts = new Map(compiled.routes.map((route) => [route.pathname, routeFacts(route)]));
     expect(facts.get("/")!.fragments).toEqual(ROUTE_FRAGMENTS["/"]);
     expect(facts.get("/lessons")!.fragments).toEqual(ROUTE_FRAGMENTS["/lessons/"]);
     expect(facts.get("/results")!.fragments).toEqual(ROUTE_FRAGMENTS["/results/"]);
@@ -69,9 +69,9 @@ describe("site structure (against the component contract)", () => {
 
   it("reflects a content edit in the projection without touching the structure", async () => {
     const edited = entries.map((entry) => (entry.id === "two-month" ? { ...entry, values: { ...entry.values, "course-price": "¥55,000" } } : entry));
-    const compiled = await compileSiteProjectPlan(JSON.parse(assembleProjectText(edited, pack)), pack.manifest);
+    const compiled = await projectHostedSite({ project: JSON.parse(assembleProjectText(edited, pack)), componentPack: pack.manifest }, []);
     if (compiled.status !== "ready") throw new Error(compiled.status);
-    const home = compiled.plan.routes.find((route) => route.pathname === "/")!;
+    const home = compiled.routes.find((route) => route.pathname === "/")!;
     expect(JSON.stringify(home)).toContain("¥55,000");
     expect(routeFacts(home).fragments).toEqual(ROUTE_FRAGMENTS["/"]);
   });

@@ -177,7 +177,7 @@ export async function startWorker(harness, root, config, persist, { port, caFile
       harness.checkSignal();
       if (server.finished) throw new Error(`Worker startup exited early\n${server.output}`);
       try {
-        await harness.request(`${origin}/api/v1/site`, {}, 1000);
+        await harness.request(`${origin}/api/hosted/config`, {}, 1000);
         if (server.finished) throw new Error("Worker exited during readiness");
         return { origin, stop: server.stop };
       } catch { /* bounded readiness retry */ }

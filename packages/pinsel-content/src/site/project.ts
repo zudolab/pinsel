@@ -5,7 +5,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { TrustedComponentPack } from "@zudo-composer/component-contract";
-import { stripSiteBuildModules } from "zudo-composer/content";
+import type { HostedSiteProjection } from "zudo-composer/hosted-content";
 import { compileStaticSite } from "zudo-composer/site-build";
 import type { ContentEntryRecord, SiteProject } from "zudo-composer/site-project";
 
@@ -20,7 +20,7 @@ export const ROUTES_OUT = join(REPO_ROOT, "apps/site/data/routes.generated.ts");
 export const NAVIGATION_OUT = join(REPO_ROOT, "apps/site/data/navigation.generated.ts");
 export const PLAN_OUT = join(SITE_PROJECT_DIR, "plan.json");
 
-export type ProjectedPlan = ReturnType<typeof stripSiteBuildModules>;
+export type ProjectedPlan = Extract<HostedSiteProjection, { status: "ready" }>;
 
 export interface Projection {
   projectSourceRevision: string;
@@ -31,7 +31,7 @@ export interface Projection {
 /** compileStaticSite (throws on any blocking diagnostic) → the portable plan, plus the entries the project carries. */
 export async function projectSite(projectPath: string, pack: TrustedComponentPack): Promise<Projection> {
   const compiled = await compileStaticSite({ projectPath, pack, assetsStoreRoot: join(SITE_PROJECT_DIR, "assets") });
-  const plan = stripSiteBuildModules(compiled.build);
+  const plan: ProjectedPlan = { status: "ready", projectId: compiled.build.projectId, navigation: compiled.build.navigation, routes: compiled.build.routes.map(({ modules, ...route }) => route) };
   const pathnames = plan.routes.map((route) => route.pathname);
   const missing = PINSEL_ROUTES.filter((route) => !pathnames.includes(planPathname(route)));
   if (missing.length > 0 || pathnames.length !== PINSEL_ROUTES.length) throw new Error(`compiled routes ${JSON.stringify(pathnames)} do not match the 14 outputs (missing ${JSON.stringify(missing)})`);

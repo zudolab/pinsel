@@ -1,9 +1,9 @@
 import { createRemoteJWKSet, errors, jwtVerify, type JWTVerifyGetKey } from "jose";
-import type { HostContentActor } from "zudo-composer/content";
+import type { HostedActor } from "zudo-composer/hosted-content";
 
 export type IdentityFailureCode = "configuration-required" | "missing-assertion" | "invalid-assertion" | "not-allowed";
 
-export type IdentityResult = { ok: true; actor: HostContentActor } | { ok: false; status: 401 | 403 | 503; code: IdentityFailureCode; message: string };
+export type IdentityResult = { ok: true; actor: HostedActor } | { ok: false; status: 401 | 403 | 503; code: IdentityFailureCode; message: string };
 
 /** Resolves the verified actor for a request, or why there is none. Decided before any route logic runs. */
 export type IdentityResolver = (request: Request) => Promise<IdentityResult>;
@@ -43,7 +43,7 @@ export function createAccessIdentity(config: AccessIdentityConfig): IdentityReso
       const { payload } = await jwtVerify(token, jwks, { issuer: config.teamDomain, audience: config.audience, requiredClaims: ["exp"] });
       const email = typeof payload.email === "string" ? payload.email.toLowerCase() : "";
       if (!email || !allowlist.has(email)) return { ok: false, status: 403, code: "not-allowed", message: "This identity may not edit Pinsel content." };
-      return { ok: true, actor: { subject: email } };
+      return { ok: true, actor: { id: email } };
     } catch (error) {
       const detail = error instanceof errors.JOSEError ? error.code : "verification-failed";
       return { ok: false, status: 403, code: "invalid-assertion", message: `Access assertion rejected (${detail}).` };
@@ -53,7 +53,7 @@ export function createAccessIdentity(config: AccessIdentityConfig): IdentityReso
 
 /** Local development only (`src/local-dev.ts`): a fixed subject, no network. Never bundled into the production entry. */
 export function createFixtureIdentity(subject: string): IdentityResolver {
-  const actor: HostContentActor = { subject };
+  const actor: HostedActor = { id: subject };
   return async () => ({ ok: true, actor });
 }
 

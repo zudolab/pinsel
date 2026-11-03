@@ -1,5 +1,5 @@
 import { parseInline, parseMarkdown, type InlineNode } from "@pinsel/ui/src/markdown/safe-markdown.ts";
-import type { SiteProjectPlanRoute } from "zudo-composer/content";
+import type { HostedProjectedRoute as SiteProjectPlanRoute } from "zudo-composer/hosted-content";
 import type { ContentEntryRecord } from "zudo-composer/site-project";
 
 import { ASSET_PATHS, INSTAGRAM_URL, routeForPlanPathname } from "../invariants";

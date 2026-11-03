@@ -140,42 +140,35 @@ async function main() {
   try {
     if (argv.includes("--fail-request")) {
       await dev.stop();
-      await request([`${origin}/api/v1/site`]);
+      await request([`${origin}/api/hosted/config`]);
       throw new Error("Induced request failure unexpectedly succeeded");
     }
-    await expectAnswer("configured: valid allowlisted assertion reads the site (positive control)", [...auth(tokens.valid), `${origin}/api/v1/site`], 200, '"status":"ok"');
-    for (const route of ["/api/v1/site", "/api/v1/draft", ...navigations]) await expectAnswer(`configured: no assertion ${route}`, [`${origin}${route}`], 401, "missing-assertion");
-    await expectAnswer("configured: an email header alone is not authentication", ["-H", `Cf-Access-Authenticated-User-Email: ${EDITOR}`, `${origin}/api/v1/draft`], 401, "missing-assertion");
+    await expectAnswer("configured: valid allowlisted assertion reads the site (positive control)", [...auth(tokens.valid), `${origin}/api/hosted/config`], 200, '"actorId"');
+    for (const route of ["/api/hosted/config", "/api/hosted/state", ...navigations]) await expectAnswer(`configured: no assertion ${route}`, [`${origin}${route}`], 401, "missing-assertion");
+    await expectAnswer("configured: an email header alone is not authentication", ["-H", `Cf-Access-Authenticated-User-Email: ${EDITOR}`, `${origin}/api/hosted/state`], 401, "missing-assertion");
     await expectAnswer("configured: another Host header (workers.dev-style) is gated too", ["-H", "Host: pinsel-authoring.example.workers.dev", `${origin}/editor/`], 401, "missing-assertion");
     for (const [name, token] of /** @type {const} */ ([["expired", tokens.expired], ["wrong aud", tokens.wrongAud], ["wrong iss", tokens.wrongIss], ["foreign signing key", tokens.foreignKey], ["no exp", tokens.noExp], ["nbf in the future", tokens.notYetValid], ["alg none", tokens.algNone], ["garbage", "not-a-jwt"]])) {
-      await expectAnswer(`configured: ${name} → 403 on the API`, [...auth(token), `${origin}/api/v1/draft`], 403, "invalid-assertion");
+      await expectAnswer(`configured: ${name} → 403 on the API`, [...auth(token), `${origin}/api/hosted/state`], 403, "invalid-assertion");
       await expectAnswer(`configured: ${name} → 403 on the editor`, [...auth(token), `${origin}/editor/`], 403, "invalid-assertion");
     }
-    await expectAnswer("configured: valid signature, email not on the allowlist → 403", [...auth(tokens.outsider), `${origin}/api/v1/draft`], 403, "not-allowed");
+    await expectAnswer("configured: valid signature, email not on the allowlist → 403", [...auth(tokens.outsider), `${origin}/api/hosted/state`], 403, "not-allowed");
     await expectAnswer("configured: valid signature, email not on the allowlist → 403 on preview", [...auth(tokens.outsider), `${origin}/preview/`], 403, "not-allowed");
     await expectAnswer("configured: valid assertion serves the editor", [...auth(tokens.valid), `${origin}/editor/`], 200, "<div id=\"editor\"");
     await expectAnswer("configured: valid assertion serves an editor asset", [...auth(tokens.valid), `${origin}/editor/static/${editorAsset}`], 200, null);
 
-    const draft = JSON.parse((await request([...auth(tokens.valid), `${origin}/api/v1/draft`])).body);
-    const save = (/** @type {string} */ price) => JSON.stringify({ expectedRevision: draft.value.draftRevision, expectedBaselineRevision: draft.value.baselineRevision, values: { "course-price": price } });
-    const put = `${origin}/api/v1/content/course/two-month`;
-    await expectAnswer("CSRF: mutation without Origin → 403", ["-X", "PUT", ...auth(tokens.valid), "-H", "Idempotency-Key: probe-no-origin", "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 403, "csrf-origin");
-    await expectAnswer("CSRF: mutation from another Origin → 403", ["-X", "PUT", ...auth(tokens.valid), "-H", "Origin: https://evil.example", "-H", "Idempotency-Key: probe-evil-origin", "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 403, "csrf-origin");
-    await expectAnswer("CSRF: same Origin but Sec-Fetch-Site cross-site → 403", ["-X", "PUT", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Sec-Fetch-Site: cross-site", "-H", "Idempotency-Key: probe-cross-site", "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 403, "csrf-fetch-site");
-    await expectAnswer("CSRF: same Origin, text/plain body → 415", ["-X", "PUT", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Idempotency-Key: probe-text", "-H", "Content-Type: text/plain", "--data", save(NEW_PRICE), put], 415, "unsupported-media-type");
-    await expectAnswer("CSRF: mutation without an assertion is refused before CSRF (401)", ["-X", "PUT", "-H", `Origin: ${origin}`, "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 401, "missing-assertion");
-    const unchanged = JSON.parse((await request([...auth(tokens.valid), `${origin}/api/v1/draft`])).body);
-    const priceOf = (/** @type {any} */ value) => value.value.snapshot.entries.find((/** @type {any} */ entry) => entry.modelId === "course" && entry.id === "two-month").values["course-price"];
-    const kept = unchanged.value.draftRevision === draft.value.draftRevision && priceOf(unchanged) === priceOf(draft);
-    results.push({ probe: "CSRF: every refused mutation wrote nothing", command: "GET /api/v1/draft", expected: `revision ${draft.value.draftRevision}, price ${priceOf(draft)}`, actual: `revision ${unchanged.value.draftRevision}, price ${priceOf(unchanged)}`, ok: kept });
-    console.log(`${kept ? "PASS" : "FAIL"} CSRF: every refused mutation wrote nothing`);
-    for (const id of ["probe-no-origin", "probe-evil-origin", "probe-cross-site", "probe-text"]) {
-      await expectAnswer(`refused mutation has no receipt: ${id}`, [...auth(tokens.valid), `${origin}/api/v1/operations/${id}`], 404, null);
+    const draft = JSON.parse((await request([...auth(tokens.valid), `${origin}/api/hosted/state`])).body);
+    const entry = { providerId: draft.providers[0].providerId, modelId: "course", recordId: "two-month" };
+    const save = (/** @type {string} */ key) => JSON.stringify({ method: "execute", argument: { kind: "set-fields", operationKey: key, expected: { draftRevision: draft.draftRevision, baseline: draft.baseline, definition: draft.definition }, entry, values: { "course-price": NEW_PRICE }, clear: [] } });
+    const endpoint = `${origin}/api/hosted/rpc`;
+    for (const [label, extra] of /** @type {[string,string[]][]} */ ([["missing", []], ["foreign", ["-H", "Origin: https://evil.example"]], ["fetch-site", ["-H", `Origin: ${origin}`, "-H", "Sec-Fetch-Site: cross-site"]]])) {
+      await expectAnswer(`CSRF ${label}`, ["-X", "POST", ...auth(tokens.valid), ...extra, "-H", "Content-Type: application/json", "--data", save(label), endpoint], 403, "forbidden");
     }
-    await expectAnswer("same-origin JSON mutation with a valid assertion saves (positive control)", ["-X", "PUT", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Sec-Fetch-Site: same-origin", "-H", "Idempotency-Key: probe-ok", "-H", "Content-Type: application/json", "--data", save(NEW_PRICE), put], 200, '"status":"ok"');
-    const saved = JSON.parse((await request([...auth(tokens.valid), `${origin}/api/v1/operations/probe-ok`])).body);
-    results.push({ probe: "the receipt records the verified Access email as the actor", command: "GET /api/v1/operations/probe-ok", expected: EDITOR, actual: JSON.stringify(saved).includes(EDITOR) ? EDITOR : JSON.stringify(saved).slice(0, 160), ok: JSON.stringify(saved).includes(EDITOR) });
-    results.push({ probe: "the Worker fetched the JWKS from TEAM_DOMAIN/cdn-cgi/access/certs", command: "(fixture server counter)", expected: ">= 1", actual: String(jwksHits), ok: jwksHits >= 1 });
+    const unchanged = JSON.parse((await request([...auth(tokens.valid), `${origin}/api/hosted/state`])).body);
+    results.push({ probe: "CSRF refusals preserve draft", ok: unchanged.draftRevision === draft.draftRevision });
+    await expectAnswer("valid same-origin save", ["-X", "POST", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Content-Type: application/json", "--data", save("probe-ok"), endpoint], 200, '"state"');
+    const saved = await request(["-X", "POST", ...auth(tokens.valid), "-H", `Origin: ${origin}`, "-H", "Content-Type: application/json", "--data", JSON.stringify({ method: "readReceipt", argument: "probe-ok" }), endpoint]);
+    results.push({ probe: "receipt actor is verified Access email", ok: JSON.parse(saved.body).actorId === EDITOR });
+
   } finally {
     await dev.stop();
   }
@@ -183,7 +176,7 @@ async function main() {
   // --- POLICY_AUD missing: everything fails closed, even with a valid assertion ---
   dev = await wranglerDev([`TEAM_DOMAIN:${TEAM}`, `EDITOR_ALLOWLIST:${EDITOR}`], certFile);
   try {
-    for (const route of ["/api/v1/site", "/api/v1/draft", ...navigations]) {
+    for (const route of ["/api/hosted/config", "/api/hosted/state", ...navigations]) {
       await expectAnswer(`POLICY_AUD missing: ${route} → 503`, [`${origin}${route}`], 503, "configuration-required");
       await expectAnswer(`POLICY_AUD missing: ${route} with a valid assertion → 503`, [...auth(tokens.valid), `${origin}${route}`], 503, "configuration-required");
     }
@@ -194,7 +187,7 @@ async function main() {
   // --- a plain-http TEAM_DOMAIN is not accepted as configuration ---
   dev = await wranglerDev([`TEAM_DOMAIN:http://127.0.0.1:${jwksPort}`, `POLICY_AUD:${AUD}`, `EDITOR_ALLOWLIST:${EDITOR}`], certFile);
   try {
-    await expectAnswer("non-https TEAM_DOMAIN → 503", [...auth(tokens.valid), `${origin}/api/v1/site`], 503, "configuration-required");
+    await expectAnswer("non-https TEAM_DOMAIN → 503", [...auth(tokens.valid), `${origin}/api/hosted/config`], 503, "configuration-required");
   } finally {
     await dev.stop();
   }

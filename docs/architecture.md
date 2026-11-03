@@ -1,3 +1,5 @@
+> Historical pre-Hosted implementation notes. The current S4 runtime, commands, disabled publication behavior and migration are documented in [dogfooding](dogfooding.md). Old API examples below are not the active API.
+
 # Architecture
 
 Pinsel has one canonical content source and four outputs: the public static site, the styleguide, the editor and the private authoring Worker with its preview. The public site, the Worker preview and the styleguide render the same zudo-react components from `packages/pinsel-ui`, through one bridge, `renderRouteDocument`. The editor is Preact and renders no Pinsel component itself; it shows the Worker preview in an iframe. Everything described here runs locally. Nothing is deployed (see "What is local-only" below).

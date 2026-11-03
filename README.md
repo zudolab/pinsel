@@ -2,16 +2,16 @@
 
 Website for Pinsel (online preparation classes for German art universities). It is built as static HTML with ZFB, and a constrained Composer-based CMS lets editors change content only.
 
-**Status: implemented, not deployed.** All 13 content routes and the 404 page render as complete static HTML. The private authoring Worker, the editor, the preview and the Git publication adapter are implemented and verified locally, with local D1, fixture identities and a fake publication provider. Nothing is deployed and no Cloudflare resource is provisioned. Publication is off (`PUBLISHER_PROVIDER=disabled`), and contact delivery is a local simulation. The decisions still open are listed in [`docs/launch-inputs.md`](docs/launch-inputs.md).
+**Status: local Hosted Content dogfooding; not deployed.** Run `pnpm dev:dogfood` and open **http://127.0.0.1:8787/editor/**. Persistent local D1 is `apps/authoring-worker/.wrangler/dogfood/`; normal startup never resets it. Note/FAQ/pricing editing, exact snapshot preview, history, conflict/recovery and immutable local snapshot builds use the current public Composer API. Publication/delivery remains disabled. [Daily commands, recovery and migration details](docs/dogfooding.md).
 
 ## Stack
 
-- **Public site** (`apps/site`): [ZFB](https://github.com/Takazudo/zudo-front-builder) 4.5.2 with zudo-react. It emits static HTML with no JS by default, plus three visitor scripts (`*.client.ts`). It is served as Cloudflare Workers Static Assets (`apps/site/wrangler.jsonc`, no `main`).
-- **Styleguide** (`apps/styleguide`): a zudo-sg 0.5.4 host (zudo-doc 6.2.0, zdtp 0.8.6) over `packages/pinsel-ui`. It is for developers only and is never part of the public output.
-- **Editor** (`apps/editor`): Vite and Preact. It hosts the Composer content-only editor (`zudo-composer/content-editor`) and shows the Japanese save and publication states.
-- **Authoring Worker** (`apps/authoring-worker`): a private Cloudflare Worker (wrangler 4.149.0). It provides Access JWT checks with jose, D1 drafts, revisions, immutable snapshots and publication jobs, the JSON content API, server-side preview rendering and the GitHub publication adapter. It is never deployed from this repository.
+- **Public site** (`apps/site`): [ZFB](https://github.com/Takazudo/zudo-front-builder) 5.1.5 with zudo-react. It emits static HTML with no JS by default, plus three visitor scripts (`*.client.ts`). It is served as Cloudflare Workers Static Assets (`apps/site/wrangler.jsonc`, no `main`).
+- **Styleguide** (`apps/styleguide`): a zudo-sg 0.8.1 host (zudo-doc 9.1.1, zdtp 0.9.0) over `packages/pinsel-ui`. It is for developers only and is never part of the public output.
+- **Editor** (`apps/editor`): Vite and Preact. It hosts the Composer content-only editor (`zudo-composer/hosted-content/editor`) and shows the Japanese save and publication states.
+- **Authoring Worker** (`apps/authoring-worker`): a private Cloudflare Worker (wrangler 4.149.0). It provides Access JWT checks with jose, D1 drafts, revisions, immutable snapshots and publication jobs, the JSON content API, server-side preview rendering; publication is disabled. It is never deployed from this repository.
 - **Shared packages**: `packages/pinsel-ui` holds the zudo-react components, the approved CSS and assets, and the `renderRouteDocument` bridge. `packages/pinsel-content` holds the content models, the editable-field policy, the site structure and the assemble, project and check scripts.
-- **Composer**: `zudo-composer` and `@zudo-composer/component-contract` are pinned by git SHA only (`547b532e…` and `c0b452da…`). See [`docs/dependencies.md`](docs/dependencies.md).
+- **Composer**: `zudo-composer` and `@zudo-composer/component-contract` are pinned by git SHA only (`a66424d2…` and `c0b452da…`). See [`docs/dependencies.md`](docs/dependencies.md).
 
 ## Commands
 
@@ -21,6 +21,8 @@ CI runs these in this order (`.github/workflows/ci.yml`, job `build`). `pnpm bui
 
 | Command | What it does |
 | --- | --- |
+| `pnpm dev:dogfood` | Prepare and run the persistent real local Worker/D1 editor |
+| `pnpm build:snapshot -- <file>` | Build immutable snapshot HTML without writing the working draft |
 | `pnpm install --frozen-lockfile` / `pnpm dedupe --check` | Install the pinned workspace and confirm there are no duplicate identities |
 | `pnpm no-deploy:check` | Fail if any script or workflow could deploy, promote or publish |
 | `pnpm assets:sync` | Copy `packages/pinsel-ui/public/` into `apps/site/public/` (gitignored) |
@@ -36,14 +38,14 @@ CI runs these in this order (`.github/workflows/ci.yml`, job `build`). `pnpm bui
 | `pnpm check:boundaries` | Public dist allowlist and visitor scripts only; the editor bundle has no zudo-react |
 | `pnpm worker:dry-run` / `worker:bundle:check` / `worker:check-preview` / `worker:types:check` | Run `wrangler deploy --dry-run` (no upload), scan the bundle (no `node:`, Vite, Preact or local fixtures), check the preview, check `worker-configuration.d.ts` |
 | `pnpm verify:auth` | Production entry under local Wrangler with per-run HTTPS JWKS; auth, CSRF, refusal isolation and authenticated save |
-| `pnpm verify:publication` | Real price/FAQ save, immutable snapshot and publisher validation in a disposable checkout; preserves caller content and site dist |
+| `pnpm verify:publication` | Real local save, snapshot A build, Worker restart and retained draft B in isolated D1 |
 | `pnpm test:browser` | Playwright lanes in `tests/browser/` (run through `heavy-guard` locally) |
 | `pnpm check:approved-seed` | Hash-check every immutable fixture file against `tests/approved-seed.sha256.json` (CI job `approved-seed`) |
 | `pnpm check:content` | The historical strict checker against `apps/site/dist`. CI job `migration-baseline` runs it only while there is no `content/snapshot.json` |
 
 More checks, run by the verification passes: `pnpm site:check-fragments`, `pnpm site:wrangler-dev` (public Worker on `wrangler dev`), `pnpm verify:external-install` (Composer git-pin install in a fresh directory), `pnpm gate1:wrangler-dev`, and `node scripts/content/check-publication.mjs --dist apps/site/dist` together with `node scripts/publication/check-public-output.mjs --dist apps/site/dist`. Publication PRs are validated by `.github/workflows/content-validate.yml` ([`docs/publication.md`](docs/publication.md)).
 
-Both local verification gates require the frozen install, content assembly, editor build and Worker asset assembly above. They run in every ordinary CI build, without application credentials or a prototype archive. Commit tracked changes before `verify:publication`: it rehearses the exact current Git HEAD. See [local verification](docs/verification/local-gates.md) for bounds, failure controls and sanitized reports.
+Both local verification gates require the frozen install, content assembly, editor build and Worker asset assembly above. They run in every ordinary CI build, without application credentials or a prototype archive. Snapshot build evidence records the current Git HEAD and dirty state. See [local verification](docs/verification/local-gates.md) for bounds, failure controls and sanitized reports.
 
 ## Layout
 

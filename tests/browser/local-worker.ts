@@ -56,7 +56,7 @@ export async function startLocalWorker(options: LocalWorkerOptions): Promise<Loc
     while (Date.now() - started < 90_000) {
       if (process_.exitCode !== null) throw new Error("wrangler dev exited early");
       try {
-        if ((await fetch(`${origin}/api/v1/site`, { signal: AbortSignal.timeout(2000) })).status < 600) return;
+        if ((await fetch(`${origin}/api/hosted/config`, { signal: AbortSignal.timeout(2000) })).status < 600) return;
       } catch {
         // not up yet
       }

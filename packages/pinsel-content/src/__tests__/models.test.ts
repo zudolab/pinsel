@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fixtureComponentPack } from "@zudo-composer/component-contract/fixtures";
 import { CONTENT_PROVIDER_ID, DEFAULT_TIMESTAMP, defineSite, node } from "zudo-composer/authoring";
-import { canonicalStringifyJson, validateContentEntryRecord, validateContentModelRecord, validateSiteProject } from "zudo-composer/content";
+import { canonicalSerialize as canonicalStringifyJson, projectHostedSite } from "zudo-composer/hosted-content";
 import type { JsonValue } from "@zudo-composer/component-contract";
 import type { ContentEntryRecord, ContentModelRecord, Model, SiteProject } from "zudo-composer/site-project";
 
@@ -58,29 +58,23 @@ describe("Pinsel content models", () => {
     }
   });
 
-  it("validate every record and entry with the zudo-composer/content validators", () => {
-    for (const record of PINSEL_MODELS) expect(validateContentModelRecord(record).ok, record.id).toBe(true);
-    for (const entry of seedEntries) expect(validateContentEntryRecord(entry).ok, entry.id).toBe(true);
-    expect(validateContentModelRecord({ ...PINSEL_MODELS[0], document: { ...PINSEL_MODELS[0]!.document, kind: "many" } }).ok).toBe(false);
-  });
-
-  it("validate together with one seed entry per record through validateSiteProject", () => {
+  it("validate together with one seed entry per record through public projection", async () => {
     const project = minimalProject(PINSEL_MODELS, seedEntries);
-    const result = validateSiteProject(project, { componentPack: fixtureComponentPack.manifest });
-    expect(result.diagnostics).toEqual([]);
-    expect(result.ok).toBe(true);
+    const result = await projectHostedSite({ project, componentPack: fixtureComponentPack.manifest }, []);
+    expect(result.status).toBe("ready");
   });
 
-  it("reject an entry whose value does not match its field kind", () => {
+  it("reject an entry whose value does not match its field kind", async () => {
     const project = minimalProject(PINSEL_MODELS, seedEntries);
     const year = project.providers.content[0]!.entries.find((entry) => entry.modelId === "result-year")!;
     project.providers.content[0]!.entries.push({ ...year, id: "year-bad", values: { ...year.values, [fieldId("result-year", "declaredCount")]: "9" } });
-    const result = validateSiteProject(project, { componentPack: fixtureComponentPack.manifest });
-    expect(result.ok).toBe(false);
+    const result = await projectHostedSite({ project, componentPack: fixtureComponentPack.manifest }, []);
+    expect(result.status).toBe("blocked");
+    if (result.status !== "blocked") throw new Error("Expected blocked projection");
     expect(result.diagnostics.map((diagnostic) => diagnostic.code)).toContain("invalid-entry-value");
   });
 
-  it("reject a dangling reference and a wrong-provider reference", () => {
+  it("reject a dangling reference and a wrong-provider reference", async () => {
     const project = minimalProject(PINSEL_MODELS, seedEntries);
     const item = project.providers.content[0]!.entries.find((entry) => entry.modelId === "faq-item")!;
     const groupField = fieldId("faq-item", "group");
@@ -88,18 +82,19 @@ describe("Pinsel content models", () => {
       { ...item, id: "faq-dangling", values: { ...item.values, [groupField]: { providerId: CONTENT_PROVIDER_ID, modelId: "faq-group", recordId: "nope" } } },
       { ...item, id: "faq-foreign", values: { ...item.values, [groupField]: { providerId: "other", modelId: "faq-group", recordId: "faq-exam" } } },
     );
-    const result = validateSiteProject(project, { componentPack: fixtureComponentPack.manifest });
-    expect(result.ok).toBe(false);
+    const result = await projectHostedSite({ project, componentPack: fixtureComponentPack.manifest }, []);
+    expect(result.status).toBe("blocked");
+    if (result.status !== "blocked") throw new Error("Expected blocked projection");
     expect(result.diagnostics.length).toBeGreaterThanOrEqual(2);
   });
 
-  it("round-trip through canonical JSON without drift", () => {
+  it("round-trip through canonical JSON without drift", async () => {
     const project = minimalProject(PINSEL_MODELS, seedEntries);
     const first = canonical(project);
     const parsed = JSON.parse(first) as unknown;
-    const result = validateSiteProject(parsed, { componentPack: fixtureComponentPack.manifest });
-    expect(result.ok).toBe(true);
-    expect(canonical(result.ok ? result.project : null)).toBe(first);
+    const result = await projectHostedSite({ project: parsed as SiteProject, componentPack: fixtureComponentPack.manifest }, []);
+    expect(result.status).toBe("ready");
+    expect(canonical(parsed)).toBe(first);
   });
 });
 

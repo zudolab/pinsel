@@ -9,7 +9,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { JsonValue } from "@zudo-composer/component-contract";
-import { canonicalStringifyJson } from "zudo-composer/content";
+import { canonicalSerialize as canonicalStringifyJson } from "zudo-composer/hosted-content";
 
 import { assemble } from "./assemble";
 import { hasPublishedSnapshot } from "./content-state";

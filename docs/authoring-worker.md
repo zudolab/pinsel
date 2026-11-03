@@ -1,3 +1,5 @@
+> Historical pre-Hosted implementation notes. The current S4 runtime, commands, disabled publication behavior and migration are documented in [dogfooding](dogfooding.md). Old API examples below are not the active API.
+
 # Authoring Worker
 
 `apps/authoring-worker` is the private Cloudflare Worker behind Access that serves the restricted Composer content editor, the private preview and the JSON content API. It is never deployed from this repository: CI runs only `wrangler deploy --dry-run`. Public delivery is a separate static site (`apps/site`).

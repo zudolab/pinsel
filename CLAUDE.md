@@ -1,3 +1,7 @@
+## Current authorized Hosted Content migration
+
+The provisional old API/editor/publication design has been replaced for persistent local dogfooding. See docs/dogfooding.md for the authoritative runtime contract and tests. Old design-fixed test details below do not require restoring removed public APIs. Approved-seed/assets/user drafts stay preserved; no production deployment or delivery is enabled.
+
 # Pinsel — repository rules
 
 ## Ownership

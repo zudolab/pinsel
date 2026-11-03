@@ -69,7 +69,7 @@ for (const [pattern, label] of editorForbidden) {
   if (pattern.test(editorCode)) failures.push(`editor bundle contains ${label}`);
 }
 if (!/保存しました/.test(editorCode)) failures.push("editor bundle lacks the Japanese labels");
-if (!/mountContentEditor|sg-hosted-content-editor/.test(editorCode + (await Promise.all((await files(path.join(repoRoot, "apps/editor/dist"), (name) => name.endsWith(".css"))).map((file) => readFile(file, "utf8")))).join(""))) failures.push("editor bundle lacks the Composer editor chrome");
+if (!/hosted-content-editor/.test(editorCode + (await Promise.all((await files(path.join(repoRoot, "apps/editor/dist"), (name) => name.endsWith(".css"))).map((file) => readFile(file, "utf8")))).join(""))) failures.push("editor bundle lacks the Composer editor chrome");
 
 if (failures.length > 0) {
   console.error(`check-boundaries failed:\n${failures.map((line) => `  - ${line}`).join("\n")}`);

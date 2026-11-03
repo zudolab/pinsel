@@ -1,7 +1,7 @@
 import { readFile, readdir } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import { validateContentEntryRecord } from "zudo-composer/content";
+import { validateContentEntryRecord } from "../records";
 import type { ContentEntryRecord } from "zudo-composer/site-project";
 
 import { CONTENT_ENTRIES_DIR } from "../import-rules";
