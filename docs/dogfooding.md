@@ -75,3 +75,13 @@ CLIは別Node24 processで動き、workerd内では実行しません。選択�
 回帰検証: `apps/authoring-worker/test/content-ai.test.ts` はreal D1でscope、immutable候補、Apply/Undo、receipt回復、actor分離、stale競合とpreview bindingを確認します。`tests/browser/note-ai.spec.ts` は日常launcherを隔離stateで起動し、fake→実preview→Apply→実restart→Undoと応答喪失回復を確認します。
 
 CLI設定の回帰検証は独立したoffline executableをPATHに配置し、実際のNode host → 公開provider → 制限付きCLI launcherのargvを確認します。Claude `--model opus --effort medium` とCodex `-m gpt-6-astra` / `model_reasoning_effort="medium"` / `service_tier="default"`、設定隔離とtoken非継承を検証します。これは実CLI・有料推論成功の証拠ではありません。
+
+## 日常運用の回復と受け入れ
+
+現在の簡潔な操作手順は [editing.md](editing.md)、時間・呼び出し回数を制限したAI確認は [note-ai-acceptance.md](note-ai-acceptance.md) を参照してください。
+
+新規Prepareはproviderの `ready` だけを許可し、UIとWorker、Node hostで再確認します。未設定・未認証・unknown・状態取得失敗では理由と「providerを再確認」を表示します。保存済み提案の一覧・read・Apply回復・Undoと通常編集は推論statusと独立です。host statusは5秒、browser statusは7秒で打ち切ります。
+
+不正JSON・未知version・不正shapeの回復checkpointは元localStorageキーを変更せず、新しいtab/sessionで編集画面を開きます。現在のhostが提供しないcollection作成やpublicationを含むcheckpointも未対応として保留し、自動的に削除・変換・送信しません。通常のset-fields、clear、snapshot、restore-revisionのv1回復は維持します。警告が出たらブラウザデータを消さず、管理者へ調査を依頼してください。AIの不正な回復pointerも保持し、同じproposal/actionへの上書きや再送を止めます。他の正常な提案は引き続き扱えます。
+
+#26のcontact幅は現在のCSSで修正し、390pxの100/150/200%文字サイズを検証します。historical approved-seedは変更しません。

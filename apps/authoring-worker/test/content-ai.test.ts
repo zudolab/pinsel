@@ -1,4 +1,4 @@
-import { beforeEach, expect, it } from "vitest";
+import { beforeEach, expect, it, vi } from "vitest";
 import { env } from "cloudflare:workers";
 import { createFakeContentAiProposer, type ContentAiProposal, type HostedState } from "zudo-composer/hosted-content";
 import { noteAiService } from "../src/ai/service";
@@ -46,4 +46,14 @@ it("HTTP Apply requires matching candidate/route/renderer binding; recovery work
  expect((await call({proposalId:proposal.id,renderedIdentity:{...identity,routeId:"/"}})).status).toBe(400);
  expect((await call({proposalId:proposal.id,renderedIdentity:identity})).status).toBe(200);
  const recovered=await call({proposalId:proposal.id});expect(recovered.status).toBe(200);expect(await recovered.json()).toMatchObject({ok:true,value:{recovered:true}});
+});
+
+it.each([{configured:false},{configured:true,inference:{state:"unknown",message:"auth unknown"}},{configured:true,inference:{state:"unavailable",code:"not-authenticated",message:"login required"}},null,"throw"])("rejects direct Prepare for non-ready status %j without blocking saved read/Undo",async(status)=>{
+ const {local,service,entry,proposal}=await prepared();await local.ai.apply({proposalId:proposal.id,renderedCandidate:proposal.candidateDigest});const before=await service.readState(actor);
+ const remote=vi.spyOn(globalThis,"fetch").mockImplementation(async()=>{if(status==="throw")throw new Error("offline");return new Response(JSON.stringify(status),{headers:{"content-type":"application/json"}});});
+ const localEnv={...env,PINSEL_AI_ORIGIN:"http://127.0.0.1:12345",PINSEL_AI_TOKEN:"test-only",PINSEL_AI_PROVIDER:"fake"};
+ const call=async(operation:string,payload:unknown)=>localAiHandler(new Request("http://localhost/api/hosted/ai",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({operation,payload})}),localEnv,actor);
+ try {expect(await(await call("content-ai-prepare",{entry,instruction:"blocked"}))!.json()).toMatchObject({ok:false,error:{code:"unavailable"}});expect(await service.readState(actor)).toEqual(before);expect(remote.mock.calls.every(([url])=>String(url).endsWith("/status"))).toBe(true);
+ expect(await(await call("content-ai-read",{proposalId:proposal.id}))!.json()).toMatchObject({ok:true});expect(await(await call("content-ai-undo",{proposalId:proposal.id}))!.json()).toMatchObject({ok:true});
+ }finally{remote.mockRestore();}
 });

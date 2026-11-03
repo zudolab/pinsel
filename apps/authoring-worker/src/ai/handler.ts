@@ -12,7 +12,7 @@ export async function localAiHandler(request: Request, env: Env, actor: HostedAc
  const configured = !!settings.PINSEL_AI_TOKEN && /^http:\/\/127\.0\.0\.1:\d+$/.test(settings.PINSEL_AI_ORIGIN ?? "");
  async function node<T>(path: string, payload?: unknown, signal?: AbortSignal): Promise<T> {
   if (!configured) throw new EditorialError("unavailable", "Start pnpm dev:dogfood to enable the local AI host.");
-  const response = await fetch(`${settings.PINSEL_AI_ORIGIN}${path}`, { method: payload === undefined ? "GET" : "POST", headers: { authorization: `Bearer ${settings.PINSEL_AI_TOKEN}`, "content-type": "application/json" }, ...(payload === undefined ? {} : { body: JSON.stringify(payload) }), signal });
+  const response = await fetch(`${settings.PINSEL_AI_ORIGIN}${path}`, { method: payload === undefined ? "GET" : "POST", headers: { authorization: `Bearer ${settings.PINSEL_AI_TOKEN}`, "content-type": "application/json" }, ...(payload === undefined ? {} : { body: JSON.stringify(payload) }), signal: signal ?? AbortSignal.timeout(5000) });
   if (!response.ok) throw new EditorialError("unavailable", "The selected local provider is unavailable. Saved proposals and receipts remain recoverable.");
   return response.json() as Promise<T>;
  }
@@ -32,6 +32,10 @@ export async function localAiHandler(request: Request, env: Env, actor: HostedAc
   if (request.method !== "POST" || url.pathname !== "/api/hosted/ai") return json({ error: { code: "invalid-request", message: "Unsupported AI route" } }, 400);
   const input = await request.json() as { operation: string; payload: unknown };
   if (!input || typeof input.operation !== "string") throw new EditorialError("invalid-request", "Malformed Content-AI request");
+  if (input.operation === "content-ai-prepare") {
+   const readiness=await status();
+   if(!readiness?.configured || readiness.inference?.state!=="ready") throw new EditorialError("unavailable", "Provider is not ready. Check startup/authentication and recheck status. Saved proposals and Undo remain available.");
+  }
   if (input.operation === "pinsel-ai-preview") {
    const payload = input.payload as { proposalId?: unknown };
    if (!payload || typeof payload.proposalId !== "string" || Object.keys(payload).length !== 1) throw new EditorialError("invalid-request", "Malformed preview request");

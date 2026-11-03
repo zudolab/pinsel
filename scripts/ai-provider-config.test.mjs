@@ -8,6 +8,9 @@ import { aiProviderConfig } from "./ai-provider-config.mjs";
 
 it("requires explicit real settings and rejects malformed or misleading settings", () => {
  expect(aiProviderConfig({})).toEqual({ provider: "fake" });
+ expect(aiProviderConfig({PINSEL_AI_FAKE_FIELD:"body"})).toEqual({provider:"fake"});
+ expect(()=>aiProviderConfig({PINSEL_AI_FAKE_FIELD:"other"})).toThrow();
+ expect(()=>aiProviderConfig({PINSEL_AI_PROVIDER:"claude-cli",PINSEL_AI_FAKE_FIELD:"body",PINSEL_AI_MODEL:"opus",PINSEL_AI_EFFORT:"medium"})).toThrow();
  const valid = { PINSEL_AI_PROVIDER: "codex-cli", PINSEL_AI_MODEL: "gpt-6-astra", PINSEL_AI_EFFORT: "medium", PINSEL_AI_SERVICE_TIER: "default" };
  expect(aiProviderConfig(valid)).toEqual({ provider: "codex-cli", model: "gpt-6-astra", effort: "medium", serviceTier: "default" });
  for (const key of ["PINSEL_AI_MODEL", "PINSEL_AI_EFFORT", "PINSEL_AI_SERVICE_TIER"]) {

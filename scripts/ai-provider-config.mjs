@@ -2,6 +2,7 @@
 /** @param {NodeJS.ProcessEnv} env */
 export function aiProviderConfig(env) {
  const provider = env.PINSEL_AI_PROVIDER ?? "fake";
+ if(env.PINSEL_AI_FAKE_FIELD!==undefined && (provider!=="fake" || !["title","body"].includes(env.PINSEL_AI_FAKE_FIELD))) throw new Error("PINSEL_AI_FAKE_FIELD is a fake-only acceptance fixture: title or body");
  if (provider !== "fake" && provider !== "claude-cli" && provider !== "codex-cli") throw new Error("PINSEL_AI_PROVIDER must be fake, claude-cli or codex-cli");
  const model = env.PINSEL_AI_MODEL, effort = env.PINSEL_AI_EFFORT, serviceTier = env.PINSEL_AI_SERVICE_TIER;
  if (provider === "fake") {

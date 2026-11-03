@@ -45,6 +45,7 @@ try {
  const configPath=path.join(runtime,"wrangler.json");
  await writeFile(configPath,JSON.stringify(config),{mode:0o600});await writeFile(path.join(runtime,".dev.vars"),`PINSEL_AI_TOKEN=${token}\n`,{mode:0o600});
  await run(["exec","wrangler","d1","migrations","apply","pinsel-authoring","--local","--config",configPath,"--persist-to",state],worker);
+ process.send?.({type:"dogfood-ports",workerOrigin:`http://127.0.0.1:${port}`,aiOrigin:origin});
  console.log(`Pinsel dogfood: http://127.0.0.1:${port}/editor/\nPersistent state: ${state}\nAI provider: ${provider} (availability shown in editor; fake is not real CLI verification)\nPublication disabled. Ctrl+C stops Worker and Node provider.`);
  await run(["exec","wrangler","dev","--local","--config",configPath,"--ip","127.0.0.1","--port",port,"--persist-to",state],worker);
 } catch(error) { if(!stopping) { console.error(error); process.exitCode=1; } }

@@ -1,4 +1,4 @@
-> Historical pre-Hosted implementation notes. The current S4 runtime, commands, disabled publication behavior and migration are documented in [dogfooding](dogfooding.md). Old API examples below are not the active API.
+> Historical pre-Hosted implementation notes. The current Hosted Content runtime, editing/AI commands, disabled publication behavior and migration are documented in [dogfooding](dogfooding.md). Old API examples below are not the active API.
 
 # Authoring Worker
 

@@ -424,7 +424,7 @@
     .closing__action .button { inline-size: 100%; min-block-size: 5rem; }
     .closing__reading > div:last-child p { font-size: var(--size-small); }
     .footer-grid { grid-template-columns: 1fr; gap: var(--space-7); }
-    .footer-identity { display: flex; gap: var(--space-5); justify-content: space-between; align-items: end; }
+    .footer-identity { display: flex; flex-wrap: wrap; gap: var(--space-5); justify-content: space-between; align-items: end; }
     .footer-instagram { margin: 0; font-size: var(--size-caption); }
     .footer-instagram span { font-size: var(--size-caption); }
     .footer-nav { grid-template-columns: repeat(2,minmax(0,1fr)); gap: var(--space-5); }
@@ -471,11 +471,11 @@
     .article-layout .page-toc ol { display: grid; grid-template-columns: 1fr; }
     .article-layout .prose { line-height: 1.95; }
     .prose h2 { font-size: 1.375rem; margin-block-start: var(--space-8); }
-    .contact-layout { grid-template-columns: 1fr; gap: var(--space-7); }
+    .contact-layout { grid-template-columns: minmax(0, 1fr); gap: var(--space-7); }
     .contact-panel { order: -1; padding: var(--space-5); }
     .contact-form { gap: var(--space-5); }
     .form-field label { font-size: var(--size-small); }
-    .contact-form .button { inline-size: 100%; }
+    .contact-form .button { inline-size: 100%; min-inline-size: 0; white-space: normal; flex-wrap: wrap; }
     .legal :is(th,td) { padding: .875rem .5rem; }
     .legal th { inline-size: 5.5rem; }
   }

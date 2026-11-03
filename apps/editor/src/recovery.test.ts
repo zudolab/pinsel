@@ -1,0 +1,10 @@
+import { expect,it } from "vitest";
+import { readCheckpoint,readAiPointer } from "./recovery";
+import type { HostedState } from "zudo-composer/hosted-content";
+const entry={providerId:"p",modelId:"note",recordId:"a"};
+const state={draftRevision:"opaque revision",definition:"definition",baseline:{gitSha:"source",contentDigest:"digest"},integrationFence:0,providers:[{providerId:"p",models:[{id:"note",document:{fields:[{id:"title",kind:"text"}]}}],entries:[{id:"a",modelId:"note",schemaVersion:1,lifecycle:"draft",generation:0,values:{title:"Japanese"}}]}]} as unknown as HostedState;
+const valid={version:1,acknowledged:state,edits:[{entry,fieldId:"title",revision:1}],localRevision:1,pending:null};
+it("accepts clear edits and opaque identities without modifying bytes",()=>{expect(readCheckpoint(JSON.stringify(valid),state)).toEqual(valid);});
+it.each(["capture-snapshot","restore-revision","set-fields"])("retains supported pending %s without replay",kind=>{const x={...valid,pending:{localRevision:1,rejected:false,request:{kind,operationKey:"id",expected:state,entry,revisionId:"revision",values:{title:"value"},clear:[]}}};expect(readCheckpoint(JSON.stringify(x),state)).toEqual(x);});
+it.each(["", "null", "{", JSON.stringify({...valid,version:999}),JSON.stringify({...valid,edits:[null]}),JSON.stringify({...valid,acknowledged:{...state,providers:null}}),JSON.stringify({...valid,pending:{request:null}}),JSON.stringify({...valid,creationDraft:{collectionId:"future"}})])("rejects malformed/unsupported envelope %s",raw=>{expect(()=>readCheckpoint(raw,state)).toThrow();});
+it("rejects malformed, future and misbound AI pointers while accepting legacy markers",()=>{const prefix="pinsel:ai",key=`${prefix}:proposal:apply`,x={entry,proposalId:"proposal",action:"apply"};expect(readAiPointer(JSON.stringify(x),key,prefix)).toEqual(x);for(const raw of ["null","{","",JSON.stringify({...x,version:2}),JSON.stringify({...x,proposalId:"other"}),JSON.stringify({...x,entry:null})])expect(readAiPointer(raw,key,prefix)).toBeUndefined();});

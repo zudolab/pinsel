@@ -29,10 +29,13 @@ const server = createServer(async (request, response) => {
    keys.add(field.key);
   }
   if (busy) { send(429, { error: "Provider is busy" }); return; }
+  const readiness=await provider.inference();
+  if(readiness.state!=="ready"){send(503,{error:"Provider not ready; recheck startup/authentication"});return;}
+  if(busy){send(429,{error:"Provider is busy"});return;}
   busy = true;
   const controller = new AbortController();
   response.on("close", () => controller.abort());
-  try { send(200, await provider.proposer.propose({ ...input, signal: controller.signal })); } finally { busy = false; }
+  try { send(200, await provider.proposer.propose({ ...input, fields: config.provider==="fake" && process.env.PINSEL_AI_FAKE_FIELD ? input.fields.filter((/** @type {{key:string}} */ field)=>field.key===process.env.PINSEL_AI_FAKE_FIELD) : input.fields, signal: controller.signal })); } finally { busy = false; }
  } catch { send(400, { error: "The bounded proposal request could not complete" }); }
 });
 server.listen(0, "127.0.0.1", () => {
