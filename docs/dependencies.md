@@ -1,14 +1,21 @@
-## Current Composer Hosted Content pin (2026-11-03)
-
-Source main `2a004217283d5ddebe009b105070650246a9c3a3`; installable package-root `fba434aaa96af8b4dbc2a086638180f71a2da741`; contract package-root remains `c0b452da075b66757c60bd0d721a47062d4354d0`. The root lockfile contains the installable package tarball and integrity. Old pin observations below describe history, not the active Hosted Content import surface. No npm release.
-
 # Dependencies
 
-Every direct dependency is pinned in the workspace `package.json` files and resolved once in `pnpm-lock.yaml` (pnpm 11.5.2, `autoInstallPeers: false`). Only the lockfile owners named in `CLAUDE.md` change these pins.
+## Current state
 
-Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `npm view <name> dist-tags` the same day. Final pin (#16, 2026-10-13): `zudo-composer` moved to `547b532e…` and `@takazudo/zudo-sg` to `0.5.2`; every other identity is unchanged. Zudo deps bump (#22, 2026-10-13): the zfb family moved to `4.3.3` and `@takazudo/zudo-doc` to `6.1.1`; `@takazudo/zudo-sg 0.5.2` and `@takazudo/zdtp 0.8.6` were already the newest releases. Post-merge bump (#19, 2026-10-13): the zfb family moved to `4.4.0` and `@takazudo/zudo-sg` to `0.5.4`; `@takazudo/zudo-doc 6.1.1` and `@takazudo/zdtp 0.8.6` are still the newest releases, and both Composer git pins are unchanged.
+Every direct dependency is pinned in the workspace `package.json` files and resolved once in `pnpm-lock.yaml` (pnpm 11.5.2, `autoInstallPeers: false`). Only the lockfile owners named in `CLAUDE.md` change these pins. The tables in this section match the current manifests and lockfile; everything under [History](#history) is a dated record, not the active state.
 
-## Resolved identities
+### Composer identities
+
+Two distinct package-root commits of `Takazudo/zudo-composer` are consumed. Neither is a Pinsel commit, and neither is a `zudo-composer` repository `main` head; each is the root tree of an installable package.
+
+| Package | Manifest specifier (all four importers) | Lockfile tarball integrity | Identity |
+| --- | --- | --- | --- |
+| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#fba434aaa96af8b4dbc2a086638180f71a2da741` | `sha512-F1+EmBNKVM5IWkW9SX+G++pCOs9etB5F6Y4eRdPMwFd0eNUhFmNtZ7bBHyjx1Rbuh5veSAY3DM2FgnQWzMGHSA==` | Installable package-root commit for the Hosted Content import surface (pinned 2026-11-03). It was produced from Composer source `main` at `2a004217283d5ddebe009b105070650246a9c3a3`; that source SHA is provenance only and is never installed. |
+| `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | `sha512-cGk7w+sB/cAKH90K93MH9jWlQtKcbjru9bQIFuNUIBZ13oC/qALeZyxNfmIaCPpQJknY6W8S73GLJ2eMn0gHVA==` | Contract package-root handoff commit (`package/component-contract-v1`), version 1.0.0. Unchanged since the first pin. |
+
+Importers: `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui`. Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<full-sha>`; there is no npm release of `zudo-composer`.
+
+### Resolved identities
 
 | Package | Specifier | Resolved | Importers | Integrity |
 | --- | --- | --- | --- | --- |
@@ -23,7 +30,7 @@ Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `n
 | `wrangler` | `4.149.0` | 4.149.0 | `apps/authoring-worker` | `sha512-OzK7xmB5r5iLKb3cIT3783g13fe6T7xyeKu9LEdUyl+DKAM2KP/jkjnE0OUhyw+mB/XJM9ycjgF3MWm8PR9amg==` |
 | `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | 1.0.0 (git `c0b452da075b66757c60bd0d721a47062d4354d0`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-cGk7w+sB/cAKH90K93MH9jWlQtKcbjru9bQIFuNUIBZ13oC/qALeZyxNfmIaCPpQJknY6W8S73GLJ2eMn0gHVA==` |
 | `preact` | `^10.29.8` | 10.29.8 | `apps/authoring-worker` (dev, peer only), `apps/editor`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==` |
-| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#547b532eb56dfecaec1e2bd9060f8d579ad8862c` | 0.0.0 (git `547b532eb56dfecaec1e2bd9060f8d579ad8862c`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-ftScClSN77f5t6ij1nvoJpblXdEnHTfgqTO/jNFnNPx1r5rCMzcxpRy4xtbDHlO2IOTDNBDsVqQB3CnzHbgx1Q==` |
+| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#fba434aaa96af8b4dbc2a086638180f71a2da741` | 0.0.0 (git `fba434aaa96af8b4dbc2a086638180f71a2da741`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-F1+EmBNKVM5IWkW9SX+G++pCOs9etB5F6Y4eRdPMwFd0eNUhFmNtZ7bBHyjx1Rbuh5veSAY3DM2FgnQWzMGHSA==` |
 | `tsx` | `4.23.15` | 4.23.15 | `.` | `sha512-Yiex1Ovn8z2xPpOWckIiysV1SSyRMY9BkLF++q0yKiDxCqRhosKfMg3janKkiLBwZ5c/YryloKwGZcrEmtwxKw==` |
 | `vite` | `^8.2.2` | 8.3.4 | `apps/editor` | `sha512-IftLE8phJhdNRIGNEV4JCCvfNScoZQVfcXaN8TQropWGJtOHcu+iAB9pHcuGvmEb/kddw0LBe/jS8ztdC6xdiQ==` |
 | `@takazudo/zfb` | `5.1.5` | 5.1.5 | `apps/authoring-worker`, `apps/site`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-V8czYQoiwa2N19gb9MwcgE0Re6TV5ea9yfIrL4casySOzkh8kM/TRKNL0I5Ix1T9LjyqBcaNP59v/PorJZnuTg==` |
@@ -38,9 +45,19 @@ Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `n
 | `katex` | `^0.19.0` | 0.19.0 | `apps/styleguide` | `sha512-v6Tznz3zJ7u3niRCoDTsumM2+HA2XXcCu+WAacCeHD2z3p9A9Ks987o5FzfTGBN0e8A0vjEgIDvLbICrXpdw/Q==` |
 | `tailwind-merge` | `3.6.0` | 3.6.0 | `apps/styleguide` | `sha512-uxL7qAVQriqRQPAyK3pj66VqskWqoZ37PW94jwOTwNfq/z9oyu1V+eqrZqtR2+fCiXdYOZe/Modt8GtvqNzu+w==` |
 
-Both Composer packages retain their full git commit identities. The 2026-11-03 pnpm install also records codeload tarball SHA-512 integrity in the lockfile, shown above. Earlier lockfiles recorded only `gitHosted: true`; the source pins have not changed.
+Both Composer packages retain their full git commit identities. Since the 2026-11-03 install the lockfile also records codeload tarball SHA-512 integrity for them, shown above. Earlier lockfiles recorded only `gitHosted: true`.
 
-## Composer pins
+## History
+
+> **Historical record.** The sections below are dated logs of earlier pins, bumps and decisions, kept as evidence. Versions, Composer SHAs (`7ca114a3…`, `547b532e…`), integrity values and file paths in them can be superseded and are **not** the current state; use [Current state](#current-state) above.
+
+### Pin timeline before the Hosted Content pin
+
+Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `npm view <name> dist-tags` the same day. Final pin (#16, 2026-10-13): `zudo-composer` moved to `547b532e…` and `@takazudo/zudo-sg` to `0.5.2`; every other identity is unchanged. Zudo deps bump (#22, 2026-10-13): the zfb family moved to `4.3.3` and `@takazudo/zudo-doc` to `6.1.1`; `@takazudo/zudo-sg 0.5.2` and `@takazudo/zdtp 0.8.6` were already the newest releases. Post-merge bump (#19, 2026-10-13): the zfb family moved to `4.4.0` and `@takazudo/zudo-sg` to `0.5.4`; `@takazudo/zudo-doc 6.1.1` and `@takazudo/zdtp 0.8.6` are still the newest releases, and both Composer git pins are unchanged. On 2026-11-03 `zudo-composer` moved to the Hosted Content package-root commit `fba434aa…` (see [Current state](#current-state)).
+
+### Historical Composer pins (superseded 2026-11-03)
+
+> Superseded: `zudo-composer` is now `fba434aaa96af8b4dbc2a086638180f71a2da741`. The contract row is still current.
 
 | Package | Commit | Status |
 | --- | --- | --- |
@@ -49,7 +66,7 @@ Both Composer packages retain their full git commit identities. The 2026-11-03 p
 
 Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<full-sha>`. There is no npm release of `zudo-composer`.
 
-## Published dependency refresh — 2026-11-03
+### Published dependency refresh — 2026-11-03
 
 Base main: `96506d51e089ffaa1facd4ef1ff0402abac263ab`. The specified channel-preserving resolver scanned all eight manifests (seven active workspace manifests and one historical approved-seed manifest). Write-back was restricted to the six active first-party package names; the fixture was excluded. Only the root lockfile exists. All active packages use exact stable pins; no channel warnings were emitted.
 
@@ -65,7 +82,7 @@ Base main: `96506d51e089ffaa1facd4ef1ff0402abac263ab`. The specified channel-pre
 
 Verification: Node 24.19.0 / pnpm 11.5.2 frozen install and dedupe passed; all workspace typechecks, 412 Vitest tests (15 existing skips), site/styleguide/editor builds, generated/token checks, Worker dry-run/bundle/preview/types and local authentication probes passed. Chromium: 83 passed / 15 existing skips. Independent consumer clean install, frozen reinstall and public exports passed. Publication rehearsal and CI are checked on the committed PR head.
 
-## Published dependency refresh — 2026-10-15
+### Published dependency refresh — 2026-10-15
 
 Based on main `7b4aadbd2d42c2b307bca49855332f4916f42518` after PR #29. The channel-preserving resolver scanned eight manifests: the seven active workspace manifests plus the immutable approved-seed source manifest. All active pins track stable releases. The seed's historical `@takazudo/mdx-formatter ^1.0.3` is evidence, not an installed consumer, and remains byte-exact. Only the shared root lockfile exists; no independent nested install was omitted.
 
@@ -75,7 +92,7 @@ Based on main `7b4aadbd2d42c2b307bca49855332f4916f42518` after PR #29. The chann
 - zudo-sg **0.5.4** and zdtp **0.8.6** remain the newest published stable versions. The vendored scaffold pin remains `03a726f64ff0b26ac9f1aa746eb068a8ea7f4d03` (`v0.5.4`), the newest release; no template bytes or provenance date changed.
 - Composer pins and all third-party versions remain unchanged. Release-age exemptions remain version-specific for the ZFB native/slugify packages, now `4.5.2`; the transitional old-or-new allowance was used only during installation.
 
-## Published dependency refresh — 2026-10-22
+### Published dependency refresh — 2026-10-22
 
 Base: `main` at `9c75580ba8650dcfcc4d18ba538106731becf2f8`. The channel-preserving resolver from `Takazudo/claude-settings` at `b5d815646ccae09437fddc54ef1190f153d0147c` scanned all eight manifests. The seven active workspace manifests share the root lockfile; the approved-seed manifest is immutable historical evidence, so its `@takazudo/mdx-formatter ^1.0.3` remains untouched. There are no nested lockfiles.
 
@@ -87,7 +104,7 @@ Base: `main` at `9c75580ba8650dcfcc4d18ba538106731becf2f8`. The channel-preservi
 
 Verification on 2026-10-22: frozen install, dedupe, approved-seed hashes, no-deploy guard, content assembly/projection/checks, site/styleguide/editor builds, workspace typechecks, generated styleguide checks, token layers, asset assembly/verification, boundaries, Worker dry-run/bundle/preview/types and local authentication probes passed. Vitest reports 38 files / 412 tests passed and 1 file / 15 tests skipped. The initial publication rehearsal stopped at its clean-working-tree precondition; committed-head verification runs separately after the dependency commit. Chromium reports 81 tests passed and 15 skipped (guard verdict PASS). No check was weakened.
 
-## Node 24 and zudo-doc 7 migration — 2026-10-22
+### Node 24 and zudo-doc 7 migration — 2026-10-22
 
 This separately authorized migration supersedes the earlier doc 7 hold. The workspace now declares Node `>=24 <25`, matching zudo-doc 7's supported runtime. `.nvmrc` already selects 24, `.node-version` already selects 24.13.1, and CI already runs Node 24; none requires a change. The existing Node type declarations remain compatible and are not upgraded unnecessarily.
 
@@ -98,7 +115,7 @@ This separately authorized migration supersedes the earlier doc 7 hold. The work
 
 Validation for this migration: frozen pnpm 11.5.2 install and dedupe passed; all 21 normal local build/type/content/Worker/authentication gates passed. Vitest: 412 passed / 15 skipped. Chromium: 83 passed / 15 skipped, including the two new styleguide checks. Independent review found no blocking issues. Committed-head publication rehearsal and CI run after the migration commit.
 
-## Historical pin decisions
+### Historical pin decisions
 
 - `@takazudo/zfb`, `@takazudo/zfb-runtime`, `@takazudo/zfb-md-wasm` are exactly `4.4.0` everywhere: `zfb-runtime@4.4.0` peers `zfb` at exactly `4.4.0`, `zudo-doc@6.1.1` needs zfb / zfb-runtime / zfb-md-wasm `^4.3.3`, and `zudo-sg@0.5.4` raises its zfb floor to `^4.4.0` (zudo-doc `^6.1.1`, zdtp `^0.8.6`). The install reports no missing or incompatible peers.
 - zfb 4.4.0 impact (`v4.3.3..v4.4.0`, Takazudo/zudo-front-builder; changelog + published-tarball diff): the `zfb` npm package changes only its version pins (the binary ships in the native packages). The YAML frontmatter parser moves `noyalib` 0.0.53 → 0.0.55 (near-linear long flow collections; a verbatim `!<int>` tag is now refused, full-URI core tags are accepted, aliases deeper than 128 levels are refused); upstream states no previously accepted frontmatter changes value, and Pinsel content has no verbatim tags. `zfb-runtime` changes only `dist/client-router/router.js`: Back onto a browser-created fragment entry restores the earlier page, and the following Forward reports `forward`. The public site ships no client router (zero JS by default); only the styleguide's zudo-doc chrome loads it. The four `zfb-md-wasm` `.wasm` artifacts grow by under 3 KB and change SHA-256 because they embed the release version; Pinsel pins no wasm digest. Static HTML, `zfb check`, sitemap/robots, client-script entries and CSS handling show no change: `content:check`, `check-content.sh` (14/14), `check-publication`, `check-public-output` and the browser lanes pass unchanged.
@@ -116,7 +133,9 @@ Validation for this migration: frozen pnpm 11.5.2 install and dedupe passed; all
 - `pnpm dedupe --check` is clean and runs in CI. Duplicate `@lezer/common` identities break the zudo-sg code panel (zudo-sg#963).
 - `happy-dom 20.14.6` matches the zudo-sg fixture; `21.x` (published 2026-10-11/12) is a new major and is not adopted yet.
 
-## Known Composer gaps
+### Known Composer gaps
+
+> Historical (against the `547b532e…` content-editor mount). The host files named below (`editor-mount.tsx`, `localize.ts`, `groups.ts`) were removed when the editor moved to `zudo-composer/hosted-content/editor`; see [dogfooding](dogfooding.md) for the current editor.
 
 Reconciled by the final pin (#16) against Takazudo/zudo-composer#903. Closed upstream: `preview.sandbox` (the editor no longer adds the attribute and reloads the shell). Still open, recorded on draft PR Takazudo/zudo-composer#904 as follow-ups; none blocks Pinsel, each has a working Pinsel-side handling:
 
