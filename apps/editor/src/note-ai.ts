@@ -50,21 +50,26 @@ export function mountNoteAi(options: Options) {
  async function read() {
   const id=select.value, current=generation;operation=null;renderedIdentity=null;draw();if(!id)return;
   const value=await ai<ContentAiOperation>("content-ai-read",{proposalId:id});if(current!==generation||id!==select.value)return;if(!sameEntry(value.proposal.entry,entry))throw new Error("提案の編集対象が一致しません。対象Noteを再選択してください。");operation=value;
-  for(const pending of pendingActions())if(pending.value.proposalId===operation.proposal.id&&sameEntry(pending.value.entry,operation.proposal.entry)&&((pending.value.action==="apply"&&operation.applied)||(pending.value.action==="undo"&&operation.undone)))localStorage.removeItem(pending.key);
+  for(const pending of pendingActions())if(pending.value.proposalId===operation.proposal.id&&sameEntry(pending.value.entry,operation.proposal.entry)&&((pending.value.action==="apply"&&operation.applied)||(pending.value.action==="undo"&&operation.undone))){localStorage.removeItem(pending.key);pendingFailures=pendingFailures.filter(item=>!item.startsWith(`${pending.value.proposalId}: `));pendingWarning();}
   draw();
  }
  const pendingFor = (target: ContentEntryRef | null) => pendingActions().map(item=>item.value).filter(value=>sameEntry(value.entry,target));
+ let pendingFailures: string[] = [];
+ function pendingWarning() {
+  const here=pendingFor(entry).length,elsewhere=pendingActions().length-here;
+  get("ai-pending-warning").textContent=here||elsewhere?`未完了のAI操作記録を保持しています（このNote ${here} 件・他の対象 ${elsewhere} 件）。自動再送・削除はしません。${pendingFailures.length?`読み取れない記録: ${pendingFailures.join(" / ")}`:"保存済み提案から結果を確認してください。"}`:"";
+ }
  async function recoverPending(current: number) {
-  const failures: string[] = [];let shown: string | null = null;
+  pendingFailures=[];let shown: string | null = null;
   for(const pending of pendingFor(entry)){
    if(current!==generation)return;
+   if(![...select.options].some(option=>option.value===pending.proposalId))select.add(new Option(`回復待ち操作 · ${pending.action} · ${pending.proposalId}`,pending.proposalId));
    select.value=pending.proposalId;
-   try{await read();if(current!==generation)return;}catch(error){failures.push(`${pending.proposalId}: ${error instanceof Error?error.message:String(error)}`);continue;}
+   try{await read();if(current!==generation)return;}catch(error){pendingFailures.push(`${pending.proposalId}: ${error instanceof Error?error.message:String(error)}`);continue;}
    if(!shown || pendingFor(entry).some(value=>value.proposalId===pending.proposalId))shown=pending.proposalId;
   }
   if(current!==generation)return;
-  const remaining=pendingFor(entry).length;
-  get("ai-pending-warning").textContent=remaining?`未完了のAI操作記録 ${remaining} 件を保持しています。自動再送・削除はしません。${failures.length?`読み取れない記録: ${failures.join(" / ")}`:"保存済み提案から結果を確認してください。"}`:"";
+  pendingWarning();
   if(shown&&select.value!==shown){select.value=shown;await read();}
   else if(!shown){select.value="";operation=null;renderedIdentity=null;draw();}
  }
@@ -108,7 +113,7 @@ export function mountNoteAi(options: Options) {
    void checkProvider(current);
    try{await list(next,current);if(current!==generation || !sameEntry(next,entry))return;
     await recoverPending(current);
-   }catch(error){if(current===generation)status.textContent=String(error);}finally{if(current===generation){loading=false;state();}}
+   }catch(error){if(current===generation){status.textContent=String(error);await recoverPending(current).catch(()=>{});}}finally{if(current===generation){loading=false;state();}}
   },
   invalidate(){renderedIdentity=null;state();},
  };

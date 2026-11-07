@@ -146,3 +146,15 @@ test("one unreadable pending pointer neither hides another nor is deleted",async
  await expect(reopened.page.locator("#ai-pending-warning")).toContainText("missing-proposal");expect(await reopened.page.evaluate(key=>localStorage.getItem(key),missing.key)).toBe(missing.raw);expect((await pointers(reopened.page)).map(item=>item.value.proposalId)).toEqual(["missing-proposal"]);expect(reopened.sent).toEqual([]);
  await reopened.fresh.close();
 });
+
+test("startup opens the Note of a valid pending pointer even when a misbound pointer exists, and counts the other",async({page,context,browser})=>{
+ test.setTimeout(240000);await open(page);const ids=(await state(page)).providers.flatMap((provider:any)=>provider.entries.filter((entry:any)=>entry.modelId==="note").map((entry:any)=>entry.id));
+ const noteValues=await page.locator("#entry option").evaluateAll((nodes,ids)=>nodes.filter(node=>ids.some((id:string)=>node.textContent?.endsWith(` · ${id}`))).map(node=>(node as HTMLOptionElement).value),ids);
+ const firstValue=await page.locator("#entry").inputValue(),secondValue=noteValues.find(value=>value!==firstValue)!;await page.locator("#entry").selectOption(secondValue);
+ const id=await prepare(page,"second Note pending");await preview(page);await loseMutation(page,"apply");const [pointer]=(await pointers(page)).filter(item=>item.value.proposalId===id);
+ const misbound=await page.evaluate(key=>{const scoped=key.split(":").slice(0,-2).join(":"),misboundKey=`${scoped}:misbound-proposal:apply`,raw=JSON.stringify({version:1,entry:{providerId:"wrong",modelId:"note",recordId:"absent"},proposalId:"misbound-proposal",action:"apply"});localStorage.setItem(misboundKey,raw);return{key:misboundKey,raw};},pointer.key);
+ const reopened=await reopenAfterRestart(browser,await context.storageState());await page.close();
+ await expect(reopened.page.locator("#entry")).toHaveValue(secondValue);await expect(reopened.page.locator("#ai-proposals")).toHaveValue(id);await expect(reopened.page.locator("#ai-status")).toContainText("適用・保存済み");
+ await expect(reopened.page.locator("#ai-pending-warning")).toContainText("他の対象 1 件");expect(await reopened.page.evaluate(key=>localStorage.getItem(key),misbound.key)).toBe(misbound.raw);expect(reopened.sent).toEqual([]);
+ await reopened.fresh.close();
+});
