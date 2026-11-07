@@ -3,7 +3,7 @@
 // migration gates (golden plan, seed reproduction, exact migrated wording) hold
 // byte for byte. Once a publication has been integrated, content/snapshot.json
 // exists and CMS edits are legitimate: those gates give way to the
-// snapshot-based publication checks (docs/publication.md), never the reverse.
+// snapshot-based checks, never the reverse. Publication is stopped, so CI only runs the migration path.
 import { existsSync } from "node:fs";
 import { join } from "node:path";
 

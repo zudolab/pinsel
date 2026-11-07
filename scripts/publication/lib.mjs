@@ -1,23 +1,10 @@
-// Shared loaders for the publication CI scripts. The snapshot record format and
-// the identity report live in the Worker (apps/authoring-worker/src/publish/
-// publication-record.ts) and the publish allowlist in @pinsel/content; CI loads
-// the same TypeScript through tsx so the two sides cannot drift.
+// Shared helpers for the public-output CI check.
 import { execFile } from "node:child_process";
 import path from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { fileURLToPath } from "node:url";
 import { promisify } from "node:util";
-import { tsImport } from "tsx/esm/api";
 
 export const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
-
-/** @param {string} relative */
-const load = (relative) => tsImport(pathToFileURL(path.join(repoRoot, relative)).href, import.meta.url);
-
-/** @returns {Promise<typeof import("./legacy-record")>} */
-export const loadPublicationRecord = () => load("scripts/publication/legacy-record.ts");
-
-/** @returns {Promise<typeof import("../../packages/pinsel-content/src/import-rules")>} */
-export const loadImportRules = () => load("packages/pinsel-content/src/import-rules.ts");
 
 /**
  * @param {string[]} args
