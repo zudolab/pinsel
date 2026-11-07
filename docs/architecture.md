@@ -59,15 +59,13 @@ flowchart LR
   B -- "iframe /preview/" --> PV
   W["Authoring Worker<br/>identity → refused paths → CSRF → API"] --> D1[("D1: drafts, revisions,<br/>snapshots, operations, jobs")]
   PV["/preview/&lt;snapshotId&gt;/&lt;route&gt;?revision=N<br/>SSR via renderRouteDocument"] --> D1
-  W -- "publication port" --> G["GitHub provider<br/>content/&lt;snapshotId&gt; branch + PR"]
-  G --> CI["content-validate.yml"]
 ```
 
 - **Worker** (`apps/authoring-worker`, [authoring-worker.md](authoring-worker.md)). `run_worker_first: true` sends every request through the identity gate first, including asset hits. The production entry `src/index.ts` verifies the Access JWT (`cf-access-jwt-assertion`, jose) against `TEAM_DOMAIN`, `POLICY_AUD` and `EDITOR_ALLOWLIST`. When any of them is missing, it answers `503 configuration-required`. Mutations need a same-origin `Origin` and a JSON body. Request bodies must carry exactly their documented keys. The Pinsel host rules (`refusePinselRequest`) run before Composer's `applyHostContentRequest`. Every D1 write is one `db.batch()` gated on its precondition.
 - **Identities.** `baselineRevision` is the Git commit of the content tree. `draftRevision` is an integer that grows by 1 per change. `snapshotId` is the sha256 of the canonical project. `operationId` is the idempotency key.
 - **Editor** (`apps/editor`). Composer's Preact content-only editor runs with `PINSEL_EDITOR_POLICY`. The host adds Japanese labels (`localize.ts`), groups (`groups.ts`), the save status and the publication status (`PUBLICATION_LABELS` in `publication.ts`). It is built into `/editor/` and staged into the Worker assets by `assets:assemble-worker`. Its bundle contains no zudo-react.
 - **Preview.** The editor's iframe loads `/preview/`. That page posts `ready {frameLoadId}`, then navigates to the server-rendered `/preview/<snapshotId><route>?revision=N`. The loaded document reports `rendered` only when the snapshot id, the revision, the route and the frame load id all match. The preview document contains no Preact, and Preact and zudo-react never share a root.
-- **Publication** (removed; see the git history of `docs/publication.md`). A publication takes an immutable snapshot id, never file paths. The provider writes only `content/entries/**` and `content/snapshot.json` (`PINSEL_PUBLISH_ALLOWLIST`). It does so as one commit on the recorded base, on branch `content/<snapshotId>`, with a PR into `main`. `content-validate.yml` validates that exact snapshot. The Worker reports `validated`, `integrated` and so on only from provider evidence for the exact head commit. It never reports `live`, because no deployment provider is connected.
+- **Publication** was removed (2026-11-07); see the git history of `docs/publication.md`. Confirmed snapshots build only locally with `pnpm build:snapshot`.
 
 ## Styleguide
 
@@ -83,8 +81,7 @@ flowchart LR
 | Composer is installed only through the two git SHAs | `pnpm verify:external-install`, the lockfile specifiers |
 | Nothing can deploy, promote or publish from scripts or workflows | `pnpm no-deploy:check` |
 | The approved seed fixture and the approved assets are byte-exact | `pnpm check:approved-seed`, `pnpm assets:verify` |
-| The publisher writes only content paths | `isPublishablePath` (Worker) and `check-snapshot.mjs paths` (CI): the same function |
-| The migration checker and the snapshot checker are mutually exclusive, and a skip fails | ci.yml jobs `migration-baseline` / `publication-validate` / `content-gate` |
+| The strict migration checker always runs, and a skip fails | ci.yml jobs `migration-baseline` / `content-gate` |
 
 ## What is local-only
 

@@ -41,9 +41,9 @@ CI runs these in this order (`.github/workflows/ci.yml`, job `build`). `pnpm bui
 | `pnpm verify:publication` | Real local save, snapshot A build, Worker restart and retained draft B in isolated D1 |
 | `pnpm test:browser` | Playwright lanes in `tests/browser/` (run through `heavy-guard` locally) |
 | `pnpm check:approved-seed` | Hash-check every immutable fixture file against `tests/approved-seed.sha256.json` (CI job `approved-seed`) |
-| `pnpm check:content` | The historical strict checker against `apps/site/dist`. CI job `migration-baseline` runs it only while there is no `content/snapshot.json` |
+| `pnpm check:content` | The historical strict checker against `apps/site/dist`. CI job `migration-baseline` runs it on every CI run |
 
-More checks, run by the verification passes: `pnpm site:check-fragments`, `pnpm site:wrangler-dev` (public Worker on `wrangler dev`), `pnpm verify:external-install` (Composer git-pin install in a fresh directory), `pnpm gate1:wrangler-dev`, and `node scripts/content/check-publication.mjs --dist apps/site/dist` together with `node scripts/publication/check-public-output.mjs --dist apps/site/dist`. Publication PRs are validated by `.github/workflows/content-validate.yml` ([`docs/publication.md`](docs/publication.md)).
+More checks, run by the verification passes: `pnpm site:check-fragments`, `pnpm site:wrangler-dev` (public Worker on `wrangler dev`), `pnpm verify:external-install` (Composer git-pin install in a fresh directory), `pnpm gate1:wrangler-dev`, and `node scripts/content/check-publication.mjs --dist apps/site/dist`. CI runs `node scripts/publication/check-public-output.mjs --dist apps/site/dist` in the build job. Content publication is stopped (see [`docs/dogfooding.md`](docs/dogfooding.md)).
 
 Both local verification gates require the frozen install, content assembly, editor build and Worker asset assembly above. They run in every ordinary CI build, without application credentials or a prototype archive. Snapshot build evidence records the current Git HEAD and dirty state. See [local verification](docs/verification/local-gates.md) for bounds, failure controls and sanitized reports.
 

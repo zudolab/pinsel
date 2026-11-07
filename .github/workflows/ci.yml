@@ -58,6 +58,8 @@ jobs:
       # The site build precedes `pnpm check`: the Worker tests compare their in-workerd
       # projection against apps/site/dist/index.html (Gate-1 parity).
       - run: pnpm build:site
+      - name: Public output exclusions
+        run: node scripts/publication/check-public-output.mjs --dist apps/site/dist
       - run: pnpm check
       - run: pnpm sg:check
       - run: pnpm build:sg
