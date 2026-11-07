@@ -112,3 +112,49 @@ test("invalid Markdown fake proposal is classified safely and leaves canonical c
  expect(await state(page)).toEqual(before);expect(await page.locator("#ai-proposals option").evaluateAll(nodes=>nodes.map(node=>(node as HTMLOptionElement).value))).toEqual(ids);await expect(page.locator("#ai-apply")).toBeDisabled();expect(prepares).toBe(1);
  await prepare(page,"## 日本語見出し\n\n- 項目\n- **強調**");await preview(page);expect(await state(page)).toEqual(before);await expect(page.frameLocator("#preview").getByRole("heading",{name:"日本語見出し"})).toBeVisible();
 });
+
+async function flood(page:Page,entry:unknown,count:number){await page.evaluate(async({entry,count})=>{for(let index=0;index<count;index++){const body=await(await fetch("/api/hosted/ai",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({operation:"content-ai-prepare",payload:{entry,instruction:`newer proposal ${index}`}})})).json();if(!body.ok||body.value.status==="refused")throw new Error(`fixture prepare ${index} failed`);}},{entry,count});}
+async function aiCall(page:Page,operation:string,payload:unknown){return page.evaluate(async({operation,payload})=>await(await fetch("/api/hosted/ai",{method:"POST",headers:{"content-type":"application/json"},body:JSON.stringify({operation,payload})})).json(),{operation,payload});}
+async function pointers(page:Page){return page.evaluate(()=>Object.keys(localStorage).filter(key=>key.startsWith("pinsel:note-ai:")).map(key=>({key,value:JSON.parse(localStorage.getItem(key)!)})));}
+async function loseMutation(page:Page,action:"apply"|"undo"){let lost="";await page.route("**/api/hosted/ai",async route=>{if(route.request().postDataJSON().operation===`content-ai-${action}`){const response=await route.fetch();expect(response.status()).toBe(200);const body=await response.json();expect(body.ok).toBe(true);lost=JSON.parse(body.value.receipt.expected).draftRevision;await route.abort("failed");}else await route.continue();});await page.locator(`#ai-${action}`).click();await expect.poll(()=>lost).not.toBe("");await page.unroute("**/api/hosted/ai");return lost;}
+async function reopenAfterRestart(browser:import("@playwright/test").Browser,saved:Awaited<ReturnType<import("@playwright/test").BrowserContext["storageState"]>>){await stop();await start();const fresh=await browser.newContext({storageState:saved});const page=await fresh.newPage();const sent:string[]=[];page.on("request",request=>{if(request.method()==="POST"&&request.url().endsWith("/api/hosted/ai")){const operation=request.postDataJSON()?.operation;if(!["content-ai-status","pinsel-ai-list","content-ai-read"].includes(operation))sent.push(operation);}else if(request.method()==="POST"&&request.url().endsWith("/api/hosted/rpc")&&request.postDataJSON()?.method==="execute")sent.push("execute");});await open(page);return{fresh,page,sent};}
+
+test("committed Apply and Undo older than the newest proposal page recover from receipts after restart",async({page,context,browser})=>{
+ test.setTimeout(240000);await open(page);const id=await prepare(page,"outside list window");await preview(page);
+ const appliedRevision=await loseMutation(page,"apply");const [pointer]=(await pointers(page)).filter(item=>item.value.proposalId===id);expect(pointer.value.action).toBe("apply");
+ await flood(page,pointer.value.entry,31);
+ const listed=await aiCall(page,"pinsel-ai-list",{entry:pointer.value.entry});expect(listed.value).toHaveLength(30);expect(listed.value.map((item:any)=>item.id)).not.toContain(id);
+ const direct=await aiCall(page,"content-ai-read",{proposalId:id});expect(direct.ok).toBe(true);expect(direct.value.applied.revisionId).toBeTruthy();
+ let reopened=await reopenAfterRestart(browser,await context.storageState());await page.close();
+ await expect(reopened.page.locator("#ai-proposals")).toHaveValue(id);await expect(reopened.page.locator("#ai-status")).toContainText("適用・保存済み");expect((await state(reopened.page)).draftRevision).toBe(appliedRevision);expect(await pointers(reopened.page)).toEqual([]);await expect(reopened.page.locator("#ai-proposals option")).toHaveCount(32);expect(reopened.sent).toEqual([]);
+ const undoneRevision=await loseMutation(reopened.page,"undo");expect((await pointers(reopened.page)).map(item=>item.value.action)).toEqual(["undo"]);
+ // A later manual edit from an independent browser session (no shared localStorage) after the lost Undo committed.
+ const other=await browser.newContext(),manual=await other.newPage();await open(manual);await manual.locator('[data-hosted-field="note-description"] textarea').fill("manual after lost Undo");await save(manual);const manualRevision=(await state(manual)).draftRevision;expect(manualRevision).not.toBe(undoneRevision);await other.close();
+ await flood(reopened.page,pointer.value.entry,31);const saved=await reopened.fresh.storageState();await reopened.fresh.close();
+ reopened=await reopenAfterRestart(browser,saved);
+ await expect(reopened.page.locator("#ai-proposals")).toHaveValue(id);await expect(reopened.page.locator("#ai-status")).toContainText("Undo保存済み");expect(await pointers(reopened.page)).toEqual([]);expect(reopened.sent).toEqual([]);
+ expect((await state(reopened.page)).draftRevision).toBe(manualRevision);await expect(reopened.page.locator('[data-hosted-field="note-description"] textarea')).toHaveValue("manual after lost Undo");
+ await reopened.fresh.close();
+});
+
+test("one unreadable pending pointer neither hides another nor is deleted",async({page,context,browser})=>{
+ test.setTimeout(240000);await open(page);const id=await prepare(page,"second pending survivor");await preview(page);await loseMutation(page,"apply");
+ const [pointer]=(await pointers(page)).filter(item=>item.value.proposalId===id);
+ const missing=await page.evaluate(({key,entry})=>{const scoped=key.split(":").slice(0,-2).join(":"),missingKey=`${scoped}:missing-proposal:apply`,raw=JSON.stringify({version:1,entry,proposalId:"missing-proposal",action:"apply"});localStorage.setItem(missingKey,raw);return{key:missingKey,raw};},{key:pointer.key,entry:pointer.value.entry});
+ await flood(page,pointer.value.entry,31);const reopened=await reopenAfterRestart(browser,await context.storageState());await page.close();
+ await expect(reopened.page.locator("#ai-proposals")).toHaveValue(id);await expect(reopened.page.locator("#ai-status")).toContainText("適用・保存済み");
+ await expect(reopened.page.locator("#ai-pending-warning")).toContainText("missing-proposal");expect(await reopened.page.evaluate(key=>localStorage.getItem(key),missing.key)).toBe(missing.raw);expect((await pointers(reopened.page)).map(item=>item.value.proposalId)).toEqual(["missing-proposal"]);expect(reopened.sent).toEqual([]);
+ await reopened.fresh.close();
+});
+
+test("startup opens the Note of a valid pending pointer even when a misbound pointer exists, and counts the other",async({page,context,browser})=>{
+ test.setTimeout(240000);await open(page);const ids=(await state(page)).providers.flatMap((provider:any)=>provider.entries.filter((entry:any)=>entry.modelId==="note").map((entry:any)=>entry.id));
+ const noteValues=await page.locator("#entry option").evaluateAll((nodes,ids)=>nodes.filter(node=>ids.some((id:string)=>node.textContent?.endsWith(` · ${id}`))).map(node=>(node as HTMLOptionElement).value),ids);
+ const firstValue=await page.locator("#entry").inputValue(),secondValue=noteValues.find(value=>value!==firstValue)!;await page.locator("#entry").selectOption(secondValue);
+ const id=await prepare(page,"second Note pending");await preview(page);await loseMutation(page,"apply");const [pointer]=(await pointers(page)).filter(item=>item.value.proposalId===id);
+ const misbound=await page.evaluate(key=>{const scoped=key.split(":").slice(0,-2).join(":"),misboundKey=`${scoped}:misbound-proposal:apply`,raw=JSON.stringify({version:1,entry:{providerId:"wrong",modelId:"note",recordId:"absent"},proposalId:"misbound-proposal",action:"apply"});localStorage.setItem(misboundKey,raw);return{key:misboundKey,raw};},pointer.key);
+ const reopened=await reopenAfterRestart(browser,await context.storageState());await page.close();
+ await expect(reopened.page.locator("#entry")).toHaveValue(secondValue);await expect(reopened.page.locator("#ai-proposals")).toHaveValue(id);await expect(reopened.page.locator("#ai-status")).toContainText("適用・保存済み");
+ await expect(reopened.page.locator("#ai-pending-warning")).toContainText("他の対象 1 件");expect(await reopened.page.evaluate(key=>localStorage.getItem(key),misbound.key)).toBe(misbound.raw);expect(reopened.sent).toEqual([]);
+ await reopened.fresh.close();
+});

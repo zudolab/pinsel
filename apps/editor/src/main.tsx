@@ -62,7 +62,7 @@ try {
  const noteAi = mountNoteAi({ recoveryKey: `pinsel:note-ai:${config.siteId}:${config.actorId}`, onBusy(value) { entrySelect.disabled = value; routeSelect.disabled = value; }, element: document.querySelector<HTMLElement>("#note-ai")!, editor: () => handle!, preview: () => controller! });
  let selected = Number(entrySelect.value), selectedRoute = routeSelect.value;
  const initialRecovery = readRecovery();
- const pendingAiEntry = Object.keys(localStorage).filter(key=>key.startsWith(`pinsel:note-ai:${config.siteId}:${config.actorId}:`)).map(key=>readAiPointer(localStorage.getItem(key)!,key,`pinsel:note-ai:${config.siteId}:${config.actorId}`)?.entry).find(Boolean);
+ const pendingAiEntry = Object.keys(localStorage).filter(key=>key.startsWith(`pinsel:note-ai:${config.siteId}:${config.actorId}:`)).map(key=>readAiPointer(localStorage.getItem(key)!,key,`pinsel:note-ai:${config.siteId}:${config.actorId}`)?.entry).find(entry=>!!entry&&refs.some(ref=>ref.providerId===entry.providerId&&ref.modelId===entry.modelId&&ref.recordId===entry.recordId));
  const recoveryEntry = initialRecovery?.edits[0]?.entry ?? (initialRecovery?.pending && "entry" in initialRecovery.pending.request ? initialRecovery.pending.request.entry : undefined) ?? pendingAiEntry;
  if (recoveryEntry) {
   const index = refs.findIndex(entry => entry.providerId === recoveryEntry.providerId && entry.modelId === recoveryEntry.modelId && entry.recordId === recoveryEntry.recordId);

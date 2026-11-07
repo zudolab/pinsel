@@ -10,7 +10,7 @@ async function ai<T>(operation: string, payload: unknown = {}): Promise<T> {
 }
 export function mountNoteAi(options: Options) {
  const panel = options.element;
- panel.innerHTML = `<h2>Note AI — タイトル・本文</h2><p id="ai-provider" role="status"></p><button id="ai-recheck" type="button">providerを再確認</button><p id="ai-recovery-warning" role="status"></p><label>変更の指示<textarea id="ai-instruction" maxlength="2000" rows="3"></textarea></label><button id="ai-prepare" type="button">提案を作る</button><label>保存済み提案<select id="ai-proposals"><option value="">選択してください</option></select></label><button id="ai-read" type="button">提案・結果を再確認</button><p id="ai-status" role="status"></p><div id="ai-diff"></div><div class="ai-actions"><button id="ai-preview" type="button" disabled>候補を実プレビュー</button><button id="ai-apply" type="button" disabled>明示的に適用して保存</button><button id="ai-undo" type="button" disabled>適用をUndo</button></div>`;
+ panel.innerHTML = `<h2>Note AI — タイトル・本文</h2><p id="ai-provider" role="status"></p><button id="ai-recheck" type="button">providerを再確認</button><p id="ai-recovery-warning" role="status"></p><p id="ai-pending-warning" role="status"></p><label>変更の指示<textarea id="ai-instruction" maxlength="2000" rows="3"></textarea></label><button id="ai-prepare" type="button">提案を作る</button><label>保存済み提案<select id="ai-proposals"><option value="">選択してください</option></select></label><button id="ai-read" type="button">提案・結果を再確認</button><p id="ai-status" role="status"></p><div id="ai-diff"></div><div class="ai-actions"><button id="ai-preview" type="button" disabled>候補を実プレビュー</button><button id="ai-apply" type="button" disabled>明示的に適用して保存</button><button id="ai-undo" type="button" disabled>適用をUndo</button></div>`;
  const get = <T extends HTMLElement>(id: string) => panel.querySelector<T>(`#${id}`)!;
  const status = get("ai-status"), select = get<HTMLSelectElement>("ai-proposals"), instruction = get<HTMLTextAreaElement>("ai-instruction");
  let entry: ContentEntryRef | null = null, operation: ContentAiOperation | null = null, renderedIdentity: unknown = null, busy = false, loading = false, generation = 0, providerReady = false, checking = false;
@@ -50,15 +50,37 @@ export function mountNoteAi(options: Options) {
  async function read() {
   const id=select.value, current=generation;operation=null;renderedIdentity=null;draw();if(!id)return;
   const value=await ai<ContentAiOperation>("content-ai-read",{proposalId:id});if(current!==generation||id!==select.value)return;if(!sameEntry(value.proposal.entry,entry))throw new Error("提案の編集対象が一致しません。対象Noteを再選択してください。");operation=value;
-  for(const pending of pendingActions())if(pending.value.proposalId===operation.proposal.id&&sameEntry(pending.value.entry,operation.proposal.entry)&&((pending.value.action==="apply"&&operation.applied)||(pending.value.action==="undo"&&operation.undone)))localStorage.removeItem(pending.key);
+  for(const pending of pendingActions())if(pending.value.proposalId===operation.proposal.id&&sameEntry(pending.value.entry,operation.proposal.entry)&&((pending.value.action==="apply"&&operation.applied)||(pending.value.action==="undo"&&operation.undone))){localStorage.removeItem(pending.key);pendingFailures=pendingFailures.filter(item=>!item.startsWith(`${pending.value.proposalId}: `));pendingWarning();}
   draw();
+ }
+ const pendingFor = (target: ContentEntryRef | null) => pendingActions().map(item=>item.value).filter(value=>sameEntry(value.entry,target));
+ let pendingFailures: string[] = [];
+ function pendingWarning() {
+  const here=pendingFor(entry).length,elsewhere=pendingActions().length-here;
+  get("ai-pending-warning").textContent=here||elsewhere?`未完了のAI操作記録を保持しています（このNote ${here} 件・他の対象 ${elsewhere} 件）。自動再送・削除はしません。${pendingFailures.length?`読み取れない記録: ${pendingFailures.join(" / ")}`:"保存済み提案から結果を確認してください。"}`:"";
+ }
+ async function recoverPending(current: number) {
+  pendingFailures=[];let shown: string | null = null;
+  for(const pending of pendingFor(entry)){
+   if(current!==generation)return;
+   if(![...select.options].some(option=>option.value===pending.proposalId))select.add(new Option(`回復待ち操作 · ${pending.action} · ${pending.proposalId}`,pending.proposalId));
+   select.value=pending.proposalId;
+   try{await read();if(current!==generation)return;}catch(error){pendingFailures.push(`${pending.proposalId}: ${error instanceof Error?error.message:String(error)}`);continue;}
+   if(!shown || pendingFor(entry).some(value=>value.proposalId===pending.proposalId))shown=pending.proposalId;
+  }
+  if(current!==generation)return;
+  pendingWarning();
+  if(shown&&select.value!==shown){select.value=shown;await read();}
+  else if(!shown){select.value="";operation=null;renderedIdentity=null;draw();}
  }
  async function list(requestedEntry = entry, current = generation) {
   const records=await ai<{id:string;createdAt:string;summary:string;provider:string}[]>("pinsel-ai-list",{entry:requestedEntry});
   if(current!==generation || !sameEntry(requestedEntry,entry))return;
   const previous=select.value;select.replaceChildren(new Option("選択してください",""));
   for(const record of records)select.add(new Option(`${record.createdAt} · ${record.provider} · ${record.summary.slice(0,60)}`,record.id));
-  if(records.some(record=>record.id===previous))select.value=previous;
+  // The list is a bounded newest page; known pending pointers stay selectable even when they fall outside it.
+  for(const pending of pendingFor(requestedEntry))if(![...select.options].some(option=>option.value===pending.proposalId))select.add(new Option(`回復待ち操作 · ${pending.action} · ${pending.proposalId}`,pending.proposalId));
+  if([...select.options].some(option=>option.value&&option.value===previous))select.value=previous;
  }
  async function mutate(action: "apply" | "undo", payload: { proposalId: string; renderedIdentity?: unknown }) {
   const key=`${options.recoveryKey}:${payload.proposalId}:${action}`;
@@ -87,12 +109,11 @@ export function mountNoteAi(options: Options) {
   await mutate("apply",{proposalId:operation!.proposal.id,...(renderedIdentity?{renderedIdentity}:{})});await options.editor().refresh();await read();});};
  get<HTMLButtonElement>("ai-undo").onclick=()=>{void safe(async()=>{clean();if(!operation || select.value!==operation.proposal.id || !sameEntry(operation.proposal.entry,entry))throw new Error("選択中の提案を再確認してください。");await mutate("undo",{proposalId:operation!.proposal.id});await options.editor().refresh();await read();});};
  return {
-  async select(next:ContentEntryRef){entry=next;generation++;providerReady=false;checking=false;loading=true;const current=generation;operation=null;renderedIdentity=null;select.replaceChildren(new Option("選択してください",""));panel.hidden=entry.modelId!=="note";draw();if(panel.hidden){loading=false;state();return;}
+  async select(next:ContentEntryRef){entry=next;generation++;providerReady=false;checking=false;loading=true;const current=generation;operation=null;renderedIdentity=null;select.replaceChildren(new Option("選択してください",""));get("ai-pending-warning").textContent="";panel.hidden=entry.modelId!=="note";draw();if(panel.hidden){loading=false;state();return;}
    void checkProvider(current);
    try{await list(next,current);if(current!==generation || !sameEntry(next,entry))return;
-    const pending=pendingActions().map(item=>item.value).find(value=>value.entry?.providerId===entry!.providerId&&value.entry.modelId===entry!.modelId&&value.entry.recordId===entry!.recordId);
-    if(pending){select.value=pending.proposalId;if(select.value)await read();}
-   }catch(error){if(current===generation)status.textContent=String(error);}finally{if(current===generation){loading=false;state();}}
+    await recoverPending(current);
+   }catch(error){if(current===generation){status.textContent=String(error);await recoverPending(current).catch(()=>{});}}finally{if(current===generation){loading=false;state();}}
   },
   invalidate(){renderedIdentity=null;state();},
  };
