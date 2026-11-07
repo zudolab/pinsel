@@ -67,7 +67,7 @@ docs/                   architecture, content model, editing, publication, launc
 ## Documentation
 
 - [Architecture](docs/architecture.md): how content becomes pages, plus the Worker, editor, preview and boundaries
-- [Content model](docs/content-model.md), [editing guide (Japanese)](docs/editing.md), [publication pipeline](docs/publication.md), [authoring Worker](docs/authoring-worker.md), [styleguide](docs/styleguide.md)
+- [Content model](docs/content-model.md), [editing guide (Japanese)](docs/editing.md), [authoring Worker](docs/authoring-worker.md), [styleguide](docs/styleguide.md)
 - [Dependencies](docs/dependencies.md) and [`ZUDO_DEPS_PINS.md`](ZUDO_DEPS_PINS.md)
 - [Launch inputs](docs/launch-inputs.md): everything still undecided before a launch
 - [Verification index](docs/verification/index.md): what each report proves and on which commit

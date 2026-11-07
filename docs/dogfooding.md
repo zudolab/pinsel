@@ -38,7 +38,7 @@ D1 migration0004はhost専用 `pinsel_hosted_*` テーブルを追加します�
 
 ## 今回の範囲
 
-publication/deliveryは**実装経路を停止**しています。公開操作はconfiguration-requiredとなり、GitHub provider・scheduled deliveryはWorkerへ組み込みません。画面にも公開無効と表示します。旧publication記録のread-only CI検証は `scripts/publication/legacy-record.ts` に残しますが、新snapshotのid=digestとは扱いません。本番deploy、npm release、remote D1、実メール送信は行いません。Note AIの現在の動作は下のS5節を参照してください。
+publication/deliveryは**実装経路を停止**しています。公開操作はconfiguration-requiredとなり、GitHub provider・scheduled deliveryはWorkerへ組み込みません。画面にも公開無効と表示します。旧publication記録の検証script、content PR用workflow、publication-validate jobは削除しました（2026-11-07）。CIはmigration baselineのstrict checkerを常に実行します。本番deploy、npm release、remote D1、実メール送信は行いません。Note AIの現在の動作は下のS5節を参照してください。
 
 旧API固有のfixture/mock/providerテストは新Hosted契約のreal D1/browser/production auth/snapshotA-build-draftB検証へ置き換えました。public site・renderer・static fidelity・approved-seed・content型/参照/route検証は保持。golden planは新public projectionのstatus/metadata形へ更新し、Node release compilerとWorker-safe projectionのroute一致を引き続き確認します。historical baseline digestの末尾改行は保持しています。
 

@@ -13,9 +13,6 @@ export const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)
 /** @param {string} relative */
 const load = (relative) => tsImport(pathToFileURL(path.join(repoRoot, relative)).href, import.meta.url);
 
-/** @returns {Promise<typeof import("./legacy-record")>} */
-export const loadPublicationRecord = () => load("scripts/publication/legacy-record.ts");
-
 /** @returns {Promise<typeof import("../../packages/pinsel-content/src/import-rules")>} */
 export const loadImportRules = () => load("packages/pinsel-content/src/import-rules.ts");
 
