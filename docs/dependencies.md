@@ -150,4 +150,4 @@ Reconciled by the final pin (#16) against Takazudo/zudo-composer#903. Closed ups
 | Single models cannot be attached | the five singletons are one-entry collections |
 | `list<text>` / `list<long-text>` fields cannot bind to component props | five fields are `long-text`, one item per line |
 | Collection conditions are static (no parent-relative filter) | per-year / per-group mappings are generated at assemble time |
-| Restricted UI has no create / reorder, no completeness check before Submit; no SQLite two-process backend, two-publication trace or ZFB/SG parity upstream | Pinsel edits existing entries only; D1 conformance, publication trace and ZFB parity are proven in Pinsel (`docs/authoring-worker.md`, `docs/publication.md`) |
+| Restricted UI has no create / reorder, no completeness check before Submit; no SQLite two-process backend, two-publication trace or ZFB/SG parity upstream | Pinsel edits existing entries only; D1 conformance, publication trace and ZFB parity are proven in Pinsel (`docs/authoring-worker.md`; the removed publication proof is in the git history of `docs/publication.md`) |
