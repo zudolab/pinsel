@@ -1,6 +1,12 @@
 # Launch inputs
 
-These are the decisions, identifiers and one-time actions needed before Pinsel can launch. None of them has been made or done. Until a row is filled in here, code and config keep placeholders or a fail-closed default, and nothing guesses the value. Deployment, provisioning and live tests are not authorized in the development scope (zudolab/pinsel#1).
+These are the decisions, identifiers and one-time actions needed before Pinsel can launch. Unless a row says it is resolved, it has not been decided or done. Until a row is filled in here, code and config keep placeholders or a fail-closed default, and nothing guesses the value. Deployment, provisioning and live tests are not authorized in the development scope (zudolab/pinsel#1).
+
+## Current status
+
+- **Hosted Content is local dogfooding only.** `pnpm dev:dogfood` runs the real Worker against a persistent **local** D1; see [dogfooding](dogfooding.md). Nothing is deployed, and no remote D1, npm release or real email delivery exists.
+- **The publication/delivery path is stopped.** The current Worker answers every publication request with `configuration-required` (`apps/authoring-worker/src/site/baseline.ts`), and no GitHub provider or scheduled delivery is wired into it. Confirmed snapshots are built only locally with `pnpm build:snapshot` (output `.dogfood/builds/<id>/`). The older publication pipeline in [publication.md](publication.md) is historical design, not the active path.
+- **Composer** is consumed through two distinct package-root git pins, `zudo-composer#fba434aaa96af8b4dbc2a086638180f71a2da741` and `@zudo-composer/component-contract#c0b452da075b66757c60bd0d721a47062d4354d0`; see [dependencies](dependencies.md#current-state).
 
 ## Hosting and identity
 
@@ -18,19 +24,22 @@ These are the decisions, identifiers and one-time actions needed before Pinsel c
 | Input | Needed by | Current state | Decision |
 | --- | --- | --- | --- |
 | D1 database ids (production, and preview if used) | `d1_databases` in `apps/authoring-worker/wrangler.jsonc` | placeholder `00000000-0000-4000-8000-000000000000`; only local D1 has been used | _undecided_: `wrangler d1 create pinsel-authoring` at launch |
-| Remote D1 migrations | the three files in `apps/authoring-worker/migrations/` (`0001_init`, `0002_publication`, `0003_publication_reconcile`) | applied only with `--local`. `wrangler d1 migrations apply pinsel-authoring --remote` has never run. | _not done_ |
-| Initial draft seed | first Worker start on the remote D1 | the production entry seeds from the assembled baseline. `POST /admin/seed` exists only in the local entry. | _not done_ |
+| Remote D1 migrations | the five files in `apps/authoring-worker/migrations/` (`0001_init` … `0005_content_ai`, including `0004_hosted_content`) | applied only with `--local` (by `pnpm dev:dogfood` and the tests). `wrangler d1 migrations apply pinsel-authoring --remote` has never run. | _not done_ |
+| Initial Hosted Content head | first Worker request on the remote D1 | the Worker initializes `pinsel_hosted_head` from the assembled baseline on first use (`ensureHostedSeeded`, `apps/authoring-worker/src/site/baseline.ts`), or refuses when an old draft needs explicit migration. This has run only against local D1. | _not done_ |
 
-## Publication
+## Publication and delivery
+
+The current Worker does not read the publisher variables below; they are inputs of the stopped publication design and become live decisions only if a delivery path is re-enabled in a separately authorized change.
 
 | Input | Needed by | Current state | Decision |
 | --- | --- | --- | --- |
-| Publisher identity and credentials | `PUBLISHER_GITHUB_TOKEN` (Worker **secret**: a GitHub App installation token or fine-grained token with `contents: write`, `pull_requests: write` and `checks: read` on this repository only), `PUBLISHER_GITHUB_REPOSITORY`, then `PUBLISHER_PROVIDER=github` | `PUBLISHER_PROVIDER=disabled`. No token exists, and the variables are not declared in `wrangler.jsonc`. | _undecided_ |
-| Promotion policy | `PROMOTION_POLICY` | `manual` (a maintainer merges each content PR). `auto` merges a validated PR at its validated head and honours branch rules. | _undecided_ |
-| Required checks / branch protection on `main` | `PUBLISHER_GITHUB_REQUIRED_CHECKS` (default `content-validate`) and the repository's branch rules | `main` is not protected, and no ruleset exists | _undecided_. Suggested required checks: `content-gate` and `approved-seed` (ci.yml), `build` (ci.yml), and for content PRs `content-validate` plus the `pinsel/publication-identity` check run. Also: up to date before merging, only the publisher identity may push `content/*`, no force pushes or deletions |
-| Scheduled reconciliation | a `triggers.crons` entry in `wrangler.jsonc` plus `PUBLICATION_RECONCILE_SCHEDULE=enabled` | no cron. Job status advances only when the editor reads it. | _undecided_ |
-| Cloudflare build / deployment connection | publishing integrated content; the `live` state | Workers Builds is **not connected**. No provider reports deployment evidence, so `live` is never shown. | _undecided, not authorized_ |
-| Unused repository variable `PINSEL_MIGRATION_CHECKER` | nothing (it was the old switch for the migration checker) | still set to `enabled` on the repository. Since `4b42013` the `migration-baseline` job is unconditional and no workflow reads the variable. | _remove_: a repository-settings change, left to the maintainer |
+| Delivery path itself | turning confirmed snapshots into the public site | **stopped**: publication answers `configuration-required`; only local `pnpm build:snapshot` exists ([dogfooding](dogfooding.md)) | _undecided, not authorized_ |
+| Publisher identity and credentials | a GitHub (or other) delivery provider | `PUBLISHER_PROVIDER` is `disabled` in `wrangler.jsonc`. No token exists and no provider is wired into the Worker. | _undecided_ |
+| Promotion policy | `PROMOTION_POLICY` (manual merge vs automatic promotion) | `manual` in `wrangler.jsonc`, unused while delivery is stopped | _undecided_ |
+| Required checks / branch protection on `main` | the repository's branch rules | `main` is not protected, and no ruleset exists | _undecided_. Suggested required checks: `content-gate` and `approved-seed` (ci.yml), `build` (ci.yml), plus whatever the re-enabled delivery path validates. Also: up to date before merging, no force pushes or deletions |
+| Scheduled reconciliation | a `triggers.crons` entry in `wrangler.jsonc` | no cron | _undecided_ |
+| Cloudflare build / deployment connection | publishing integrated content; a `live` state | Workers Builds is **not connected**. No deployment evidence exists. | _undecided, not authorized_ |
+| Unused repository variable `PINSEL_MIGRATION_CHECKER` | nothing (it was the old switch for the migration checker) | last recorded as still set to `enabled`; since `4b42013` the `migration-baseline` job is unconditional and no workflow reads the variable. Not re-checked here (repository variables are not readable from this environment). | _remove_: a repository-settings change, left to the maintainer |
 
 ## Public site policy
 
@@ -39,13 +48,11 @@ These are the decisions, identifiers and one-time actions needed before Pinsel c
 | Indexing / canonical policy | `siteConfig.indexing` (`apps/site/lib/site-config.ts`): meta robots, `robots.txt`, sitemap | `noindex`: every page has `noindex,nofollow` and `robots.txt` is `Disallow: /`, as in the approved preview. Canonical and `og:url` use `siteConfig.origin`. | _undecided_: switch to `index` at launch |
 | Contact delivery | the contact form (`/contact/`) | a local simulation. The form has no `action`, nothing is sent, and both notices say so. | _undecided_: provider and recipient |
 
-## Design decision pending
+## Local acceptance still open
 
-| Input | Needed by | Current state | Decision |
-| --- | --- | --- | --- |
-| zudolab/pinsel#26: contact page overflow at 390px with 150% text | `.contact-layout` mobile rule in the approved `packages/pinsel-ui/styles/components.css` | `/contact/` is 8px wider than the viewport at that setting, exactly like the approved prototype. `tests/browser/public-site.spec.ts` ("150% text, narrow") fails if it gets worse. The likely fix, `grid-template-columns: minmax(0, 1fr)`, changes approved component CSS. | _undecided_: needs a design decision |
+- **Real-CLI Note AI acceptance is NOT_RUN.** Only the fake provider has been verified end to end; fake success is not real CLI or model success. The bounded manual procedure (one provider, at most 10 minutes and 2 Prepares) is in [note-ai-acceptance.md](note-ai-acceptance.md) and must run on a machine with a supported, already-authenticated CLI.
+- No live test has been performed: Access, remote D1, delivery, Workers Builds and contact delivery.
 
-## Not required for launch, recorded for completeness
+## Resolved
 
-- The Composer feature PR Takazudo/zudo-composer#904 is still a draft. Pinsel consumes its reachable SHA `547b532eb56dfecaec1e2bd9060f8d579ad8862c` (and component-contract `c0b452da075b66757c60bd0d721a47062d4354d0`). Merging upstream is a separate decision, and so is moving the pin.
-- No live test has been performed: Access, remote D1, GitHub publication, Workers Builds and contact delivery.
+- **zudolab/pinsel#26 (contact page overflow at 390px with 150% text): resolved.** The issue is closed as completed (2026-11-03). The mobile `.contact-layout` rule now uses `grid-template-columns: minmax(0, 1fr)` (`packages/pinsel-ui/styles/components.css`), and `tests/browser/public-site.spec.ts` asserts that `/contact/` fits 390px at 100%, 150% and 200% text with no overflow allowance. The historical approved seed is unchanged.
