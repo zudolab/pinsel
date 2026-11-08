@@ -6,7 +6,7 @@ These are the decisions, identifiers and one-time actions needed before Pinsel c
 
 - **Hosted Content is local dogfooding only.** `pnpm dev:dogfood` runs the real Worker against a persistent **local** D1; see [dogfooding](dogfooding.md). Nothing is deployed, and no remote D1, npm release or real email delivery exists.
 - **The publication/delivery path is stopped.** The current Worker answers every publication request with `configuration-required` (`apps/authoring-worker/src/site/baseline.ts`), and no GitHub provider or scheduled delivery is wired into it. Confirmed snapshots are built only locally with `pnpm build:snapshot` (output `.dogfood/builds/<id>/`). The older publication pipeline was removed on 2026-11-07; its design survives only in the git history of `docs/publication.md`.
-- **Composer** is consumed through two distinct package-root git pins, `zudo-composer#fba434aaa96af8b4dbc2a086638180f71a2da741` and `@zudo-composer/component-contract#c0b452da075b66757c60bd0d721a47062d4354d0`; see [dependencies](dependencies.md#current-state).
+- **Composer** is consumed through two distinct package-root git pins, `zudo-composer#13ed855a3268d91c114c3f5ee167d9ace9078d57` and `@zudo-composer/component-contract#c0b452da075b66757c60bd0d721a47062d4354d0`; see [dependencies](dependencies.md#current-state).
 
 ## Hosting and identity
 
