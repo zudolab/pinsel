@@ -202,6 +202,17 @@ async function cleanup() {
   finish();
 }
 
-const phase = { setup, site: siteChecks, auth: authChecks, access: accessChecks, cleanup }[process.argv[2]];
+// Points the browser lanes' `--env local` D1 binding at the throwaway remote database.
+async function remoteEditor() {
+  if (!state.created.db) { check("editor lane on real D1", false, "NOT TESTED: no remote D1"); return finish(); }
+  const file = path.join(worker, "wrangler.jsonc");
+  const config = readJsonc(file);
+  config.env.local.d1_databases = [{ binding: "DB", database_name: "pinsel-authoring", database_id: state.created.db, migrations_dir: "./migrations", remote: true }];
+  writeFileSync(file, JSON.stringify(config, null, 2));
+  check("browser lane bound to remote D1", true, names.db);
+  finish();
+}
+
+const phase = { "remote-editor": remoteEditor, setup, site: siteChecks, auth: authChecks, access: accessChecks, cleanup }[process.argv[2]];
 if (!phase) throw new Error("phase: setup|site|auth|access|cleanup");
 await phase().catch((error) => { check(`${process.argv[2]} crashed`, false, String(error?.message ?? error)); finish(); });
