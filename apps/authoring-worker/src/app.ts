@@ -1,7 +1,7 @@
 import { HostedContentError, type HostedActor } from "zudo-composer/hosted-content";
 import { checkMutationRequest, type IdentityResolver } from "./auth/identity";
 import { POLICY, PACK, RENDERER, ROUTES, serviceFor } from "./site/baseline";
-import { previewShellDocument, renderPreviewDocument } from "./preview/preview";
+import { PreviewBlockedError, previewShellDocument, renderPreviewDocument } from "./preview/preview";
 
 const json = (value: unknown, status = 200) => new Response(JSON.stringify(value), { status, headers: { "content-type": "application/json", "cache-control": "private, no-store" } });
 export function createApp(options: { identity: IdentityResolver; localAi?: (request: Request, env: Env, actor: HostedActor) => Promise<Response | null> }) {
@@ -55,6 +55,7 @@ export function createApp(options: { identity: IdentityResolver; localAi?: (requ
    const headers = new Headers(response.headers); headers.set("cache-control", "private, no-store"); headers.set("x-content-type-options", "nosniff");
    return new Response(response.body, { status: response.status, headers });
   } catch(error) {
+   if (error instanceof PreviewBlockedError) return json({ error: { code: error.code, message: error.message, diagnostics: error.incomplete } }, 400);
    if (error instanceof HostedContentError) return json({ error: { code: error.code, message: error.message, diagnostics: error.diagnostics, restoreDiagnostics: error.restoreDiagnostics } }, error.code === "not-found" ? 404 : error.code === "forbidden" ? 403 : /conflict|reuse/.test(error.code) ? 409 : 400);
    console.error("Hosted request failed", error);
    return json({ error: { code: "unavailable", message: "Request outcome uncertain. Retry Save with the same operation key to recover." } }, 503);
