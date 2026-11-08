@@ -116,7 +116,7 @@ A provider writes only `content/entries/**` and `content/snapshot.json` (`PINSEL
 | `DB` | placeholder id | D1 `pinsel-authoring`, `migrations_dir: migrations` |
 | `ASSETS` | `dist-assets/` | written only by `scripts/assets/assemble-worker.mjs` |
 
-No secrets are in the repository; `apps/authoring-worker/.dev.vars.example` lists the local keys. Launch inputs still open (see `docs/launch-inputs.md`): the authoring hostname and Access application (team domain, AUD, allowlist, One-time PIN), the D1 database id, publisher credentials, the promotion policy and the Cloudflare build connection. None is configured, and no live test was performed.
+No secrets are in the repository; `apps/authoring-worker/.dev.vars.example` lists the local keys. Launch inputs still open (see `docs/launch-inputs.md`): the authoring hostname and Access application (team domain, AUD, allowlist, One-time PIN), the D1 database id, publisher credentials, the promotion policy and the Cloudflare build connection. None is configured. A disposable live test on 2026-11-08 covered remote D1, Access JWT verification and the editor on real D1; see [launch inputs](launch-inputs.md#disposable-live-test-2026-11-08).
 
 ## Absent by design
 
