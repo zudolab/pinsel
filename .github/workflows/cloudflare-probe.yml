@@ -1,0 +1,41 @@
+name: Cloudflare credential probe
+
+# Temporary, read-only: proves the repository secrets reach CI and reports what the
+# token can see. Runs only on this probe branch. No deploy, create, migrate or write.
+on:
+  push:
+    branches: [claude/pinsel-cf-credentials]
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Secrets present
+        run: |
+          test -n "$CF_TOKEN" && echo "CLOUDFLARE_API_TOKEN: present (${#CF_TOKEN} chars)" || { echo "CLOUDFLARE_API_TOKEN: MISSING"; exit 1; }
+          test -n "$CF_ACCOUNT" && echo "CLOUDFLARE_ACCOUNT_ID: present (${#CF_ACCOUNT} chars)" || { echo "CLOUDFLARE_ACCOUNT_ID: MISSING"; exit 1; }
+      - name: Read-only API checks
+        run: |
+          api() { curl -sS --max-time 20 -H "Authorization: Bearer $CF_TOKEN" "https://api.cloudflare.com/client/v4$1"; }
+          show() { echo "== $1"; api "$2" | jq -c "$3" || echo "(unparseable)"; }
+          show "user token verify"    "/user/tokens/verify"                      '{success, status: .result.status, errors: [.errors[]?.code]}'
+          show "account token verify" "/accounts/$CF_ACCOUNT/tokens/verify"      '{success, status: .result.status, errors: [.errors[]?.code]}'
+          show "account"              "/accounts/$CF_ACCOUNT"                    '{success, name: .result.name, errors: [.errors[]?.code]}'
+          show "workers scripts"      "/accounts/$CF_ACCOUNT/workers/scripts"    '{success, count: (.result|length?), pinsel: [.result[]?.id|select(test("pinsel"))], errors: [.errors[]?.code]}'
+          show "workers subdomain"    "/accounts/$CF_ACCOUNT/workers/subdomain"  '{success, has_subdomain: (.result.subdomain != null), errors: [.errors[]?.code]}'
+          show "d1 databases"         "/accounts/$CF_ACCOUNT/d1/database"        '{success, count: (.result|length?), pinsel: [.result[]?.name|select(test("pinsel"))], errors: [.errors[]?.code]}'
+          show "zones"                "/zones?account.id=$CF_ACCOUNT&per_page=50" '{success, zones: [.result[]?.name], errors: [.errors[]?.code]}'
+          show "access organization"  "/accounts/$CF_ACCOUNT/access/organizations" '{success, has_org: (.result.auth_domain != null), errors: [.errors[]?.code]}'
+          show "access applications"  "/accounts/$CF_ACCOUNT/access/apps"        '{success, count: (.result|length?), errors: [.errors[]?.code]}'
+      - name: Wrangler whoami
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx -y wrangler@4.149.0 whoami 2>&1 | grep -v -i -E "email|@" || true
