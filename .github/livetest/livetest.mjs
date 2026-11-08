@@ -53,11 +53,17 @@ function finish() {
 async function setup() {
   const created = await cf(`/accounts/${account}/d1/database`, { method: "POST", body: JSON.stringify({ name: names.db }) });
   check("D1 create", created.success, created.success ? names.db : JSON.stringify(created.errors));
-  if (!created.success) return;
-  state.created.db = created.result.uuid; save();
   const base = readJsonc(path.join(worker, "wrangler.jsonc"));
-  const config = { ...base, name: names.auth, workers_dev: true, preview_urls: false, d1_databases: [{ binding: "DB", database_name: names.db, database_id: state.created.db, migrations_dir: "./migrations" }] };
+  const config = { ...base, name: names.auth, workers_dev: true, preview_urls: false };
   delete config.env; delete config.$schema;
+  if (!created.success) {
+    // Without D1 access the production entry is still deployed, unbound, to prove it fails closed before touching storage.
+    delete config.d1_databases;
+    writeFileSync(path.join(worker, "wrangler.livetest.json"), JSON.stringify(config, null, 2));
+    return finish();
+  }
+  state.created.db = created.result.uuid; save();
+  config.d1_databases = [{ binding: "DB", database_name: names.db, database_id: state.created.db, migrations_dir: "./migrations" }];
   writeFileSync(path.join(worker, "wrangler.livetest.json"), JSON.stringify(config, null, 2));
   const migrate = wrangler(["d1", "migrations", "apply", names.db, "--remote", "-c", "wrangler.livetest.json"]);
   check("remote D1 migrations apply", migrate.ok);
@@ -127,7 +133,7 @@ function deployAuth(vars = {}) {
 }
 async function authChecks() {
   const deploy = deployAuth();
-  check("authoring Worker upload (production entry, real D1 binding)", deploy.ok);
+  check(`authoring Worker upload (production entry, ${state.created.db ? "real D1 binding" : "NO D1 binding: token lacks D1"})`, deploy.ok);
   if (!deploy.ok) return finish();
   const origin = `https://${names.auth}.${await subdomain()}.workers.dev`;
   await waitFor(`${origin}/api/hosted/config`, (r) => r.status !== 404 && r.status < 520, "authoring");
@@ -190,6 +196,7 @@ async function cleanup() {
   const left = (scripts.result ?? []).map((s) => s.id).filter((n) => n.startsWith("pinsel-livetest-"));
   check("no pinsel-livetest Workers remain", scripts.success && left.length === 0, left.join(", "));
   const dbs = await cf(`/accounts/${account}/d1/database?name=pinsel-livetest`);
+  if (!dbs.success && !created.db) { check("D1 leftovers", true, "none created (token cannot read D1)"); return finish(); }
   const leftDb = (dbs.result ?? []).map((d) => d.name).filter((n) => n.startsWith("pinsel-livetest-"));
   check("no pinsel-livetest D1 databases remain", dbs.success && leftDb.length === 0, leftDb.join(", "));
   finish();

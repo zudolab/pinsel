@@ -45,12 +45,10 @@ jobs:
       - name: Public site on workers.dev
         continue-on-error: true
         run: node .github/livetest/livetest.mjs site
-      - name: Authoring Worker fails closed on real D1
-        if: steps.setup.outcome == 'success'
+      - name: Authoring Worker fails closed on Workers
         continue-on-error: true
         run: node .github/livetest/livetest.mjs auth
       - name: Access in front of the authoring Worker
-        if: steps.setup.outcome == 'success'
         continue-on-error: true
         run: node .github/livetest/livetest.mjs access
       - name: Delete every livetest resource
