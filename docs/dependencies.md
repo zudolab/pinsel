@@ -10,7 +10,7 @@ Two distinct package-root commits of `Takazudo/zudo-composer` are consumed. Neit
 
 | Package | Manifest specifier (all four importers) | Lockfile tarball integrity | Identity |
 | --- | --- | --- | --- |
-| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#fba434aaa96af8b4dbc2a086638180f71a2da741` | `sha512-F1+EmBNKVM5IWkW9SX+G++pCOs9etB5F6Y4eRdPMwFd0eNUhFmNtZ7bBHyjx1Rbuh5veSAY3DM2FgnQWzMGHSA==` | Installable package-root commit for the Hosted Content import surface (pinned 2026-11-03). It was produced from Composer source `main` at `2a004217283d5ddebe009b105070650246a9c3a3`; that source SHA is provenance only and is never installed. |
+| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#13ed855a3268d91c114c3f5ee167d9ace9078d57` | `sha512-Hq9eqZSWdvBrrXWYJ+oJ1TCMxC5Y1NS6gjYxJlIuKtN7p3GE5J1KCXGqJ9nvTF47jS4vRbI2J3p6zNqPvNSUIQ==` | Installable package-root commit for the Hosted Content import surface (pinned 2026-11-08, Takazudo/zudo-composer#967). It adds the hosted editor's conflict-difference view, required-field marking, preview-failure alert and the `submission: false` option that Pinsel uses. Its recorded payload is `verification/hosted-content/current-payload.json` at that commit. |
 | `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | `sha512-cGk7w+sB/cAKH90K93MH9jWlQtKcbjru9bQIFuNUIBZ13oC/qALeZyxNfmIaCPpQJknY6W8S73GLJ2eMn0gHVA==` | Contract package-root handoff commit (`package/component-contract-v1`), version 1.0.0. Unchanged since the first pin. |
 
 Importers: `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui`. Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<full-sha>`; there is no npm release of `zudo-composer`.
@@ -30,7 +30,7 @@ Importers: `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `p
 | `wrangler` | `4.149.0` | 4.149.0 | `apps/authoring-worker` | `sha512-OzK7xmB5r5iLKb3cIT3783g13fe6T7xyeKu9LEdUyl+DKAM2KP/jkjnE0OUhyw+mB/XJM9ycjgF3MWm8PR9amg==` |
 | `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | 1.0.0 (git `c0b452da075b66757c60bd0d721a47062d4354d0`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-cGk7w+sB/cAKH90K93MH9jWlQtKcbjru9bQIFuNUIBZ13oC/qALeZyxNfmIaCPpQJknY6W8S73GLJ2eMn0gHVA==` |
 | `preact` | `^10.29.8` | 10.29.8 | `apps/authoring-worker` (dev, peer only), `apps/editor`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==` |
-| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#fba434aaa96af8b4dbc2a086638180f71a2da741` | 0.0.0 (git `fba434aaa96af8b4dbc2a086638180f71a2da741`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-F1+EmBNKVM5IWkW9SX+G++pCOs9etB5F6Y4eRdPMwFd0eNUhFmNtZ7bBHyjx1Rbuh5veSAY3DM2FgnQWzMGHSA==` |
+| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#13ed855a3268d91c114c3f5ee167d9ace9078d57` | 0.0.0 (git `13ed855a3268d91c114c3f5ee167d9ace9078d57`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-Hq9eqZSWdvBrrXWYJ+oJ1TCMxC5Y1NS6gjYxJlIuKtN7p3GE5J1KCXGqJ9nvTF47jS4vRbI2J3p6zNqPvNSUIQ==` |
 | `tsx` | `4.23.15` | 4.23.15 | `.` | `sha512-Yiex1Ovn8z2xPpOWckIiysV1SSyRMY9BkLF++q0yKiDxCqRhosKfMg3janKkiLBwZ5c/YryloKwGZcrEmtwxKw==` |
 | `vite` | `^8.2.2` | 8.3.4 | `apps/editor` | `sha512-IftLE8phJhdNRIGNEV4JCCvfNScoZQVfcXaN8TQropWGJtOHcu+iAB9pHcuGvmEb/kddw0LBe/jS8ztdC6xdiQ==` |
 | `@takazudo/zfb` | `5.1.5` | 5.1.5 | `apps/authoring-worker`, `apps/site`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-V8czYQoiwa2N19gb9MwcgE0Re6TV5ea9yfIrL4casySOzkh8kM/TRKNL0I5Ix1T9LjyqBcaNP59v/PorJZnuTg==` |
@@ -53,11 +53,11 @@ Both Composer packages retain their full git commit identities. Since the 2026-1
 
 ### Pin timeline before the Hosted Content pin
 
-Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `npm view <name> dist-tags` the same day. Final pin (#16, 2026-10-13): `zudo-composer` moved to `547b532e…` and `@takazudo/zudo-sg` to `0.5.2`; every other identity is unchanged. Zudo deps bump (#22, 2026-10-13): the zfb family moved to `4.3.3` and `@takazudo/zudo-doc` to `6.1.1`; `@takazudo/zudo-sg 0.5.2` and `@takazudo/zdtp 0.8.6` were already the newest releases. Post-merge bump (#19, 2026-10-13): the zfb family moved to `4.4.0` and `@takazudo/zudo-sg` to `0.5.4`; `@takazudo/zudo-doc 6.1.1` and `@takazudo/zdtp 0.8.6` are still the newest releases, and both Composer git pins are unchanged. On 2026-11-03 `zudo-composer` moved to the Hosted Content package-root commit `fba434aa…` (see [Current state](#current-state)).
+Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `npm view <name> dist-tags` the same day. Final pin (#16, 2026-10-13): `zudo-composer` moved to `547b532e…` and `@takazudo/zudo-sg` to `0.5.2`; every other identity is unchanged. Zudo deps bump (#22, 2026-10-13): the zfb family moved to `4.3.3` and `@takazudo/zudo-doc` to `6.1.1`; `@takazudo/zudo-sg 0.5.2` and `@takazudo/zdtp 0.8.6` were already the newest releases. Post-merge bump (#19, 2026-10-13): the zfb family moved to `4.4.0` and `@takazudo/zudo-sg` to `0.5.4`; `@takazudo/zudo-doc 6.1.1` and `@takazudo/zdtp 0.8.6` are still the newest releases, and both Composer git pins are unchanged. On 2026-11-03 `zudo-composer` moved to the Hosted Content package-root commit `fba434aa…` (produced from Composer source `2a004217…`), and on 2026-11-08 to `13ed855a…` (see [Current state](#current-state)).
 
 ### Historical Composer pins (superseded 2026-11-03)
 
-> Superseded: `zudo-composer` is now `fba434aaa96af8b4dbc2a086638180f71a2da741`. The contract row is still current.
+> Superseded: `zudo-composer` is now `13ed855a3268d91c114c3f5ee167d9ace9078d57`. The contract row is still current.
 
 | Package | Commit | Status |
 | --- | --- | --- |
