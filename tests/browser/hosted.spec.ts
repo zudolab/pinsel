@@ -49,3 +49,14 @@ test("unsaved FAQ resumes visibly on reload before any save",async({page})=>{
  await open(page);await choose(page,"faq-exam-02");const answer=page.locator('[data-hosted-field="faq-item-answer"] textarea');await answer.fill("Unsaved FAQ checkpoint");await expect(page.locator("#host-status")).toContainText("dirty");
  page.once("dialog",dialog=>dialog.accept());await page.reload();await expect(page.locator("#entry option:checked")).toContainText("faq-exam-02");await expect(answer).toHaveValue("Unsaved FAQ checkpoint");await expect(page.locator("#host-status")).toContainText("dirty");await save(page);
 });
+test("history pages past the first 50 revisions and restores an older one",async({page})=>{
+ test.setTimeout(240000);
+ await open(page);await choose(page,"faq-exam-04");const answer=page.locator('[data-hosted-field="faq-item-answer"] textarea');
+ for(let index=1;index<=55;index++){await answer.fill(`Paged answer ${index}`);await save(page);}
+ await page.getByRole("button",{name:"履歴を読み込む"}).click();const revisions=page.locator("#history details");await expect(revisions).toHaveCount(50);
+ const more=page.getByRole("button",{name:"さらに古い履歴を読み込む"});await more.click();await expect(revisions).toHaveCount(56);await expect(more).toHaveCount(0);
+ const sequences=await revisions.locator("summary").allTextContents();expect(new Set(sequences).size).toBe(56);
+ const oldest=revisions.filter({hasText:'"Paged answer 1"'});await expect(oldest).toHaveCount(1);
+ await oldest.locator("summary").click();await oldest.getByRole("button").click();await expect(answer).toHaveValue("Paged answer 1");
+ await choose(page,"faq-exam-05");await expect(revisions).toHaveCount(0);
+});
