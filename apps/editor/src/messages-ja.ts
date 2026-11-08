@@ -2,10 +2,13 @@ import { hostedEditorLabelsJa, hostedErrorMessagesJa, type HostedEditorSessionSt
 import type { ContentAiStatus, HostedErrorCode, HostedRevision, HostedSnapshot } from "zudo-composer/hosted-content";
 
 const japanese = /[぀-ヿ㐀-鿿]/;
+// The same author in another tab also causes this, so it must not say "someone else".
+const revisionConflictJa = "別のタブか別の人が先に保存しました。あなたの入力は保持されています。「現在の内容を確認」で違いを確認してください。";
 const known = (code: unknown): code is HostedErrorCode => typeof code === "string" && Object.hasOwn(hostedErrorMessagesJa, code);
 /** Japanese text for any error the editor shows; untranslated server/library English never reaches the screen. */
 export function errorMessageJa(error: unknown): string {
  const code = error && typeof error === "object" && "code" in error ? (error as { code: unknown }).code : undefined;
+ if (code === "revision-conflict") return revisionConflictJa;
  if (known(code)) return hostedErrorMessagesJa[code];
  const message = error instanceof Error ? error.message : typeof error === "string" ? error : "";
  if (japanese.test(message)) return message;
@@ -20,6 +23,7 @@ export function saveStatusText(state: Pick<HostedEditorSessionState, "phase" | "
  const phase = phaseLabels[state.phase] ?? state.phase;
  if (!state.error) return `保存状態: ${phase}`;
  const detail = errorMessageJa(state.error);
+ if (state.phase === "conflict") return `保存状態: ${detail}`;
  return detail === phase ? `保存状態: ${phase}` : `保存状態: ${phase} ${detail}`;
 }
 
@@ -87,6 +91,7 @@ const markdownIssues: Record<string, string> = {
 const aiFieldLabels: Record<string, string> = { "note-title": "タイトル", "note-body": "本文" };
 const aiMessages: Partial<Record<HostedErrorCode, string>> = {
  "invalid-request": "変更の指示を1〜2000文字で入力してください。",
+ "revision-conflict": "AIの操作より後に別の保存がありました（このタブ・別のタブ・別の人）。新しい内容は保持されています。",
  unavailable: "AIプロバイダーが利用できないか、結果を確認できませんでした。保存済み提案から結果を確認するか、providerを再確認してください。",
 };
 interface AiFieldDiagnostic { fieldId?: unknown; code?: unknown; message?: unknown }

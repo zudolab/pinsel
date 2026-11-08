@@ -22,7 +22,7 @@ describe("Japanese editor messages", () => {
  it("shows save phases and typed errors with Composer's Japanese labels", () => {
   const conflict = Object.assign(new Error("The draft changed; review"), { code: "revision-conflict" });
   const text = saveStatusText({ phase: "conflict", error: conflict });
-  expect(text).toContain("内容が更新されました");expect(text).toContain("ほかの人が先に保存しました");expect(text).not.toMatch(/conflict|The draft/);
+  expect(text).toBe("保存状態: 別のタブか別の人が先に保存しました。あなたの入力は保持されています。「現在の内容を確認」で違いを確認してください。");expect(text).not.toMatch(/conflict|The draft/);
   expect(saveStatusText({ phase: "saved", error: null })).toBe("保存状態: 保存しました");
   expect(errorMessageJa(new Error("HTTP 500"))).not.toContain("HTTP");
   expect(errorMessageJa(new Error("ログインが必要です。"))).toBe("ログインが必要です。");
@@ -31,7 +31,7 @@ describe("Japanese editor messages", () => {
   expect(aiErrorMessage("invalid-request", [])).toBe("変更の指示を1〜2000文字で入力してください。");
   const markdown = aiErrorMessage("invalid-value", [{ fieldId: "note-body", code: "invalid-value", message: "note-markdown: heading-3-plus (line 1), unsafe-link (line 3)" }]);
   expect(markdown).toContain("本文: ### 以下の見出し（heading-3-plus・1行目）、使えないリンク先（unsafe-link・3行目）は使えません");
-  expect(aiErrorMessage("revision-conflict", [])).toContain("ほかの人が先に保存しました");
+  expect(aiErrorMessage("revision-conflict", [])).toContain("AIの操作より後に別の保存がありました");
  });
  it("labels the fake provider as test output and keeps provider text as reported", () => {
   const fake = providerStatusText({ configured: true, provider: "Fake provider (offline, deterministic)", canApply: true, inference: { state: "ready", detail: "deterministic" } });

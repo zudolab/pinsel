@@ -31,7 +31,7 @@ test("two tabs refuse stale writes and retain local input",async({context})=>{
  const first=await context.newPage(),second=await context.newPage();await open(first);await open(second);
  await first.locator('[data-hosted-field="note-title"] input').fill("First wins");await save(first);
  await second.locator('[data-hosted-field="note-title"] input').fill("Second retained");await second.getByRole("button",{name:"保存",exact:true}).click();
- await expect(second.locator("#host-status")).toHaveAttribute("data-phase","conflict");await expect(second.locator("#host-status")).toContainText("内容が更新されました");await expect(second.locator("#host-status")).not.toContainText("conflict");await expect(second.locator('[data-hosted-field="note-title"] input')).toHaveValue("Second retained");
+ await expect(second.locator("#host-status")).toHaveAttribute("data-phase","conflict");await expect(second.locator("#host-status")).toHaveText("保存状態: 別のタブか別の人が先に保存しました。あなたの入力は保持されています。「現在の内容を確認」で違いを確認してください。");await expect(second.locator("#host-status")).not.toContainText("conflict");await expect(second.locator('[data-hosted-field="note-title"] input')).toHaveValue("Second retained");
  await first.close();await second.close();
 });
 test("lost response recovers the same operation after closing its tab; opener tabs have separate checkpoints",async({context,browser})=>{
@@ -66,6 +66,9 @@ test("an empty required field names the entry and field instead of a raw preview
  await page.getByRole("button",{name:"プレビュー",exact:true}).click();
  const status=page.locator("#preview-status");await expect(status).toContainText("コース・料金「four-month」の「価格（表示）」が空です");
  await expect(status).toHaveAttribute("data-status","error");await expect(status).not.toContainText(/error|Preview failed/);
+ await expect(page.frameLocator("#preview").locator("body")).toHaveText("このスナップショットはプレビューできませんでした。編集画面のメッセージを確認してください。");
+ await expect(price).toHaveAttribute("aria-invalid","true");await expect(page.locator("#composer [role=alert]")).toContainText("「価格（表示）」は必須です。");
+ await expect(page.getByRole("button",{name:"公開を申請"})).toHaveCount(0);await expect(page.getByText("申請する前に")).toHaveCount(0);
  await price.fill(original);await save(page);await page.getByRole("button",{name:"プレビュー",exact:true}).click();await expect(status).toContainText("確認済み");
 });
 for(const reducedMotion of ["reduce","no-preference"] as const)test(`at 390px the preview status is brought into view after プレビュー (${reducedMotion})`,async({page})=>{
