@@ -60,6 +60,7 @@ jobs:
           node .github/livetest/livetest.mjs remote-editor
           pnpm exec playwright install --with-deps chromium
           pnpm exec playwright test tests/browser/hosted.spec.ts
+          node .github/livetest/livetest.mjs remote-editor-proof
       - name: Delete every livetest resource
         if: always()
         run: node .github/livetest/livetest.mjs cleanup

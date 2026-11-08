@@ -138,9 +138,10 @@ async function authChecks() {
   const origin = `https://${names.auth}.${await subdomain()}.workers.dev`;
   await waitFor(`${origin}/api/hosted/config`, (r) => r.status !== 404 && r.status < 520, "authoring");
   for (const p of ["/", "/editor/", "/api/hosted/config", "/api/hosted/state", "/preview/"]) {
-    const r = await fetch(`${origin}${p}`, { redirect: "manual" });
-    const text = await r.text();
-    check(`unconfigured ${p} fails closed`, r.status === 503 && text.includes("configuration-required"), `${r.status}`);
+    // A fresh workers.dev script can still answer 404 from some edge locations for a short while.
+    let r, text;
+    for (let i = 0; i < 20; i++) { r = await fetch(`${origin}${p}`, { redirect: "manual" }); text = await r.text(); if (r.status !== 404) break; await sleep(3000); }
+    check(`unconfigured ${p} fails closed`, r.status === 503 && text.includes("configuration-required"), `${r.status} ${text.slice(0, 80)}`);
   }
   const forged = await fetch(`${origin}/api/hosted/config`, { headers: { "cf-access-jwt-assertion": "eyJhbGciOiJSUzI1NiJ9.e30.x" } });
   check("forged Access header without config still 503", forged.status === 503, `${forged.status}`);
@@ -170,7 +171,8 @@ async function accessChecks() {
   const passed = await waitFor(`${origin}/api/hosted/config`, (r) => r.status !== 503, "access edge", 180000).catch((e) => ({ error: e }));
   const anonymous = await fetch(`${origin}/editor/`, { redirect: "manual" });
   const anonText = await anonymous.text();
-  check("anonymous request is stopped by Access before the Worker", [302, 401, 403].includes(anonymous.status) && !anonText.includes("not-allowed") && !anonText.includes("configuration-required"), `${anonymous.status} ${anonymous.headers.get("location")?.split("?")[0] ?? ""}${passed.error ? " (edge wait timed out)" : ""}`);
+  const fromWorker = (anonymous.headers.get("content-type") ?? "").includes("application/json");
+  check("anonymous request is stopped by Access before the Worker", [302, 401, 403].includes(anonymous.status) && !fromWorker, `${anonymous.status} ${anonymous.headers.get("content-type")} ${anonymous.headers.get("location")?.split("?")[0] ?? ""}${passed.error ? " (edge wait timed out)" : ""} ${anonText.replace(/\s+/g, " ").slice(0, 120)}`);
   let service;
   for (let i = 0; i < 20; i++) { service = await fetch(`${origin}/api/hosted/config`, { headers: creds, redirect: "manual" }); if (service.status === 403) break; await sleep(3000); }
   const serviceText = await service.text();
@@ -213,6 +215,15 @@ async function remoteEditor() {
   finish();
 }
 
-const phase = { "remote-editor": remoteEditor, setup, site: siteChecks, auth: authChecks, access: accessChecks, cleanup }[process.argv[2]];
+async function remoteEditorProof() {
+  const q = async (sql) => (await cf(`/accounts/${account}/d1/database/${state.created.db}/query`, { method: "POST", body: JSON.stringify({ sql }) })).result?.[0]?.results?.[0];
+  const revisions = await q("SELECT COUNT(*) AS n FROM pinsel_hosted_revision");
+  const head = await q("SELECT COUNT(*) AS n FROM pinsel_hosted_head");
+  check("hosted.spec writes landed in the remote D1 (revisions)", Number(revisions?.n) >= 55, `${revisions?.n} revisions`);
+  check("Hosted Content head was seeded on the remote D1", Number(head?.n) >= 1, `${head?.n} head row(s)`);
+  finish();
+}
+
+const phase = { "remote-editor-proof": remoteEditorProof, "remote-editor": remoteEditor, setup, site: siteChecks, auth: authChecks, access: accessChecks, cleanup }[process.argv[2]];
 if (!phase) throw new Error("phase: setup|site|auth|access|cleanup");
 await phase().catch((error) => { check(`${process.argv[2]} crashed`, false, String(error?.message ?? error)); finish(); });
