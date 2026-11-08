@@ -3,3 +3,22 @@
 .pinsel-ai{margin-top:1rem;border-top:2px solid #97ada5;padding-top:1rem}.pinsel-ai h2{font-size:1.1rem}.pinsel-ai label{display:block;margin:.8rem 0}.pinsel-ai textarea,.pinsel-ai select{display:block;width:100%}.pinsel-ai pre{white-space:pre-wrap;overflow-wrap:anywhere;max-height:20rem;overflow:auto;padding:.75rem;background:#f2f5ee}.ai-actions{display:flex;gap:.5rem;flex-wrap:wrap}.pinsel-ai[hidden]{display:none}
 /* Public field wrapper: keep long Markdown/diffs beside the visitor preview. */
 [data-hosted-field="note-body"]{max-height:32rem;overflow:auto;overscroll-behavior:contain}.pinsel-ai #ai-diff{max-height:32rem;overflow:auto;overscroll-behavior:contain}.pinsel-preview{position:sticky;top:1rem;align-self:start}@media(max-width:900px){.pinsel-preview{position:static}[data-hosted-field="note-body"],.pinsel-ai #ai-diff{max-height:24rem}}
+/* Host controls match the Composer editor chrome (editor.css) without restyling controls inside it. */
+.pinsel-controls{--pinsel-control-border:#b8b8b8;--pinsel-control-focus:#185abc}
+.pinsel-button,.pinsel-ai button,.pinsel-recovery select,.pinsel-controls>label select,.pinsel-ai select,.pinsel-ai textarea{min-block-size:2.25rem;padding:.375rem .75rem;border:1px solid var(--pinsel-control-border);border-radius:.25rem;color:inherit;background:#fff;font:inherit}
+.pinsel-button,.pinsel-ai button{cursor:pointer}
+.pinsel-button:disabled,.pinsel-ai button:disabled{opacity:.55;cursor:default}
+:is(.pinsel-button,.pinsel-ai button,.pinsel-recovery select,.pinsel-controls>label select,.pinsel-ai select,.pinsel-ai textarea):focus-visible{outline:2px solid var(--pinsel-control-focus);outline-offset:2px}
+.pinsel-ai textarea{resize:vertical;inline-size:100%}
+.pinsel-recovery{display:flex;flex-wrap:wrap;align-items:end;gap:.5rem;margin-bottom:.75rem}.pinsel-recovery label{display:grid;gap:.25rem;flex:1 1 16rem;min-inline-size:0}.pinsel-recovery select{inline-size:100%}
+.pinsel-history>.pinsel-button,.pinsel-history-more{margin-block:.5rem}.pinsel-history details{margin-block:.25rem}.pinsel-history details .pinsel-button{margin-block-start:.25rem}.pinsel-history details[data-source="content-ai"]>summary{font-weight:600}
+#preview-status:focus{outline:none}#preview-status:focus-visible{outline:2px solid var(--pinsel-control-focus,#185abc);outline-offset:2px}
+.ai-hint,.ai-provider-detail{margin:.25rem 0;font-size:.85rem;color:#4b5753}
+.ai-line-diff{list-style:none;margin:.5rem 0;padding:0;font:.85rem/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;border:1px solid #c9d4cf;border-radius:.25rem;overflow:auto}
+.ai-line-diff li{display:flex;gap:.5rem;padding:0 .5rem;white-space:pre-wrap;overflow-wrap:anywhere}
+.ai-line-diff :is(ins,del){text-decoration:none}
+.ai-diff-sign{flex:none;inline-size:1ch;font-weight:700}
+.ai-diff-added{background:#e3f4e6;border-inline-start:4px solid #2e7d4a}.ai-diff-removed{background:#fbe7e7;border-inline-start:4px solid #b3261e}.ai-diff-removed del{text-decoration:line-through;text-decoration-thickness:1px}
+.ai-diff-same{border-inline-start:4px solid transparent}.ai-diff-skipped{color:#4b5753;font-style:italic;border-inline-start:4px solid transparent}
+.ai-full-text>summary{cursor:pointer;font-size:.9rem}
+.ai-visually-hidden{position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}

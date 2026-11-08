@@ -81,6 +81,21 @@ describe("Pinsel real D1 hosted content", () => {
   expect(await env.DB.prepare("SELECT count(*) AS n FROM pinsel_hosted_receipt").first("n")).toBe(0);
   expect(await env.DB.prepare("SELECT archive FROM pinsel_hosted_migration").first("archive")).toContain("LEGACY USER DRAFT");
  });
+ it("names the empty required field when a saved snapshot cannot be previewed", async () => {
+  const app=createApp({identity:createFixtureIdentity(actor.id)}), service=await serviceFor(env.DB);
+  let state=await service.readState(actor);
+  const provider=state.providers.find(provider=>provider.entries.some(entry=>entry.id==="four-month"))!;
+  state=(await service.execute(actor,{kind:"set-fields",operationKey:crypto.randomUUID(),expected:expected(state),entry:{providerId:provider.providerId,modelId:"course",recordId:"four-month"},values:{"course-price":""},clear:[]})).state;
+  const snapshot=(await service.execute(actor,{kind:"capture-snapshot",operationKey:crypto.randomUUID(),expected:expected(state)})).snapshot!;
+  for(const route of ["/lessons/","/"]){
+   const response=await app.fetch(new Request(`http://localhost/preview/document?${new URLSearchParams({snapshot:snapshot.id,digest:snapshot.digest,route})}`),env);
+   expect(response.status).toBe(400);
+   const body=await response.json() as {error:{code:string;diagnostics:unknown[]}};
+   expect(body.error.code).toBe("incomplete");
+   expect(body.error.diagnostics).toEqual([{code:"required-value-missing",modelId:"course",model:"コース・料金",entryId:"four-month",fieldId:"course-price",field:"価格（表示）"}]);
+   expect(JSON.stringify(body)).not.toMatch(/\$\.|collectionAttachments|attachment-entry/);
+  }
+ });
  it("requires same-origin JSON for every RPC, including restore",async()=>{
   const app=createApp({identity:createFixtureIdentity(actor.id)});
   const request=(headers:Record<string,string>)=>new Request("http://localhost/api/hosted/rpc",{method:"POST",headers,body:JSON.stringify({method:"readState"})});

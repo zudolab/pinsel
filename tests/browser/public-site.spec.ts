@@ -242,8 +242,8 @@ test.describe("contact", () => {
 });
 
 // Overflow the approved prototype measured with PINSEL_REFERENCE_DIST set, used when the reference is not served (CI).
-// /contact/ at 390px with 150% text overflows 8px in the prototype too (tracked in #26).
-const PROTOTYPE_OVERFLOW: Record<string, number> = {}; // #26 is fixed in current output; historical seed remains unchanged.
+// The historical prototype's /contact/ overflowed 8px at 390px with 150% text (#26); current output fixes it, so no route is exempt.
+const PROTOTYPE_OVERFLOW: Record<string, number> = {};
 
 test.describe("robustness", () => {
   for (const width of WIDTHS) {

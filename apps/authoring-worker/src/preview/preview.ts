@@ -9,11 +9,23 @@ const safeJson = (value: unknown) => JSON.stringify(value).replace(/</g, "\\u003
 export function previewShellDocument(): string {
  return `<!doctype html><html lang="ja"><head><meta charset="utf-8"><meta name="robots" content="noindex,nofollow"><link rel="stylesheet" href="/assets/fonts/fonts.css"><style>${PREVIEW_STYLES}</style></head><body><p>プレビューを準備しています</p><script id="pinsel-preview-config" type="application/json">${safeJson({ pack: PACK, renderer: RENDERER })}</script><script type="module" src="/editor/static/preview.js"></script></body></html>`;
 }
+/** Editor-facing reason a blocked snapshot cannot be previewed: definition labels only, never projection paths or values. */
+export interface PreviewIncompleteField { code: string; modelId: string; model: string; entryId: string; fieldId: string; field: string }
+export class PreviewBlockedError extends HostedContentError {
+ constructor(readonly incomplete: PreviewIncompleteField[]) { super("incomplete", "Snapshot projection is blocked"); }
+}
+export function previewIncompleteFields(snapshot: HostedSnapshot): PreviewIncompleteField[] {
+ return snapshot.diagnostics.map(diagnostic => {
+  const model = snapshot.providers.flatMap(provider => provider.models).find(model => model.id === diagnostic.modelId);
+  const field = model?.document.fields.find(field => field.id === diagnostic.fieldId);
+  return { code: diagnostic.code, modelId: diagnostic.modelId, model: model?.document.name ?? diagnostic.modelId, entryId: diagnostic.entryId, fieldId: diagnostic.fieldId, field: field?.label ?? diagnostic.fieldId };
+ });
+}
 /** Render only a stored snapshot's immutable projected route through the real site renderer. */
 export function renderPreviewDocument(snapshot: HostedSnapshot, route: string): string {
  if (!(PINSEL_ROUTES as readonly string[]).includes(route)) throw new HostedContentError("not-found", "Unknown preview route");
  const plan = snapshot.renderData as unknown as HostedSiteProjection;
- if (plan.status !== "ready") throw new HostedContentError("incomplete", "Snapshot projection is blocked");
+ if (plan.status !== "ready") throw new PreviewBlockedError(previewIncompleteFields(snapshot));
  const document = plan.routes.find(item => item.pathname === planPathname(route as PinselRoute));
  if (!document) throw new HostedContentError("not-found", "Route is absent from snapshot");
  const meta = resolvePageMeta(route as PinselRoute, snapshot.providers.flatMap(provider => provider.entries));

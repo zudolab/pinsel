@@ -1,23 +1,25 @@
 import { readAiPointer } from "./recovery";
+import { renderFieldChange } from "./diff-view";
+import { aiErrorMessage, formatLocalTime, providerStatusText } from "./messages-ja";
 import type { ContentAiOperation, ContentAiPrepareResult, ContentAiStatus, ContentEntryRef, HostedSnapshot } from "zudo-composer/hosted-content";
 import type { HostedContentEditorHandle, HostedPreviewController } from "zudo-composer/hosted-content/editor";
 type Options = { element: HTMLElement; recoveryKey: string; onBusy(value: boolean): void; editor(): HostedContentEditorHandle; preview(): HostedPreviewController };
 async function ai<T>(operation: string, payload: unknown = {}): Promise<T> {
  const response = await fetch("/api/hosted/ai", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ operation, payload }), ...(operation==="content-ai-status"?{signal:AbortSignal.timeout(7000)}:{}) });
- const body = await response.json();
- if (!response.ok || !body.ok) throw Object.assign(new Error(`${body.error?.code ?? "unavailable"}: ${body.error?.message ?? "AI request outcome uncertain. Read/retry the saved proposal to recover."}`), { code: body.error?.code, uncertain: response.status >= 500 });
+ const body = await response.json().catch(() => ({}));
+ if (!response.ok || !body.ok) throw Object.assign(new Error(aiErrorMessage(body.error?.code ?? "unavailable", body.error?.diagnostics)), { code: body.error?.code, uncertain: response.status >= 500 });
  return body.value as T;
 }
 export function mountNoteAi(options: Options) {
  const panel = options.element;
- panel.innerHTML = `<h2>Note AI — タイトル・本文</h2><p id="ai-provider" role="status"></p><button id="ai-recheck" type="button">providerを再確認</button><p id="ai-recovery-warning" role="status"></p><p id="ai-pending-warning" role="status"></p><label>変更の指示<textarea id="ai-instruction" maxlength="2000" rows="3"></textarea></label><button id="ai-prepare" type="button">提案を作る</button><label>保存済み提案<select id="ai-proposals"><option value="">選択してください</option></select></label><button id="ai-read" type="button">提案・結果を再確認</button><p id="ai-status" role="status"></p><div id="ai-diff"></div><div class="ai-actions"><button id="ai-preview" type="button" disabled>候補を実プレビュー</button><button id="ai-apply" type="button" disabled>明示的に適用して保存</button><button id="ai-undo" type="button" disabled>適用をUndo</button></div>`;
+ panel.innerHTML = `<h2>Note AI — タイトル・本文</h2><p id="ai-provider" role="status"></p><p id="ai-provider-detail" class="ai-provider-detail"></p><button id="ai-recheck" type="button" class="pinsel-button">providerを再確認</button><p id="ai-recovery-warning" role="status"></p><p id="ai-pending-warning" role="status"></p><label>変更の指示<textarea id="ai-instruction" maxlength="2000" rows="3" aria-describedby="ai-instruction-hint"></textarea></label><p id="ai-instruction-hint" class="ai-hint">1〜2000文字で入力すると「提案を作る」を押せます。</p><button id="ai-prepare" type="button">提案を作る</button><label>保存済み提案<select id="ai-proposals"><option value="">選択してください</option></select></label><button id="ai-read" type="button">提案・結果を再確認</button><p id="ai-status" role="status"></p><div id="ai-diff"></div><div class="ai-actions"><button id="ai-preview" type="button" disabled>候補を実プレビュー</button><button id="ai-apply" type="button" disabled>明示的に適用して保存</button><button id="ai-undo" type="button" disabled>適用をUndo</button></div>`;
  const get = <T extends HTMLElement>(id: string) => panel.querySelector<T>(`#${id}`)!;
  const status = get("ai-status"), select = get<HTMLSelectElement>("ai-proposals"), instruction = get<HTMLTextAreaElement>("ai-instruction");
  let entry: ContentEntryRef | null = null, operation: ContentAiOperation | null = null, renderedIdentity: unknown = null, busy = false, loading = false, generation = 0, providerReady = false, checking = false;
  const sameEntry = (left: ContentEntryRef | null, right: ContentEntryRef | null) => !!left && !!right && left.providerId === right.providerId && left.modelId === right.modelId && left.recordId === right.recordId;
  const state = () => {
   select.disabled = busy || loading; get<HTMLButtonElement>("ai-read").disabled = busy || loading; instruction.disabled = busy || loading;
-  get<HTMLButtonElement>("ai-prepare").disabled = busy || loading || checking || !providerReady;
+  get<HTMLButtonElement>("ai-prepare").disabled = busy || loading || checking || !providerReady || !instruction.value.trim();
   get<HTMLButtonElement>("ai-recheck").disabled = busy || checking;
   get<HTMLButtonElement>("ai-preview").disabled = busy || loading || !operation || !!operation.applied;
   get<HTMLButtonElement>("ai-apply").disabled = busy || loading || !operation || !!operation.undone || (!operation.applied && !renderedIdentity);
@@ -27,9 +29,11 @@ export function mountNoteAi(options: Options) {
  function draw() {
   const diff=get("ai-diff");diff.replaceChildren();
   if(!operation){state();return;}
-  const summary=document.createElement("p");summary.textContent=`${operation.proposal.provider}: ${operation.proposal.summary}`;diff.append(summary);
-  for(const change of operation.proposal.differences){const row=document.createElement("details"),label=document.createElement("summary"),before=document.createElement("pre"),after=document.createElement("pre");row.open=true;label.textContent=change.label;before.textContent=`変更前\n${String(change.before??"")}`;after.textContent=`提案\n${String(change.after??"")}`;row.append(label,before,after);diff.append(row);}
-  status.textContent=operation.undone?`Undo保存済み ${operation.undone.revisionId}`:operation.applied?`適用・保存済み ${operation.applied.revisionId}`:"提案はまだ保存内容へ適用されていません。差分と実プレビューを確認してください。";
+  const summary=document.createElement("p"),fake=/^fake\b/i.test(operation.proposal.provider);summary.className="ai-summary";
+  // Composer's fake proposer writes a fixed English summary; it is labelled as test output, not translated.
+  summary.textContent=fake?`テスト用fakeの出力（実際のAIではありません・原文のまま）: ${operation.proposal.summary}`:`${operation.proposal.provider} の要約: ${operation.proposal.summary}`;diff.append(summary);
+  for(const change of operation.proposal.differences)diff.append(renderFieldChange(change.label,String(change.before??""),String(change.after??"")));
+  status.textContent=operation.undone?"Undo保存済み（適用前の内容に戻しました）":operation.applied?"適用・保存済み（履歴に「AI提案による操作」として残ります）":"提案はまだ保存内容へ適用されていません。差分と実プレビューを確認してください。";
   state();
  }
  const pendingActions = () => Object.keys(localStorage).filter(key => key.startsWith(`${options.recoveryKey}:`)).flatMap(key => {
@@ -41,11 +45,13 @@ export function mountNoteAi(options: Options) {
   checking=true;providerReady=false;state();
   try { const value=await ai<ContentAiStatus>("content-ai-status");if(current!==generation)return;
    providerReady=value?.configured===true && value.inference?.state==="ready";
-   get("ai-provider").textContent=value?.configured?`${value.provider} — ${value.inference?.state ?? "unknown"}: ${value.inference && ("detail" in value.inference?value.inference.detail:value.inference.message) || "状態を確認できません"}`:"AI host未設定。pnpm dev:dogfoodで起動してください。";
-  }catch {if(current===generation)get("ai-provider").textContent="provider状態の取得に失敗しました。起動・認証を確認して「providerを再確認」を押してください。";}
+   const text=providerStatusText(value);get("ai-provider").textContent=text.line;get("ai-provider-detail").textContent=text.detail;
+  }catch {if(current===generation){get("ai-provider-detail").textContent="";get("ai-provider").textContent="provider状態の取得に失敗しました。起動・認証を確認して「providerを再確認」を押してください。";}}
   finally {if(current===generation){checking=false;if(!providerReady)get("ai-provider").textContent+=" 新規提案は停止中です。起動・認証を確認し、providerを再確認してください。保存済み提案・Undo・通常編集は利用できます。";state();}}
  }
  get<HTMLButtonElement>("ai-recheck").onclick=()=>{void checkProvider();};
+ instruction.addEventListener("input",state);
+ const pendingLabel=(pending:{action:"apply"|"undo";proposalId:string})=>`回復待ちの${pending.action==="apply"?"適用":"Undo"}操作 · 提案 ${pending.proposalId.slice(0,8)}`;
 
  async function read() {
   const id=select.value, current=generation;operation=null;renderedIdentity=null;draw();if(!id)return;
@@ -63,7 +69,7 @@ export function mountNoteAi(options: Options) {
   pendingFailures=[];let shown: string | null = null;
   for(const pending of pendingFor(entry)){
    if(current!==generation)return;
-   if(![...select.options].some(option=>option.value===pending.proposalId))select.add(new Option(`回復待ち操作 · ${pending.action} · ${pending.proposalId}`,pending.proposalId));
+   if(![...select.options].some(option=>option.value===pending.proposalId))select.add(new Option(pendingLabel(pending),pending.proposalId));
    select.value=pending.proposalId;
    try{await read();if(current!==generation)return;}catch(error){pendingFailures.push(`${pending.proposalId}: ${error instanceof Error?error.message:String(error)}`);continue;}
    if(!shown || pendingFor(entry).some(value=>value.proposalId===pending.proposalId))shown=pending.proposalId;
@@ -77,9 +83,9 @@ export function mountNoteAi(options: Options) {
   const records=await ai<{id:string;createdAt:string;summary:string;provider:string}[]>("pinsel-ai-list",{entry:requestedEntry});
   if(current!==generation || !sameEntry(requestedEntry,entry))return;
   const previous=select.value;select.replaceChildren(new Option("選択してください",""));
-  for(const record of records)select.add(new Option(`${record.createdAt} · ${record.provider} · ${record.summary.slice(0,60)}`,record.id));
+  for(const record of records)select.add(new Option(`${formatLocalTime(record.createdAt)} · ${/^fake\b/i.test(record.provider)?"テスト用fake":record.provider} · ${record.summary.slice(0,60)}`,record.id));
   // The list is a bounded newest page; known pending pointers stay selectable even when they fall outside it.
-  for(const pending of pendingFor(requestedEntry))if(![...select.options].some(option=>option.value===pending.proposalId))select.add(new Option(`回復待ち操作 · ${pending.action} · ${pending.proposalId}`,pending.proposalId));
+  for(const pending of pendingFor(requestedEntry))if(![...select.options].some(option=>option.value===pending.proposalId))select.add(new Option(pendingLabel(pending),pending.proposalId));
   if([...select.options].some(option=>option.value&&option.value===previous))select.value=previous;
  }
  async function mutate(action: "apply" | "undo", payload: { proposalId: string; renderedIdentity?: unknown }) {
@@ -94,7 +100,7 @@ export function mountNoteAi(options: Options) {
   }
  }
  const clean = () => { const value=options.editor().state;if(value.dirty||value.pending)throw new Error("通常編集の保存・回復を完了してからAI操作を実行してください。"); };
- get<HTMLButtonElement>("ai-prepare").onclick=()=>{void safe(async()=>{clean();if(!providerReady)throw new Error("providerを再確認してください。");renderedIdentity=null;const result=await ai<ContentAiPrepareResult>("content-ai-prepare",{entry,instruction:instruction.value});if(result.status==="refused"){status.textContent=result.message;return;}await list();select.value=result.proposal.id;await read();});};
+ get<HTMLButtonElement>("ai-prepare").onclick=()=>{void safe(async()=>{clean();if(!providerReady)throw new Error("providerを再確認してください。");renderedIdentity=null;const result=await ai<ContentAiPrepareResult>("content-ai-prepare",{entry,instruction:instruction.value});if(result.status==="refused"){status.textContent=`AIは提案を作成しませんでした。指示を変えてもう一度お試しください。（AIからの理由・原文: ${result.message}）`;return;}await list();select.value=result.proposal.id;await read();});};
  get<HTMLButtonElement>("ai-read").onclick=()=>{void safe(read);};select.onchange=()=>{void safe(read);};
  get<HTMLButtonElement>("ai-preview").onclick=()=>{void safe(async()=>{
   clean();renderedIdentity=null;const proposal=operation!.proposal, expectedGeneration=generation;
@@ -113,7 +119,7 @@ export function mountNoteAi(options: Options) {
    void checkProvider(current);
    try{await list(next,current);if(current!==generation || !sameEntry(next,entry))return;
     await recoverPending(current);
-   }catch(error){if(current===generation){status.textContent=String(error);await recoverPending(current).catch(()=>{});}}finally{if(current===generation){loading=false;state();}}
+   }catch(error){if(current===generation){status.textContent=error instanceof Error?error.message:String(error);await recoverPending(current).catch(()=>{});}}finally{if(current===generation){loading=false;state();}}
   },
   invalidate(){renderedIdentity=null;state();},
  };
