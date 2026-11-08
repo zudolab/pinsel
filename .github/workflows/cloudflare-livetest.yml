@@ -1,0 +1,58 @@
+name: Cloudflare disposable live test
+
+# Owner-approved (2026-11-08) disposable live test. This workflow DEPLOYS throwaway
+# pinsel-livetest-* Workers to workers.dev and creates a throwaway D1 and Access app,
+# then always deletes them. It exists only on this branch and must never merge to main.
+on:
+  push:
+    branches: [claude/pinsel-cf-credentials]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cloudflare-livetest
+  cancel-in-progress: false
+
+jobs:
+  livetest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      COREPACK_ENABLE_DOWNLOAD_PROMPT: "0"
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm assets:sync
+      - run: pnpm content:assemble
+      - run: pnpm content:project
+      - run: pnpm build:site
+      - run: pnpm build:editor
+      - run: pnpm assets:assemble-worker
+      - name: Remote D1 (create, migrate, inspect)
+        id: setup
+        continue-on-error: true
+        run: node .github/livetest/livetest.mjs setup
+      - name: Public site on workers.dev
+        continue-on-error: true
+        run: node .github/livetest/livetest.mjs site
+      - name: Authoring Worker fails closed on real D1
+        if: steps.setup.outcome == 'success'
+        continue-on-error: true
+        run: node .github/livetest/livetest.mjs auth
+      - name: Access in front of the authoring Worker
+        if: steps.setup.outcome == 'success'
+        continue-on-error: true
+        run: node .github/livetest/livetest.mjs access
+      - name: Delete every livetest resource
+        if: always()
+        run: node .github/livetest/livetest.mjs cleanup
