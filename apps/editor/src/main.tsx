@@ -77,6 +77,7 @@ try {
   download.textContent = `Snapshot ${snapshot.id} · digest ${snapshot.digest.slice(0,12)}`;
  }
  async function mount() {
+  historyLoad++; document.querySelector("#history")!.replaceChildren();
   handle?.dispose(); controller?.dispose();
   const frame = document.querySelector<HTMLIFrameElement>("#preview")!;
   controller = createHostedPreviewController({ frame, hostWindow: window, location: buildHostedPreviewLocation("/preview/", location.origin), pack: config.pack, renderer: config.renderer,
@@ -95,7 +96,6 @@ try {
   handle.subscribe(next => { if(next.dirty || next.pending) noteAi.invalidate(); status.textContent = `保存状態: ${next.phase}${next.error ? ` — ${next.error instanceof Error ? next.error.message : String(next.error)}` : ""}`; if (next.reviewedSnapshot) showSnapshot(next.reviewedSnapshot); });
   await handle.ready;
   await noteAi.select(entry);
-  historyLoad++; document.querySelector("#history")!.replaceChildren();
  }
  async function switchSelection() {
   try { await handle?.flush(); if (handle?.state.dirty || handle?.state.pending) throw new Error("保存・回復を完了してから移動してください"); selected = Number(entrySelect.value); selectedRoute = routeSelect.value; await mount(); }
