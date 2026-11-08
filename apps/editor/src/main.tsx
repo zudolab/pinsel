@@ -3,13 +3,15 @@ import { mountHostedContentEditor, createHostedPreviewController, buildHostedPre
 import type { ContentEntryRef, HostedPolicy, HostedSnapshot } from "zudo-composer/hosted-content";
 import { mountNoteAi } from "./note-ai";
 import { transport, AuthenticationExpired } from "./transport";
+import { errorMessageJa, formatLocalTime, previewStatusText, revisionLabel, saveStatusText, snapshotDownloadLabel } from "./messages-ja";
+import { revealPreviewStatus } from "./reveal";
 import "zudo-composer/hosted-content/editor.css";
 import "./host.css";
 
 const root = document.querySelector<HTMLElement>("#editor")!;
-root.innerHTML = `<header class="pinsel-header"><h1>Pinsel 編集</h1><p>ローカルの下書きと履歴。公開配信は停止中です。</p></header><main class="pinsel-workspace"><section class="pinsel-controls"><label>編集する項目 <select id="entry"></select></label><label>プレビューページ <select id="route"></select></label><p id="host-status" role="status"></p><div id="composer"></div><section id="note-ai" class="pinsel-ai"></section><section class="pinsel-history"><h2>変更履歴</h2><button id="history-refresh">履歴を読み込む</button><div id="history"></div></section><p><a id="snapshot-download" hidden>確定スナップショットを保存</a></p><p>配信は無効です。スナップショットをダウンロードし、<code>pnpm build:snapshot -- &lt;file&gt;</code> でローカル出力できます。</p></section><section class="pinsel-preview"><h2>保存済みスナップショットのプレビュー</h2><p id="preview-status" role="status">未確認</p><iframe id="preview" title="Pinsel 実プレビュー" sandbox="allow-scripts allow-same-origin"></iframe></section></main>`;
+root.innerHTML = `<header class="pinsel-header"><h1>Pinsel 編集</h1><p>ローカルの下書きと履歴。公開配信は停止中です。</p></header><main class="pinsel-workspace"><section class="pinsel-controls"><label>編集する項目 <select id="entry"></select></label><label>プレビューページ <select id="route"></select></label><p id="host-status" role="status" aria-live="polite"></p><div id="composer"></div><section id="note-ai" class="pinsel-ai"></section><section class="pinsel-history"><h2>変更履歴</h2><button id="history-refresh" type="button" class="pinsel-button">履歴を読み込む</button><div id="history"></div></section><p><a id="snapshot-download" hidden>確定スナップショットを保存</a></p><p>配信は無効です。スナップショットをダウンロードし、<code>pnpm build:snapshot -- &lt;file&gt;</code> でローカル出力できます。</p></section><section class="pinsel-preview"><h2>保存済みスナップショットのプレビュー</h2><p id="preview-status" role="status" tabindex="-1">未確認</p><iframe id="preview" title="Pinsel 実プレビュー" sandbox="allow-scripts allow-same-origin"></iframe></section></main>`;
 const status = document.querySelector<HTMLElement>("#host-status")!;
-const showError = (error: unknown) => { status.textContent = error instanceof Error ? error.message : String(error); };
+const showError = (error: unknown) => { status.removeAttribute("data-phase"); status.textContent = errorMessageJa(error); };
 try {
  const response = await fetch("/api/hosted/config");
  if (!response.ok) throw new Error(`Authoring unavailable (${response.status})`);
@@ -46,6 +48,8 @@ try {
  if (!releaseSession) { tab = crypto.randomUUID(); releaseSession = (await claimSession(tab))!; }
  sessionStorage.setItem("pinsel-editor-tab", tab!);
  window.addEventListener("pagehide", () => releaseSession?.(), { once: true });
+ // Display-only sidecar outside the checkpoint prefix, so checkpoint validation never sees it.
+ const recoveryTimeKey = (key: string) => key.replace("pinsel:hosted:v1:", "pinsel:hosted-time:v1:");
  let recoveryKey = `pinsel:hosted:v1:${config.siteId}:${config.actorId}:${tab}`;
  const warning=document.createElement("p");warning.id="recovery-warning";warning.setAttribute("role","status");document.querySelector(".pinsel-controls")!.prepend(warning);
  const readRecovery = (): HostedRecoveryCheckpoint | undefined => { const saved = localStorage.getItem(recoveryKey); return saved !== null ? readCheckpoint(saved,state) : undefined; };
@@ -74,14 +78,20 @@ try {
   snapshotUrl = URL.createObjectURL(new Blob([JSON.stringify(snapshot, null, 2)], { type: "application/json" }));
   const download = document.querySelector<HTMLAnchorElement>("#snapshot-download")!;
   download.href = snapshotUrl; download.download = `pinsel-snapshot-${snapshot.id}.json`; download.hidden = false;
-  download.textContent = `Snapshot ${snapshot.id} · digest ${snapshot.digest.slice(0,12)}`;
+  download.textContent = snapshotDownloadLabel(snapshot); download.title = `スナップショットID ${snapshot.id}`;
  }
  async function mount() {
   historyLoad++; document.querySelector("#history")!.replaceChildren();
   handle?.dispose(); controller?.dispose();
   const frame = document.querySelector<HTMLIFrameElement>("#preview")!;
   controller = createHostedPreviewController({ frame, hostWindow: window, location: buildHostedPreviewLocation("/preview/", location.origin), pack: config.pack, renderer: config.renderer,
-   onState(preview) { if(preview.status !== "rendered") noteAi.invalidate(); document.querySelector("#preview-status")!.textContent = preview.status === "rendered" ? `確認済み ${preview.result.snapshotId}` : preview.status; },
+   onState(preview) {
+    if(preview.status !== "rendered") noteAi.invalidate();
+    const target = document.querySelector<HTMLElement>("#preview-status")!, previous = target.dataset.status;
+    target.dataset.status = preview.status; target.textContent = previewStatusText(preview);
+    // At one-column widths the preview sits far below the buttons that start it.
+    if (preview.status === "pending" && previous !== "pending") revealPreviewStatus(target);
+   },
   });
   frame.src = "/preview/";
   const entry = refs[selected]!;
@@ -89,11 +99,11 @@ try {
   const permissions = config.policy.models.find(model => model.providerId === entry.providerId && model.modelId === entry.modelId)!.fields;
   const fieldId = model.document.fields.find(field => permissions.some(permission => permission.fieldId === field.id) && !["reference", "reference-list", "slug", "asset-use"].includes(field.kind))!.id;
   handle = mountHostedContentEditor(document.querySelector<HTMLElement>("#composer")!, { transport, policy: { ...config.policy, models: config.policy.models.map(model => ({ ...model, entryIds: model.providerId === entry.providerId && model.modelId === entry.modelId ? [entry.recordId] : [] })) }, selection: { entry, fieldId }, presentation: "record", routeId: selectedRoute,
-   preview: controller, createOperationKey: () => crypto.randomUUID(), recovery: readRecovery(), persistRecovery(checkpoint) { localStorage.setItem(recoveryKey, JSON.stringify(checkpoint)); },
+   preview: controller, createOperationKey: () => crypto.randomUUID(), recovery: readRecovery(), persistRecovery(checkpoint) { localStorage.setItem(recoveryKey, JSON.stringify(checkpoint)); try { localStorage.setItem(recoveryTimeKey(recoveryKey), new Date().toISOString()); } catch { /* the time is a label only */ } },
    isAuthenticationExpired: error => error instanceof AuthenticationExpired, onAuthenticationExpired: showError,
    labels: { ...hostedEditorLabelsJa, submit: "公開は無効です" }, errorMessages: hostedErrorMessagesJa,
   });
-  handle.subscribe(next => { if(next.dirty || next.pending) noteAi.invalidate(); status.textContent = `保存状態: ${next.phase}${next.error ? ` — ${next.error instanceof Error ? next.error.message : String(next.error)}` : ""}`; if (next.reviewedSnapshot) showSnapshot(next.reviewedSnapshot); });
+  handle.subscribe(next => { if(next.dirty || next.pending) noteAi.invalidate(); status.dataset.phase = next.phase; status.textContent = saveStatusText(next); if (next.reviewedSnapshot) showSnapshot(next.reviewedSnapshot); });
   await handle.ready;
   await noteAi.select(entry);
  }
@@ -115,15 +125,15 @@ try {
    list.querySelector(".pinsel-history-more")?.remove();
    for (const revision of page.revisions) {
     const item = document.createElement("details"), summary = document.createElement("summary"), values = document.createElement("pre"), restore = document.createElement("button");
-    summary.textContent = `#${revision.sequence} ${revision.createdAt} ${revision.operation.kind}`;
-    values.textContent = JSON.stringify(revision.values, null, 2); restore.textContent = "この履歴を新しい下書きとして復元";
+    summary.textContent = revisionLabel(revision); summary.title = revision.createdAt; if (revision.source === "content-ai") item.dataset.source = "content-ai";
+    values.textContent = JSON.stringify(revision.values, null, 2); restore.textContent = "この履歴を新しい下書きとして復元"; restore.type = "button"; restore.className = "pinsel-button";
     restore.onclick = async () => { try { await handle!.restore(entry, revision.id); status.textContent = "履歴を復元しました。プレビューで確認できます。"; } catch(error) { showError(error); } };
     item.append(summary, values, restore); list.append(item);
    }
    if (!cursor && !page.revisions.length) list.textContent = "まだ編集履歴はありません。";
    if (page.nextCursor) {
     const more = document.createElement("button"), next = page.nextCursor;
-    more.className = "pinsel-history-more"; more.textContent = "さらに古い履歴を読み込む";
+    more.className = "pinsel-history-more pinsel-button"; more.type = "button"; more.textContent = "さらに古い履歴を読み込む";
     more.onclick = () => { more.disabled = true; void loadHistory(next).finally(() => { more.disabled = false; }); };
     list.append(more);
    }
@@ -132,15 +142,22 @@ try {
  document.querySelector<HTMLButtonElement>("#history-refresh")!.onclick = () => loadHistory();
  // Discover outstanding sessions even after closing the browser and reopening
  // the root URL. Selecting one is explicit: concurrent tabs never share silently.
- const recoveryPanel = document.createElement("section"), recoverySelect = document.createElement("select"), recoveryButton = document.createElement("button");
+ const recoveryPanel = document.createElement("section"), recoveryLabel = document.createElement("label"), recoverySelect = document.createElement("select"), recoveryButton = document.createElement("button");
  recoverySelect.setAttribute("aria-label", "保存済み回復セッション"); recoverySelect.add(new Option("未完了の編集セッション", ""));
  const prefix = `pinsel:hosted:v1:${config.siteId}:${config.actorId}:`;
+ function recoveryOptionLabel(key: string, checkpoint: HostedRecoveryCheckpoint) {
+  const ref = checkpoint.edits[0]?.entry ?? (checkpoint.pending && "entry" in checkpoint.pending.request ? checkpoint.pending.request.entry : undefined);
+  const index = ref ? refs.findIndex(item => item.providerId === ref.providerId && item.modelId === ref.modelId && item.recordId === ref.recordId) : -1;
+  const target = index >= 0 ? entrySelect.options[index]!.text : ref ? `${ref.modelId} · ${ref.recordId}` : "スナップショット保存";
+  const savedAt = localStorage.getItem(recoveryTimeKey(key));
+  return `${target} · ${checkpoint.pending ? "応答回復待ち" : "未保存"} · ${savedAt ? `${formatLocalTime(savedAt)} 時点` : "記録時刻不明"}`;
+ }
  for (let index = 0; index < localStorage.length; index++) {
   const key = localStorage.key(index)!;
   if (!key.startsWith(prefix) || key === recoveryKey) continue;
-  try { const checkpoint = readCheckpoint(localStorage.getItem(key)!,state); if (checkpoint.pending || checkpoint.edits?.length) recoverySelect.add(new Option(`${key.slice(prefix.length)} · ${checkpoint.pending ? "応答回復待ち" : "未保存"}`, key)); } catch { warning.textContent="不正または未対応の回復記録を保持しています。自動送信・削除は行いません。ブラウザデータを消さず管理者に調査を依頼してください。"; }
+  try { const checkpoint = readCheckpoint(localStorage.getItem(key)!,state); if (checkpoint.pending || checkpoint.edits?.length) recoverySelect.add(new Option(recoveryOptionLabel(key, checkpoint), key)); } catch { warning.textContent="不正または未対応の回復記録を保持しています。自動送信・削除は行いません。ブラウザデータを消さず管理者に調査を依頼してください。"; }
  }
- recoveryButton.textContent = "このセッションを回復";
+ recoveryButton.textContent = "このセッションを回復"; recoveryButton.type = "button"; recoveryButton.className = "pinsel-button";
  recoveryButton.onclick = async () => {
   if (!recoverySelect.value) return;
   try {
@@ -156,7 +173,8 @@ try {
    await mount(); status.textContent = "回復セッションを読み込みました。「保存」で同じ操作の結果を確認します。";
   } catch(error) { showError(error); }
  };
- recoveryPanel.append(recoverySelect, recoveryButton); document.querySelector(".pinsel-controls")!.prepend(recoveryPanel);
+ recoveryPanel.className = "pinsel-recovery"; recoveryLabel.textContent = "保存済み回復セッション"; recoveryLabel.append(recoverySelect);
+ recoveryPanel.append(recoveryLabel, recoveryButton); document.querySelector(".pinsel-controls")!.prepend(recoveryPanel);
  await mount();
  window.addEventListener("beforeunload", event => { if (handle?.state.dirty || handle?.state.pending) { event.preventDefault(); event.returnValue = ""; } });
 } catch(error) { showError(error); }
