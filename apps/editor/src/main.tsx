@@ -95,7 +95,7 @@ try {
   handle.subscribe(next => { if(next.dirty || next.pending) noteAi.invalidate(); status.textContent = `保存状態: ${next.phase}${next.error ? ` — ${next.error instanceof Error ? next.error.message : String(next.error)}` : ""}`; if (next.reviewedSnapshot) showSnapshot(next.reviewedSnapshot); });
   await handle.ready;
   await noteAi.select(entry);
-  document.querySelector("#history")!.replaceChildren();
+  historyLoad++; document.querySelector("#history")!.replaceChildren();
  }
  async function switchSelection() {
   try { await handle?.flush(); if (handle?.state.dirty || handle?.state.pending) throw new Error("保存・回復を完了してから移動してください"); selected = Number(entrySelect.value); selectedRoute = routeSelect.value; await mount(); }
@@ -103,20 +103,33 @@ try {
  }
  entrySelect.onchange = () => { routeSelect.value = guessRoute(refs[Number(entrySelect.value)]!); void switchSelection(); };
  routeSelect.onchange = () => { void switchSelection(); };
- document.querySelector<HTMLButtonElement>("#history-refresh")!.onclick = async () => {
+ // History is paged by the Composer cursor; each load is bound to the entry it
+ // was started for, so switching entries never mixes two entries' revisions.
+ let historyLoad = 0;
+ async function loadHistory(cursor?: string) {
+  const load = ++historyLoad, entry = refs[selected]!, list = document.querySelector("#history")!;
   try {
-   const page = await transport.listRevisions!({ entry: refs[selected]!, limit: 50 });
-   const list = document.querySelector("#history")!; list.replaceChildren();
+   const page = await transport.listRevisions!({ entry, limit: 50, ...(cursor ? { cursor } : {}) });
+   if (load !== historyLoad || entry !== refs[selected]) return;
+   if (!cursor) list.replaceChildren();
+   list.querySelector(".pinsel-history-more")?.remove();
    for (const revision of page.revisions) {
     const item = document.createElement("details"), summary = document.createElement("summary"), values = document.createElement("pre"), restore = document.createElement("button");
     summary.textContent = `#${revision.sequence} ${revision.createdAt} ${revision.operation.kind}`;
     values.textContent = JSON.stringify(revision.values, null, 2); restore.textContent = "この履歴を新しい下書きとして復元";
-    restore.onclick = async () => { try { await handle!.restore(refs[selected]!, revision.id); status.textContent = "履歴を復元しました。プレビューで確認できます。"; } catch(error) { showError(error); } };
+    restore.onclick = async () => { try { await handle!.restore(entry, revision.id); status.textContent = "履歴を復元しました。プレビューで確認できます。"; } catch(error) { showError(error); } };
     item.append(summary, values, restore); list.append(item);
    }
-   if (!page.revisions.length) list.textContent = "まだ編集履歴はありません。";
+   if (!cursor && !page.revisions.length) list.textContent = "まだ編集履歴はありません。";
+   if (page.nextCursor) {
+    const more = document.createElement("button"), next = page.nextCursor;
+    more.className = "pinsel-history-more"; more.textContent = "さらに古い履歴を読み込む";
+    more.onclick = () => { more.disabled = true; void loadHistory(next).finally(() => { more.disabled = false; }); };
+    list.append(more);
+   }
   } catch(error) { showError(error); }
- };
+ }
+ document.querySelector<HTMLButtonElement>("#history-refresh")!.onclick = () => loadHistory();
  // Discover outstanding sessions even after closing the browser and reopening
  // the root URL. Selecting one is explicit: concurrent tabs never share silently.
  const recoveryPanel = document.createElement("section"), recoverySelect = document.createElement("select"), recoveryButton = document.createElement("button");
