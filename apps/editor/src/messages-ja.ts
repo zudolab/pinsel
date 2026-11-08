@@ -3,7 +3,7 @@ import type { ContentAiStatus, HostedErrorCode, HostedRevision, HostedSnapshot }
 
 const japanese = /[぀-ヿ㐀-鿿]/;
 // The same author in another tab also causes this, so it must not say "someone else".
-const revisionConflictJa = "別のタブか別の人が先に保存しました。あなたの入力は保持されています。「現在の内容を確認」で違いを確認してください。";
+export const revisionConflictJa = "別のタブか別の人が先に保存しました。あなたの入力は保持されています。「現在の内容を確認」で違いを確認してください。";
 const known = (code: unknown): code is HostedErrorCode => typeof code === "string" && Object.hasOwn(hostedErrorMessagesJa, code);
 /** Japanese text for any error the editor shows; untranslated server/library English never reaches the screen. */
 export function errorMessageJa(error: unknown): string {

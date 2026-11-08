@@ -49,19 +49,20 @@ Both Composer packages retain their full git commit identities. Since the 2026-1
 
 ## History
 
-> **Historical record.** The sections below are dated logs of earlier pins, bumps and decisions, kept as evidence. Versions, Composer SHAs (`7ca114a3…`, `547b532e…`), integrity values and file paths in them can be superseded and are **not** the current state; use [Current state](#current-state) above.
+> **Historical record.** The sections below are dated logs of earlier pins, bumps and decisions, kept as evidence. Versions, Composer SHAs (`7ca114a3…`, `547b532e…`, `fba434aa…`), integrity values and file paths in them can be superseded and are **not** the current state; use [Current state](#current-state) above.
 
 ### Pin timeline before the Hosted Content pin
 
 Resolved 2026-10-12 with `corepack pnpm install`; registry state checked with `npm view <name> dist-tags` the same day. Final pin (#16, 2026-10-13): `zudo-composer` moved to `547b532e…` and `@takazudo/zudo-sg` to `0.5.2`; every other identity is unchanged. Zudo deps bump (#22, 2026-10-13): the zfb family moved to `4.3.3` and `@takazudo/zudo-doc` to `6.1.1`; `@takazudo/zudo-sg 0.5.2` and `@takazudo/zdtp 0.8.6` were already the newest releases. Post-merge bump (#19, 2026-10-13): the zfb family moved to `4.4.0` and `@takazudo/zudo-sg` to `0.5.4`; `@takazudo/zudo-doc 6.1.1` and `@takazudo/zdtp 0.8.6` are still the newest releases, and both Composer git pins are unchanged. On 2026-11-03 `zudo-composer` moved to the Hosted Content package-root commit `fba434aa…` (produced from Composer source `2a004217…`), and on 2026-11-08 to `13ed855a…` (see [Current state](#current-state)).
 
-### Historical Composer pins (superseded 2026-11-03)
+### Historical Composer pins
 
 > Superseded: `zudo-composer` is now `13ed855a3268d91c114c3f5ee167d9ace9078d57`. The contract row is still current.
 
 | Package | Commit | Status |
 | --- | --- | --- |
 | `zudo-composer` | `547b532eb56dfecaec1e2bd9060f8d579ad8862c` | Final pin (#16) on `feat/903-hosted-content-authoring` (draft PR Takazudo/zudo-composer#904): milestone 2 (`7ca114a3`, the Gate-1 pin) plus `preview.sandbox` on the content-editor mount. Proved by `verify-root-git-install --sha 547b532e…` and `smoke:host-install -- --host hosted-content-host`. |
+| `zudo-composer` | `fba434aaa96af8b4dbc2a086638180f71a2da741` | Hosted Content package-root commit, pinned 2026-11-03 (from Composer source `2a004217…`), replaced by `13ed855a…` on 2026-11-08. |
 | `@zudo-composer/component-contract` | `c0b452da075b66757c60bd0d721a47062d4354d0` | Package-root handoff commit (`package/component-contract-v1`). |
 
 Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<full-sha>`. There is no npm release of `zudo-composer`.

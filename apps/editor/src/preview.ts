@@ -6,7 +6,7 @@ const host = createHostedPreviewHost({ hostWindow: window, parent: window.parent
   try { await renderSnapshot(request, context); }
   catch (error) {
    // A failed render must not leave the loading text or an older snapshot looking current.
-   if (context.isCurrent()) { const notice = document.createElement("p"); notice.textContent = "このスナップショットはプレビューできませんでした。編集画面のメッセージを確認してください。"; document.body.className = ""; document.body.replaceChildren(notice); }
+   if (context.isCurrent()) { const notice = document.createElement("p"); notice.textContent = "このスナップショットはプレビューできませんでした。編集画面のメッセージを確認してください。"; document.body.className = ""; document.body.replaceChildren(notice); document.title = "プレビューできません"; }
    throw error;
   }
  }

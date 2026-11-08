@@ -31,7 +31,7 @@ test("two tabs refuse stale writes and retain local input",async({context})=>{
  const first=await context.newPage(),second=await context.newPage();await open(first);await open(second);
  await first.locator('[data-hosted-field="note-title"] input').fill("First wins");await save(first);
  await second.locator('[data-hosted-field="note-title"] input').fill("Second retained");await second.getByRole("button",{name:"保存",exact:true}).click();
- await expect(second.locator("#host-status")).toHaveAttribute("data-phase","conflict");await expect(second.locator("#host-status")).toHaveText("保存状態: 別のタブか別の人が先に保存しました。あなたの入力は保持されています。「現在の内容を確認」で違いを確認してください。");await expect(second.locator("#host-status")).not.toContainText("conflict");await expect(second.locator('[data-hosted-field="note-title"] input')).toHaveValue("Second retained");
+ await expect(second.locator("#host-status")).toHaveAttribute("data-phase","conflict");await expect(second.locator("#host-status")).toHaveText("保存状態: 別のタブか別の人が先に保存しました。あなたの入力は保持されています。「現在の内容を確認」で違いを確認してください。");await expect(second.locator("#host-status")).not.toContainText("conflict");await expect(second.locator('[data-hosted-field="note-title"] input')).toHaveValue("Second retained");await expect(second.locator("#composer")).not.toContainText("ほかの人が先に保存しました");
  await first.close();await second.close();
 });
 test("lost response recovers the same operation after closing its tab; opener tabs have separate checkpoints",async({context,browser})=>{

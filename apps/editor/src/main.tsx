@@ -3,7 +3,7 @@ import { mountHostedContentEditor, createHostedPreviewController, buildHostedPre
 import type { ContentEntryRef, HostedPolicy, HostedSnapshot } from "zudo-composer/hosted-content";
 import { mountNoteAi } from "./note-ai";
 import { transport, AuthenticationExpired } from "./transport";
-import { errorMessageJa, formatLocalTime, previewStatusText, revisionLabel, saveStatusText, snapshotDownloadLabel } from "./messages-ja";
+import { errorMessageJa, revisionConflictJa, formatLocalTime, previewStatusText, revisionLabel, saveStatusText, snapshotDownloadLabel } from "./messages-ja";
 import { revealPreviewStatus } from "./reveal";
 import "zudo-composer/hosted-content/editor.css";
 import "./host.css";
@@ -101,7 +101,7 @@ try {
   handle = mountHostedContentEditor(document.querySelector<HTMLElement>("#composer")!, { transport, policy: { ...config.policy, models: config.policy.models.map(model => ({ ...model, entryIds: model.providerId === entry.providerId && model.modelId === entry.modelId ? [entry.recordId] : [] })) }, selection: { entry, fieldId }, presentation: "record", routeId: selectedRoute, submission: false,
    preview: controller, createOperationKey: () => crypto.randomUUID(), recovery: readRecovery(), persistRecovery(checkpoint) { localStorage.setItem(recoveryKey, JSON.stringify(checkpoint)); try { localStorage.setItem(recoveryTimeKey(recoveryKey), new Date().toISOString()); } catch { /* the time is a label only */ } },
    isAuthenticationExpired: error => error instanceof AuthenticationExpired, onAuthenticationExpired: showError,
-   labels: { ...hostedEditorLabelsJa, submit: "公開は無効です" }, errorMessages: hostedErrorMessagesJa,
+   labels: { ...hostedEditorLabelsJa, submit: "公開は無効です" }, errorMessages: { ...hostedErrorMessagesJa, "revision-conflict": revisionConflictJa },
   });
   handle.subscribe(next => { if(next.dirty || next.pending) noteAi.invalidate(); status.dataset.phase = next.phase; status.textContent = saveStatusText(next); if (next.reviewedSnapshot) showSnapshot(next.reviewedSnapshot); });
   await handle.ready;
