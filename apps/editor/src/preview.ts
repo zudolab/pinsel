@@ -3,6 +3,15 @@ import { previewFailureMessage } from "./preview-messages";
 const config = JSON.parse(document.querySelector("#pinsel-preview-config")!.textContent!);
 const host = createHostedPreviewHost({ hostWindow: window, parent: window.parent, origin: location.origin, ...config, frameSession: crypto.randomUUID(),
  async render(request, context) {
+  try { await renderSnapshot(request, context); }
+  catch (error) {
+   // A failed render must not leave the loading text or an older snapshot looking current.
+   if (context.isCurrent()) { const notice = document.createElement("p"); notice.textContent = "このスナップショットはプレビューできませんでした。編集画面のメッセージを確認してください。"; document.body.className = ""; document.body.replaceChildren(notice); document.title = "プレビューできません"; }
+   throw error;
+  }
+ }
+});
+async function renderSnapshot(request: Parameters<Parameters<typeof createHostedPreviewHost>[0]["render"]>[0], context: Parameters<Parameters<typeof createHostedPreviewHost>[0]["render"]>[1]) {
   const params = new URLSearchParams({ snapshot: request.snapshotId, digest: request.snapshotDigest, route: request.routeId });
   if (request.snapshotId.startsWith("ai-")) params.set("proposal", request.snapshotId.slice(3));
   const endpoint = request.snapshotId.startsWith("ai-") ? "/preview/ai-document" : "/preview/document";
@@ -27,7 +36,6 @@ const host = createHostedPreviewHost({ hostWindow: window, parent: window.parent
   }));
   await document.fonts.ready;
   if (!context.isCurrent()) return;
- }
-});
+}
 host.ready();
 window.addEventListener("pagehide", () => host.dispose(), { once: true });
