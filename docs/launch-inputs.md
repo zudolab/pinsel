@@ -24,7 +24,7 @@ These are the decisions, identifiers and one-time actions needed before Pinsel c
 | Input | Needed by | Current state | Decision |
 | --- | --- | --- | --- |
 | D1 database ids (production, and preview if used) | `d1_databases` in `apps/authoring-worker/wrangler.jsonc` | placeholder `00000000-0000-4000-8000-000000000000`; only local D1 has been used | _undecided_: `wrangler d1 create pinsel-authoring` at launch |
-| Remote D1 migrations | the five files in `apps/authoring-worker/migrations/` (`0001_init` … `0005_content_ai`, including `0004_hosted_content`) | applied only with `--local` (by `pnpm dev:dogfood` and the tests). `wrangler d1 migrations apply pinsel-authoring --remote` has never run. | _not done_ |
+| Remote D1 migrations | the five files in `apps/authoring-worker/migrations/` (`0001_init` … `0005_content_ai`, including `0004_hosted_content`) | applied only with `--local` (by `pnpm dev:dogfood` and the tests). Not applied to a launch database. A disposable remote D1 took all five in order, and a second apply was a no-op ([live test](#disposable-live-test-2026-11-08)). | _not done_ for launch |
 | Initial Hosted Content head | first Worker request on the remote D1 | the Worker initializes `pinsel_hosted_head` from the assembled baseline on first use (`ensureHostedSeeded`, `apps/authoring-worker/src/site/baseline.ts`), or refuses when an old draft needs explicit migration. This has run only against local D1. | _not done_ |
 
 ## Publication and delivery
@@ -51,7 +51,17 @@ The current Worker does not read the publisher variables below; they are inputs 
 ## Local acceptance still open
 
 - **Real-CLI Note AI acceptance is NOT_RUN.** Only the fake provider has been verified end to end; fake success is not real CLI or model success. The bounded manual procedure (one provider, at most 10 minutes and 2 Prepares) is in [note-ai-acceptance.md](note-ai-acceptance.md) and must run on a machine with a supported, already-authenticated CLI.
-- No live test has been performed: Access, remote D1, delivery, Workers Builds and contact delivery.
+- Not live-tested: an allowlisted person signing in through Access (it needs a human One-time PIN login), delivery, Workers Builds and contact delivery.
+
+## Disposable live test (2026-11-08)
+
+The owner approved one disposable live test on Cloudflare. It ran from the unmerged branch `claude/pinsel-cf-credentials` (workflow `cloudflare-livetest.yml`) with a dedicated test token, as [run 42491941628](https://github.com/zudolab/pinsel/actions/runs/42491941628): main `3e7a5df` plus only the test workflow (branch head `3caf53e`). It created throwaway `pinsel-livetest-*` resources and deleted all of them at the end. Nothing in this repository deploys, and launch resources were not created.
+
+- **Remote D1:** create, all five migrations in order (18 tables, `d1_migrations` lists the five files), and an idempotent re-apply.
+- **Public site** on a workers.dev host: all 13 routes 200 with `noindex`, all 139 emitted files byte-exact, `robots.txt` `Disallow: /`, the 404 page, `/about` → 307 `/about/`, and none of the public-output exclusions served.
+- **Authoring Worker** (production entry, real D1 binding, empty launch inputs): `/`, `/editor/`, `/api/hosted/config`, `/api/hosted/state` and `/preview/` answer 503 `configuration-required`, also with a forged `cf-access-jwt-assertion`.
+- **Access** in front of the Worker (team `takazudo.cloudflareaccess.com`, service-token policy): an anonymous request is stopped by Access (403 Access page). A service-token JWT reaches the Worker, passes JWKS and AUD verification, and is refused 403 `not-allowed` because it has no allowlisted email. With a different `POLICY_AUD` the same JWT is rejected 403 `invalid-assertion`.
+- **Editor on real D1:** `tests/browser/hosted.spec.ts` 8/8, with the editor's D1 binding pointed at the remote database. Afterwards the remote D1 held 71 revisions and the seeded Hosted Content head.
 
 ## Resolved
 
