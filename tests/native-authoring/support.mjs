@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { readFile } from 'node:fs/promises';
+import { readFile, realpath } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { dirname, resolve, join, relative, isAbsolute } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -20,8 +20,19 @@ export async function assertInstalledPin(root, expected) {
         const manifest = await readJson(join(root, path, 'package.json'));
         assert.equal(manifest.dependencies['zudo-composer'], `git+https://github.com/Takazudo/zudo-composer.git#${expected}`, `Unexpected ${path} Composer pin`);
     }
+    const installedRoots = [];
+    for (const path of ['apps/editor', 'apps/authoring-worker', 'packages/pinsel-content', 'packages/pinsel-ui']) {
+        const installedRoot = await realpath(join(root, path, 'node_modules/zudo-composer'));
+        assert(installedRoot.includes('/node_modules/.pnpm/zudo-composer@'), 'Installed Composer is not an independent pnpm package');
+        const manifest = await readJson(join(installedRoot, 'package.json'));
+        assert.equal(manifest.name, 'zudo-composer');
+        installedRoots.push({ consumer: path, installedRoot, packageManifestSha256: sha256(await readFile(join(installedRoot, 'package.json'))) });
+    }
+    const installedLock = await readFile(join(root, 'node_modules/.pnpm/lock.yaml'), 'utf8');
+    assert(installedLock.includes(`https://codeload.github.com/Takazudo/zudo-composer/tar.gz/${expected}`), 'Installed lock lacks expected revision');
     const lock = await readFile(join(root, 'pnpm-lock.yaml'), 'utf8');
     assert(lock.includes(expected), 'Lockfile does not contain expected immutable revision');
+    return { installedRoots, installedLockSha256: sha256(installedLock), qualification: 'Resolved installed package roots and installed lock; frozen install remains required. This is not a cryptographic source-byte attestation.' };
 }
 export async function assertFreePort(port) {
     assert(Number.isInteger(port) && port > 1023 && port <= 65535, 'Choose a loopback port between 1024 and 65535');
@@ -115,4 +126,13 @@ export async function hashTree(root) {
     }
     await walk(root);
     return result;
+}
+
+export function scopeIdentity(snapshot) {
+    return { workspaceId: snapshot.workspaceId, schemaVersion: snapshot.schemaVersion,
+        projectSchemaVersion: snapshot.project.schemaVersion, componentPack: snapshot.componentPack,
+        renderer: snapshot.renderer };
+}
+export function assertRunScope(manifest, current) {
+    assert.deepEqual(current, manifest.scope, 'Restore scope differs from original repository/stage/package/workspace identity');
 }

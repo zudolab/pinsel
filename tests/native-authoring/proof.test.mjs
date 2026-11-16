@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { artifactPath, assertRestored, baselineRoutes, canonicalProject, savedNode, verifyBuild, sha256 } from './support.mjs';
+import { artifactPath, assertRestored, baselineRoutes, canonicalProject, savedNode, verifyBuild, sha256, assertRunScope } from './support.mjs';
 const fixture = () => ({ digest: 'a'.repeat(64), assets: { files: [] }, publicFiles: [], project: { providers: {
             compositions: [{ id: 'files', records: [{ id: 'lessons', updatedAt: 'old', document: { root: [{ id: 'frame', slots: { main: [{ id: 'owned', props: { text: 'saved A' }, slots: {} }] } }] } }] }],
             content: [{ id: 'content-filesystem', models: [], entries: [{ id: 'consultation', modelId: 'course', updatedAt: 'old', values: { price: 'price A', updatedAt: 'authored date' } }] }], mappings: [], sitemaps: []
@@ -53,5 +53,14 @@ test('exact A proof allows authored extra routes, checks actual saved text, and 
     }
     finally {
         await rm(root, { recursive: true, force: true });
+    }
+});
+
+test('restore scope refuses another repository, stage, pin, workspace or renderer', () => {
+    const scope = { canonicalRepoRoot: '/repo', stage: 'notes-v1', composer: 'a'.repeat(40), workspaceId: 'pinsel', schemaVersion: 1, renderer: { digest: 'original' } };
+    assertRunScope({ scope }, structuredClone(scope));
+    for (const key of Object.keys(scope)) {
+        const altered = structuredClone(scope); altered[key] = 'different';
+        assert.throws(() => assertRunScope({ scope }, altered));
     }
 });

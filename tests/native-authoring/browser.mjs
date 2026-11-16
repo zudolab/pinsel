@@ -2,7 +2,7 @@ import { chromium } from '@playwright/test';
 import { join, isAbsolute } from 'node:path';
 import { repoRoot, assertInstalledPin, assertFreePort } from './support.mjs';
 import { spawn } from 'node:child_process';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, realpath } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { get } from 'node:http';
 const probe = url => new Promise((resolve, reject) => { const request = get(url, { headers: { Accept: 'text/html' }, timeout: 3000 }, response => { let body = ''; response.on('data', chunk => body += chunk); response.on('end', () => resolve({ status: response.statusCode, body: body.slice(0, 120) })); }); request.on('error', reject); request.on('timeout', () => request.destroy(new Error('HTTP readiness timeout'))); });
@@ -14,13 +14,17 @@ assert.match(expected ?? '', /^[a-f0-9]{40}$/, 'Set exact expected immutable SHA
 await assertInstalledPin(repoRoot, expected);
 const artifacts = process.env.NATIVE_ACCEPTANCE_ARTIFACTS;
 assert(artifacts && isAbsolute(artifacts));
+const manifest = JSON.parse(await readFile(join(artifacts, 'run-manifest.json'), 'utf8'));
+assert.equal(manifest.scope.canonicalRepoRoot, await realpath(repoRoot));
+assert.equal(manifest.scope.stage, process.env.PINSEL_AUTHORING_STAGE);
+assert.equal(manifest.scope.composer, expected);
 const run = join(artifacts, mode + '-' + Date.now());
 await mkdir(run);
 const port = Number(process.env.NATIVE_ACCEPTANCE_PORT);
 await assertFreePort(port);
 const base = 'http://127.0.0.1:' + port;
 const notes = [];
-let serverLog = '', context, page, preview;
+let serverLog = '', context, page, preview, nativeHeaders;
 let cleanupError;
 const record = (key, value) => { notes.push({ key, value, time: new Date().toISOString() }); console.log(key, JSON.stringify(value)); };
 const server = spawn('pnpm', ['dev', '--port', String(port), '--strict-port'], { cwd: repoRoot, env: process.env, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
@@ -32,6 +36,7 @@ let profileCounter = 0;
 async function launch() {
     context = await chromium.launchPersistentContext(run + '/browser-profile-' + (mode === 'negative' ? profileCounter++ : 0), { executablePath, headless: true, viewport: { width: 1600, height: 1050 } });
     page = context.pages()[0] ?? await context.newPage();
+    page.on('request', request => { if (request.url().endsWith('/__zudo-native-edit')) nativeHeaders = request.headers(); });
     page.on('pageerror', e => record('pageerror', e.message));
     page.on('response', async (response) => {
         try {
@@ -198,8 +203,16 @@ try {
                         journal.node = { providerId: input.target.providerId, recordId: input.target.recordId, nodeId: input.change.nodeId };
                         await writeFile(journalPath, JSON.stringify(journal, null, 2));
                     }
+                    if (input.change.kind === 'remove') {
+                        journal.removal = { request: { ...submitted, input } };
+                        await writeFile(journalPath, JSON.stringify(journal, null, 2));
+                    }
                     const response = await route.fetch({ postData: JSON.stringify({ ...submitted, input }), timeout: 180000 });
                     const body = await response.json();
+                    if (input.change.kind === 'remove' && body.ok) {
+                        journal.removal.receipt = body;
+                        await writeFile(journalPath, JSON.stringify(journal, null, 2));
+                    }
                     record(override ? 'supported-api-inverse' : 'actual-edit', { input, result: body });
                     await route.fulfill({ response });
                     resolveResult({ body });
@@ -324,17 +337,28 @@ try {
             await open('/lessons/');
             if (journal.node) {
                 const node = preview.targets.find(t => t.nodeId === journal.node.nodeId && t.recordId === 'lessons');
-                assert(node, 'Saved UUID missing after restart');
+                if (!node) {
+                    assert(journal.removal?.request?.input?.change?.kind === 'remove', 'Missing node without recorded removal request');
+                    for (const key of ['providerId', 'recordId', 'nodeId']) assert.equal(journal.removal.request.input.target[key], journal.node[key]);
+                    if (!journal.removal.receipt?.ok) {
+                        const recovered = await page.request.post(new URL('/__zudo-native-edit', page.url()).href, { data: journal.removal.request, headers: nativeHeaders });
+                        const receipt = await recovered.json();
+                        assert(receipt.ok, 'Uncertain removal must recover its exact receipt before continuing');
+                        journal.removal.receipt = receipt;
+                        await writeFile(journalPath, JSON.stringify(journal, null, 2));
+                    }
+                } else {
                 assert([journal.text, journal.laterText, journal.node.props?.text, ''].includes(node.props.text), 'Inserted node has unexpected intervening text');
                 await selectTarget(node);
                 await shot('t4-restarted-stable-node');
                 await edit(() => page.getByRole('button', { name: 'Move down', exact: true }).click(), { kind: 'remove' });
                 assert(!preview.targets.some(t => t.nodeId === journal.node.nodeId));
+                }
             }
             await contentEntry();
             for (const [label, key, changed] of [['価格（表示）', 'price', 'changedPrice'], ['お問い合わせ 選択肢名', 'label', 'changedLabel'], ['表示順', 'order', 'changedOrder']]) {
                 assert([journal[key], journal[changed]].includes(await page.getByLabel(label).inputValue()), 'Intervening Content change');
-                await saveField(label, journal[key]);
+                if (await page.getByLabel(label).inputValue() !== journal[key]) await saveField(label, journal[key]);
             }
             record('t4-originals-restored', journal);
             await shot('t4-restored-content');
@@ -428,7 +452,7 @@ try {
         }
     }
     if (mode === 'negative') {
-        const names = ['shared-field-shadow', 'invalid-local-slot'];
+        const names = ['shared-field-shadow', 'invalid-local-slot', 'forged-owner', 'shared-reorder', 'child-without-placement', 'forged-slot', 'forged-placement'];
         for (const name of names) {
             await context.close();
             context = null;

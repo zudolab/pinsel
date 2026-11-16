@@ -139,3 +139,45 @@ execution environment. Syntax/unit checks alone do not count as a browser pass.
 T5 owner-aware AI, T6 new-page/Note workflows and a reviewer following the complete
 recipe independently still need their integrated scenarios. Scripted model tests
 remain distinct from authenticated-provider acceptance and actual owner cutover.
+
+Restore safety: each new run writes an exclusive `run-manifest.json` before browser
+mutation. It binds canonical repository path, explicit stage, full package pin,
+workspace/schema, renderer and component-pack identities from public capture.
+Restore captures current identity and refuses a mismatch before writes. Removal
+requests and successful receipts are journaled before proceeding; a missing node
+requires its recorded exact removal proof or successful receipt recovery. Content
+inverses skip already-restored values and refuse unrelated values. Old artifact
+runs without a manifest require manual review; this runner does not infer scope.
+Resolved installed package roots, manifest hashes and installed-lock digest are
+recorded. These complement required frozen installation; they are not a claim that
+lockfile text cryptographically attests every installed byte. The negative mode
+now attempts all seven defined endpoint refusals, with public and receipt-inclusive
+before/after audits; this expanded run is not yet executed.
+
+### Assistant integration preparation (not yet executed)
+
+`assistant-ui.mjs` provides actual DOM helpers for selection handoff, fake-provider
+proposal, candidate rendering, Apply observation, deliberately lost response,
+identical retained-request recovery, and Undo. It does not launch a server, select
+credentials, or fabricate candidate acknowledgements. The final orchestration
+must run only after an immutable T5 package is installed and sources are frozen,
+with `PINSEL_ASSISTANT_PROVIDER=fake` explicitly set. No real inference is implied.
+
+For each selected local text field, shared Course price, FAQ answer and Note body:
+select its actual rendered owner, choose `Selected property`, use Ask Assistant,
+create a conversation and send `replace "OLD" with "NEW"`. For insertion, select
+the parent arrangement and send `insert "COMPONENT" into "SLOT" with {"text":"NEW"}`
+using the generated grammar's actual allowed component/slot. Assert Apply is
+initially disabled; capture unchanged canonical state before Apply. Render the
+exact candidate route, verify changed text in its iframe, then Apply. Public
+post-Apply capture must show only the named owning domain/field changed; Content
+cases must leave Composition, Mapping and Sitemap untouched. Verify shared price
+on both Home and Lessons, and FAQ/Note on their actual public routes.
+
+The orchestrator must also exercise stale proposal refusal after a human save,
+response loss after a real successful Apply followed by fresh-browser retained
+request recovery, and Undo refusal after an intervening save to the same owner.
+Use supported inverses and public canonical comparisons for restoration. Capture
+before/after each refusal to prove no write. These scenarios are **NOT_RUN**;
+the helpers alone do not satisfy T5 acceptance, and `run.mjs` does not yet expose
+an Assistant scenario. Current UI/service integration is still being finalized.

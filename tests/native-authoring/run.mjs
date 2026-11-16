@@ -1,9 +1,9 @@
 import assert from 'node:assert/strict';
-import { mkdir, mkdtemp, writeFile, access } from 'node:fs/promises';
+import { mkdir, mkdtemp, writeFile, access, realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
-import { repoRoot, readJson, assertInstalledPin, assertRestored, verifyBuild, hashTree } from './support.mjs';
+import { repoRoot, readJson, assertInstalledPin, assertRestored, verifyBuild, hashTree, scopeIdentity, assertRunScope } from './support.mjs';
 const options = {};
 for (let i = 2; i < process.argv.length; i += 2) {
     const flag = process.argv[i];
@@ -12,7 +12,7 @@ for (let i = 2; i < process.argv.length; i += 2) {
     options[flag] = process.argv[i + 1];
 }
 assert.match(options['--stage'] ?? '', /^[a-z0-9][a-z0-9-]+$/, 'Explicit --stage required; default authority is never a test target');
-await assertInstalledPin(repoRoot, options['--composer']);
+const installation = await assertInstalledPin(repoRoot, options['--composer']);
 assert.equal(Number(process.versions.node.split('.')[0]), 24, 'Use repository Node24 contract');
 const scenario = options['--scenario'] ?? 'full';
 assert(['full', 'inspect', 'negative', 'recovery'].includes(scenario));
@@ -47,6 +47,17 @@ let before;
 let fileHashes;
 try {
     before = options['--restore'] ? await readJson(join(run, 'before.json')) : (await capture('before.json'), await readJson(join(run, 'before.json')));
+    const scopeSnapshot = options['--restore'] ? null : before;
+    let currentSnapshot = scopeSnapshot;
+    if (!currentSnapshot) {
+        // A fixed preflight filename is separate from immutable before evidence.
+        const currentName = `restore-current-${Date.now()}.json`;
+        await capture(currentName);
+        currentSnapshot = await readJson(join(run, currentName));
+    }
+    const scope = { canonicalRepoRoot: await realpath(repoRoot), stage: options['--stage'], composer: options['--composer'], ...scopeIdentity(currentSnapshot) };
+    if (options['--restore']) assertRunScope(await readJson(join(run, 'run-manifest.json')), scope);
+    else await writeFile(join(run, 'run-manifest.json'), JSON.stringify({ scope, installation, beforeDigest: before.digest }, null, 2), { flag: 'wx' });
     if (options['--audit-data-root'])
         fileHashes = await hashTree(resolve(options['--audit-data-root']));
     if (options['--restore']) {
