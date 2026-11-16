@@ -1,3 +1,15 @@
+## Full Composer adoption phase
+
+Read [the adoption and authority contract](docs/composer-adoption.md) and
+[the compatibility ledger](docs/composer-compatibility.md) before implementation.
+[Adoption epic #51](https://github.com/zudolab/pinsel/issues/51) supersedes the
+old content-only authoring scope. Build semantic nested authoring using the full
+installed Composer, Pinsel's real renderer and one explicit native workspace.
+Shared values remain Content-owned; parents own arrangement and constrained slots.
+Do not reseed authored state or treat a source generator as its authority. Preserve
+historical migration evidence, existing recovery guarantees and the no-deployment
+boundary. Owner-data cutover and new live-provider acceptance are separate holds.
+
 ## Current authorized Hosted Content migration
 
 The provisional old API/editor/publication design has been replaced for persistent local dogfooding. See docs/dogfooding.md for the authoritative runtime contract and tests. Old design-fixed test details below do not require restoring removed public APIs. Approved-seed/assets/user drafts stay preserved; no production deployment or delivery is enabled.
