@@ -308,8 +308,9 @@ The independent installed scenario passed on Pinsel
 `c0b452da075b66757c60bd0d721a47062d4354d0`. Workspace `pinsel`, snapshot schema1,
 pack0.3.0, renderer `pinsel-zfb@native-v2`; explicit stage `course-identity-v1`.
 
-The guarded483-second run verified local Paragraph insertion, exact typed value
-and focus, zero autosave writes, explicit Save, rendered text and same-UUID reload.
+The guarded483-second run verified local Paragraph insertion, exact typed value,
+zero autosave writes, explicit Save, rendered text and same-UUID reload. Focus
+retention was verified separately by the component regression tests.
 Shared price appeared on Home and Lessons; Contact label and order changed while
 numeric1/2/3 and all three canonical query IDs retained their meanings. Stopping
 the editor, capturing through the public API, building that exact capture and
