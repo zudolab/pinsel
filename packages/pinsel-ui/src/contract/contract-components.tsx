@@ -296,7 +296,7 @@ export function GraduateContent({ paragraphs }: { paragraphs: string }): Child {
 
 export function NoteCardBlock(props: { href: string; slug: string; title: string; description: string } & Injected): Child {
   return (
-    <a class="note-card" href={props.slug ? `/notes/${props.slug}/` : props.href}>
+    <a class="note-card" href={props.slug ? `/notes/${props.slug}/` : props.href.startsWith("/") && !props.href.includes("?") && !props.href.includes("#") && !props.href.endsWith("/") && !props.href.endsWith(".html") ? `${props.href}/` : props.href}>
       <span class="note-card__index" aria-hidden="true">
         {twoDigits(index(props.position))}
       </span>
@@ -503,4 +503,18 @@ export function NotFoundBlock(props: { title: string; body: string; linkLabel: s
       <ButtonLink href="/" label={props.linkLabel} />
     </section>
   );
+}
+
+/** Parent owns arrangement and accessible identity; the label stays Content-owned. */
+export function NoteToc(props: { wide: boolean; label?: readonly unknown[]; items?: readonly unknown[]; presentation?: { nodeId: string } }): Child {
+  if (!props.presentation?.nodeId || props.label?.length !== 1) throw new Error("Note TOC requires one shared label and a renderer identity");
+  const labelId = `toc-label-${encodeURIComponent(props.presentation.nodeId)}`;
+  return <nav class={props.wide ? "page-toc page-toc--wide container" : "page-toc"} aria-labelledby={labelId}>
+    <p class="eyebrow" id={labelId}><Icon name="contents" />{props.label as Child}</p>
+    <ol>{(props.items ?? []) as Child}</ol>
+  </nav>;
+}
+export function TocLabel(props: { text: string }): Child {
+  if (!props.text.trim()) throw new Error("Shared TOC label is empty");
+  return <span>{props.text}</span>;
 }

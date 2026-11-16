@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { createFilesystemAssetStore, initializeAuthoringWorkspace } from "zudo-composer/authoring";
 import { loadHostContext } from "zudo-composer/vite";
 import { readContentEntries } from "./entries";
+import { normalizeNoteRoutes } from "./migrate-note-routes";
 import { buildPinselSite } from "./structure";
 import { prepareNativePublic } from "./prepare-native-public";
 
@@ -16,7 +17,7 @@ try {
 } catch (error) {
   if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error;
 }
-const project = buildPinselSite(await readContentEntries(), pack).project;
+const project = normalizeNoteRoutes(buildPinselSite(await readContentEntries(), pack).project);
 console.log(`Staging ${project.providers.compositions.flatMap(provider => provider.records).length} compositions and ${project.providers.content.flatMap(provider => provider.entries).length} Content records; legacy D1 is untouched.`);
 await prepareNativePublic(dirname(composerConfig.paths.publicAssets));
 const ready = await initializeAuthoringWorkspace({ composerConfig, pack, project, workspaceId: "pinsel" });

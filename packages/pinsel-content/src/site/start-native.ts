@@ -37,7 +37,7 @@ try {
 } catch (cause) {
   throw new Error(
     "Cannot open the existing native workspace. Preserve saved data and resolve the cause below. " +
-    "An older pack workspace requires explicit staged migration; select a verified stage with PINSEL_AUTHORING_STAGE=course-identity-v1. " +
+    "An older pack workspace requires explicit staged migration; follow docs/composer-note-migration.md and select a verified compatible stage with PINSEL_AUTHORING_STAGE=notes-v1. " +
     "For a new known-data rehearsal only, run pnpm --filter @pinsel/content authoring:init explicitly. " +
     "Never initialize over an existing workspace or substitute committed inputs for owner drafts.",
     { cause },

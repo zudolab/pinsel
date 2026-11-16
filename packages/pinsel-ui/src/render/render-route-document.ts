@@ -1,6 +1,7 @@
 import type { Child } from "@takazudo/zfb/zudo-react";
 import type { ComponentManifest } from "@zudo-composer/component-contract";
 import type { HostedProjectedRoute as SiteProjectPlanRoute } from "zudo-composer/hosted-content";
+import type { StaticSiteCompilation } from "zudo-composer/site-build";
 import type { RenderRegistry, RouteContext, SlotPosition } from "./types";
 
 // The one bridge from a compiled Composer route to Pinsel HTML. It walks
@@ -10,7 +11,7 @@ import type { RenderRegistry, RouteContext, SlotPosition } from "./types";
 // Every node is checked against its manifest before it renders: unknown
 // components, props, slots and children a slot does not accept are refused.
 
-export type RouteDocument = SiteProjectPlanRoute;
+export type RouteDocument = SiteProjectPlanRoute & Partial<Pick<StaticSiteCompilation["build"]["routes"][number], "selectedEntry" | "ancestors" | "sitemapNode">>;
 export type RouteCompositionDocument = RouteDocument["composition"]["document"];
 export type RouteCompositionNode = RouteCompositionDocument["root"][number];
 
@@ -37,7 +38,7 @@ function definition(registry: RenderRegistry, node: RouteCompositionNode): Compo
   return found;
 }
 
-const INJECTED_PROPS = new Set(["route", "position"]);
+const INJECTED_PROPS = new Set(["route", "position", "presentation"]);
 
 function checkNode(manifest: ComponentManifest, node: RouteCompositionNode): void {
   const declared = new Set([...Object.keys(manifest.defaults), ...manifest.fields.map((field) => field.prop)]);
@@ -67,7 +68,7 @@ function renderNode(registry: RenderRegistry, node: RouteCompositionNode, route:
   const component = registry.components[node.componentId];
   if (!component) throw new RouteRenderError(`No renderer registered for "${node.componentId}".`);
   checkNode(manifest, node);
-  const props: Record<string, unknown> = { ...manifest.defaults, ...node.props, route, position };
+  const props: Record<string, unknown> = { ...manifest.defaults, ...node.props, route, position, presentation: { nodeId: node.id } };
   for (const slot of manifest.slots) {
     const projected = outlet !== undefined && outlet.parentId === node.id && outlet.slotId === slot.id;
     const children = projected ? outlet.children : (node.slots[slot.id] ?? []);
