@@ -20,7 +20,8 @@
     "authoring:dev": "tsx --tsconfig tsconfig.scripts.json src/site/start-native.ts",
     "authoring:capture": "tsx --tsconfig tsconfig.scripts.json src/site/capture-native.ts",
     "authoring:build": "tsx --tsconfig tsconfig.scripts.json src/site/build-native-snapshot.ts",
-    "authoring:migrate-course": "tsx --tsconfig tsconfig.scripts.json src/site/stage-course-identity.ts"
+    "authoring:migrate-course": "tsx --tsconfig tsconfig.scripts.json src/site/stage-course-identity.ts",
+    "authoring:migrate-notes": "tsx --tsconfig tsconfig.scripts.json src/site/stage-note-routes.ts"
   },
   "dependencies": {
     "@pinsel/ui": "workspace:*",
