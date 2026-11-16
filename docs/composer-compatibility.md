@@ -243,3 +243,32 @@ Contact option, and Home links using canonical IDs. Full mutation/restart/build
 browser acceptance remains pending.
 
 [Migration checkpoint](https://github.com/zudolab/pinsel/issues/54#issuecomment-6929759951).
+
+
+### Explicit draft Save correction
+
+Installed533 acceptance found that a local field draft incorrectly invalidated its
+own saved preview, disabling Save. Composer31cbdffd corrects the subscription to
+ignore only local session-registry changes; canonical provider and native source
+changes still invalidate. The real integration regression failed before the fix
+and passed afterward (15 focused tests); independent review and11 focused tests
+also passed. The unrelated Mapping browser test now verifies collection identities
+and persisted Single-mode selection correctly; its focused real browser passed27s.
+
+New immutable package `1d7bb65c7b53989816bf144c7a25f9d7d6046662` replaces533 in all
+four manifests and the lock. Its754-file payload digest is
+`0ee608f4a7fae6484e2d7a7933a24add3ad5780a5aa9d942c7998daf212ccd60`.
+Public Node9/hosted16 entry checks and four demo CMS regenerations passed42s
+with no generated diff. Exact install and frozen reinstall passed; installed
+mutation/restart/build acceptance is pending. Component contract remains
+`c0b452da075b66757c60bd0d721a47062d4354d0`.
+
+All failed-attempt test values and the one inserted local Paragraph were removed
+through supported UI/API inverses. The restored public capture is
+`361adda71b996f1609a2c8be9e3a69765066c26ffcb1cdc350ae13cc147c0769`.
+All Composition documents, Content values/lifecycle, Mapping, Sitemap and public
+bytes match the initial stage; original source814files/public142files remain
+unchanged. Legitimate history, revisions and receipts remain. This is not a raw
+snapshot rollback or an owner-data migration.
+
+[Save blocker, correction and cleanup evidence](https://github.com/zudolab/pinsel/issues/54#issuecomment-6930906534).
