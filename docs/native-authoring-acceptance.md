@@ -62,7 +62,7 @@ The full scenario:
 
 1. Loads the Content catalog and checks semantic Consultation selection, structural
    wrappers and shared read-only fields. Verifies old numeric and new canonical
-   course query identities and actual Home pricing hrefs.
+   course query identities and actual Home pricing hrefs, then follows real Home → Lessons and Home → Contact links and reloads query/hash state.
 2. Records original course values, inserts a local Paragraph into the advertised
    Lessons `main` slot, records its generated UUID, and types through the real
    schema control. Captures inputValue/screenshot and verifies zero autosave

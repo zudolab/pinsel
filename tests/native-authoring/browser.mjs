@@ -146,6 +146,26 @@ try {
         for (const id of ['consultation', 'two-month', 'four-month'])
             assert(links.includes('/contact/?course=' + id), 'New canonical ID link missing ' + id);
         record('canonical-course-links', links);
+        await browse();
+        await frame().locator('a[href="/lessons/"]:visible').first().click();
+        await page.waitForFunction(() => new URLSearchParams(location.search).get('visitor') === '/lessons/', null, { timeout: 180000 });
+        await ready();
+        record('visitor-home-to-lessons', page.url());
+        await open('/');
+        await browse();
+        await frame().locator('a[href="/contact/?course=consultation"]:visible').first().click();
+        await page.waitForFunction(() => new URLSearchParams(location.search).get('visitor') === '/contact/?course=consultation', null, { timeout: 180000 });
+        await ready();
+        assert.equal(await frame().locator('select#course option:checked').getAttribute('data-course-id'), 'consultation');
+        await page.reload();
+        await ready();
+        assert.equal(await frame().locator('select#course option:checked').getAttribute('data-course-id'), 'consultation');
+        await shot('visitor-contact-query-reloaded');
+        await open('/lessons/#consultation');
+        await page.reload();
+        await ready();
+        assert.equal(new URL(page.frames().find(f => f !== page.mainFrame()).url()).hash, '#consultation');
+        record('visitor-hash-reloaded', page.url());
     }
     if (['stage', 'later', 'restore'].includes(mode)) {
         const journalPath = process.env.NATIVE_ACCEPTANCE_JOURNAL;
