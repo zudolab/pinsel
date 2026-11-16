@@ -63,5 +63,8 @@ it("keeps slotted TOC accessible ownership and distinct stable identities", () =
  const html=renderToString(renderRouteDocument(route([toc("one"),toc("two")]),pinselRegistry,{decorateNode:(value,item)=>markSemanticRoots(value,item.id)}));
  expect(html).toContain('aria-labelledby="toc-label-one"');expect(html).toContain('id="toc-label-two"');
  expect(html).toContain('data-composer-target="one-label"');expect(html).not.toContain('aria-label="Shared contents"');
- expect(()=>renderRouteDocument(route([node("bad","pinsel.note-toc",{}, {label:[],items:[]})]),pinselRegistry)).toThrow("one shared label");
+ const empty = renderToString(renderRouteDocument(route([node("empty","pinsel.note-toc",{}, {label:[],items:[]})]),pinselRegistry));
+ expect(empty).toContain('aria-label="Contents"'); expect(empty).not.toContain("aria-labelledby");
+ const blank = renderToString(renderRouteDocument(route([node("blank","pinsel.toc-label",{text:""})]),pinselRegistry));
+ expect(blank).toBe("<span>Contents</span>");
 });

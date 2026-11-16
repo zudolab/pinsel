@@ -140,11 +140,9 @@ describe("renderRouteDocument contract", () => {
     expect(() => renderRouteDocument(routeWith([node("x", "pinsel.checklist", {}, { items: [node("y", "pinsel.faq-item", { question: "q" })] })]), pinselRegistry)).toThrow(/not accepted/);
   });
 
-  it("renders every pack component with its required semantic inputs", () => {
+  it("renders every pack component from its manifest defaults", () => {
     for (const component of pinselPack.manifest.components) {
-      const requiredProps = component.id === "pinsel.toc-label" ? { text: "Contents" } : {};
-      const requiredSlots = component.id === "pinsel.note-toc" ? { label: [node("label", "pinsel.toc-label", { text: "Contents" })], items: [] } : {};
-      const html = renderToString(renderRouteDocument(routeWith([node("n", component.id, requiredProps, requiredSlots)]), pinselRegistry));
+      const html = renderToString(renderRouteDocument(routeWith([node("n", component.id)]), pinselRegistry));
       expect(typeof html, component.id).toBe("string");
       expect(html, component.id).not.toContain("<script");
     }

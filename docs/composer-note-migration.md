@@ -78,8 +78,10 @@ The new semantic Note TOC owns arrangement and its accessible association. Its
 single label slot contains a site-copy-owned label span; its items belong to the
 selected Note body. The parent renders `aria-labelledby` to its own stable ID,
 derived from read-only rendered-node identity, and keeps the original classes,
-icon, span and ordered list. The label's own selection target is preserved. Missing
-label output fails rendering; single-slot validation rejects extra label children.
+icon, span and ordered list. The label's own selection target is preserved. An empty optional label slot renders the structural fallback “Contents”; it does
+not copy or mutate shared Content. Add a label child for custom text. An empty label
+text also uses this local structural fallback; a nonempty mapped site-copy label
+remains authoritative. Single-slot validation rejects extra label children.
 The original scalar-label Toc contract remains unchanged for historical content.
 
 Model descriptions mentioning five Notes, three Courses or eighteen FAQs describe

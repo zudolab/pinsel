@@ -507,14 +507,14 @@ export function NotFoundBlock(props: { title: string; body: string; linkLabel: s
 
 /** Parent owns arrangement and accessible identity; the label stays Content-owned. */
 export function NoteToc(props: { wide: boolean; label?: readonly unknown[]; items?: readonly unknown[]; presentation?: { nodeId: string } }): Child {
-  if (!props.presentation?.nodeId || props.label?.length !== 1) throw new Error("Note TOC requires one shared label and a renderer identity");
+  if (!props.presentation?.nodeId) throw new Error("Note TOC requires its renderer identity");
+  const hasLabel = (props.label?.length ?? 0) > 0;
   const labelId = `toc-label-${encodeURIComponent(props.presentation.nodeId)}`;
-  return <nav class={props.wide ? "page-toc page-toc--wide container" : "page-toc"} aria-labelledby={labelId}>
-    <p class="eyebrow" id={labelId}><Icon name="contents" />{props.label as Child}</p>
+  return <nav class={props.wide ? "page-toc page-toc--wide container" : "page-toc"} aria-labelledby={hasLabel ? labelId : undefined} aria-label={hasLabel ? undefined : "Contents"}>
+    <p class="eyebrow" id={hasLabel ? labelId : undefined}><Icon name="contents" />{hasLabel ? props.label as Child : <span>Contents</span>}</p>
     <ol>{(props.items ?? []) as Child}</ol>
   </nav>;
 }
 export function TocLabel(props: { text: string }): Child {
-  if (!props.text.trim()) throw new Error("Shared TOC label is empty");
-  return <span>{props.text}</span>;
+  return <span>{props.text || "Contents"}</span>;
 }

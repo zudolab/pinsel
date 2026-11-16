@@ -4,12 +4,13 @@ import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   captureAuthoringWorkspace, createFilesystemAssetStore, initializeAuthoringWorkspace,
-  isAuthoringWorkspaceSourceCurrent, resolveAuthoringPackIdentity, resolveAuthoringRendererIdentity,
+  resolveAuthoringPackIdentity, resolveAuthoringRendererIdentity,
   validateSiteProject, type AuthoringWorkspaceSnapshot,
 } from "zudo-composer/authoring";
 import { compileAuthoringWorkspaceSnapshot } from "zudo-composer/site-build";
 import { loadHostContext } from "zudo-composer/vite";
 import { verifyImportedCourseContent } from "./migrate-course-identity";
+import { checkNativeMigrationSource } from "./check-native-migration-source";
 import { migrateNoteRoutes } from "./migrate-note-routes";
 import { nativePublicFiles, prepareNativeScripts } from "./prepare-native-public";
 
@@ -30,8 +31,7 @@ const workspaceRoot = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const sourceRoot = explicitSourceRoot ? resolve(explicitSourceRoot) : workspaceRoot;
 process.env.PINSEL_AUTHORING_STAGE = "course-identity-v1";
 const original = await loadHostContext({ workspaceRoot: sourceRoot });
-const sourceCheck = { ...original, publicFiles: await nativePublicFiles(sourceRoot, dirname(original.composerConfig.paths.publicAssets)) };
-if (!await isAuthoringWorkspaceSourceCurrent(sourceCheck, source)) throw new Error("Source changed since capture; save/stop and capture again. No migration performed.");
+if (!await checkNativeMigrationSource(original, source)) throw new Error("Source changed since capture; save/stop and capture again. No migration performed.");
 process.env.PINSEL_AUTHORING_STAGE = "notes-v1";
 const target = await loadHostContext({ workspaceRoot });
 const publicRoot = dirname(target.composerConfig.paths.publicAssets);
@@ -73,7 +73,7 @@ const captureOptions = { ...target, packIdentity, renderer, publicFiles: await n
 const migrated = await captureAuthoringWorkspace(captureOptions);
 const importedContent = verifyImportedCourseContent(source.project, migrated.project);
 const compiled = await compileAuthoringWorkspaceSnapshot({ snapshot: migrated, pack: target.pack, packIdentity, renderer });
-const sourceStillCurrent = await isAuthoringWorkspaceSourceCurrent({ ...sourceCheck, publicFiles: await nativePublicFiles(sourceRoot, dirname(original.composerConfig.paths.publicAssets)) }, source);
+const sourceStillCurrent = await checkNativeMigrationSource(original, source);
 const hashesBefore = new Map(source.publicFiles.map(file => [file.fileName, file.checksum]));
 const hashesAfter = new Map(migrated.publicFiles.map(file => [file.fileName, file.checksum]));
 const publicChanges = [...new Set([...hashesBefore.keys(), ...hashesAfter.keys()])].filter(name => hashesBefore.get(name) !== hashesAfter.get(name)).map(fileName => ({ fileName, before: hashesBefore.get(fileName), after: hashesAfter.get(fileName) }));
