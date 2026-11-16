@@ -9,7 +9,7 @@ import {
 } from "zudo-composer/authoring";
 import { compileAuthoringWorkspaceSnapshot } from "zudo-composer/site-build";
 import { loadHostContext } from "zudo-composer/vite";
-import { migrateCourseIdentity } from "./migrate-course-identity";
+import { migrateCourseIdentity, verifyImportedCourseContent } from "./migrate-course-identity";
 import { nativePublicFiles, prepareNativeScripts } from "./prepare-native-public";
 
 const [input, expectedDigest, ...extra] = process.argv.slice(2).filter(arg => arg !== "--");
@@ -64,12 +64,13 @@ await initializeAuthoringWorkspace({ ...target, project: candidate.project, work
 await createFilesystemAssetStore({ assetsStoreRoot: target.composerConfig.paths.assets });
 const captureOptions = { ...target, packIdentity, renderer, publicFiles: await nativePublicFiles(workspaceRoot, publicRoot) };
 const migrated = await captureAuthoringWorkspace(captureOptions);
+const importedContent = verifyImportedCourseContent(source.project, migrated.project);
 const compiled = await compileAuthoringWorkspaceSnapshot({ snapshot: migrated, pack: target.pack, packIdentity, renderer });
 const sourceStillCurrent = await isAuthoringWorkspaceSourceCurrent(sourceCheck, source);
 const hashesBefore = new Map(source.publicFiles.map(file => [file.fileName, file.checksum]));
 const hashesAfter = new Map(migrated.publicFiles.map(file => [file.fileName, file.checksum]));
 const publicChanges = [...new Set([...hashesBefore.keys(), ...hashesAfter.keys()])].filter(name => hashesBefore.get(name) !== hashesAfter.get(name)).map(fileName => ({ fileName, before: hashesBefore.get(fileName), after: hashesAfter.get(fileName) }));
-const evidence = { ...candidate.evidence, sourceStillCurrent, targetCapture: migrated.digest, actualTargetPack: migrated.componentPack, actualTargetRenderer: migrated.renderer,
+const evidence = { ...candidate.evidence, importedContent, sourceStillCurrent, targetCapture: migrated.digest, actualTargetPack: migrated.componentPack, actualTargetRenderer: migrated.renderer,
   targetData: target.composerConfig.paths.data, targetPublic: publicRoot, publicChanges, routes: compiled.build.routes.map(route => route.pathname),
   activation: "NOT_SWITCHED. Start this known-data rehearsal explicitly with PINSEL_AUTHORING_STAGE=course-identity-v1 pnpm dev. Original store/history and legacy D1 remain unchanged.",
 };

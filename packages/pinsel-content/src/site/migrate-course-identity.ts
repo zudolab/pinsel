@@ -87,3 +87,22 @@ export function migrateCourseIdentity(source: AuthoringWorkspaceSnapshot, expect
     note: "Explicit pin order owns tuition membership/arrangement; Home and Contact still sort by Content order. All Content fields/values and unrelated references retained. Source history remains in the untouched original store.",
   } };
 }
+
+/** Verify the actual public post-import capture, not merely the proposed input.
+ * A new store starts entry generations at 1; all other Content bytes must agree.
+ */
+export function verifyImportedCourseContent(source: SiteProject, imported: SiteProject) {
+  const before = source.providers.content;
+  const after = imported.providers.content;
+  const metadataChanges = differences(before, after).map(change => {
+    const match = /^\/(\d+)\/entries\/(\d+)\/generation$/.exec(change.path);
+    if (!match || change.after !== 1 || !Number.isSafeInteger(change.before) || Number(change.before) < 1) {
+      throw new Error(`Imported Content differs outside the initializer generation reset: ${change.path}`);
+    }
+    const provider = before[Number(match[1])]!;
+    const entry = provider.entries[Number(match[2])]!;
+    return { ...change, providerId: provider.id, modelId: entry.modelId, recordId: entry.id, reason: "New native store initializes entry generation to 1" };
+  });
+  return { verified: true as const, providers: before.length, models: before.reduce((count, provider) => count + provider.models.length, 0),
+    entries: before.reduce((count, provider) => count + provider.entries.length, 0), metadataChanges };
+}

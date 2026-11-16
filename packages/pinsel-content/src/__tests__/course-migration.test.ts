@@ -4,7 +4,7 @@ import { canonicalStringifyJson, type AuthoringWorkspaceSnapshot } from "zudo-co
 import type { JsonValue } from "@zudo-composer/component-contract";
 import { PINSEL_MODELS } from "../models";
 import { readContentEntries } from "../site/entries";
-import { migrateCourseIdentity } from "../site/migrate-course-identity";
+import { migrateCourseIdentity, verifyImportedCourseContent } from "../site/migrate-course-identity";
 
 const stamp = "2026-09-12T00:00:00.000Z";
 const hash = (value: unknown) => createHash("sha256").update(canonicalStringifyJson(value as JsonValue)).digest("hex");
@@ -79,4 +79,23 @@ it("does not assign a foreign Composition with matching record/node IDs to the k
   original.project.providers.compositions.push({ id: "foreign", records: [structuredClone(original.project.providers.compositions[0]!.records[1]!)] } as unknown as (typeof original.project.providers.compositions)[number]);
   const current = signed(original);
   expect(() => migrateCourseIdentity(current, current.digest)).toThrow("custom course option");
+});
+
+it("verifies actual imported Content and records only the initializer generation reset", async () => {
+  const original = (await source()).project;
+  original.providers.content[0]!.entries[0]!.generation = 9;
+  const imported = structuredClone(original);
+  imported.providers.content[0]!.entries[0]!.generation = 1;
+  expect(verifyImportedCourseContent(original, imported)).toMatchObject({ verified: true, entries: 246, metadataChanges: [{ before: 9, after: 1, recordId: original.providers.content[0]!.entries[0]!.id }] });
+  for (const mutate of [
+    (project: typeof imported) => { project.providers.content[0]!.entries[0]!.values = {}; },
+    (project: typeof imported) => { project.providers.content[0]!.entries[0]!.lifecycle = "draft"; },
+    (project: typeof imported) => { project.providers.content[0]!.entries[0]!.updatedAt = "2099-01-01T00:00:00.000Z"; },
+    (project: typeof imported) => { project.providers.content[0]!.entries[0]!.id = "changed"; },
+    (project: typeof imported) => { project.providers.content[0]!.models.pop(); },
+    (project: typeof imported) => { project.providers.content[0]!.entries[0]!.generation = 2; },
+  ]) {
+    const changed = structuredClone(imported); mutate(changed);
+    expect(() => verifyImportedCourseContent(original, changed)).toThrow("Imported Content differs");
+  }
 });

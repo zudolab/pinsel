@@ -101,3 +101,11 @@ PINSEL_AUTHORING_STAGE=course-identity-v1 pnpm --filter @pinsel/content authorin
 Restart with the same explicit stage variable and verify persistence. Neither this
 recipe nor successful deterministic checks complete actual owner-data cutover or
 authenticated AI-provider acceptance; those remain separate held tasks.
+
+The post-import verifier compares all Content providers, model schemas, entry IDs,
+values, lifecycle and metadata in the actual public capture against the source.
+Only an existing positive entry `generation` resetting to `1` in the newly
+initialized store is allowed; evidence records every such reset with its qualified
+entry identity. Timestamps and all other metadata must remain unchanged. This
+generation is distinct from the source store's physical transaction generation
+and its public Content mutation token.
