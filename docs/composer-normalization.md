@@ -1,0 +1,41 @@
+# Normalization decisions for native authoring
+
+Audited against the independently installed Composer
+`533be688e51ff150bce5e9bc87d2b07e62ebaec3` and Pinsel pack0.3.0 on2026-11-16.
+The generated grammar exposes read-only entry identity and no published Global
+templates for this pack. Current validators establish the additional boundaries
+below. Source paths in the table are evidence references, not permission for
+consumer code to import private package implementation.
+
+## Concrete dispositions
+
+| Item | Current evidence | Disposition and consequence |
+| --- | --- | --- |
+| Manual post-DSL pin patches and impossible `order == -1` selection | Installed `src/site-project/authoring.ts:159,412` accepts typed pins. Pinsel `site/structure.ts:65–84` now passes explicit pins and exact limits to public `site.mapping`; no private mutation remains. | **Proven obsolete and already replaced in T4.** Retain selected identities/order, reject missing pins. Update stale migration-map/adoption text after freeze; do not count an obsolete comment as unfinished code. |
+| Course order used as identity | Installed grammar exposes entry-ID source. Pinsel Home/Contact now bind canonical entry identity; Lessons pins consultation and paid membership. | **Proven obsolete and replaced, subject to current migration/query and arbitrary-new-ID fixes/rehearsal.** Stable aliases1/2/3, original-order preservation/refusal and new Course renderer support are real acceptance, not optional prose. See separate query-edge review. |
+| Five singleton-shaped collections | `models/singletons.ts` retains site-copy, lessons-copy, about-copy, instructor-profile, contact-copy as collections. `structure.ts:76–77` maps each through collection limit1, then attaches to many local semantic compositions. Installed `site-project/model/validation.ts:393` and compiler `compiler.ts:342–346` require collection-mode attachments; `mapping/resolver/collection.ts:57` rejects non-collection models. | **Justified retained adaptation; changing kind alone is invalid.** Single Content models and single Mapping do exist, but no single-Mapping fragment attachment replaces these nested uses. Do not convert five models or copy shared values into Composition. Document intended exactly-one existing entry and unsupported duplication; native generic New Entry does not enforce that semantic restriction. A future single-source attachment capability would require explicit generic design and migration, not a cosmetic T4 change. |
+| Newline-delimited lists | `models/singletons.ts:21–22,80,82,88,120`; pack fields `hero.titleLines`, `consultation-intro.topics/faqTopics`, `graduate-content.paragraphs`, `paragraphs.text` are long-text. `contract/contract-components.tsx:30,107,140–145,246,286` splits lines/filter-blanks for some props, but Hero lead joins lines without separators. | **Retain with explicit semantics; not proven obsolete by typed fields alone.** Installed Mapping `resolver/targets.ts:15,31` rejects array/object targets; `model/types.ts:31–45` has scalar/object-field/reference/asset projections, no list identity/element projection or join transform. Content and component schemas independently support lists, but there is no coherent bound list path here. Preserve every raw string and renderer-specific blank/line semantics. Creating new child collections is possible but adds records/references and changes ownership; it is not a lossless drop-in modernization. Do not blindly split heroLead, ordinary long-text, markdown or intentional prose. |
+| Repeated page frames | `structure.ts:115–123` creates page-owned site-frame with local main and two shared Mapping attachments. Header/footer composition+Mapping records themselves are reused, with Content sources remaining shared. | **Justified retained page-owned arrangement, not duplicated shared content.** An installed Global template source cannot itself be linked (`composer/model/commands.ts:737`), and attachment Mapping compositions must be detached (`site-project/compiler/compiler.ts:345`). No current published Global template appears in generated Pinsel grammar. Avoid turning this into nested Global architecture merely to reduce record count. A detached pattern for new pages can be considered in T6 while preserving live shared references. |
+| Per-year Results fragments | `structure.ts:370–393` enumerates known result-year entries; each section pins its year and attaches result-entry Mapping with a literal qualified year-reference condition. TOC uses matching year IDs/labels. Declared year counts and actual detailed counts remain independent fields. | **Retain existing fragments because parent-relative Mapping query context is unsupported; T6 creation gap remains.** Installed collection condition `model/types.ts:15–19` has literal JsonValue, no parent-entry expression. Nested materialization recursively evaluates the declared Mapping; no parent-row binding is passed to its query. Adding a new year record alone will not add section/TOC structure in native authority. T6 must prove explicit supported placement or justify one focused parent-context capability; ordinary startup must never regenerate source to simulate this. |
+| Per-category FAQ fragments | `structure.ts:416–439` enumerates faq-group entries; each section pins a group and literal item-group reference; positional FAQ anchors and open-first presentation are deliberate. | **Same justified retained query boundary, with T6 authoring acceptance still needed.** Existing item edits and items in an existing group can flow through collection queries; new group creation/reordering is not automatically new section/TOC/anchor migration. Preserve legacy anchors and references until a reviewed replacement. Do not claim fully dynamic group creation. |
+| Fixed Note-detail fragments | `structure.ts` still constructs full detail routes from fixed NOTE_SLUGS. Existing Sitemap schema already supports collection entry-field routes, selectedEntry and titleFieldId. | **Proven consumer limitation; T6-dependent required work, not a generic schema blocker.** Replace with dynamic detail Composition/Mapping plus explicit metadata and existing-route migration as in t6-ready-scenarios.md. Keep this acceptance open; do not close the overall adoption epic from T4 completion. |
+| Excessive tiny fragments/wrappers | `fragment()` makes one owning Composition+Mapping per model-specific projection; same model may already bind multiple nodes, e.g. results-stats and lessons sections. Different shared owners often require separate attached mappings. T4b host presentation hides explicit transparent Group/section-after wrappers without mutating owners or placements. | **Mixed: visual prominence fixed in T4b; canonical fragmentation mostly justified, further consolidation scenario-driven.** No arbitrary node-count target. Merging across Content models would require inferred ownership or a new multi-source Mapping mechanism. Same-owner small fragments may be consolidated only where installed editing demonstrates a usability defect and full reference/selection equivalence is rehearsed. Do not hide page inventory errors by deleting internal compositions. |
+
+## Preservation and remaining authoring work
+
+All 181 baseline Content fields and 128 qualified Content references retain their
+owner and field identity. The [field inventory](composer-migration-inventory.md)
+and [reference map](composer-migration-reference-map.json) remain historical
+baseline evidence; the [staged migration recipe](composer-course-migration.md)
+and [compatibility ledger](composer-compatibility.md) record actual transformations
+and verification. Preserve all original seed, assets and history.
+
+Home excerpts, instructor biographies and course descriptions remain distinct from
+detailed records. Knowledge-card copy remains independent of Note copy. Result
+counts remain authored values rather than inferred totals.
+
+[T6](https://github.com/zudolab/pinsel/issues/55) still owns new Note/static-page
+creation, explicit Results-year/FAQ-group placement, singleton duplication behavior
+and removal controls. A supported schema does not establish that those installed
+user scenarios pass. These boundaries must remain visible until verified; source
+regeneration may never overwrite native authoring to simulate support.

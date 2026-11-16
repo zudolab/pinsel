@@ -64,21 +64,22 @@ See the [complete field inventory](composer-migration-inventory.md),
 and proposed transformations; the migration recipe records current implementation, and a fresh
 public capture is required before any migration.
 
-Lessons' `consultation` group attaches `lessons-consultation`, whose `intro`
-component owns a `course` slot attached to `lessons-consultation-course`.
-The latter renders a `price` component from the shared course selected by `order=1`.
-Home pricing and Contact option labels use those same course records. Local section
-arrangement must remain local; shared prices and option labels must update every use.
+Lessons' `consultation` group attaches the Consultation presentation, whose nested
+course region uses a stable qualified Course pin. Home pricing and Contact option
+labels reference those same Content records. Parents own arrangement; shared
+prices and labels remain Content-owned. Entry-ID bindings supply visitor identity,
+while `course.order` controls Home/Contact display order. Existing numeric query
+aliases keep their original meaning after reorder or relabeling.
 
-`course.order` currently also means the `?course=N` identity. Introduce stable
-references while preserving the meanings of existing query links. Audit five
-one-entry collection models (`site-copy`, `lessons-copy`, `about-copy`,
-`instructor-profile`, `contact-copy`), newline-delimited list fields, repeated frames,
-post-DSL mapping pin patches, per-category/year fragments and excess splitting
-against current schemas. Historical workaround comments are not evidence that the
-latest Composer still lacks a capability. Do not assume arbitrary structured Mapping
-targets or nested Global templates. T4 must map every old field and reference to a
-preserved or explicitly transformed destination; no field may silently disappear.
+The [normalization audit](composer-normalization.md) records current installed
+capabilities and dispositions. Public DSL pins replace manual query patches;
+semantic tree presentation reduces wrapper prominence without changing ownership.
+Singleton-shaped collections, newline lists, repeated page-owned frames and some
+per-group fragments remain for documented Mapping/schema reasons. They are not
+permission to advertise unsupported creation or regenerate authored state. T6
+retains the dynamic Note-detail, new-page and everyday group/structure scenarios.
+Every old field/reference is preserved or explicitly transformed by the reviewed
+migration; distinct Home excerpts remain independent authored Content.
 
 ## Authority and migration
 
