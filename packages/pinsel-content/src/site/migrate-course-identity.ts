@@ -46,14 +46,24 @@ export function migrateCourseIdentity(source: AuthoringWorkspaceSnapshot, expect
     ["lessons-price-cards", "not-equals", ["two-month", "four-month"]],
   ] as const) {
     const mapping = getMapping(id);
-    if (mapping.mode.kind !== "collection" || mapping.mode.query.pins.length !== 0
-      || mapping.mode.query.conditions.length !== 1 || mapping.mode.query.conditions[0]!.fieldId !== "course-order"
-      || mapping.mode.query.conditions[0]!.operator !== oldOperator || mapping.mode.query.conditions[0]!.value !== 1) throw new Error(`Membership query differs from reviewed source: ${id}`);
-    mapping.mode.query = { ...mapping.mode.query, limit: ids.length, sort: [], conditions: [], pins: ids.map(recordId => {
-      const course = courses.find(value => value.entry.id === recordId)!;
-      if (course.providerId !== mapping.contentModel.providerId) throw new Error("Course provider identity mismatch");
-      return { providerId: course.providerId, modelId: "course", recordId };
-    }) };
+    const unsupported = () => new Error(`Unsupported source membership/arrangement: ${id}. Original source remains authoritative; this customization needs a separately reviewed Mapping migration.`);
+    if (mapping.mode.kind !== "collection") throw unsupported();
+    const query = mapping.mode.query;
+    if (query.pins.length !== 0 || query.publication !== "published-only" || query.limit !== 1000
+      || query.sort.length !== 1 || query.sort[0]!.fieldId !== "course-order" || query.sort[0]!.direction !== "asc"
+      || query.conditions.length !== 1 || query.conditions[0]!.fieldId !== "course-order"
+      || query.conditions[0]!.operator !== oldOperator || query.conditions[0]!.value !== 1) throw unsupported();
+    if (courses.some(course => course.providerId !== mapping.contentModel.providerId || course.entry.lifecycle !== "published"
+      || typeof course.entry.values["course-order"] !== "number" || !Number.isFinite(course.entry.values["course-order"]))) throw unsupported();
+    const selected = courses.filter(course => oldOperator === "equals" ? course.entry.values["course-order"] === 1 : course.entry.values["course-order"] !== 1);
+    if (selected.length !== ids.length || selected.some(course => !(ids as readonly string[]).includes(course.entry.id))) throw unsupported();
+    // The only supported IDs are ASCII, so this ID comparison is exactly the
+    // resolver's Unicode code-point tie break. Preserve captured arrangement.
+    selected.sort((left, right) => Number(left.entry.values["course-order"]) - Number(right.entry.values["course-order"])
+      || (left.entry.id < right.entry.id ? -1 : left.entry.id > right.entry.id ? 1 : 0));
+    mapping.mode.query = { ...query, limit: selected.length, sort: [], conditions: [], pins: selected.map(course => ({
+      providerId: course.providerId, modelId: "course", recordId: course.entry.id,
+    })) };
   }
   type Node = SiteProject["providers"]["compositions"][number]["records"][number]["document"]["root"][number];
   const visit = (node: Node, providerId: string, recordId: string): void => {

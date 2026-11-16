@@ -2,6 +2,9 @@ import { createHash } from "node:crypto";
 import { expect, it } from "vitest";
 import { canonicalStringifyJson, type AuthoringWorkspaceSnapshot } from "zudo-composer/authoring";
 import type { JsonValue } from "@zudo-composer/component-contract";
+import { projectHostedSite } from "zudo-composer/hosted-content";
+import { buildPinselSite } from "../site/structure";
+import { contractPack } from "../site/contract-pack";
 import { PINSEL_MODELS } from "../models";
 import { readContentEntries } from "../site/entries";
 import { migrateCourseIdentity, verifyImportedCourseContent } from "../site/migrate-course-identity";
@@ -52,7 +55,7 @@ it("preserves every Content field/value/reference and migrates only reviewed ide
 it("retains changed prices and arrangement while selecting Consultation by fixed identity", async () => {
   const original = await source();
   const consultation = original.project.providers.content[0]!.entries.find(entry => entry.id === "consultation")!;
-  consultation.values["course-order"] = 3;
+  original.project.providers.content[0]!.entries.find(entry => entry.id === "two-month")!.values["course-order"] = 4;
   consultation.values["course-price"] = "¥12,345";
   const current = signed(original);
   const migrated = migrateCourseIdentity(current, current.digest);
@@ -98,4 +101,53 @@ it("verifies actual imported Content and records only the initializer generation
     const changed = structuredClone(imported); mutate(changed);
     expect(() => verifyImportedCourseContent(original, changed)).toThrow("Imported Content differs");
   }
+});
+
+it.each(["limit", "descending", "other-field", "publication", "consultation-membership", "paid-membership", "draft", "missing", "nonnumeric", "provider"])("refuses unsupported %s source without mutation", async kind => {
+  const original = await source();
+  const record = original.project.providers.mappings[0]!.records.find(record => record.id === "lessons-price-cards")!;
+  if (record.document.mode.kind !== "collection") throw new Error("fixture mode");
+  const query = record.document.mode.query;
+  const entries = original.project.providers.content[0]!.entries;
+  const consultation = entries.find(entry => entry.id === "consultation")!;
+  const paid = entries.find(entry => entry.id === "two-month")!;
+  if (kind === "limit") query.limit = 1;
+  if (kind === "descending") query.sort[0]!.direction = "desc";
+  if (kind === "other-field") query.sort[0]!.fieldId = "course-name";
+  if (kind === "publication") query.publication = "include-drafts";
+  if (kind === "consultation-membership") consultation.values["course-order"] = 4;
+  if (kind === "paid-membership") paid.values["course-order"] = 1;
+  if (kind === "draft") paid.lifecycle = "draft";
+  if (kind === "missing") entries.splice(entries.indexOf(paid), 1);
+  if (kind === "nonnumeric") paid.values["course-order"] = "2";
+  if (kind === "provider") record.document.contentModel.providerId = "other-provider";
+  const current = signed(original);
+  const before = structuredClone(current);
+  expect(() => migrateCourseIdentity(current, current.digest)).toThrow();
+  expect(current).toEqual(before);
+});
+
+it.each([false, true])("preserves captured paid arrangement including ID ties (tie=%s)", async tie => {
+  const original = await source();
+  const entries = original.project.providers.content[0]!.entries;
+  entries.find(entry => entry.id === "two-month")!.values["course-order"] = tie ? 2 : 3;
+  entries.find(entry => entry.id === "four-month")!.values["course-order"] = 2;
+  const current = signed(original);
+  const migrated = migrateCourseIdentity(current, current.digest);
+  expect(migrated.project.providers.content).toEqual(current.project.providers.content);
+  const migratedMapping = migrated.project.providers.mappings[0]!.records.find(record => record.id === "lessons-price-cards")!;
+  expect(migratedMapping.document.mode).toMatchObject({ query: { pins: [{ recordId: "four-month" }, { recordId: "two-month" }] } });
+  // Compile the migrated query in the complete installed consumer project.
+  const pack = contractPack();
+  const project = buildPinselSite(entries, pack).project;
+  const mapping = project.providers.mappings.flatMap(provider => provider.records).find(record => record.id === "lessons-price-cards")!;
+  mapping.document.mode = migratedMapping.document.mode;
+  const compiled = await projectHostedSite({ project, componentPack: pack.manifest }, []);
+  if (compiled.status !== "ready") throw new Error(JSON.stringify(compiled));
+  const lessons = compiled.routes.find(route => route.pathname === "/lessons")!;
+  type Node = (typeof lessons.composition.document.root)[number];
+  const names: unknown[] = [];
+  const visit = (node: Node) => { if (node.componentId === "pinsel.price-detail-card") names.push(node.props.name); Object.values(node.slots).flat().forEach(visit); };
+  lessons.composition.document.root.forEach(visit);
+  expect(names).toEqual(["four-month", "two-month"].map(id => entries.find(entry => entry.id === id)!.values["course-name"]));
 });
