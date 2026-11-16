@@ -200,6 +200,8 @@ test.describe("motion", () => {
 
   test("two tabs share the absolute-time phase", async ({ context }) => {
     await context.clock.install({ time: new Date("2026-10-13T00:01:30Z") });
+    // Freeze before navigation so both pages start from the same virtual second.
+    await context.clock.pauseAt(new Date("2026-10-13T00:01:31Z"));
     const [a, b] = [await context.newPage(), await context.newPage()];
     for (const page of [a, b]) {
       await page.emulateMedia({ reducedMotion: "no-preference" });
