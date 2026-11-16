@@ -81,3 +81,26 @@ no deployment or production authority switch follows from this ledger.
   Linux arm64 npm 7 is intentionally suspended (latest 6.0.1); the GitHub standalone
   artifact is separate. Publication alone does not prove Pinsel compatibility,
   so no framework upgrade is bundled into this Composer acceptance cycle.
+
+## Navigation and nested-tree candidate — 2026-11-16
+
+- Composer package/source: `10f331bc2212c407693909d1e6eb6d03e73ccb72`;
+  payload evidence commit `ea0e492b` records 749 shipped files, digest
+  `74588162cae99c97133978ff78e146eeb99502260885c33401b5d95ca9feb2e1`.
+  Contract stays `c0b452da075b66757c60bd0d721a47062d4354d0`.
+- The preceding installed `61feb263` browser rehearsal rendered the actual Home
+  and Lessons documents, selected the same owner-qualified Consultation target
+  in the tree and iframe, and saved a parent-owned placement change across restart.
+  A supported inverse edit restored the original ordering; two legitimate receipts
+  remain. Shared Content, Mapping, Sitemap and child compositions stayed unchanged.
+- That rehearsal found broken visitor navigation and cached catalog failures during
+  coordinated capture. This candidate adds exact-route document navigation,
+  query/hash persistence, expandable semantic hierarchy, and bounded safe read retries.
+  Independent source review and focused tests pass. Installed navigation, live shared
+  Content edits, fresh-browser response-loss recovery and exact recapture remain pending.
+- Composer root TypeScript and lint passed at this candidate. The unchanged full
+  Assistant browser suite still fails its Withdraw display assertion: the server
+  returns the updated draft, but the UI retains the older draft. A focused upstream
+  fix is in progress; this candidate is not an accepted completion or merge-ready state.
+- Staged known-data workspace and history remain intact. No owner-data cutover,
+  authenticated model inference, production deployment or framework upgrade occurred.
