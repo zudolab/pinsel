@@ -297,3 +297,43 @@ supported UI/API operations. Public restored digest:
 `10496496f648221c8f4ce9332f84b1f039e62aa15c2dc9563d4ffc31484230ac`.
 Original source, Mapping, Sitemap and public assets remained unchanged; legitimate
 history and receipts remain. No owner-data switch or deployment occurred.
+
+
+## T4 installed acceptance — final package87b399f0
+
+The independent installed scenario passed on Pinsel
+`4ebdb8da1609b3366ee192d93ebd25e905538cad`, Composer package
+`87b399f0d35e016ad4193238fd2d9f606d7dd59a` (source/attestation head
+`9a6423e37e5d98618fd34dc0761d5a0fd51f044a`), unchanged contract
+`c0b452da075b66757c60bd0d721a47062d4354d0`. Workspace `pinsel`, snapshot schema1,
+pack0.3.0, renderer `pinsel-zfb@native-v2`; explicit stage `course-identity-v1`.
+
+The guarded483-second run verified local Paragraph insertion, exact typed value
+and focus, zero autosave writes, explicit Save, rendered text and same-UUID reload.
+Shared price appeared on Home and Lessons; Contact label and order changed while
+numeric1/2/3 and all three canonical query IDs retained their meanings. Stopping
+the editor, capturing through the public API, building that exact capture and
+restarting preserved the saved state. All14 routes and143 public-file hashes
+matched. Changed snapshot:
+`02848464ab29af911808de57dd8e473934d276e82cc4aa4a4451d300dc33cbf3`.
+
+A separate guarded131-second installed test refused an undeclared insert slot
+(`component-invalid`) and a shared-value shadow (`unsupported-scope`). Before and
+after public snapshots/tokens and all838 canonical files were identical, including
+all8 existing receipt files; no receipt was added. Restored snapshot:
+`640425ae7b0b900132dd98efcfef2591090e2dc5b8cd2d0714747f0c11b6db40`.
+
+Supported API removal and Content UI inverses restored all test values/documents,
+retaining legitimate history and receipts. The original source814files/public142files
+remained byte-identical and the test server stopped. Removal was an API inverse;
+an everyday Remove button remains T6 work. Earlier wrapper/legacy01 inspection is
+still attributed to533, not silently relabeled. Both real inspector failures and
+harness failures remain recorded rather than counted as passes.
+
+Evidence: `t4-mutations-1794868111900510442`, `final-t4-stage-1794868121459`,
+`t4-negative-1794868625809700220`, and `final-negative-1794868636697` under the Cloud
+acceptance evidence directory. `saved-node-audit.json` reads the final saved text;
+the creation-time target in the original build proof is explicitly distinguished.
+Integration state is tracked in [Pinsel #60](https://github.com/zudolab/pinsel/pull/60)
+and [Composer #977](https://github.com/Takazudo/zudo-composer/pull/977).
+T5–T7, actual owner-data cutover and authenticated inference remain separate work.
