@@ -1,7 +1,9 @@
 /* Local-only contact form behavior. No request is ever sent and entered
    content is never persisted. */
 
-// `<select id="course">` option order on the contact page; `/contact/?course=N` from the pricing cards selects index N.
+import { courseIdFromSearch } from "./course-identity";
+
+// Historical labels remain fallbacks; Course record identity selects options.
 export const COURSE_OPTIONS = ["未定", "有料進路相談", "2ヶ月コース", "4ヶ月コース"] as const;
 export const SUBMIT_PENDING_MS = 450;
 // Fallbacks for markup without the `data-*` texts on form#contact-form; the
@@ -26,7 +28,7 @@ export function validationTextsFrom(dataset: DOMStringMap): ValidationTexts {
   };
 }
 
-/** Option index for `?course=N`, or null when absent / out of range (0 = 未定 is the default already). */
+/** Historical positional parser retained only for the legacy migration proof. Native selection uses courseIdFromSearch. */
 export function courseIndexFromSearch(search: string, optionCount: number): number | null {
   const index = Number(new URLSearchParams(search).get("course"));
   return Number.isInteger(index) && index > 0 && index < optionCount ? index : null;
@@ -74,8 +76,9 @@ export function initContactForm(): void {
 
   const course = form.elements.namedItem("course");
   if (course instanceof HTMLSelectElement) {
-    const index = courseIndexFromSearch(location.search, course.options.length);
-    if (index !== null) course.selectedIndex = index;
+    const id = courseIdFromSearch(location.search);
+    const matches = [...course.options].filter(option => option.dataset.courseId === id);
+    if (id !== null && matches.length === 1) matches[0]!.selected = true;
   }
 
   const required = [...form.querySelectorAll<Field>("[required]")];

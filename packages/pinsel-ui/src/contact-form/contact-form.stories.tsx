@@ -6,7 +6,7 @@ const meta: StoryMeta = {
   title: "ContactForm",
   category: "Forms",
   description: "The preview-only inquiry form (nothing is sent) in its idle, invalid, error and success states.",
-  usage: `import { ContactForm, CourseOption } from "@pinsel/ui";\n\n<ContactForm nameLabel="お名前" … courseOptions={["有料進路相談", "2ヶ月コース", "4ヶ月コース"].map((label) => CourseOption({ label }))} />`,
+  usage: `import { ContactForm, CourseOption } from "@pinsel/ui";\n\n<ContactForm nameLabel="お名前" … courseOptions={["有料進路相談", "2ヶ月コース", "4ヶ月コース"].map((label, index) => CourseOption({ label, courseId: ["consultation", "two-month", "four-month"][index]! }))} />`,
 };
 export default meta;
 
@@ -34,7 +34,7 @@ const COPY: Omit<ContactFormProps, "previewState" | "courseOptions"> = {
 
 const form = (previewState: ContactFormProps["previewState"]): Child => (
   <div class="container contact-layout">
-    <ContactForm {...COPY} previewState={previewState} courseOptions={["有料進路相談", "2ヶ月コース", "4ヶ月コース"].map((label) => CourseOption({ label }))} />
+    <ContactForm {...COPY} previewState={previewState} courseOptions={["有料進路相談", "2ヶ月コース", "4ヶ月コース"].map((label, index) => CourseOption({ label, courseId: ["consultation", "two-month", "four-month"][index]! }))} />
   </div>
 );
 

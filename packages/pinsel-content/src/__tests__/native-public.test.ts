@@ -4,14 +4,15 @@ import { join } from "node:path";
 import { expect, it } from "vitest";
 import { nativePublicFiles, prepareNativePublic } from "../site/prepare-native-public";
 
-it("prepares the production visitor sources and exact public assets for capture", async () => {
+it.each([".native-public", ".native-public-course-identity-v1"])("prepares captured visitor sources and assets under %s", async directory => {
   const root = await mkdtemp(join(tmpdir(), "pinsel-native-public-"));
   try {
-    const publicRoot = join(root, ".native-public");
+    const publicRoot = join(root, directory);
     await prepareNativePublic(publicRoot);
     const files = await nativePublicFiles(root, publicRoot);
     expect(files.some(file => file.fileName === "assets/fonts/fonts.css")).toBe(true);
     expect(files.some(file => file.fileName.includes(".test."))).toBe(false);
+    expect(files.every(file => file.sourcePath === `${directory}/${file.fileName}`)).toBe(true);
     const scriptRoot = join(publicRoot, "assets/pinsel-native");
     const scripts = await readdir(scriptRoot);
     for (const name of scripts) {

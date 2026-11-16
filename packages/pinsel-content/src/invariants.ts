@@ -141,8 +141,8 @@ export const ROUTE_FRAGMENTS: Readonly<Record<PinselRoute, readonly string[]>> =
 export const POSITIONAL_FRAGMENT_PREFIXES = { testimonial: "student-", faqGroup: "faq-", noteSection: "section-" } as const;
 
 /**
- * `/contact/?course=N` → `form.course.selectedIndex = N` (site.js). Index 0 is
- * the 未定 default; 1..3 are the `course` entries in `order`.
+ * Historical numeric query aliases address canonical Course IDs, never order.
+ * Index 0 is the 未定 default; 1..3 retain their original record identities.
  */
 export const COURSE_QUERY_OPTIONS = [
   { index: 0, label: "未定", courseId: null },

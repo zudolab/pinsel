@@ -31,7 +31,7 @@ describe("Pinsel host document adapter", () => {
     expect(decorated.replace(/ data-composer-target="[^"]*"/g, "")).toBe(ordinary);
     expect(decorated).toContain('data-composer-target="a"');
     expect(decorated).toContain('id="faq-2"');
-    const html = await renderDocument({ route: document, identity: { pathname: "/faq", rendererId: "pinsel-zfb", rendererVersion: "native-v1" }, targets: [{ renderedNodeId: "a" }] });
+    const html = await renderDocument({ route: document, identity: { pathname: "/faq", rendererId: "pinsel-zfb", rendererVersion: "native-v2" }, targets: [{ renderedNodeId: "a" }] });
     expect(html).toContain('<!doctype html>');
     expect(html).toContain('data-composer-target="a"');
     expect(html).not.toContain('data-composer-target="b"');
@@ -41,7 +41,7 @@ describe("Pinsel host document adapter", () => {
     const project = { providers: { content: [{ entries: [{ id: "page-faq", modelId: "page-copy", values: {
       "page-copy-route": "/faq/", "page-copy-meta-title": "Edited FAQ", "page-copy-meta-description": "Saved description",
     } }] }] } } as unknown as SiteProject;
-    const html = await renderDocument({ route: route([]), project, identity: { pathname: "/faq", rendererId: "pinsel-zfb", rendererVersion: "native-v1" }, targets: [] });
+    const html = await renderDocument({ route: route([]), project, identity: { pathname: "/faq", rendererId: "pinsel-zfb", rendererVersion: "native-v2" }, targets: [] });
     expect(html).toContain("<title>Edited FAQ</title>");
     expect(html).toContain('name="description" content="Saved description"');
   });

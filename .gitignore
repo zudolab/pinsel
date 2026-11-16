@@ -42,3 +42,9 @@ packages/pinsel-content/.native-builds/
 
 # Transient native authoring lease (owned and removed by Composer).
 /packages/pinsel-content/.zudo-authoring.lock
+
+# Explicit course-identity migration stage; retain as local recovery material.
+packages/pinsel-content/.native-authoring-course-identity-v1/
+packages/pinsel-content/.native-public-course-identity-v1/
+packages/pinsel-content/.native-course-identity-evidence.json
+packages/pinsel-content/.native-course-identity-snapshot.json

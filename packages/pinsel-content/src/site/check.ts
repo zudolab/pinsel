@@ -17,11 +17,33 @@ import { readContentEntries, REPO_ROOT, SITE_PROJECT_PATH } from "./entries";
 import { structurePack } from "./pack";
 import { NAVIGATION_OUT, PLAN_OUT, ROUTES_OUT, navigationModule, projectSite, routesModule, type ProjectedPlan } from "./project";
 import { validateContent } from "./validate";
+import { COURSE_QUERY_IDS } from "@pinsel/ui/src/scripts/course-identity.ts";
 
 export const GOLDEN_PATH = join(REPO_ROOT, "tests/golden/routes.snapshot.json");
 
 export function goldenText(plan: ProjectedPlan): string {
   return `${JSON.stringify(plan, null, 2)}\n`;
+}
+
+/** Explicit inverse of the two course presentation contracts for the immutable
+ * historical 14-route proof. No other field, node, reference or value is omitted.
+ * Current identity behavior is checked separately, including reordered courses. */
+export function historicalCoursePlan(plan: ProjectedPlan): ProjectedPlan {
+  const visit = (value: unknown): unknown => {
+    if (Array.isArray(value)) return value.map(visit);
+    if (!value || typeof value !== "object") return value;
+    const result = Object.fromEntries(Object.entries(value).map(([key, child]) => [key, visit(child)]));
+    if (result.componentId === "pinsel.pricing-card" || result.componentId === "pinsel.course-option") {
+      const props = result.props as Record<string, unknown>;
+      const alias = COURSE_QUERY_IDS.indexOf(props.courseId as (typeof COURSE_QUERY_IDS)[number]);
+      if (result.componentVersion !== 2 || alias < 0 || "courseIndex" in props) throw new Error("Unexpected course contract in historical proof");
+      const { courseId: _, ...retained } = props;
+      result.props = result.componentId === "pinsel.pricing-card" ? { ...retained, courseIndex: alias + 1 } : retained;
+      result.componentVersion = 1;
+    }
+    return result;
+  };
+  return visit(plan) as ProjectedPlan;
 }
 
 /** The plan without content values: every `props` object reduced to its sorted keys, `displayTitle` dropped. */
@@ -71,7 +93,8 @@ async function main(): Promise<void> {
   await mkdir(dirname(ROUTES_OUT), { recursive: true });
   await writeFile(ROUTES_OUT, routesModule(projection, source));
   await writeFile(NAVIGATION_OUT, navigationModule(projection, source));
-  const actual = goldenText(projection.plan);
+  const historical = historicalCoursePlan(projection.plan);
+  const actual = goldenText(historical);
   const published = hasPublishedSnapshot();
   if (update && published) {
     console.error("content:check: the golden records the migration baseline; it is not rewritten while content/snapshot.json exists");
@@ -90,7 +113,7 @@ async function main(): Promise<void> {
   }
   if (published) {
     const golden = planStructure(JSON.parse(expected));
-    const current = planStructure(projection.plan);
+    const current = planStructure(historical);
     if (canonicalStringifyJson(golden as JsonValue) !== canonicalStringifyJson(current as JsonValue)) {
       console.error(`content:check: the projected structure differs from the golden (content values excluded): ${firstDifference(golden, current)}`);
       process.exit(1);
@@ -98,7 +121,7 @@ async function main(): Promise<void> {
     console.log(`content:check ok: ${entries.length} entries, ${projection.plan.routes.length} routes, plan structure equals ${join("tests/golden", "routes.snapshot.json")} (content/snapshot.json present: values are checked by check-publication)`);
     return;
   }
-  if (expected !== actual) {
+  if (canonicalStringifyJson(JSON.parse(expected)) !== canonicalStringifyJson(JSON.parse(actual))) {
     console.error(`content:check: projected routes differ from the golden: ${firstDifference(JSON.parse(expected), JSON.parse(actual))}\n  (re-run with --update only if the change is intended)`);
     process.exit(1);
   }

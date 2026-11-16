@@ -24,10 +24,10 @@ describe("component pack", () => {
 describe("PricingCards", () => {
   it("renders the approved card markup with the contact link per course", () => {
     const html = renderToString(
-      <PricingCards note="※ 注記" moreLabel="クラスの詳細はこちら" moreHref="/lessons/" items={[<PricingCard name="2ヶ月コース" price="¥50,000" unit="全4回（月2回）" description="ポートフォリオ制作指導" featured courseIndex={2} {...LABELS} />]} />,
+      <PricingCards note="※ 注記" moreLabel="クラスの詳細はこちら" moreHref="/lessons/" items={[<PricingCard name="2ヶ月コース" price="¥50,000" unit="全4回（月2回）" description="ポートフォリオ制作指導" featured courseId="two-month" {...LABELS} />]} />,
     );
     expect(html).toContain('<article class="pricing-card"><div class="pricing-card__top"><h3>2ヶ月コース</h3><span class="pricing-card__popular">POPULAR</span></div><p class="price">¥50,000<span>税込</span></p>');
-    expect(html).toContain('<a class="text-link" href="/contact/?course=2">');
+    expect(html).toContain('<a class="text-link" href="/contact/?course=two-month">');
     expect(html).toContain('<p class="price-note">※ 注記</p>');
     expect(html).not.toContain("<script");
   });
@@ -76,7 +76,7 @@ describe("renderRouteDocument", () => {
     root: [
       {
         id: "pricing", componentId: "pinsel.section", componentVersion: 2, props: { id: "pricing", eyebrow: "COURSE & PRICING", title: "コースと料金" },
-        slots: { content: [{ id: "cards", componentId: "pinsel.pricing-cards", componentVersion: 1, props: { note: "n", moreLabel: "m", moreHref: "/lessons/" }, slots: { items: [{ id: "c1", componentId: "pinsel.pricing-card", componentVersion: 1, props: { name: "進路相談", price: "¥10,000", unit: "1回", description: "d", featured: false, courseIndex: 1 }, slots: {} }] } }] },
+        slots: { content: [{ id: "cards", componentId: "pinsel.pricing-cards", componentVersion: 1, props: { note: "n", moreLabel: "m", moreHref: "/lessons/" }, slots: { items: [{ id: "c1", componentId: "pinsel.pricing-card", componentVersion: 2, props: { name: "進路相談", price: "¥10,000", unit: "1回", description: "d", featured: false, courseId: "consultation" }, slots: {} }] } }] },
       },
     ],
     binding: { sourceRecordId: "frame", outletId: "outlet" },
@@ -100,7 +100,7 @@ describe("renderRouteDocument", () => {
     expect(html).toMatch(/^<a class="skip-link" href="#main">本文へスキップ<\/a><main id="main" tabindex="-1">/);
     expect(html).toContain('<main id="main" tabindex="-1"><section class="section container reading-zone" id="pricing">');
     expect(html).toContain('<h3>進路相談</h3>');
-    expect(html).toContain('href="/contact/?course=1"');
+    expect(html).toContain('href="/contact/?course=consultation"');
     expect(html).toMatch(/<\/main>$/);
   });
 

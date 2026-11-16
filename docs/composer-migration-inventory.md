@@ -1,6 +1,7 @@
 # Exhaustive baseline field map
 
-This is the **proposed T4 migration inventory**, not an applied migration. See the
+This is the **historical T4 field inventory**. It records baseline ownership; actual
+staged migration and post-import verification are recorded separately. See the
 [migration plan](composer-migration-plan.md), [adoption contract](composer-adoption.md)
 and [compatibility ledger](composer-compatibility.md).
 
@@ -11,10 +12,11 @@ snapshot schema version 1, workspace `pinsel`, originally captured with Composer
 current D1 data or a fresh capture of subsequently edited native state. Before
 migration, capture the current saved workspace through the public API, verify its
 identities and regenerate this map against that exact revision. T4 implementation
-remains pending T3 acceptance; owner-data import/cutover remains separately held.
+is tracked separately in the [migration recipe](composer-course-migration.md) and
+compatibility ledger; owner-data import/cutover remains separately held.
 
 
-181 fields across 25 models. All old fields retain their exact ID, kind, required flag, values and owning model unless an explicit staged amendment below is approved in implementation. Every Mapping binding/filter/sort and qualified reference is recorded in [machine-readable reference map](composer-migration-reference-map.json). No migration has run.
+181 fields across 25 models. All old fields retain their exact ID, kind, required flag, values and owning model unless an explicit staged amendment below is approved in implementation. Every Mapping binding/filter/sort and qualified reference is recorded in [machine-readable reference map](composer-migration-reference-map.json). At inventory creation no migration had run; see the migration recipe and compatibility ledger for subsequent rehearsals.
 
 | Old owner.field | Kind | Destination | Current uses |
 | --- | --- | --- | --- |

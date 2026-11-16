@@ -23,8 +23,8 @@ for (let index = 0; index < args.length; index++) {
 }
 
 const workspaceRoot = resolve(fileURLToPath(new URL("../..", import.meta.url)));
-const host = await loadHostContext({ workspaceRoot });
 try {
+  const host = await loadHostContext({ workspaceRoot });
   // Public coherent inspection refuses incomplete/missing stores or another
   // active authoring lease. The result is not written or used to reseed data.
   const snapshot = await captureAuthoringWorkspace({
@@ -37,6 +37,7 @@ try {
 } catch (cause) {
   throw new Error(
     "Cannot open the existing native workspace. Preserve saved data and resolve the cause below. " +
+    "An older pack workspace requires explicit staged migration; select a verified stage with PINSEL_AUTHORING_STAGE=course-identity-v1. " +
     "For a new known-data rehearsal only, run pnpm --filter @pinsel/content authoring:init explicitly. " +
     "Never initialize over an existing workspace or substitute committed inputs for owner drafts.",
     { cause },

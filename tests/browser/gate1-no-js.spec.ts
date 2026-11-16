@@ -51,7 +51,7 @@ test("home page renders the pricing record without JavaScript", async ({ page })
   await expect(cards.locator(".price")).toHaveText(prices);
   await expect(cards.locator("h3")).toHaveText(["進路相談", "2ヶ月コース", "4ヶ月コース"]);
   await expect(cards.locator(".pricing-card__popular")).toHaveText(["POPULAR"]);
-  for (const index of [1, 2, 3]) await expect(page.locator(`a.text-link[href="/contact/?course=${index}"]`)).toHaveCount(1);
+  for (const id of ["consultation", "two-month", "four-month"]) await expect(page.locator(`a.text-link[href="/contact/?course=${id}"]`)).toHaveCount(1);
   await expect(page.locator("main#main")).toContainText("コースと料金");
 });
 

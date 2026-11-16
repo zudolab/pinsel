@@ -7,7 +7,7 @@ import { canonicalSerialize as canonicalStringifyJson, canonicalSerialize as ser
 
 import { PINSEL_ROUTES, ROUTE_FRAGMENTS, planPathname } from "../invariants";
 import { assembleProjectText } from "../site/assemble";
-import { GOLDEN_PATH, goldenText, planStructure } from "../site/check";
+import { GOLDEN_PATH, historicalCoursePlan, planStructure } from "../site/check";
 import { PINSEL_COMPONENT_CONTRACT } from "../site/component-contract";
 import { checkPackAgainstContract, contractPack } from "../site/contract-pack";
 import { readContentEntries } from "../site/entries";
@@ -43,9 +43,9 @@ describe("site structure (against the component contract)", () => {
     if (portable.status !== "ready") return;
     expect(canonical(portable.routes)).toBe(canonical(node.plan.routes));
     const golden = await readFile(GOLDEN_PATH, "utf8");
-    expect(canonical(planStructure(node.plan))).toBe(canonical(planStructure(JSON.parse(golden))));
+    expect(canonical(planStructure(historicalCoursePlan(node.plan)))).toBe(canonical(planStructure(JSON.parse(golden))));
     // Byte for byte, values included, only while the content is the migration baseline.
-    if (MIGRATION_BASELINE) expect(goldenText(node.plan)).toBe(golden);
+    if (MIGRATION_BASELINE) expect(canonical(historicalCoursePlan(node.plan))).toBe(canonical(JSON.parse(golden)));
   });
 
   it("carries the prototype's fragments, links and art windows", async () => {
@@ -56,7 +56,7 @@ describe("site structure (against the component contract)", () => {
     expect(facts.get("/lessons")!.fragments).toEqual(ROUTE_FRAGMENTS["/lessons/"]);
     expect(facts.get("/results")!.fragments).toEqual(ROUTE_FRAGMENTS["/results/"]);
     expect(facts.get("/notes/german-language")!.fragments).toEqual(ROUTE_FRAGMENTS["/notes/german-language/"]);
-    expect(facts.get("/")!.links.filter((href) => href.startsWith("/contact/?course="))).toEqual(["/contact/?course=1", "/contact/?course=2", "/contact/?course=3"]);
+    expect(facts.get("/")!.links.filter((href) => href.startsWith("/contact/?course="))).toEqual(["/contact/?course=consultation", "/contact/?course=two-month", "/contact/?course=four-month"]);
     // Prototype build.py art() per page: size/drift/range.
     expect(facts.get("/")!.art).toEqual(["hero/hero/1/52", "middle/large/1/52", "closing/closing/1/52"]);
     expect(facts.get("/lessons")!.art).toEqual(["hero/medium/1/8", "middle/large/-1/52", "closing/closing/1/52"]);
@@ -74,6 +74,51 @@ describe("site structure (against the component contract)", () => {
     const home = compiled.routes.find((route) => route.pathname === "/")!;
     expect(JSON.stringify(home)).toContain("¥55,000");
     expect(routeFacts(home).fragments).toEqual(ROUTE_FRAGMENTS["/"]);
+  });
+
+  it("keeps shared Course identity, labels and canonical ID links after Content reorder", async () => {
+    const order: Record<string, number> = { "four-month": 1, consultation: 2, "two-month": 3 };
+    const edited = entries.map(entry => entry.modelId !== "course" ? entry : {
+      ...entry, values: { ...entry.values, "course-order": order[entry.id]!, ...(entry.id === "consultation" ? { "course-price": "¥12,345", "course-contact-option-label": "面談・改訂" } : {}) },
+    });
+    const compiled = await projectHostedSite({ project: buildPinselSite(edited, pack).project, componentPack: pack.manifest }, []);
+    if (compiled.status !== "ready") throw new Error(JSON.stringify(compiled));
+    const select = (pathname: string, componentId: string) => {
+      const route = compiled.routes.find(candidate => candidate.pathname === pathname)!;
+      type Node = (typeof route.composition.document.root)[number];
+      const found: Node[] = [];
+      const walk = (node: Node) => { if (node.componentId === componentId) found.push(node); for (const children of Object.values(node.slots)) children.forEach(walk); };
+      route.composition.document.root.forEach(walk);
+      return found;
+    };
+    const home = select("/", "pinsel.pricing-card");
+    expect(home.map(node => node.props.courseId)).toEqual(["four-month", "consultation", "two-month"]);
+    expect(home.every(node => node.componentVersion === 2 && !("courseIndex" in node.props))).toBe(true);
+    expect(home[1]!.props.price).toBe("¥12,345");
+    const options = select("/contact", "pinsel.course-option");
+    expect(options.map(node => node.props.courseId)).toEqual(["four-month", "consultation", "two-month"]);
+    expect(options[1]!.props.label).toBe("面談・改訂");
+    expect(options.every(node => node.componentVersion === 2)).toBe(true);
+    const consultation = select("/lessons", "pinsel.consultation-price");
+    expect(consultation).toHaveLength(1);
+    expect(consultation[0]!.props.price).toBe("¥12,345");
+    expect(consultation[0]!.props.name).toBe(entries.find(entry => entry.id === "consultation")!.values["course-name"]);
+    expect(select("/lessons", "pinsel.price-detail-card").map(node => node.props.name)).toEqual(["two-month", "four-month"].map(id => entries.find(entry => entry.id === id)!.values["course-name"]));
+    expect(routeFacts(compiled.routes.find(route => route.pathname === "/")!).links.filter(href => href.startsWith("/contact/?course="))).toEqual(["/contact/?course=four-month", "/contact/?course=consultation", "/contact/?course=two-month"]);
+  });
+
+  it("publishes a newly authored UUID course into Home and Contact with a unique query target", async () => {
+    const id = "64b504c4-d13e-4de0-a357-f662543eb07e";
+    const original = entries.find(entry => entry.id === "two-month")!;
+    const authored = [...entries, { ...original, id, values: { ...original.values, "course-order": 4, "course-name": "新しい講座", "course-contact-option-label": "新しい講座" } }];
+    const compiled = await projectHostedSite({ project: buildPinselSite(authored, pack).project, componentPack: pack.manifest }, []);
+    if (compiled.status !== "ready") throw new Error(JSON.stringify(compiled));
+    const facts = compiled.routes.map(routeFacts);
+    expect(facts.find(route => route.pathname === "/")!.links).toContain(`/contact/?course=${id}`);
+    expect(facts.find(route => route.pathname === "/contact")!.courseIds).toContain(id);
+    expect(checkLinks(facts)).toEqual([]);
+    const duplicate = facts.map(route => route.pathname === "/contact" ? { ...route, courseIds: [...route.courseIds, id] } : route);
+    expect(checkLinks(duplicate).some(issue => issue.includes(id))).toBe(true);
   });
 
   it("the contract pack is self-consistent; the real pack is checked by content:validate", () => {

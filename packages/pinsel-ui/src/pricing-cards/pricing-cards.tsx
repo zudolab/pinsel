@@ -1,4 +1,5 @@
 import type { Child } from "@takazudo/zfb/zudo-react";
+import { courseHref } from "../scripts/course-identity";
 import { TextLink } from "../text-link/text-link";
 
 export interface PricingCardProps {
@@ -7,8 +8,8 @@ export interface PricingCardProps {
   unit: string;
   description: string;
   featured: boolean;
-  /** 1-based course position; the contact form preselects `?course=N`. */
-  courseIndex: number;
+  /** Canonical Course entry identity, independent of display order. */
+  courseId: string;
   taxLabel: string;
   popularBadge: string;
   linkLabel: string;
@@ -28,7 +29,7 @@ export function PricingCard(props: PricingCardProps): Child {
       </p>
       <p class="pricing-card__unit">{props.unit}</p>
       <p class="pricing-card__description">{props.description}</p>
-      <TextLink href={`/contact/?course=${props.courseIndex}`} label={props.linkLabel} />
+      <TextLink href={courseHref(props.courseId)} label={props.linkLabel} />
     </article>
   );
 }

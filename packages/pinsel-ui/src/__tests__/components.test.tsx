@@ -23,6 +23,7 @@ import { LegalRow, LegalTable } from "../legal-table/legal-table";
 import { NotFound } from "../not-found/not-found";
 import { NoteCard, NoteCards } from "../note-cards/note-cards";
 import { PageHeading, Stat } from "../page-heading/page-heading";
+import { PricingCard } from "../pricing-cards/pricing-cards";
 import { Paragraphs } from "../paragraphs/paragraphs";
 import { ResultRow, ResultsYearSection } from "../results-year/results-year";
 import { Section } from "../section/section";
@@ -294,13 +295,13 @@ describe("contact", () => {
   };
 
   it("keeps every hook the visitor script needs and the approved option order", () => {
-    const html = renderToString(<ContactForm {...LABELS} courseOptions={["有料進路相談", "2ヶ月コース", "4ヶ月コース"].map((label) => CourseOption({ label }))} />);
+    const html = renderToString(<ContactForm {...LABELS} courseOptions={["有料進路相談", "2ヶ月コース", "4ヶ月コース"].map((label, index) => CourseOption({ label, courseId: ["consultation", "two-month", "four-month"][index]! }))} />);
     for (const hook of [
       '<form id="contact-form" class="contact-form" novalidate aria-label="お問い合わせフォーム" data-submitting-label="送信中..." data-value-missing-message="{label}を入力してください。" data-email-format-message="メールアドレスの形式をご確認ください。">',
       '<p class="form-error" role="alert" data-form-error="" hidden>送信に失敗しました。</p>',
       '<label for="name">お名前<span>必須</span></label><input id="name" name="name" type="text" autocomplete="name" required><p class="form-error" id="name-error" hidden></p>',
       '<input id="email" name="email" type="email" autocomplete="email" required>',
-      '<label for="course">ご希望のコース<span>任意</span></label><select id="course" name="course"><option value="未定">未定</option><option value="有料進路相談">有料進路相談</option><option value="2ヶ月コース">2ヶ月コース</option><option value="4ヶ月コース">4ヶ月コース</option></select>',
+      '<label for="course">ご希望のコース<span>任意</span></label><select id="course" name="course"><option value="未定">未定</option><option value="有料進路相談" data-course-id="consultation">有料進路相談</option><option value="2ヶ月コース" data-course-id="two-month">2ヶ月コース</option><option value="4ヶ月コース" data-course-id="four-month">4ヶ月コース</option></select>',
       '<textarea id="message" name="message" rows="6" required></textarea>',
       '<span data-submit-label="">送信する</span>',
       '<div class="form-success" tabindex="-1" hidden>',
@@ -369,4 +370,13 @@ describe("source hygiene", () => {
     }
     expect(css).not.toMatch(/\.jump-row|\.motion-toggle|page-404/);
   });
+});
+
+it("renders an authored UUID Course without changing its label-based inquiry payload", () => {
+  const courseId = "64b504c4-d13e-4de0-a357-f662543eb07e";
+  const card = renderToString(<PricingCard courseId={courseId} name="新しい講座" price="¥12,000" unit="月" description="説明" featured={false} taxLabel="税込" popularBadge="人気" linkLabel="問い合わせ" />);
+  expect(card).toContain(`/contact/?course=${courseId}`);
+  const option = renderToString(<CourseOption courseId={courseId} label="新しい講座" />);
+  expect(option).toContain(`data-course-id="${courseId}"`);
+  expect(option).toContain('value="新しい講座"');
 });

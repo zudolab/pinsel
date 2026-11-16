@@ -19,7 +19,8 @@
     "authoring:init": "tsx --tsconfig tsconfig.scripts.json src/site/initialize-native.ts",
     "authoring:dev": "tsx --tsconfig tsconfig.scripts.json src/site/start-native.ts",
     "authoring:capture": "tsx --tsconfig tsconfig.scripts.json src/site/capture-native.ts",
-    "authoring:build": "tsx --tsconfig tsconfig.scripts.json src/site/build-native-snapshot.ts"
+    "authoring:build": "tsx --tsconfig tsconfig.scripts.json src/site/build-native-snapshot.ts",
+    "authoring:migrate-course": "tsx --tsconfig tsconfig.scripts.json src/site/stage-course-identity.ts"
   },
   "dependencies": {
     "@pinsel/ui": "workspace:*",
@@ -27,6 +28,6 @@
     "@zudo-composer/component-contract": "git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0",
     "preact": "^10.29.8",
     "zod": "^4.3.6",
-    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#e62e1a6ab3b2b783e56533ee510e4cfc27b24547"
+    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#87b399f0d35e016ad4193238fd2d9f606d7dd59a"
   }
 }

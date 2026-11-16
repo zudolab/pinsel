@@ -140,3 +140,212 @@ public capture → exact build → restart/inverse rehearsal remain pending.
 
 No owner D1 data, active editor authority or real model provider was migrated or
 accepted. Native staged data, original assets and all recovery evidence remain.
+
+## Foundation integrated — 2026-11-16
+
+Composer [#974](https://github.com/Takazudo/zudo-composer/pull/974) merged as
+`a2ffab5e9c78900085fe0ed5bd713ba88b74bbe1`; Pinsel
+[#59](https://github.com/zudolab/pinsel/pull/59) merged as
+`9e2ab176a94a2d004bc3c1dbab278a43b0c2ec0b`. The installed package remains
+`e62e1a6ab3b2b783e56533ee510e4cfc27b24547`, contract unchanged.
+Premerge current-head CI passed both repositories; Pinsel postmerge CI
+[43948848862](https://github.com/zudolab/pinsel/actions/runs/43948848862) passed.
+Composer postmerge validation was still running at this checkpoint.
+
+The exact e62 package passed changed-state browser save → stop → public capture →
+static build → restart → supported inverse, guarded 694 seconds. Consultation
+price ¥10,321 appeared on Home and Lessons; Contact label 進路相談・静的検証 and
+Lessons placement order matched the saved state. All 14 HTML routes and 142 public
+files matched captured bytes, lengths and SHA256. Snapshot/build digest:
+`b50e826a840b8fc104ae970302d9428b5395ec148490d082801655ce85e67375`.
+Original values, lifecycle and exact Lessons document were restored through UI
+saves, retaining legitimate history at Content generation 10.
+
+Evidence and resource audit are recorded in
+[the integration checkpoint](https://github.com/zudolab/pinsel/issues/51#issuecomment-6928706760).
+The old merged feature branches were deleted after checking merge ancestry and
+PR dependencies; both primary checkouts returned clean to main. T4 now uses
+`feat/semantic-native-migration` and Composer `feat/pinsel-semantic-authoring`.
+
+Fresh public pre-migration capture of the restored workspace:
+`9d9d33461da5b79fb4faaa118ca11e7939fdb7cc4efa36f681c6b392ca1a75bb`, workspace
+`pinsel`, snapshot schema 1 / Composition v2, pack `pinsel@0.2.0`, renderer
+`pinsel-zfb@native-v1`. T4 must transform that captured state into a separate
+staging root and retain its source, rather than reinitialize from Git seed.
+T4 implementation and T5–T7 remain incomplete. Installed negative endpoint tests
+are being added before T3 closure. Owner-data cutover and real inference remain
+held; no deployment or actual owner-editor switch occurred.
+
+Foundation final audit: Composer postmerge
+[43948802208](https://github.com/Takazudo/zudo-composer/actions/runs/43948802208)
+passed. Independently installed e62 endpoint negatives also passed (299 seconds):
+forged owner, shared field shadow, shared reorder, missing parent placement, forged
+slot and forged placement all refused. Snapshot
+`ff5700c6d91bd93b77662479aba2a06f95a5d2f5544fcaeb29f891d222340888`, all tokens and
+799 canonical files were identical before/after, with no receipts. The isolated
+clean worktree was removed normally and server stopped.
+[Final foundation evidence](https://github.com/zudolab/pinsel/issues/53#issuecomment-6929152532).
+This completes T0–T3; it does not complete T4–T7 or the data/provider holds.
+
+## T4 semantic authoring candidate — 2026-11-16
+
+Upstream [draft PR #977](https://github.com/Takazudo/zudo-composer/pull/977)
+adds selected-entry identity, explicit pins, semantic host tree/typed fields/local
+insertion, and a separate migration-source equivalence API. Source reviews found
+and corrected strict DSL-input and fixture typing gaps. Focused Mapping 474 tests,
+host editor 51 tests, capture/public DSL 23 tests, public type checks and independent
+reviews passed. Packed public runtime/declarations/release portability passed
+55 seconds after correcting its collection-route fixture.
+
+Initial immutable package `9ad8bac4f7ede83fcf3a78f7b516d222152cea6f` installed,
+frozen-installed and dedupe-checked successfully. A packaging correction adds the
+new Mapping guide to the shipping allowlist; final package candidate is
+`533be688e51ff150bce5e9bc87d2b07e62ebaec3`, payload 754 files, digest
+`f68ed3d382fea81d0fa96105d38a4e95f6110021620e28b2dc1f815b612b3b42`.
+Its immutable Pinsel install, frozen reinstall and dedupe check passed. Staged
+migration and installed browser acceptance remain pending at this checkpoint. Contract remains `c0b452da075b66757c60bd0d721a47062d4354d0`.
+
+The candidate migrates captured pack 0.2.0/native-v1 state into separately selected
+pack 0.3.0/native-v2 state. Content fields/entries and original store/history remain
+untouched; the migration map records exact structural/reference changes. Missing
+managed-asset import support causes refusal before destination creation rather
+than data loss; the known rehearsal has no managed Assets. All prepared public
+assets are captured separately. No actual owner-data cutover or live inference.
+
+
+### Staged migration and static proof
+
+The known source capture `9d9d33461da5b79fb4faaa118ca11e7939fdb7cc4efa36f681c6b392ca1a75bb`
+migrated into the separate explicitly selected `course-identity-v1` stage. The
+97-second rehearsal passed with source currentness checked again after import:
+17 project/reference changes, all 181 fields and 246 entries retained. The actual
+post-import public capture comparison permits only positive entry generations
+resetting to 1 in the newly initialized store; Consultation changed from 9 to 1.
+All Content values, timestamps, lifecycle, model schemas and qualified identities
+matched. This is an initializer metadata reset, not a Content mutation-token claim.
+
+Initial staged snapshot:
+`5b338c602b1ed8570eba0996a3cae3d593ab1e0220ee9e639a6da9d57dff1986`,
+pack `pinsel@0.3.0`, renderer `pinsel-zfb@native-v2`. Its exact static build passed
+in 8 seconds: 14 HTML routes and all 143 captured public-file hashes matched.
+Compared with the old source, only the Contact visitor script changed and the
+course identity helper was added; CSS and assets remained unchanged. Original
+`.native-authoring` and `.native-public` remain authoritative unless the stage
+is explicitly selected. No owner-data import or cutover occurred.
+
+The first browser inspection became stale after a concurrent test-file edit;
+Composer's Vite watcher correctly invalidates the preview for watched changes.
+A frozen-source retry reached the current preview and selected the semantic
+Consultation owner correctly. The installed read-only browser inspection then passed (152 seconds): semantic
+Consultation selection at depth 2, advanced wrapper visibility, shared controls
+disabled, legacy aliases 1/2/3/01 and all three canonical IDs selecting the correct
+Contact option, and Home links using canonical IDs. Full mutation/restart/build
+browser acceptance remains pending.
+
+[Migration checkpoint](https://github.com/zudolab/pinsel/issues/54#issuecomment-6929759951).
+
+
+### Explicit draft Save correction
+
+Installed533 acceptance found that a local field draft incorrectly invalidated its
+own saved preview, disabling Save. Composer31cbdffd corrects the subscription to
+ignore only local session-registry changes; canonical provider and native source
+changes still invalidate. The real integration regression failed before the fix
+and passed afterward (15 focused tests); independent review and11 focused tests
+also passed. The unrelated Mapping browser test now verifies collection identities
+and persisted Single-mode selection correctly; its focused real browser passed27s.
+
+New immutable package `1d7bb65c7b53989816bf144c7a25f9d7d6046662` replaces533 in all
+four manifests and the lock. Its754-file payload digest is
+`0ee608f4a7fae6484e2d7a7933a24add3ad5780a5aa9d942c7998daf212ccd60`.
+Public Node9/hosted16 entry checks and four demo CMS regenerations passed42s
+with no generated diff. Exact install and frozen reinstall passed; installed
+mutation/restart/build acceptance is pending. Component contract remains
+`c0b452da075b66757c60bd0d721a47062d4354d0`.
+
+All failed-attempt test values and the one inserted local Paragraph were removed
+through supported UI/API inverses. The restored public capture is
+`361adda71b996f1609a2c8be9e3a69765066c26ffcb1cdc350ae13cc147c0769`.
+All Composition documents, Content values/lifecycle, Mapping, Sitemap and public
+bytes match the initial stage; original source814files/public142files remain
+unchanged. Legitimate history, revisions and receipts remain. This is not a raw
+snapshot rollback or an owner-data migration.
+
+[Save blocker, correction and cleanup evidence](https://github.com/zudolab/pinsel/issues/54#issuecomment-6930906534).
+
+
+### Typed-value handoff correction
+
+The1d7 installed run passed enabled Save and no-autosave checks, but submitted the
+old empty text. Composerc4859574 removes capture-phase staging of the old value;
+the typed control now supplies the complete draft before notifying observers.
+The regression reproduced the failure before the fix. It also verifies textarea
+identity, focus and value survive the first input. Composer87b399f0 aligns omitted
+numeric steps with the schema (`any`) while retaining explicit step constraints.
+28 focused field/host tests and scoped lint passed, with independent review;
+invalid-number blur behavior remains unchanged.
+
+Current package: `87b399f0d35e016ad4193238fd2d9f606d7dd59a`,754 shipped files,
+payload digest `1e06b7c8213104b5c2aaa853a0af8f3f773185a3be6d7c0f5c853eb34e7d18fb`.
+All four manifests, lock and dependency inventory use that exact revision.
+Public entry checks and all four CMS regenerations passed39s with no generated
+diff. Fresh install/frozen verification is recorded by the current acceptance run.
+The final installed local-Save/shared-content/build/restart scenario remains pending.
+
+The failed1d7 run restored all test values and removed its one test node through
+supported UI/API operations. Public restored digest:
+`10496496f648221c8f4ce9332f84b1f039e62aa15c2dc9563d4ffc31484230ac`.
+Original source, Mapping, Sitemap and public assets remained unchanged; legitimate
+history and receipts remain. No owner-data switch or deployment occurred.
+
+
+## T4 installed acceptance — final package87b399f0
+
+The independent installed scenario passed on Pinsel
+`4ebdb8da1609b3366ee192d93ebd25e905538cad`, Composer package
+`87b399f0d35e016ad4193238fd2d9f606d7dd59a` (source/attestation head
+`9a6423e37e5d98618fd34dc0761d5a0fd51f044a`), unchanged contract
+`c0b452da075b66757c60bd0d721a47062d4354d0`. Workspace `pinsel`, snapshot schema1,
+pack0.3.0, renderer `pinsel-zfb@native-v2`; explicit stage `course-identity-v1`.
+
+The guarded483-second run verified local Paragraph insertion, exact typed value,
+zero autosave writes, explicit Save, rendered text and same-UUID reload. Focus
+retention was verified separately by the component regression tests.
+Shared price appeared on Home and Lessons; Contact label and order changed while
+numeric1/2/3 and all three canonical query IDs retained their meanings. Stopping
+the editor, capturing through the public API, building that exact capture and
+restarting preserved the saved state. All14 routes and143 public-file hashes
+matched. Changed snapshot:
+`02848464ab29af911808de57dd8e473934d276e82cc4aa4a4451d300dc33cbf3`.
+
+A separate guarded131-second installed test refused an undeclared insert slot
+(`component-invalid`) and a shared-value shadow (`unsupported-scope`). Before and
+after public snapshots/tokens and all838 canonical files were identical, including
+all8 existing receipt files; no receipt was added. Restored snapshot:
+`640425ae7b0b900132dd98efcfef2591090e2dc5b8cd2d0714747f0c11b6db40`.
+
+Supported API removal and Content UI inverses restored all test values/documents,
+retaining legitimate history and receipts. The original source814files/public142files
+remained byte-identical and the test server stopped. Removal was an API inverse;
+an everyday Remove button remains T6 work. Earlier wrapper/legacy01 inspection is
+still attributed to533, not silently relabeled. Both real inspector failures and
+harness failures remain recorded rather than counted as passes.
+
+Evidence: `t4-mutations-1794868111900510442`, `final-t4-stage-1794868121459`,
+`t4-negative-1794868625809700220`, and `final-negative-1794868636697` under the Cloud
+acceptance evidence directory. `saved-node-audit.json` reads the final saved text;
+the creation-time target in the original build proof is explicitly distinguished.
+Integration state is tracked in [Pinsel #60](https://github.com/zudolab/pinsel/pull/60)
+and [Composer #977](https://github.com/Takazudo/zudo-composer/pull/977).
+T5–T7, actual owner-data cutover and authenticated inference remain separate work.
+
+### Final migration inventory review
+
+Independent review found that the final migration source check reused its initial
+public-file list, which could omit a newly added file. The course migration now
+re-enumerates before each supported source-currentness check and verifies the list
+again afterward. A real installed-API regression adds a file between checks,
+observes refusal and verifies canonical state remains unchanged. Native-authoring
+and course-migration tests passed22 cases; after correcting a helper type error,
+the focused regression and Content typecheck passed. No staged data was changed.
+This follow-up changes migration tooling, not the accepted renderer or Composer pin.

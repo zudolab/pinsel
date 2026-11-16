@@ -1,5 +1,5 @@
 import { cp, mkdir, readFile, readdir, writeFile } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { dirname, join, relative as relativePath } from "node:path";
 import { fileURLToPath } from "node:url";
 import { stripTypeScriptTypes } from "node:module";
 
@@ -12,6 +12,12 @@ export async function prepareNativePublic(publicRoot: string): Promise<void> {
     return name === "components.css" ? text : `@layer tokens {${text}}`;
   }))).join("\n");
   await writeFile(join(publicRoot, "assets/pinsel-native.css"), css);
+  await prepareNativeScripts(publicRoot);
+}
+
+/** Refresh only generated visitor code; migration preserves captured CSS and asset bytes. */
+export async function prepareNativeScripts(publicRoot: string): Promise<void> {
+  const uiRoot = fileURLToPath(new URL("../../../pinsel-ui/", import.meta.url));
   const destination = join(publicRoot, "assets/pinsel-native");
   await mkdir(destination, { recursive: true });
   for (const file of await readdir(join(uiRoot, "src/scripts"))) {
@@ -30,7 +36,7 @@ export async function nativePublicFiles(workspaceRoot: string, publicRoot: strin
       if (entry.isSymbolicLink()) throw new Error("Native public assets must not contain symlinks");
       const path = relative ? `${relative}/${entry.name}` : entry.name;
       if (entry.isDirectory()) await visit(path);
-      else if (entry.isFile()) files.push({ fileName: path, sourcePath: `.native-public/${path}` });
+      else if (entry.isFile()) files.push({ fileName: path, sourcePath: `${relativePath(workspaceRoot, publicRoot)}/${path}` });
     }
   };
   if (dirname(publicRoot) !== workspaceRoot) throw new Error("Unexpected native public root");
