@@ -140,3 +140,38 @@ public capture → exact build → restart/inverse rehearsal remain pending.
 
 No owner D1 data, active editor authority or real model provider was migrated or
 accepted. Native staged data, original assets and all recovery evidence remain.
+
+## Foundation integrated — 2026-11-16
+
+Composer [#974](https://github.com/Takazudo/zudo-composer/pull/974) merged as
+`a2ffab5e9c78900085fe0ed5bd713ba88b74bbe1`; Pinsel
+[#59](https://github.com/zudolab/pinsel/pull/59) merged as
+`9e2ab176a94a2d004bc3c1dbab278a43b0c2ec0b`. The installed package remains
+`e62e1a6ab3b2b783e56533ee510e4cfc27b24547`, contract unchanged.
+Premerge current-head CI passed both repositories; Pinsel postmerge CI
+[43948848862](https://github.com/zudolab/pinsel/actions/runs/43948848862) passed.
+Composer postmerge validation was still running at this checkpoint.
+
+The exact e62 package passed changed-state browser save → stop → public capture →
+static build → restart → supported inverse, guarded 694 seconds. Consultation
+price ¥10,321 appeared on Home and Lessons; Contact label 進路相談・静的検証 and
+Lessons placement order matched the saved state. All 14 HTML routes and 142 public
+files matched captured bytes, lengths and SHA256. Snapshot/build digest:
+`b50e826a840b8fc104ae970302d9428b5395ec148490d082801655ce85e67375`.
+Original values, lifecycle and exact Lessons document were restored through UI
+saves, retaining legitimate history at Content generation 10.
+
+Evidence and resource audit are recorded in
+[the integration checkpoint](https://github.com/zudolab/pinsel/issues/51#issuecomment-6928706760).
+The old merged feature branches were deleted after checking merge ancestry and
+PR dependencies; both primary checkouts returned clean to main. T4 now uses
+`feat/semantic-native-migration` and Composer `feat/pinsel-semantic-authoring`.
+
+Fresh public pre-migration capture of the restored workspace:
+`9d9d33461da5b79fb4faaa118ca11e7939fdb7cc4efa36f681c6b392ca1a75bb`, workspace
+`pinsel`, snapshot schema 1 / Composition v2, pack `pinsel@0.2.0`, renderer
+`pinsel-zfb@native-v1`. T4 must transform that captured state into a separate
+staging root and retain its source, rather than reinitialize from Git seed.
+T4 implementation and T5–T7 remain incomplete. Installed negative endpoint tests
+are being added before T3 closure. Owner-data cutover and real inference remain
+held; no deployment or actual owner-editor switch occurred.
