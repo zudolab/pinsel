@@ -5,6 +5,7 @@ import { isCurrentSection } from "../nav-link/nav-link";
 
 export interface SiteHeaderProps {
   brandWord: string;
+  /** Legacy shared-frame descriptor; the header uses the accepted caption below. */
   brandSub: string;
   /** The green contact button's label. */
   contactLabel: string;
@@ -13,22 +14,20 @@ export interface SiteHeaderProps {
   pathname?: string;
   /** Static initial states for stories; the visitor scripts own them at runtime. */
   menuOpen?: boolean;
-  motionOn?: boolean;
 }
 
 /**
  * Prototype `ui.py header()`. The visitor scripts depend on `.site-header`,
  * `.menu-toggle[aria-controls=site-navigation]`, `#site-navigation.site-nav`,
- * `[data-motion-toggle]` and `[data-motion-label]`; the menu and motion
- * toggles start collapsed / off and only the scripts change them.
+ * the menu starts collapsed and the visitor script changes its state.
  */
 export function SiteHeader(props: SiteHeaderProps): Child {
   return (
     <div class="site-header">
       <header class="container site-header__inner">
-        <Brand word={props.brandWord} sub={props.brandSub} />
-        <button class="menu-toggle" type="button" aria-expanded={props.menuOpen ? "true" : "false"} aria-controls="site-navigation">
-          <span>メニュー</span>
+        <Brand word={props.brandWord} sub={props.brandSub} captionLines={["ONLINE PREPARATION", "FOR GERMAN ART SCHOOLS"]} />
+        <button class="menu-toggle" type="button" aria-expanded={props.menuOpen ? "true" : "false"} aria-controls="site-navigation" aria-label="メニュー">
+          <span class="menu-toggle__label">メニュー</span>
           <Icon name="menu" class="menu-open-icon" />
           <Icon name="close" class="menu-close-icon" />
         </button>
@@ -39,12 +38,6 @@ export function SiteHeader(props: SiteHeaderProps): Child {
             <span>{props.contactLabel}</span>
           </a>
         </nav>
-        <button class="motion-toggle" type="button" aria-describedby="motion-toggle-description" aria-pressed={props.motionOn ? "true" : "false"} data-motion-toggle="">
-          <Icon name="pause" class="motion-running-icon" />
-          <Icon name="play" class="motion-paused-icon" />
-          <span data-motion-label="">{props.motionOn ? "動き ON" : "動き OFF"}</span>
-          <span id="motion-toggle-description" hidden>装飾の動きと色の変化</span>
-        </button>
       </header>
     </div>
   );

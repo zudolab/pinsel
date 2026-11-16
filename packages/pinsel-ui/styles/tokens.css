@@ -24,6 +24,11 @@
   --page-width: 76rem;
   --reading-width: 43rem;
   --radius: 0;
+  --header-word-size: 2.65rem;
+  --header-brand-gap: 1.25rem;
+  --header-caption-size: .65625rem;
+  --header-caption-leading: 1.85;
+  --header-caption-tracking: .1em;
   --header-height: 5.75rem;
   --header-offset: var(--header-height);
   --z-header: 20;

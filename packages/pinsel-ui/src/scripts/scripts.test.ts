@@ -226,6 +226,13 @@ describe("motion toggle", () => {
     localStorage.clear();
   });
 
+  it("initializes without controls and preserves a saved off preference", () => {
+    localStorage.setItem(MOTION_STORAGE_KEY, "off");
+    expect(() => initMotion()).not.toThrow();
+    expect(document.documentElement.dataset.motion).toBe("off");
+    expect(localStorage.getItem(MOTION_STORAGE_KEY)).toBe("off");
+  });
+
   it("stores auto|off under pinsel-motion and announces the change", () => {
     document.body.innerHTML = `<button data-motion-toggle aria-pressed="false"><span data-motion-label>動き OFF</span></button>`;
     const changes: boolean[] = [];

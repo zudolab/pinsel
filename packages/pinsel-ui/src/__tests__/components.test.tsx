@@ -352,7 +352,6 @@ describe("source hygiene", () => {
     expect(css).toContain("@layer tokens, reset, layout, components, responsive;");
     for (const selector of [
       ".menu-toggle[aria-expanded=true]",
-      ".motion-toggle[aria-pressed=true]",
       ".site-nav[data-open]",
       ".site-nav a[aria-current]::after",
       ".page-toc a[aria-current=location]",
@@ -368,6 +367,6 @@ describe("source hygiene", () => {
     for (const query of ["@container site-header (max-width:70rem)", "(max-width:70rem)", "(max-width:74rem)", "(max-width:64rem)", "(max-width:47.99rem)", "(max-width:23rem)", "(min-width:100rem)", "(prefers-reduced-motion:reduce)", "@media print", "(hover:hover)"]) {
       expect(css.replace(/\s+/g, ""), query).toContain(query.replace(/\s+/g, ""));
     }
-    expect(css).not.toMatch(/\.jump-row|\.motion-toggle__mark|page-404/);
+    expect(css).not.toMatch(/\.jump-row|\.motion-toggle|page-404/);
   });
 });

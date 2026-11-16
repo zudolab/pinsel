@@ -36,13 +36,17 @@ describe("PricingCards", () => {
 describe("SiteFrame", () => {
   it("keeps the DOM hooks the visitor scripts need and marks the current route", () => {
     const html = renderToString(<SiteFrame {...FRAME} route={{ pathname: "/lessons/" }} main={["body"]} />);
-    for (const hook of ['class="site-header"', 'class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation"', 'id="site-navigation" class="site-nav"', "data-motion-toggle", "data-motion-label", '<main id="main" tabindex="-1">body</main>', 'class="skip-link" href="#main"']) {
+    for (const hook of ['class="site-header"', 'class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-navigation"', 'id="site-navigation" class="site-nav"', '<main id="main" tabindex="-1">body</main>', 'class="skip-link" href="#main"']) {
       expect(html).toContain(hook);
     }
     expect(html).toContain('<a class="site-nav__item" href="/lessons/" aria-current="page">オンラインクラス</a>');
     expect(html).toContain('<a class="site-nav__item" href="/about/">講師紹介</a>');
     expect(html.match(/<a class="site-nav__item"/g)).toHaveLength(6);
     expect(html).not.toContain("料金");
+    const header = html.split('</header>')[0]!;
+    expect(header).toContain('class="brand__caption" lang="en"><span>ONLINE PREPARATION</span> <span>FOR GERMAN ART SCHOOLS</span>');
+    expect(header).not.toMatch(/ART STUDY|data-motion|motion-toggle/);
+    expect(html).toContain('<span class="brand__sub">ART STUDY IN GERMANY</span>');
   });
 });
 

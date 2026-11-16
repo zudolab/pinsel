@@ -18,3 +18,8 @@ export const Default: Story = {
     </div>
   ),
 };
+
+export const Header: Story = {
+  name: "Header A caption",
+  render: (): Child => <Brand word="Pinsel" sub="ART STUDY IN GERMANY" captionLines={["ONLINE PREPARATION", "FOR GERMAN ART SCHOOLS"]} />,
+};
