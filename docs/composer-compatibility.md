@@ -175,3 +175,39 @@ staging root and retain its source, rather than reinitialize from Git seed.
 T4 implementation and T5–T7 remain incomplete. Installed negative endpoint tests
 are being added before T3 closure. Owner-data cutover and real inference remain
 held; no deployment or actual owner-editor switch occurred.
+
+Foundation final audit: Composer postmerge
+[43948802208](https://github.com/Takazudo/zudo-composer/actions/runs/43948802208)
+passed. Independently installed e62 endpoint negatives also passed (299 seconds):
+forged owner, shared field shadow, shared reorder, missing parent placement, forged
+slot and forged placement all refused. Snapshot
+`ff5700c6d91bd93b77662479aba2a06f95a5d2f5544fcaeb29f891d222340888`, all tokens and
+799 canonical files were identical before/after, with no receipts. The isolated
+clean worktree was removed normally and server stopped.
+[Final foundation evidence](https://github.com/zudolab/pinsel/issues/53#issuecomment-6929152532).
+This completes T0–T3; it does not complete T4–T7 or the data/provider holds.
+
+## T4 semantic authoring candidate — 2026-11-16
+
+Upstream [draft PR #977](https://github.com/Takazudo/zudo-composer/pull/977)
+adds selected-entry identity, explicit pins, semantic host tree/typed fields/local
+insertion, and a separate migration-source equivalence API. Source reviews found
+and corrected strict DSL-input and fixture typing gaps. Focused Mapping 474 tests,
+host editor 51 tests, capture/public DSL 23 tests, public type checks and independent
+reviews passed. Packed public runtime/declarations/release portability passed
+55 seconds after correcting its collection-route fixture.
+
+Initial immutable package `9ad8bac4f7ede83fcf3a78f7b516d222152cea6f` installed,
+frozen-installed and dedupe-checked successfully. A packaging correction adds the
+new Mapping guide to the shipping allowlist; final package candidate is
+`533be688e51ff150bce5e9bc87d2b07e62ebaec3`, payload 754 files, digest
+`f68ed3d382fea81d0fa96105d38a4e95f6110021620e28b2dc1f815b612b3b42`.
+Its immutable Pinsel install, frozen reinstall and dedupe check passed. Staged
+migration and installed browser acceptance remain pending at this checkpoint. Contract remains `c0b452da075b66757c60bd0d721a47062d4354d0`.
+
+The candidate migrates captured pack 0.2.0/native-v1 state into separately selected
+pack 0.3.0/native-v2 state. Content fields/entries and original store/history remain
+untouched; the migration map records exact structural/reference changes. Missing
+managed-asset import support causes refusal before destination creation rather
+than data loss; the known rehearsal has no managed Assets. All prepared public
+assets are captured separately. No actual owner-data cutover or live inference.
