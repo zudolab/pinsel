@@ -401,3 +401,23 @@ still require browser acceptance. See [the migration recipe](composer-note-migra
 
 T5/T6/T7 and human Remove task[978](https://github.com/Takazudo/zudo-composer/issues/978)
 remain open. No owner-data cutover, authenticated inference or deployment occurred.
+
+## Boundary repair and installed acceptance retry
+
+Current candidate package is `cafc1e44025e4537da049a63220844f592ed3336`,
+Composer attestation source `31be5a5a` (PR979), unchanged contract. Its766-file
+payload digest is `bfe902e7bbf14107e5cb94464d9b48b273ac89cb9cdff7672b59f5980de4a325`.
+The unchanged headless boundary scan detected a feature-owned type imported by
+server plugins. Moving the pure contract to shared types fixes that boundary;
+independent review confirmed unchanged runtime semantics. Node/app typechecks,
+scoped lint, public9/hosted16 generated checks pass; all four CMS fixtures regenerated.
+Required current-head CI and installed scenario acceptance remain pending.
+
+Pinsel `0a96abe` fixed fake provider input through actual public `loadHostContext`
+coverage: all four provider shapes plus policy tests (8) and Content typecheck pass.
+Two5e16 browser attempts stopped before proposals or Apply: first unsupported fake
+config model, then ambiguous select locator. The latter final public capture matched
+before `2a797d039c07394fa0b269709d6eb6efcf5e30c46eb2f3818f78586061c2b89f`.
+Neither counts as acceptance. Harness `e374b63` fixes scoped locators and asserts exact
+post-Apply ownership for Composition and Content;29 pure tests pass. No real-provider
+inference, owner-data import, deployment or actual-data authority switch occurred.
