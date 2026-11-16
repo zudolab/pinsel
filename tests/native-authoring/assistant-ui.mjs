@@ -16,12 +16,16 @@ export async function proposeFromSelection(page, { prop, prompt, domain }) {
     return card;
 }
 export async function renderExactCandidate(card, { pathname, text }) {
-    await card.getByLabel('Candidate route', { exact: true }).selectOption(pathname);
+    const choices = card.getByLabel('Candidate route', { exact: true });
+    const values = await choices.locator('option').evaluateAll(options => options.map(option => option.value));
+    const value = values.find(value => value && value.replace(/\/$/, '') === pathname.replace(/\/$/, ''));
+    assert(value, `Candidate route unavailable: ${pathname}`);
+    await choices.selectOption(value);
     await expect(card.getByText('Exact candidate rendered. Review the changes before Apply.', { exact: true })).toBeVisible({ timeout: 180000 });
     if (text) await expect(card.frameLocator('iframe[title="Host candidate review"]').locator('body')).toContainText(text);
 }
 /** Observe the real request and receipt before delivery; do not mistake CDP observer loss for response loss. */
-export async function observeAssistantOperation(page, operation, action, { loseResponse = false } = {}) {
+export async function observeAssistantOperation(page, operation, action, { loseResponse = false, onRequest } = {}) {
     let settle;
     const result = new Promise(resolve => { settle = resolve; });
     let captured = false;
@@ -31,6 +35,7 @@ export async function observeAssistantOperation(page, operation, action, { loseR
         if (captured || request?.operation !== operation) { await route.continue(); return; }
         captured = true;
         try {
+            if (onRequest) await onRequest(request);
             const response = await route.fetch({ timeout: 180000 });
             const body = await response.json();
             if (loseResponse) {

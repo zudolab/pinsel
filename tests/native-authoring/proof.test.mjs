@@ -64,3 +64,14 @@ test('restore scope refuses another repository, stage, pin, workspace or rendere
         assert.throws(() => assertRunScope({ scope }, altered));
     }
 });
+
+test('Content ownership proof rejects shadows and unrelated authored changes', async () => {
+    const { assertContentOwnership, assertProposalReadOnly } = await import('./assistant-ui.mjs');
+    const before = fixture(), after = structuredClone(before);
+    after.project.providers.content[0].entries[0].values.price = 'new';
+    const change = { providerId: 'content-filesystem', entryId: 'consultation', fieldId: 'price', value: 'new' };
+    assertContentOwnership(before, after, change);
+    assert.throws(() => assertProposalReadOnly(before, after));
+    after.project.providers.compositions[0].records[0].document.root[0].slots.main[0].props.price = 'new';
+    assert.throws(() => assertContentOwnership(before, after, change));
+});

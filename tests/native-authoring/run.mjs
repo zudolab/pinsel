@@ -1,3 +1,5 @@
+import { assistantCases } from './assistant-scenarios.mjs';
+import { assertContentOwnership, assertProposalReadOnly } from './assistant-ui.mjs';
 import assert from 'node:assert/strict';
 import { mkdir, mkdtemp, writeFile, access, realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
@@ -15,7 +17,7 @@ assert.match(options['--stage'] ?? '', /^[a-z0-9][a-z0-9-]+$/, 'Explicit --stage
 const installation = await assertInstalledPin(repoRoot, options['--composer']);
 assert.equal(Number(process.versions.node.split('.')[0]), 24, 'Use repository Node24 contract');
 const scenario = options['--scenario'] ?? 'full';
-assert(['full', 'inspect', 'negative', 'recovery'].includes(scenario));
+assert(['full', 'inspect', 'negative', 'recovery', 'assistant'].includes(scenario));
 if (scenario === 'negative')
     assert(options['--audit-data-root'], 'Negative proof requires explicit --audit-data-root for receipt-inclusive byte audit');
 if(options['--audit-data-root'])assert.equal(resolve(options['--audit-data-root']),join(repoRoot,'packages/pinsel-content',`.native-authoring-${options['--stage']}`),'Audit root must be the explicitly selected Pinsel stage, never another directory');
@@ -24,6 +26,7 @@ if (options['--artifacts'] && !options['--restore'])
     await mkdir(run); // Exclusive destination: never overwrite a prior run.
 const journalPath = join(run, 'beforeimages.json');
 const env = { ...process.env, EXPECTED_COMPOSER_SHA: options['--composer'], PINSEL_AUTHORING_STAGE: options['--stage'], NATIVE_ACCEPTANCE_PORT: options['--port'] ?? '4173', NATIVE_ACCEPTANCE_ARTIFACTS: run, NATIVE_ACCEPTANCE_JOURNAL: journalPath };
+if (scenario === 'assistant') { assert.equal(options['--stage'], 'notes-v1'); env.PINSEL_ASSISTANT_PROVIDER = 'fake'; }
 console.log(`Artifacts: ${run}`);
 async function command(args) {
     console.log('COMMAND', JSON.stringify(args));
@@ -45,6 +48,7 @@ catch {
 const errors = [];
 let before;
 let fileHashes;
+let scopeVerified = false;
 try {
     before = options['--restore'] ? await readJson(join(run, 'before.json')) : (await capture('before.json'), await readJson(join(run, 'before.json')));
     const scopeSnapshot = options['--restore'] ? null : before;
@@ -57,11 +61,44 @@ try {
     }
     const scope = { canonicalRepoRoot: await realpath(repoRoot), stage: options['--stage'], composer: options['--composer'], ...scopeIdentity(currentSnapshot) };
     if (options['--restore']) assertRunScope(await readJson(join(run, 'run-manifest.json')), scope);
-    else await writeFile(join(run, 'run-manifest.json'), JSON.stringify({ scope, installation, beforeDigest: before.digest }, null, 2), { flag: 'wx' });
+    else await writeFile(join(run, 'run-manifest.json'), JSON.stringify({ scope, scenario, installation, beforeDigest: before.digest }, null, 2), { flag: 'wx' });
+    scopeVerified = true;
     if (options['--audit-data-root'])
         fileHashes = await hashTree(resolve(options['--audit-data-root']));
     if (options['--restore']) {
-        await browser('restore');
+        assert.equal((await readJson(join(run, 'run-manifest.json'))).scenario, scenario, 'Restore requires original --scenario');
+        if (scenario !== 'assistant') await browser('restore');
+    }
+    else if (scenario === 'assistant') {
+      for (const spec of assistantCases) {
+        if (spec.id === 'local') await browser(`assistant:${spec.id}:setup`);
+        await capture(`assistant-${spec.id}-before.json`);
+        const caseBefore = await readJson(join(run, `assistant-${spec.id}-before.json`));
+        await browser(`assistant:${spec.id}:propose`);
+        await capture(`assistant-${spec.id}-proposed.json`);
+        assertProposalReadOnly(caseBefore, await readJson(join(run, `assistant-${spec.id}-proposed.json`)));
+        await browser(`assistant:${spec.id}:apply`);
+        await capture(`assistant-${spec.id}-applied.json`);
+        if (spec.domain === 'content') assertContentOwnership(caseBefore, await readJson(join(run, `assistant-${spec.id}-applied.json`)), await readJson(join(run, `assistant-${spec.id}.json`)));
+        await browser(`assistant:${spec.id}:undo`);
+        await capture(`assistant-${spec.id}-undone.json`);
+        assertRestored(caseBefore, await readJson(join(run, `assistant-${spec.id}-undone.json`)));
+        if (spec.id === 'local') await browser(`assistant:${spec.id}:cleanup`);
+      }
+      for (const id of ['course-stale', 'course-guard']) {
+        await browser(`assistant:${id}:propose`);
+        await capture(`assistant-${id}-proposed.json`);
+        assertRestored(before, await readJson(join(run, `assistant-${id}-proposed.json`)));
+        if (id === 'course-guard') await browser(`assistant:${id}:apply`);
+        await browser(`assistant:${id}:intervene`);
+        await capture(`assistant-${id}-intervened.json`);
+        await browser(`assistant:${id}:${id === 'course-stale' ? 'stale-refuse' : 'guard-refuse'}`);
+        await capture(`assistant-${id}-refused.json`);
+        assert.deepEqual(await readJson(join(run, `assistant-${id}-intervened.json`)), await readJson(join(run, `assistant-${id}-refused.json`)), 'Refused stale/Undo operation wrote canonical state');
+        await browser(`assistant:${id}:human-inverse`);
+        await capture(`assistant-${id}-restored.json`);
+        assertRestored(before, await readJson(join(run, `assistant-${id}-restored.json`)));
+      }
     }
     else if (scenario === 'full') {
         await browser('inspect');
@@ -84,6 +121,23 @@ catch (error) {
     errors.push(String(error.stack ?? error));
 }
 finally {
+    if (scopeVerified && before && scenario === 'assistant') {
+      for (const id of ['course-stale', 'course-guard']) {
+        const path = join(run, `assistant-${id}.json`);
+        if (!await exists(path)) continue;
+        try { const journal = await readJson(path); if (journal.human || journal.apply) await browser(`assistant:${id}:human-inverse`); }
+        catch (error) { errors.push(`Assistant ${id} human inverse held: ${error.stack ?? error}`); }
+      }
+      for (const spec of [...assistantCases].reverse()) {
+        const path = join(run, `assistant-${spec.id}.json`);
+        if (!await exists(path)) continue;
+        try {
+          const journal = await readJson(path);
+          if (journal.conversationId) await browser(`assistant:${spec.id}:restore`);
+          if (journal.fixture && !journal.cleanup) await browser(`assistant:${spec.id}:cleanup`);
+        } catch (error) { errors.push(`Assistant ${spec.id} restoration held: ${error.stack ?? error}`); }
+      }
+    }
     if (!options['--restore'] && scenario === 'full' && await exists(journalPath)) {
         try {
             await browser('restore');

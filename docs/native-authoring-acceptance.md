@@ -154,12 +154,12 @@ lockfile text cryptographically attests every installed byte. The negative mode
 now attempts all seven defined endpoint refusals, with public and receipt-inclusive
 before/after audits; this expanded run is not yet executed.
 
-### Assistant integration preparation (not yet executed)
+### Assistant scenario (not yet executed)
 
 `assistant-ui.mjs` provides actual DOM helpers for selection handoff, fake-provider
 proposal, candidate rendering, Apply observation, deliberately lost response,
 identical retained-request recovery, and Undo. It does not launch a server, select
-credentials, or fabricate candidate acknowledgements. The final orchestration
+credentials, or fabricate candidate acknowledgements. The orchestration
 must run only after an immutable T5 package is installed and sources are frozen,
 with `PINSEL_ASSISTANT_PROVIDER=fake` explicitly set. No real inference is implied.
 
@@ -178,6 +178,29 @@ The orchestrator must also exercise stale proposal refusal after a human save,
 response loss after a real successful Apply followed by fresh-browser retained
 request recovery, and Undo refusal after an intervening save to the same owner.
 Use supported inverses and public canonical comparisons for restoration. Capture
-before/after each refusal to prove no write. These scenarios are **NOT_RUN**;
-the helpers alone do not satisfy T5 acceptance, and `run.mjs` does not yet expose
-an Assistant scenario. Current UI/service integration is still being finalized.
+before/after each refusal to prove no write. These scenarios are **NOT_RUN** until the installed browser command completes:
+
+```sh
+node tests/native-authoring/run.mjs \
+  --composer "$ACCEPTANCE_COMPOSER_SHA" --stage notes-v1 --scenario assistant \
+  --artifacts /absolute/new-assistant-run
+```
+
+Run through the environment's shared heavy guard and child reaper. The runner
+sets only `PINSEL_ASSISTANT_PROVIDER=fake`; it does not alter real-provider
+credentials. It executes Course, FAQ, Note, local field and local insertion
+proposals, with server shutdown and public capture before/after each proposal,
+Apply and Undo. The local field case creates a journaled human paragraph fixture
+and removes it using the actual Remove component button after Undo. Course Apply
+loses a real committed response, closes the browser process and recovers through
+the retained product request in the persistent profile. Separate Course cases
+exercise stale candidate refusal and guarded Undo with a human price change;
+these use an explicit human inverse after the guard refuses. All refusals have
+public capture comparisons.
+
+A failed run retains journals, receipts, browser profiles and snapshots. Resume
+supported cleanup with the same scope and `--scenario assistant --restore DIR`.
+Unexpected values or unresolved receipts stop cleanup for review. An interrupted
+fixture insertion records its exact operation/UUID before dispatch; uncertain
+state must be reconciled, never reseeded. Do not treat a prepared script, pure
+proof tests, or a successful subset as passing the integrated scenario.

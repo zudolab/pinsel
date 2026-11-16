@@ -1,3 +1,4 @@
+import { runAssistantPhase } from './assistant-scenarios.mjs';
 import { chromium } from '@playwright/test';
 import { join, isAbsolute } from 'node:path';
 import { repoRoot, assertInstalledPin, assertFreePort } from './support.mjs';
@@ -8,7 +9,7 @@ import { get } from 'node:http';
 const probe = url => new Promise((resolve, reject) => { const request = get(url, { headers: { Accept: 'text/html' }, timeout: 3000 }, response => { let body = ''; response.on('data', chunk => body += chunk); response.on('end', () => resolve({ status: response.statusCode, body: body.slice(0, 120) })); }); request.on('error', reject); request.on('timeout', () => request.destroy(new Error('HTTP readiness timeout'))); });
 const mode = process.argv[2];
 assert.match(process.env.PINSEL_AUTHORING_STAGE ?? '', /^[a-z0-9][a-z0-9-]+$/, 'Explicit staged authority required');
-assert(['inspect', 'stage', 'later', 'restore', 'recovery', 'negative'].includes(mode), 'Unknown browser phase');
+assert(['inspect', 'stage', 'later', 'restore', 'recovery', 'negative'].includes(mode) || mode.startsWith('assistant:'), 'Unknown browser phase');
 const expected = process.env.EXPECTED_COMPOSER_SHA;
 assert.match(expected ?? '', /^[a-f0-9]{40}$/, 'Set exact expected immutable SHA');
 await assertInstalledPin(repoRoot, expected);
@@ -34,7 +35,7 @@ const executablePath = process.env.NATIVE_ACCEPTANCE_CHROMIUM || chromium.execut
 const frame = () => page.frameLocator('iframe[title="Host rendered page"]');
 let profileCounter = 0;
 async function launch() {
-    context = await chromium.launchPersistentContext(run + '/browser-profile-' + (mode === 'negative' ? profileCounter++ : 0), { executablePath, headless: true, viewport: { width: 1600, height: 1050 } });
+    context = await chromium.launchPersistentContext((mode.startsWith('assistant:') ? join(artifacts, 'assistant-profile') : run + '/browser-profile-' + (mode === 'negative' ? profileCounter++ : 0)), { executablePath, headless: true, viewport: { width: 1600, height: 1050 } });
     page = context.pages()[0] ?? await context.newPage();
     page.on('request', request => { if (request.url().endsWith('/__zudo-native-edit')) nativeHeaders = request.headers(); });
     page.on('pageerror', e => record('pageerror', e.message));
@@ -351,7 +352,7 @@ try {
                 assert([journal.text, journal.laterText, journal.node.props?.text, ''].includes(node.props.text), 'Inserted node has unexpected intervening text');
                 await selectTarget(node);
                 await shot('t4-restarted-stable-node');
-                await edit(() => page.getByRole('button', { name: 'Move down', exact: true }).click(), { kind: 'remove' });
+                await edit(() => page.getByRole('button', { name: 'Remove component', exact: true }).click());
                 assert(!preview.targets.some(t => t.nodeId === journal.node.nodeId));
                 }
             }
@@ -506,6 +507,13 @@ try {
             assert(!result.error, result.error);
         }
         await shot('invalid-owner-slot-placement-refused');
+    }
+    if (mode.startsWith('assistant:')) {
+      const [, caseId, phase] = mode.split(':');
+      await runAssistantPhase({ phase, caseId, page, open, getPreview: () => preview, frame, record, shot,
+        journalPath: join(artifacts, `assistant-${caseId}.json`),
+        before: JSON.parse(await readFile(join(artifacts, 'before.json'), 'utf8')),
+        restart: async () => { await context.close(); await launch(); return page; } });
     }
     record('PASS', mode);
 }
