@@ -14,6 +14,10 @@ export type RouteDocument = SiteProjectPlanRoute;
 export type RouteCompositionDocument = RouteDocument["composition"]["document"];
 export type RouteCompositionNode = RouteCompositionDocument["root"][number];
 
+export interface RouteRenderOptions {
+  decorateNode?: (rendered: Child, node: RouteCompositionNode) => Child;
+}
+
 interface Outlet {
   parentId: string;
   slotId: string;
@@ -49,16 +53,16 @@ function checkNode(manifest: ComponentManifest, node: RouteCompositionNode): voi
   }
 }
 
-function renderChildren(registry: RenderRegistry, nodes: readonly RouteCompositionNode[], route: RouteContext, outlet: Outlet | undefined, accepts?: readonly string[]): Child[] {
+function renderChildren(registry: RenderRegistry, nodes: readonly RouteCompositionNode[], route: RouteContext, outlet: Outlet | undefined, accepts?: readonly string[], options: RouteRenderOptions = {}): Child[] {
   return nodes.map((child, index) => {
     if (accepts && !accepts.includes(child.componentId)) {
       throw new RouteRenderError(`Node ${child.id} (${child.componentId}) is not accepted here; the slot takes ${accepts.join(", ")}.`);
     }
-    return renderNode(registry, child, route, { index: index + 1, count: nodes.length }, outlet);
+    return renderNode(registry, child, route, { index: index + 1, count: nodes.length }, outlet, options);
   });
 }
 
-function renderNode(registry: RenderRegistry, node: RouteCompositionNode, route: RouteContext, position: SlotPosition, outlet: Outlet | undefined): Child {
+function renderNode(registry: RenderRegistry, node: RouteCompositionNode, route: RouteContext, position: SlotPosition, outlet: Outlet | undefined, options: RouteRenderOptions): Child {
   const manifest = definition(registry, node);
   const component = registry.components[node.componentId];
   if (!component) throw new RouteRenderError(`No renderer registered for "${node.componentId}".`);
@@ -67,9 +71,10 @@ function renderNode(registry: RenderRegistry, node: RouteCompositionNode, route:
   for (const slot of manifest.slots) {
     const projected = outlet !== undefined && outlet.parentId === node.id && outlet.slotId === slot.id;
     const children = projected ? outlet.children : (node.slots[slot.id] ?? []);
-    props[slot.prop] = renderChildren(registry, children, route, projected ? undefined : outlet, projected ? undefined : slot.accepts);
+    props[slot.prop] = renderChildren(registry, children, route, projected ? undefined : outlet, projected ? undefined : slot.accepts, options);
   }
-  return component(props);
+  const rendered = component(props);
+  return options.decorateNode ? options.decorateNode(rendered, node) : rendered;
 }
 
 /** Same verification the upstream Preact delivery runtime performs before projecting into a template outlet. */
@@ -105,8 +110,8 @@ function linkedView(routeDocument: RouteDocument, registry: RenderRegistry): { d
   return { document: linked.document, outlet: { ...linked.outlet.target, children: composition.document.root } };
 }
 
-export function renderRouteDocument(routeDocument: RouteDocument, registry: RenderRegistry): Child {
+export function renderRouteDocument(routeDocument: RouteDocument, registry: RenderRegistry, options: RouteRenderOptions = {}): Child {
   const view = linkedView(routeDocument, registry);
   const route: RouteContext = { pathname: routeDocument.pathname };
-  return renderChildren(registry, view.document.root, route, view.outlet);
+  return renderChildren(registry, view.document.root, route, view.outlet, undefined, options);
 }

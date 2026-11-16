@@ -1,5 +1,7 @@
 # Note AI 限定受け入れ
 
+This is the retained Hosted/D1 workflow. Normal native authoring and its separate cutover hold are documented in [Composer adoption](composer-adoption.md).
+
 実CLIはCloudでは実行しません。fakeは契約と保存経路の検証であり、実モデルの日本語編集能力を証明しません。現在のpinとNode24を使用し、個人設定・認証・model・speed・課金設定を変更しないでください。
 
 ## 自動fake回帰
@@ -16,9 +18,9 @@ rootで `pnpm exec playwright test tests/browser/note-ai.spec.ts`。重い検証
 2. 既存設定を明示した下記のどちらか**1 provider**だけをforeground起動します。`PINSEL_AI_FAKE_FIELD` は未設定にします。`PINSEL_DOGFOOD_STATE=/absolute/new/test-state PINSEL_DOGFOOD_PORT=8798` を同じcommandへ追加します。Node hostにはランダムportが割り当てられるので、OSの `lsof -nP -iTCP -sTCP:LISTEN`（Linuxは `ss -ltnp`）で今回起動したNode/WorkerのPIDとloopback portを控えます。秘密を含むprocess environmentやtemporary `.dev.vars` は表示しません。
 
    ```sh
-   PINSEL_AI_PROVIDER=claude-cli PINSEL_AI_MODEL=opus PINSEL_AI_EFFORT=medium pnpm dev:dogfood
+   PINSEL_AI_PROVIDER=claude-cli PINSEL_AI_MODEL=opus PINSEL_AI_EFFORT=medium pnpm dev:legacy-hosted
    # または（既存設定を本人が確認済みの場合）
-   PINSEL_AI_PROVIDER=codex-cli PINSEL_AI_MODEL=gpt-6-astra PINSEL_AI_EFFORT=medium PINSEL_AI_SERVICE_TIER=default pnpm dev:dogfood
+   PINSEL_AI_PROVIDER=codex-cli PINSEL_AI_MODEL=gpt-6-astra PINSEL_AI_EFFORT=medium PINSEL_AI_SERVICE_TIER=default pnpm dev:legacy-hosted
    ```
 
 3. provider readyを確認します。未認証・unknown・失敗ならPrepareせず停止します。資格情報の変更・CLI更新や自動再試行はしません。

@@ -33,3 +33,12 @@ playwright-report/
 
 # Persistent local artifacts (never user content source)
 .dogfood/
+
+# Staged native authoring and import evidence
+packages/pinsel-content/.native-authoring/
+packages/pinsel-content/.native-public/
+packages/pinsel-content/.native-import-evidence.json
+packages/pinsel-content/.native-builds/
+
+# Transient native authoring lease (owned and removed by Composer).
+/packages/pinsel-content/.zudo-authoring.lock

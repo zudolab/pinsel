@@ -4,7 +4,7 @@ These are the decisions, identifiers and one-time actions needed before Pinsel c
 
 ## Current status
 
-- **Hosted Content is local dogfooding only.** `pnpm dev:dogfood` runs the real Worker against a persistent **local** D1; see [dogfooding](dogfooding.md). Nothing is deployed, and no remote D1, npm release or real email delivery exists.
+- **Hosted Content is local dogfooding only.** `pnpm dev:legacy-hosted` runs the real Worker against a persistent **local** D1; see [dogfooding](dogfooding.md). Nothing is deployed, and no remote D1, npm release or real email delivery exists.
 - **The publication/delivery path is stopped.** The current Worker answers every publication request with `configuration-required` (`apps/authoring-worker/src/site/baseline.ts`), and no GitHub provider or scheduled delivery is wired into it. Confirmed snapshots are built only locally with `pnpm build:snapshot` (output `.dogfood/builds/<id>/`). The older publication pipeline was removed on 2026-11-07; its design survives only in the git history of `docs/publication.md`.
 - **Composer** is consumed through two distinct package-root git pins, `zudo-composer#13ed855a3268d91c114c3f5ee167d9ace9078d57` and `@zudo-composer/component-contract#c0b452da075b66757c60bd0d721a47062d4354d0`; see [dependencies](dependencies.md#current-state).
 
@@ -24,7 +24,7 @@ These are the decisions, identifiers and one-time actions needed before Pinsel c
 | Input | Needed by | Current state | Decision |
 | --- | --- | --- | --- |
 | D1 database ids (production, and preview if used) | `d1_databases` in `apps/authoring-worker/wrangler.jsonc` | placeholder `00000000-0000-4000-8000-000000000000`; only local D1 has been used | _undecided_: `wrangler d1 create pinsel-authoring` at launch |
-| Remote D1 migrations | the five files in `apps/authoring-worker/migrations/` (`0001_init` … `0005_content_ai`, including `0004_hosted_content`) | applied only with `--local` (by `pnpm dev:dogfood` and the tests). Not applied to a launch database. A disposable remote D1 took all five in order, and a second apply was a no-op ([live test](#disposable-live-test-2026-11-08)). | _not done_ for launch |
+| Remote D1 migrations | the five files in `apps/authoring-worker/migrations/` (`0001_init` … `0005_content_ai`, including `0004_hosted_content`) | applied only with `--local` (by `pnpm dev:legacy-hosted` and the tests). Not applied to a launch database. A disposable remote D1 took all five in order, and a second apply was a no-op ([live test](#disposable-live-test-2026-11-08)). | _not done_ for launch |
 | Initial Hosted Content head | first Worker request on the remote D1 | the Worker initializes `pinsel_hosted_head` from the assembled baseline on first use (`ensureHostedSeeded`, `apps/authoring-worker/src/site/baseline.ts`), or refuses when an old draft needs explicit migration. This has run only against local D1. | _not done_ |
 
 ## Publication and delivery
