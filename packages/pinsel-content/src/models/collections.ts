@@ -39,7 +39,7 @@ export const navLinkModel = defineModel({
 export const courseModel = defineModel({
   id: "course",
   name: "コース・料金",
-  description: "進路相談・2ヶ月・4ヶ月（3件、追加不可。並び順は ?course= の番号に対応）",
+  description: "進路相談・2ヶ月・4ヶ月（3件）。表示順は識別子・お問い合わせリンクとは独立",
   kind: "collection",
   fields: [
     { key: "name", label: "コース名", kind: "text" },

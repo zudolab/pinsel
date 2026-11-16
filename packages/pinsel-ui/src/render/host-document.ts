@@ -22,7 +22,7 @@ export async function renderDocument(input: {
   identity: { pathname: string; rendererId: string; rendererVersion: string };
   targets: readonly { renderedNodeId: string }[];
 }): Promise<string> {
-  if (input.identity.rendererId !== "pinsel-zfb" || input.identity.rendererVersion !== "native-v1") throw new Error("Unsupported Pinsel renderer identity");
+  if (input.identity.rendererId !== "pinsel-zfb" || input.identity.rendererVersion !== "native-v2") throw new Error("Unsupported Pinsel renderer identity");
   const entries = input.project?.providers.content.flatMap(provider => provider.entries) ?? [];
   const pathname = input.identity.pathname;
   const noteSlug = /^\/notes\/([^/]+)\/?$/.exec(pathname)?.[1];

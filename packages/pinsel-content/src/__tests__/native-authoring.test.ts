@@ -58,7 +58,7 @@ beforeAll(async () => {
   await writeFile(join(root, "zudo-composer.config.ts"), `export default ${JSON.stringify({
     pack: "@pinsel/ui/composer-pack", dataDir: "native-data", styles: "styles/authoring.css", authoringAuthority: "workspace",
     nativeEditing: { source: "workspace", paragraph: { componentId: "pinsel.paragraph", textProp: "text" } },
-    hostDocument: { module: "@pinsel/ui/host-document", rendererId: "pinsel-zfb", rendererVersion: "native-v1" },
+    hostDocument: { module: "@pinsel/ui/host-document", rendererId: "pinsel-zfb", rendererVersion: "native-v2" },
   })};\n`);
   host = await loadHostContext({ workspaceRoot: root });
   await initializeAuthoringWorkspace({ ...host, project: await firstSlice(host.pack), workspaceId: "first-slice" });

@@ -1,3 +1,4 @@
+import { courseIdFromSearch } from "@pinsel/ui/src/scripts/course-identity.ts";
 // `pnpm content:validate`: content/entries + structure through Composer's
 // validateSiteProject and the portable compiler (zero diagnostics), the
 // Pinsel policy rules on every stored value, the structure invariants, the
@@ -64,8 +65,8 @@ export function checkEntries(entries: readonly ContentEntryRecord[]): string[] {
   if (!sameSet(navHrefs, NAV_HREFS)) issues.push(`nav-link: hrefs ${JSON.stringify(navHrefs)} must be exactly ${JSON.stringify(NAV_HREFS)}`);
   const courses = ordered(entries, "course");
   const expectedCourses = COURSE_QUERY_OPTIONS.filter((option) => option.courseId !== null);
-  if (courses.length !== expectedCourses.length || expectedCourses.some((option, index) => courses[index]?.id !== option.courseId || value(courses[index]!, "order") !== option.index)) {
-    issues.push(`course: entries must be ${expectedCourses.map((option) => `${option.courseId}@${option.index}`).join(", ")} so /contact/?course=N selects option N`);
+  if (expectedCourses.some(option => !courses.some(entry => entry.id === option.courseId))) {
+    issues.push(`course: original alias identities must remain ${expectedCourses.map(option => option.courseId).join(", ")}; order never changes query aliases`);
   }
   const notes = entries.filter((entry) => entry.modelId === "note");
   if (!sameSet(notes.map((entry) => entry.id), NOTE_SLUGS) || notes.some((entry) => value(entry, "slug") !== entry.id)) issues.push(`note: entries must be ${NOTE_SLUGS.join(", ")} with id = slug`);
@@ -90,6 +91,7 @@ export function checkLinks(facts: readonly RouteFacts[]): string[] {
   const issues: string[] = [];
   const fragmentsByRoute = new Map<string, Set<string>>();
   for (const fact of facts) fragmentsByRoute.set(routeForPlanPathname(fact.pathname) ?? fact.pathname, new Set(fact.fragments));
+  const courseIds = facts.find(fact => normalisedRoute(fact.pathname) === "/contact/")?.courseIds ?? [];
   const uiAnchors = new Set(["main", "top", "site-navigation", "legal", "contact-form", "hero-title"]);
   for (const fact of facts) {
     const here = routeForPlanPathname(fact.pathname)!;
@@ -106,9 +108,9 @@ export function checkLinks(facts: readonly RouteFacts[]): string[] {
         continue;
       }
       if (query !== undefined) {
-        const course = /^course=(\d+)$/.exec(query);
-        const option = course ? COURSE_QUERY_OPTIONS.find((candidate) => candidate.index === Number(course[1])) : undefined;
-        if (target !== "/contact/" || !option || option.courseId === null) issues.push(`${here}: link ${href} has an unknown query`);
+        const course = /^course=([^&]+)$/.exec(query);
+        const identity = course ? courseIdFromSearch(`?${query}`) : null;
+        if (target !== "/contact/" || !identity || courseIds.filter(id => id === identity).length !== 1) issues.push(`${here}: link ${href} has an unknown query`);
       }
       if (hash !== undefined && !uiAnchors.has(hash) && !fragmentsByRoute.get(target)?.has(hash)) issues.push(`${here}: link ${href} points to a missing fragment`);
     }

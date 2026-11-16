@@ -25,7 +25,7 @@ import { NOTE_ROUTES, PAGE_ROUTES, PINSEL_ROUTES, type PinselRoute } from "./inv
 // - "cta-subcopy"     the value minus the shared まずはお気軽にご相談ください。 prefix
 // - "count"           `（N件）`
 // - "presence"        boolean: the selector matches iff the value is true
-// - "course-href"     `/contact/?course=N` on the `href` attribute
+// - "course-href"     canonical entry ID → `/contact/?course=<id>`; `$entry-id` is metadata, not a Content field
 // - "note-href"       `/notes/<slug>/` on `href` (slug value or note reference)
 // - "markdown"        the note body through the safe markdown tree, structurally
 // - "note-title"      `<title>` = `{title} - Pinsel Notes`
@@ -49,6 +49,8 @@ export type PublicationRender =
 export interface PublicationRow {
   model: string;
   field: string;
+  /** Explicit presentation membership/order; independent of Content arrangement. */
+  entryIds?: readonly string[];
   routes: readonly PinselRoute[];
   entry: "single" | "route" | "route-note" | "each" | "keyed" | "nested";
   /** Item elements for each/keyed/nested; the row selector is resolved inside each item. */
@@ -227,13 +229,13 @@ export const PUBLICATION_MAP: readonly PublicationRow[] = [
   each("course", "unit", HOME, ".pricing-grid > article.pricing-card", ".pricing-card__unit"),
   each("course", "homeDescription", HOME, ".pricing-grid > article.pricing-card", ".pricing-card__description"),
   each("course", "featured", HOME, ".pricing-grid > article.pricing-card", ".pricing-card__popular", { render: "presence" }),
-  each("course", "order", HOME, ".pricing-grid > article.pricing-card", "a.text-link", { attribute: "href", render: "course-href" }),
-  each("course", "name", LESSONS, ".price-detail > .price-detail__card", "h3", { filter: { field: "order", equals: 1, operator: "not-equals" } }),
-  each("course", "price", LESSONS, ".price-detail > .price-detail__card", ".price", { filter: { field: "order", equals: 1, operator: "not-equals" } }),
-  each("course", "lessonsNote", LESSONS, ".price-detail > .price-detail__card", ".quiet", { filter: { field: "order", equals: 1, operator: "not-equals" } }),
-  each("course", "name", LESSONS, ".consultation-intro > div:first-child", "p:first-child", { filter: { field: "order", equals: 1 } }),
-  each("course", "price", LESSONS, ".consultation-intro > div:first-child", ".price", { filter: { field: "order", equals: 1 } }),
-  each("course", "lessonsNote", LESSONS, ".consultation-intro > div:first-child", ".quiet", { filter: { field: "order", equals: 1 } }),
+  each("course", "$entry-id", HOME, ".pricing-grid > article.pricing-card", "a.text-link", { attribute: "href", render: "course-href" }),
+  each("course", "name", LESSONS, ".price-detail > .price-detail__card", "h3", { entryIds: ["two-month", "four-month"] }),
+  each("course", "price", LESSONS, ".price-detail > .price-detail__card", ".price", { entryIds: ["two-month", "four-month"] }),
+  each("course", "lessonsNote", LESSONS, ".price-detail > .price-detail__card", ".quiet", { entryIds: ["two-month", "four-month"] }),
+  each("course", "name", LESSONS, ".consultation-intro > div:first-child", "p:first-child", { entryIds: ["consultation"] }),
+  each("course", "price", LESSONS, ".consultation-intro > div:first-child", ".price", { entryIds: ["consultation"] }),
+  each("course", "lessonsNote", LESSONS, ".consultation-intro > div:first-child", ".quiet", { entryIds: ["consultation"] }),
   each("course", "contactOptionLabel", CONTACT, "select#course > option:not(:first-child)", ""),
 
   each("course-step", "title", LESSONS, ".course-steps > article.course-step", "h3"),

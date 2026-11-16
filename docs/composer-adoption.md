@@ -61,7 +61,7 @@ remain historical proofs while supported new routes receive separate validation.
 See the [complete field inventory](composer-migration-inventory.md),
 [qualified reference map](composer-migration-reference-map.json) and
 [migration plan](composer-migration-plan.md). They describe the known-input baseline
-and proposed transformations; T4 implementation remains pending T3, and a fresh
+and proposed transformations; the migration recipe records current implementation, and a fresh
 public capture is required before any migration.
 
 Lessons' `consultation` group attaches `lessons-consultation`, whose `intro`
@@ -151,6 +151,11 @@ references and generated capability grammar through its actual context/tool path
 This Markdown file alone does not establish that behavior.
 
 ## Staged native workspace recipe (implementation acceptance pending)
+
+For an existing `0.2.0` / `native-v1` workspace, follow the
+[explicit course-identity migration recipe](composer-course-migration.md). The new
+pack does not make an old workspace compatible by itself. Preserve the original
+store/history and select only a verified separate stage; do not rerun initialization.
 
 After installing the exact Composer revision recorded in the compatibility ledger:
 

@@ -18,7 +18,7 @@ import type { JsonValue } from "@zudo-composer/component-contract";
 // - list fields cannot be bound, so multi-line props are one item per line.
 
 export const CONTRACT_PACK_ID = "pinsel";
-export const CONTRACT_PACK_VERSION = "0.2.0";
+export const CONTRACT_PACK_VERSION = "0.3.0";
 
 export type ContractPropKind = "text" | "multiline" | "number" | "boolean" | { select: readonly string[] };
 
@@ -93,7 +93,7 @@ export const PINSEL_COMPONENT_CONTRACT: readonly ContractComponent[] = [
   component("checklist", "ul.checklist around the items slot.", {}, [many("items", ["pinsel.checklist-item"])]),
   component("checklist-item", "li: check icon .checklist__mark + span text.", { text: text() }),
   component("pricing-cards", "div.pricing-grid (items slot) + p.price-note note + .section-after text link moreLabel → moreHref.", { note: text(), moreLabel: text(), moreHref: text("/lessons/") }, [many("items", ["pinsel.pricing-card"])]),
-  component("pricing-card", "article.pricing-card; link /contact/?course={courseIndex}. taxLabel/popularBadge/linkLabel stay manifest defaults (a slot child cannot read site-copy).", { name: text(), price: text(), unit: text(), description: text(), featured: flag(), courseIndex: count(1), taxLabel: text("税込"), popularBadge: text("POPULAR"), linkLabel: text("このコースについて相談する") }),
+  component("pricing-card", "article.pricing-card; canonical-ID contact link; legacy numeric aliases remain supported. taxLabel/popularBadge/linkLabel stay manifest defaults (a slot child cannot read site-copy).", { name: text(), price: text(), unit: text(), description: text(), featured: flag(), courseId: text("consultation"), taxLabel: text("税込"), popularBadge: text("POPULAR"), linkLabel: text("このコースについて相談する") }, [], 2),
   component("instructor", "div.instructor[.instructor--about] > figure portrait (ASSET_PATHS.instructorPortrait, alt portraitAlt, 600×902, lazy) + .instructor__identity (p.instructor__name, p.instructor__latin, then the identity slot).", { name: text(), latinName: text(), portraitAlt: text(), about: flag() }, [many("identity", ["pinsel.instructor-subtitle", "pinsel.instructor-bio", "pinsel.instructor-bio-link", "pinsel.text-link", "pinsel.group"])]),
   component("instructor-subtitle", "p.instructor__subtitle.", { text: text() }),
   component("instructor-bio", "div.instructor__bio > p.", { text: text() }),
@@ -179,7 +179,7 @@ export const PINSEL_COMPONENT_CONTRACT: readonly ContractComponent[] = [
     },
     [many("options", ["pinsel.course-option"])],
   ),
-  component("course-option", "<option value=label>label</option>.", { label: text() }),
+  component("course-option", "<option value=label data-course-id=courseId>label</option>; payload remains the label.", { label: text(), courseId: text("consultation") }, [], 2),
   component("legal", "section.container > details.legal#legal: summary + table > tbody(items slot).", { summary: text() }, [many("items", ["pinsel.legal-row"])]),
   component("legal-row", "tr: th[scope=row] term, td value.", { term: text(), value: text() }),
 

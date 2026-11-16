@@ -1,17 +1,20 @@
 import type { Child } from "@takazudo/zfb/zudo-react";
 import { Icon } from "../icon/icon";
+import { courseHref } from "../scripts/course-identity";
 
 export interface CourseOptionProps {
   label: string;
+  courseId: string;
 }
 
 /**
  * One `<option>` after 未定. A `select` accepts only intrinsic children, so
- * call it as a function (`CourseOption({ label })`) outside the renderer,
+ * call it as a function (`CourseOption({ label, courseId })`) outside the renderer,
  * which already calls components eagerly.
  */
-export function CourseOption({ label }: CourseOptionProps): Child {
-  return <option value={label}>{label}</option>;
+export function CourseOption({ label, courseId }: CourseOptionProps): Child {
+  courseHref(courseId); // Refuse unknown identities instead of silently retargeting an alias.
+  return <option value={label} data-course-id={courseId}>{label}</option>;
 }
 
 export interface ContactFormProps {
@@ -103,7 +106,7 @@ export function ContactForm(props: ContactFormProps): Child {
           marker={props.optionalLabel}
           control={
             <select id="course" name="course">
-              {CourseOption({ label: props.courseUndecidedOption })}
+              <option value={props.courseUndecidedOption}>{props.courseUndecidedOption}</option>
               {(props.courseOptions ?? []) as Child}
             </select>
           }

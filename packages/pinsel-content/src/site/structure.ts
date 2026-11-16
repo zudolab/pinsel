@@ -16,7 +16,8 @@ import { PINSEL_PROJECT_ID } from "../policy";
 // attachment into a slot. The year/FAQ-group/note sections are generated per
 // entry (pinned), since attachment conditions cannot refer to the parent entry.
 
-type Binding = Omit<BindingInput, "nodeId"> & { nodeId?: string };
+type OptionalNode<T> = T extends unknown ? Omit<T, "nodeId"> & { nodeId?: string } : never;
+type Binding = OptionalNode<BindingInput>;
 
 /** Structure literals of the approved prototype (English eyebrows, ARIA labels, fixed hrefs). */
 export const STRUCTURE_LITERALS = {
@@ -43,12 +44,13 @@ export interface PinselSite {
 interface ModeSpec {
   kind: "single" | "pinned" | "list";
   entryId?: string;
+  entryIds?: string[];
   conditions?: { field: string; operator: "equals" | "not-equals"; value: JsonValue }[];
   /** List sort field; default `order`. */
   sortField?: string;
 }
 
-const ref = (modelId: string, recordId: string): JsonValue => ({ providerId: PINSEL_CONTENT_PROVIDER_ID, modelId, recordId });
+const ref = (modelId: string, recordId: string) => ({ providerId: PINSEL_CONTENT_PROVIDER_ID, modelId, recordId });
 
 /** Builds the full site project with `entries` as the Content provider's entries. */
 export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: TrustedComponentPack): PinselSite {
@@ -58,8 +60,6 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
   const model = (id: string) => models.get(id)!;
   const entriesOf = (modelId: string) =>
     entries.filter((entry) => entry.modelId === modelId).sort((left, right) => Number(left.values[fieldId(modelId, "order")]) - Number(right.values[fieldId(modelId, "order")]) || (left.id < right.id ? -1 : 1));
-
-  const pins = new Map<string, JsonValue>();
 
   /** A detached composition + mapping: `root` is mapped once per selected entry. */
   const fragment = (id: string, modelId: string, root: NodeInput[], bindings: Binding[], mode: ModeSpec): { page: Page; mapping: Mapping } => {
@@ -76,12 +76,11 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
         mode.kind === "single"
           ? { kind: "collection", limit: 1 }
           : mode.kind === "pinned"
-            ? // Pins are patched in after toSiteProject (the DSL has no pins); the impossible condition keeps a deleted pin from selecting another entry.
-              { kind: "collection", limit: 1, conditions: [{ field: "order", operator: "equals", value: -1 }] }
+            ? // Explicit pin order owns membership and arrangement. Missing/ineligible pins block; the exact limit leaves no query fallback.
+              { kind: "collection", limit: (mode.entryIds ?? [mode.entryId!]).length, pins: (mode.entryIds ?? [mode.entryId!]).map(id => ref(modelId, id)), conditions: [] }
             : { kind: "collection", limit: 1000, sort: [sort], conditions: mode.conditions ?? [] },
       bindings: resolved,
     });
-    if (mode.kind === "pinned") pins.set(id, ref(modelId, mode.entryId!));
     return { page, mapping };
   };
 
@@ -179,8 +178,7 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
     { field: "unit", prop: "unit" },
     { field: "homeDescription", prop: "description" },
     { field: "featured", prop: "featured" },
-    // `course.order` is the `?course=N` index (COURSE_QUERY_OPTIONS) and read-only.
-    { field: "order", prop: "courseIndex" },
+    { source: { kind: "entry-id" }, prop: "courseId" },
   ]);
   const homePricing = fragment("home-pricing", "site-copy", [node("pinsel.section", { id: "pricing", eyebrow: STRUCTURE_LITERALS.pricingEyebrow }, { content: [node("pinsel.pricing-cards", { moreHref: STRUCTURE_LITERALS.pricingMoreHref }, {}, "cards")] }, "section")], [
     { field: "pricingTitle", prop: "title" },
@@ -269,8 +267,8 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
     { field: "pricingPaymentNote", nodeId: "payment", prop: "text" },
   ]);
   const courseCard = (component: string) => [{ field: "name", prop: "name" }, { field: "price", prop: "price" }, { field: "lessonsNote", prop: "note" }].map((binding) => ({ ...binding, nodeId: component }));
-  // `course.order` 1 is the consultation (COURSE_QUERY_OPTIONS); the price cards are the paid courses after it.
-  inject(lessonsPricing.page, "detail", list("lessons-price-cards", "course", node("pinsel.price-detail-card", {}, {}, "card"), courseCard("card"), [{ field: "order", operator: "not-equals", value: 1 }]).mapping);
+  // Explicit qualified membership is independent of mutable Content order. Tuition pin order is local presentation arrangement.
+  inject(lessonsPricing.page, "detail", fragment("lessons-price-cards", "course", [node("pinsel.price-detail-card", {}, {}, "card")], courseCard("card"), { kind: "pinned", entryIds: ["two-month", "four-month"] }).mapping);
 
   const lessonsConsultation = lessonsSection("lessons-consultation", "consultation", "Consultation", "consultationTitle", [node("pinsel.consultation-intro", {}, { course: [] }, "intro")], [
     { field: "consultationTopicsTitle", nodeId: "intro", prop: "topicsTitle" },
@@ -278,7 +276,7 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
     { field: "consultationFaqTitle", nodeId: "intro", prop: "faqTitle" },
     { field: "consultationFaqTopics", nodeId: "intro", prop: "faqTopics" },
   ]);
-  inject(lessonsConsultation.page, "intro", list("lessons-consultation-course", "course", node("pinsel.consultation-price", {}, {}, "price"), courseCard("price"), [{ field: "order", operator: "equals", value: 1 }]).mapping, "course");
+  inject(lessonsConsultation.page, "intro", fragment("lessons-consultation-course", "course", [node("pinsel.consultation-price", {}, {}, "price")], courseCard("price"), { kind: "pinned", entryId: "consultation" }).mapping, "course");
 
   const lessonsInstructorProfile = instructorFor("lessons-instructor-profile", [node("pinsel.instructor-bio", {}, {}, "bio"), group("detail")], [{ field: "lessonsBio", nodeId: "bio", prop: "text" }]);
   inject(lessonsInstructorProfile.page, "detail", detailLink.mapping);
@@ -490,10 +488,10 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
   ] as const;
   const contactForm = fragment("contact-form", "contact-copy", [node("pinsel.contact-form", {}, {}, "form")], [
     ...formFields.map((key) => ({ field: key, prop: key })),
-    // Option index 0 is 未定; the course options follow in `course.order` (COURSE_QUERY_OPTIONS, `?course=N`).
+    // 未定 remains first; numeric URL aliases resolve canonical identity, never option order.
     { field: "courseUndecidedOption", prop: "undecidedOption" },
   ], { kind: "single" });
-  inject(contactForm.page, "form", list("contact-course-options", "course", node("pinsel.course-option", {}, {}, "option"), [{ field: "contactOptionLabel", prop: "label" }]).mapping, "options");
+  inject(contactForm.page, "form", list("contact-course-options", "course", node("pinsel.course-option", {}, {}, "option"), [{ field: "contactOptionLabel", prop: "label" }, { source: { kind: "entry-id" }, prop: "courseId" }]).mapping, "options");
   const legal = fragment("contact-legal", "contact-copy", [node("pinsel.legal", {}, {}, "legal")], [{ field: "legalSummary", prop: "summary" }], { kind: "single" });
   inject(legal.page, "legal", list("contact-legal-rows", "legal-row", node("pinsel.legal-row", {}, {}, "row"), [{ field: "key", prop: "term" }, { field: "value", prop: "value" }]).mapping);
   const contact = pageWithFrame("contact", [
@@ -549,10 +547,6 @@ export function buildPinselSite(entries: readonly ContentEntryRecord[], pack: Tr
   const provider = project.providers.content.find((candidate) => candidate.id === PINSEL_CONTENT_PROVIDER_ID);
   if (!provider) throw new Error(`defineSite produced no "${PINSEL_CONTENT_PROVIDER_ID}" provider.`);
   provider.entries = [...entries];
-  for (const record of project.providers.mappings.flatMap((candidate) => candidate.records)) {
-    const pin = pins.get(record.id);
-    if (pin && record.document.mode.kind === "collection") record.document.mode.query.pins = [pin as never];
-  }
   return { project, models };
 }
 

@@ -1,4 +1,5 @@
 // The markdown tree module itself, not the @pinsel/ui index: this file must load without the zudo-react JSX setup.
+import { courseHref } from "@pinsel/ui/src/scripts/course-identity.ts";
 import { parseMarkdown } from "@pinsel/ui/src/markdown/safe-markdown.ts";
 import type { HostedProjectedRoute as SiteProjectPlanRoute } from "zudo-composer/hosted-content";
 import type { ContentEntryRecord } from "zudo-composer/site-project";
@@ -24,6 +25,8 @@ export interface RouteFacts {
   art: string[];
   /** Component ids in document order. */
   components: string[];
+  /** Canonical option identities, including duplicates for ambiguity checks. */
+  courseIds: string[];
 }
 
 const str = (value: unknown): string => (typeof value === "string" ? value : "");
@@ -83,8 +86,11 @@ function visit(node: PlanNode, slotIndex: number, facts: RouteFacts): void {
     case "pinsel.pricing-cards":
       facts.links.push(str(props.moreHref));
       break;
+    case "pinsel.course-option":
+      facts.courseIds.push(str(props.courseId));
+      break;
     case "pinsel.pricing-card":
-      facts.links.push(`/contact/?course=${String(props.courseIndex)}`);
+      facts.links.push(courseHref(str(props.courseId)));
       break;
     case "pinsel.toc-item":
       facts.links.push(str(props.href) || `#${str(props.fragmentPrefix)}${slotIndex}`);
@@ -120,7 +126,7 @@ function visit(node: PlanNode, slotIndex: number, facts: RouteFacts): void {
 }
 
 export function routeFacts(route: SiteProjectPlanRoute): RouteFacts {
-  const facts: RouteFacts = { pathname: route.pathname, fragments: [], links: [], art: [], components: [] };
+  const facts: RouteFacts = { pathname: route.pathname, fragments: [], links: [], art: [], components: [], courseIds: [] };
   route.composition.document.root.forEach((root, index) => visit(root, index + 1, facts));
   return facts;
 }

@@ -1,3 +1,4 @@
+import { courseHref } from "@pinsel/ui/src/scripts/course-identity.ts";
 import { parseMarkdown, type InlineNode } from "@pinsel/ui/src/markdown/safe-markdown.ts";
 import type { JsonValue } from "@zudo-composer/component-contract";
 import { projectHostedSite } from "zudo-composer/hosted-content";
@@ -132,7 +133,7 @@ function checkMarkdown(markdown: string, prose: DomElement, where: string): stri
   return issues;
 }
 
-function expectation(row: PublicationRow, value: JsonValue | undefined): string {
+function expectation(row: PublicationRow, value: JsonValue | undefined, entry: ContentEntryRecord): string {
   const text = asText(value);
   switch (row.render) {
     case "joined-lines":
@@ -142,7 +143,7 @@ function expectation(row: PublicationRow, value: JsonValue | undefined): string 
     case "count":
       return `（${text}件）`;
     case "course-href":
-      return `/contact/?course=${text}`;
+      return courseHref(entry.id);
     case "note-href":
       return `/notes/${typeof value === "object" && value !== null && !Array.isArray(value) ? asText((value as { recordId?: JsonValue }).recordId) : text}/`;
     case "note-title":
@@ -154,13 +155,13 @@ function expectation(row: PublicationRow, value: JsonValue | undefined): string 
 
 /** One element against one entry's value; returns the problem or null. */
 function compare(row: PublicationRow, element: DomElement | null, entry: ContentEntryRecord, where: string): string | null {
-  const value = valueOf(entry, row.field);
+  const value = row.field === "$entry-id" ? entry.id : valueOf(entry, row.field);
   if (row.render === "presence") return (element !== null) === (value === true) ? null : `${where}: ${row.selector} ${element ? "present" : "absent"} but ${row.model}/${entry.id}.${row.field} is ${String(value)}`;
   if (row.optional && asText(value) === "") return element === null || (row.attribute && element.getAttribute(row.attribute) === null) ? null : `${where}: ${row.selector} rendered for an empty ${row.field}`;
   if (!element) return `${where}: ${row.selector || "item"} missing for ${row.model}/${entry.id}.${row.field}`;
   if (row.render === "markdown") return checkMarkdown(asText(value), element, where).join("; ") || null;
   const actual = row.attribute ? (element.getAttribute(row.attribute) ?? "") : textOf(element, row.render === "own-text");
-  const expected = expectation(row, value);
+  const expected = expectation(row, value, entry);
   return normalise(actual) === normalise(expected) ? null : `${where}: ${row.model}/${entry.id}.${row.field} expected "${normalise(expected).slice(0, 80)}", rendered "${normalise(actual).slice(0, 80)}"`;
 }
 
@@ -202,7 +203,9 @@ function checkRow(row: PublicationRow, route: PinselRoute, page: DomDocument, en
       groups.push({ scope, entries: children, label: `${where} in ${parent.id}` });
     });
   } else {
-    const selected = sorted(entries, row.model, row.sortBy).filter((entry) => passes(entry, row));
+    const selected = row.entryIds
+      ? row.entryIds.flatMap(id => entries.filter(entry => entry.modelId === row.model && entry.id === id))
+      : sorted(entries, row.model, row.sortBy).filter((entry) => passes(entry, row));
     // `lines` on the items themselves: a one-entry model whose value has one line per item.
     if (row.render === "lines" && row.selector === "") return selected.length === 1 ? checkLines(row, Array.from(page.querySelectorAll(row.items!)), selected[0]!, where) : [`${where}: expected one ${row.model} entry`];
     groups.push({ scope: page, entries: selected, label: where });

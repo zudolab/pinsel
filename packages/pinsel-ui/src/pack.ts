@@ -41,7 +41,7 @@ import { VoicePreview, VoicePreviews } from "./voice-previews/voice-previews";
 // parent slot). Positional ids and numbering (`#student-3`, `01`) use it.
 
 export const PINSEL_PACK_ID = "pinsel";
-export const PINSEL_PACK_VERSION = "0.2.0";
+export const PINSEL_PACK_VERSION = "0.3.0";
 
 type Kind = "text" | "multiline" | "number" | "boolean" | readonly string[];
 type PropSpec = readonly [prop: string, kind: Kind, fallback: JsonValue, label: string];
@@ -130,12 +130,13 @@ const SPECS: readonly Spec[] = [
   { id: "pricing-cards", title: "Pricing cards", category: "Sections", description: "The home pricing grid, note and lessons link.", component: PricingCards, exportName: "PricingCards", props: [t("note", "注記"), t("moreLabel", "詳細リンク"), t("moreHref", "詳細リンク先", "/lessons/")], slots: [items("pricing-card")] },
   {
     id: "pricing-card",
+    schemaVersion: 2,
     title: "Pricing card",
     category: "Sections",
     description: "One course and its contact link.",
     component: PricingCard,
     exportName: "PricingCard",
-    props: [t("name", "コース名"), t("price", "価格（表示）"), t("unit", "回数・単位"), t("description", "説明"), b("featured", "人気表示"), n("courseIndex", "表示順", 1), t("taxLabel", "税込表記", "税込"), t("popularBadge", "人気バッジ", "POPULAR"), t("linkLabel", "リンク文言", "このコースについて相談する")],
+    props: [t("name", "コース名"), t("price", "価格（表示）"), t("unit", "回数・単位"), t("description", "説明"), b("featured", "人気表示"), t("courseId", "Course entry identity", "consultation"), t("taxLabel", "税込表記", "税込"), t("popularBadge", "人気バッジ", "POPULAR"), t("linkLabel", "リンク文言", "このコースについて相談する")],
   },
   { id: "instructor", title: "Instructor", category: "Sections", description: "Modest portrait beside the identity block.", component: C.InstructorBlock, exportName: "InstructorBlock", props: [t("name", "氏名"), t("latinName", "氏名（ローマ字）"), t("portraitAlt", "写真の代替テキスト"), b("about", "講師紹介ページ")], slots: [many("identity", ["pinsel.instructor-subtitle", "pinsel.instructor-bio", "pinsel.instructor-bio-link", "pinsel.text-link", "pinsel.group"])] },
   { id: "instructor-subtitle", title: "Instructor subtitle", category: "Sections", description: "p.instructor__subtitle.", component: C.InstructorSubtitle, exportName: "InstructorSubtitle", props: [t("text", "肩書・生年")] },
@@ -226,7 +227,7 @@ const SPECS: readonly Spec[] = [
     ],
     slots: [many("options", ["pinsel.course-option"])],
   },
-  { id: "course-option", title: "Course option", category: "Forms", description: "One course after 未定.", component: CourseOption, exportName: "CourseOption", props: [t("label", "選択肢名")] },
+  { id: "course-option", schemaVersion: 2, title: "Course option", category: "Forms", description: "One course after 未定.", component: CourseOption, exportName: "CourseOption", props: [t("label", "選択肢名"), t("courseId", "Course entry identity", "consultation")] },
   { id: "legal", title: "Legal table", category: "Forms", description: "details#legal: 特定商取引法に基づく表記.", component: C.Legal, exportName: "Legal", props: [t("summary", "見出し")], slots: [items("legal-row")] },
   { id: "legal-row", title: "Legal row", category: "Forms", description: "One th/td row.", component: LegalRow, exportName: "LegalRow", props: [t("term", "項目"), t("value", "内容")] },
 

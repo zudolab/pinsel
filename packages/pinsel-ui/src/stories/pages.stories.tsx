@@ -114,7 +114,7 @@ export const ContactPage: Story = {
           successPreviewNotice="プレビューのため、実際のお問い合わせは送信されていません。"
           backLabel="入力画面に戻る"
           previewState="idle"
-          courseOptions={["有料進路相談", "2ヶ月コース", "4ヶ月コース"].map((label) => CourseOption({ label }))}
+          courseOptions={["有料進路相談", "2ヶ月コース", "4ヶ月コース"].map((label, index) => CourseOption({ label, courseId: ["consultation", "two-month", "four-month"][index]! }))}
         />
       </div>,
     ),

@@ -216,7 +216,7 @@ test.describe("motion", () => {
 });
 
 test.describe("contact", () => {
-  for (const [query, expected] of [["1", "有料進路相談"], ["2", "2ヶ月コース"], ["3", "4ヶ月コース"], ["0", "未定"], ["9", "未定"]] as const) {
+  for (const [query, expected] of [["consultation", "有料進路相談"], ["two-month", "2ヶ月コース"], ["four-month", "4ヶ月コース"], ["1", "有料進路相談"], ["01", "有料進路相談"], ["2", "2ヶ月コース"], ["3", "4ヶ月コース"], ["0", "未定"], ["9", "未定"], ["unknown", "未定"]] as const) {
     test(`?course=${query} selects ${expected}`, async ({ page }) => {
       await serve(page);
       await page.goto(`${ORIGIN}/contact/?course=${query}`);

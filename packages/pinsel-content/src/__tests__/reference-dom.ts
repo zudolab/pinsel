@@ -1,3 +1,4 @@
+import { courseHref } from "@pinsel/ui/src/scripts/course-identity.ts";
 import { parseInline, parseMarkdown, type InlineNode } from "@pinsel/ui/src/markdown/safe-markdown.ts";
 import type { HostedProjectedRoute as SiteProjectPlanRoute } from "zudo-composer/hosted-content";
 import type { ContentEntryRecord } from "zudo-composer/site-project";
@@ -80,7 +81,7 @@ function render(node: PlanNode, slotIndex: number, pathname: string): string {
     case "pinsel.pricing-cards":
       return `<div class="pricing-grid">${slot("items")}</div><p class="price-note">${e(p.note)}</p><div class="section-after"><a class="text-link" href="${e(p.moreHref)}"><span>${e(p.moreLabel)}</span></a></div>`;
     case "pinsel.pricing-card":
-      return `<article class="pricing-card"><div class="pricing-card__top"><h3>${e(p.name)}</h3>${p.featured ? `<span class="pricing-card__popular">${e(p.popularBadge)}</span>` : ""}</div><p class="price">${e(p.price)}<span>${e(p.taxLabel)}</span></p><p class="pricing-card__unit">${e(p.unit)}</p><p class="pricing-card__description">${e(p.description)}</p><a class="text-link" href="/contact/?course=${e(p.courseIndex)}"><span>${e(p.linkLabel)}</span></a></article>`;
+      return `<article class="pricing-card"><div class="pricing-card__top"><h3>${e(p.name)}</h3>${p.featured ? `<span class="pricing-card__popular">${e(p.popularBadge)}</span>` : ""}</div><p class="price">${e(p.price)}<span>${e(p.taxLabel)}</span></p><p class="pricing-card__unit">${e(p.unit)}</p><p class="pricing-card__description">${e(p.description)}</p><a class="text-link" href="${e(courseHref(String(p.courseId)))}"><span>${e(p.linkLabel)}</span></a></article>`;
     case "pinsel.instructor":
       return `<div class="instructor${p.about ? " instructor--about" : ""}"><figure class="instructor__portrait"><img src="${ASSET_PATHS.instructorPortrait}" alt="${e(p.portraitAlt)}"></figure><div class="instructor__identity"><p class="instructor__name">${e(p.name)}</p><p class="instructor__latin">${e(p.latinName)}</p>${slot("identity")}</div></div>`;
     case "pinsel.instructor-subtitle":
@@ -188,7 +189,7 @@ function render(node: PlanNode, slotIndex: number, pathname: string): string {
       return `<div class="contact-panel"><form id="contact-form" class="contact-form" novalidate aria-label="${e(p.formAriaLabel)}" data-submitting-label="${e(p.submittingLabel)}" data-value-missing-message="${e(p.valueMissingMessage)}" data-email-format-message="${e(p.emailFormatMessage)}"><p class="form-error" role="alert" data-form-error hidden>${e(p.errorMessage)}</p>${field("name", p.nameLabel, true, `<input id="name" name="name" type="text" required>`)}${field("email", p.emailLabel, true, `<input id="email" name="email" type="email" required>`)}${field("course", p.courseLabel, false, `<select id="course" name="course"><option value="${e(p.undecidedOption)}">${e(p.undecidedOption)}</option>${slot("options")}</select>`)}${field("message", p.messageLabel, true, `<textarea id="message" name="message" rows="6" required></textarea>`)}<p class="prototype-message">${e(p.previewNotice)}</p><button type="submit" class="button button--primary"><span class="button__label"><span data-submit-label>${e(p.submitLabel)}</span></span></button></form><div class="form-success" tabindex="-1" hidden><p class="eyebrow">${e(p.successPreviewEyebrow)}</p><h2>${e(p.successTitle)}</h2><p>${e(p.successBody)}</p><p class="prototype-message">${e(p.successPreviewNotice)}</p><button type="button" class="button" data-form-back>${e(p.backLabel)}</button></div></div>`;
     }
     case "pinsel.course-option":
-      return `<option value="${e(p.label)}">${e(p.label)}</option>`;
+      return `<option value="${e(p.label)}" data-course-id="${e(p.courseId)}">${e(p.label)}</option>`;
     case "pinsel.legal":
       return `<section class="container"><details class="legal" id="legal"><summary>${e(p.summary)}</summary><table><tbody>${slot("items")}</tbody></table></details></section>`;
     case "pinsel.legal-row":
