@@ -272,3 +272,28 @@ unchanged. Legitimate history, revisions and receipts remain. This is not a raw
 snapshot rollback or an owner-data migration.
 
 [Save blocker, correction and cleanup evidence](https://github.com/zudolab/pinsel/issues/54#issuecomment-6930906534).
+
+
+### Typed-value handoff correction
+
+The1d7 installed run passed enabled Save and no-autosave checks, but submitted the
+old empty text. Composerc4859574 removes capture-phase staging of the old value;
+the typed control now supplies the complete draft before notifying observers.
+The regression reproduced the failure before the fix. It also verifies textarea
+identity, focus and value survive the first input. Composer87b399f0 aligns omitted
+numeric steps with the schema (`any`) while retaining explicit step constraints.
+28 focused field/host tests and scoped lint passed, with independent review;
+invalid-number blur behavior remains unchanged.
+
+Current package: `87b399f0d35e016ad4193238fd2d9f606d7dd59a`,754 shipped files,
+payload digest `1e06b7c8213104b5c2aaa853a0af8f3f773185a3be6d7c0f5c853eb34e7d18fb`.
+All four manifests, lock and dependency inventory use that exact revision.
+Public entry checks and all four CMS regenerations passed39s with no generated
+diff. Fresh install/frozen verification is recorded by the current acceptance run.
+The final installed local-Save/shared-content/build/restart scenario remains pending.
+
+The failed1d7 run restored all test values and removed its one test node through
+supported UI/API operations. Public restored digest:
+`10496496f648221c8f4ce9332f84b1f039e62aa15c2dc9563d4ffc31484230ac`.
+Original source, Mapping, Sitemap and public assets remained unchanged; legitimate
+history and receipts remain. No owner-data switch or deployment occurred.

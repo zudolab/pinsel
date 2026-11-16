@@ -13,7 +13,7 @@
     "@pinsel/content": "workspace:*",
     "@zudo-composer/component-contract": "git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0",
     "preact": "^10.29.8",
-    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#1d7bb65c7b53989816bf144c7a25f9d7d6046662"
+    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#87b399f0d35e016ad4193238fd2d9f606d7dd59a"
   },
   "devDependencies": {
     "vite": "^8.2.2"
