@@ -58,6 +58,12 @@ remain historical proofs while supported new routes receive separate validation.
 
 ## First slice and normalization inventory
 
+See the [complete field inventory](composer-migration-inventory.md),
+[qualified reference map](composer-migration-reference-map.json) and
+[migration plan](composer-migration-plan.md). They describe the known-input baseline
+and proposed transformations; T4 implementation remains pending T3, and a fresh
+public capture is required before any migration.
+
 Lessons' `consultation` group attaches `lessons-consultation`, whose `intro`
 component owns a `course` slot attached to `lessons-consultation-course`.
 The latter renders a `price` component from the shared course selected by `order=1`.
