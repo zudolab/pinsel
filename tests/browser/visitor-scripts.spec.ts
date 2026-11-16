@@ -84,7 +84,7 @@ test.describe("motion and pigment clock", () => {
     await expect(root).toHaveAttribute("data-reduced-motion", "true");
     await expect(root).toHaveAttribute("data-motion", "off");
     await expect(root).toHaveAttribute("data-art-mode", "paused");
-    await expect(page.locator("[data-motion-toggle]")).toBeDisabled();
+    await expect(page.locator(".site-header [data-motion-toggle]")).toHaveCount(0);
     const sample = () => page.evaluate(() => [document.documentElement.style.getPropertyValue("--art-back"), document.documentElement.dataset.artPhase]);
     const first = await sample();
     expect(first[0]).toMatch(/^rgb\([\d.]+ [\d.]+ [\d.]+\)$/);
@@ -95,7 +95,7 @@ test.describe("motion and pigment clock", () => {
     await expect(page.locator(".art-window [data-depth]").first()).toHaveCSS("transform", "none");
   });
 
-  test("live clock ticks, parallax moves, and the toggle persists `off`", async ({ page }) => {
+  test("live clock ticks, parallax moves, and a saved `off` remains paused", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await page.clock.install({ time: new Date("2026-10-13T00:01:30Z") });
     await serve(page);
@@ -112,13 +112,10 @@ test.describe("motion and pigment clock", () => {
     await page.clock.runFor(100);
     await expect.poll(() => page.locator('.art-window [data-depth="0.85"]').first().evaluate((node) => (node as SVGElement).style.transform)).toMatch(/^translate\(/);
 
-    const toggle = page.locator("[data-motion-toggle]");
-    await expect(toggle).toHaveAttribute("aria-pressed", "true");
-    await toggle.click();
+    await page.evaluate(() => localStorage.setItem("pinsel-motion", "off"));
+    await page.reload();
     await expect(root).toHaveAttribute("data-motion", "off");
     await expect(root).toHaveAttribute("data-art-mode", "paused");
-    await expect(toggle).toHaveAttribute("aria-pressed", "false");
-    await expect(toggle.locator("[data-motion-label]")).toHaveText("動き OFF");
     expect(await page.evaluate(() => localStorage.getItem("pinsel-motion"))).toBe("off");
     await expect(page.locator(".art-window [data-depth]").first()).toHaveCSS("transform", "none");
     const paused = await phase();

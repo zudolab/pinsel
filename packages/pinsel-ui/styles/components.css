@@ -1,4 +1,4 @@
-/* Pinsel approved component CSS (seed 2026-10-12, prototype/src/styles.css). The tokens layer lives in tokens.css and colors.css; everything else is byte-exact. */
+/* Pinsel approved component CSS (seed 2026-10-12, prototype/src/styles.css). The tokens layer lives in tokens.css and colors.css; header A is scoped below. */
 /* Pinsel / R7 — Water and Paper refinement
    CSS Wisdom contract: semantic tokens; component-owned styles; square, flat
    surfaces; neutral hierarchy; one filled primary action in each content group.
@@ -71,10 +71,14 @@
   .skip-link { position: fixed; inset-block-start: .75rem; inset-inline-start: 1rem; z-index: 100; transform: translateY(-200%); padding: .75rem 1rem; background: var(--color-fg); color: var(--color-surface); }
   .skip-link:focus { transform: none; }
   .site-header { container: site-header / inline-size; position: sticky; inset-block-start: 0; z-index: var(--z-header); border-block-end: 1px solid var(--color-line); background: var(--color-bg); }
-  .site-header__inner { min-block-size: var(--header-height); display: flex; align-items: center; gap: var(--space-5); }
+  .site-header__inner { min-block-size: var(--header-height); display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-5); padding-block: 1rem; }
   .brand { display: inline-flex; flex-direction: column; color: var(--color-fg); text-decoration: none; flex: 0 0 auto; }
   .brand__word { font: 400 2.65rem/1 var(--font-latin); letter-spacing: -.045em; }
   .brand__sub { font: 400 .625rem/1.5 var(--font-body); letter-spacing: .15em; margin-block-start: .5rem; }
+  .brand--header { flex-direction: row; align-items: center; gap: var(--header-brand-gap); flex: 0 1 auto; min-inline-size: 0; max-inline-size: 100%; }
+  .brand--header .brand__word { flex: 0 0 auto; font-size: var(--header-word-size); }
+  .brand__caption { min-inline-size: 0; font: 400 var(--header-caption-size)/var(--header-caption-leading) var(--font-body); letter-spacing: var(--header-caption-tracking); text-align: start; }
+  .brand__caption > span { display: block; }
   .site-nav { --nav-gap: clamp(1.1rem,1.55vw,1.5rem); margin-inline-start: auto; display: flex; align-items: center; gap: var(--nav-gap); }
   .site-nav a { min-block-size: 2.75rem; display: inline-flex; align-items: center; font-size: var(--size-small); text-decoration: none; position: relative; white-space: nowrap; }
   .site-nav a[aria-current]::after { content: ''; position: absolute; inset-inline: 0; inset-block-end: .15rem; block-size: 1px; background: var(--color-fg); }
@@ -308,11 +312,11 @@
   /* Container-query rem units follow the user's computed font size, so the
      header can collapse for enlarged text as well as a narrower window. */
   @container site-header (max-width:70rem) {
-    .site-header__inner { flex-wrap: wrap; }
+    .site-header__inner { min-block-size: 5rem; flex-wrap: wrap; }
     .menu-toggle { margin-inline-start: auto; display: flex; gap: var(--space-4); align-items: center; justify-content: center; min-block-size: 2.75rem; border: 1px solid var(--color-line); padding: .4rem .75rem; font-size: var(--size-caption); }
     .site-nav { display: none; margin: 0; order: 4; flex-basis: 100%; padding-block: var(--space-4) var(--space-5); gap: var(--space-2) var(--space-5); }
     .site-nav[data-open] { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
-    .site-nav a { font-size: var(--size-small); }
+    .site-nav a { font-size: var(--size-small); white-space: normal; min-inline-size: 0; }
     .site-nav__contact { grid-column: 1/-1; justify-content: space-between; }
     .site-nav__item + .site-nav__item::before { display: none; }
   }
@@ -322,6 +326,7 @@
 
   @media (min-width:100rem) { .hero__reading { padding-block: var(--space-8); } }
   @media (max-width:74rem) {
+    .site-header { --header-word-size: 2.25rem; --header-brand-gap: 1rem; --gutter: 2rem; }
     .site-header__inner { gap: var(--space-4); }
     .site-nav { --nav-gap: 1rem; }
     .site-nav a { font-size: var(--size-small); }
@@ -363,8 +368,10 @@
     :root { --space-section: 3.75rem; --space-8: 3rem; --gutter: 1.5rem; --header-height: 4.75rem; }
     .brand__word { font-size: 2rem; }
     .brand__sub { font-size: .5rem; margin-block-start: .3rem; }
-    .motion-toggle { padding-inline: .45rem; gap: .25rem; }
-    .menu-toggle { padding-inline: .6rem; gap: .625rem; }
+    .site-header { --header-word-size: 2rem; --header-brand-gap: .75rem; --header-caption-size: .5625rem; --header-caption-leading: 1.8; --header-caption-tracking: .055em; --gutter: 1rem; }
+    .site-header__inner { min-block-size: 4.75rem; }
+    .menu-toggle__label { display: none; }
+    .menu-toggle { min-inline-size: 2.75rem; padding: .4rem; gap: 0; }
     .site-header__inner { gap: .625rem; }
     .hero__reading { display: flex; flex-direction: column; gap: var(--space-6); padding-block: var(--space-6) var(--space-7); }
     .hero__label { padding-block-end: var(--space-2); font-size: var(--size-caption); }
@@ -485,7 +492,7 @@
     .brand__sub { font-size: .45rem; }
     .menu-toggle { font-size: var(--size-caption); padding-inline: .45rem; gap: .4rem; }
     .site-header__inner { gap: .45rem; }
-    .motion-toggle { padding-inline: .35rem; }
+
     .hero h1 { font-size: 1.625rem; }
     .pricing-card { grid-template-columns: 1fr; }
     .price { margin-block-start: var(--space-4); }
@@ -497,6 +504,10 @@
   @media (prefers-reduced-motion:reduce) {
     *,*::before,*::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; }
     .art-window [data-depth] { transform: none !important; }
+  }
+  @media (max-width:22.49rem) {
+    .site-header { --header-word-size: 1.875rem; --header-brand-gap: .5rem; --header-caption-size: .53125rem; --header-caption-tracking: .025em; --gutter: .75rem; }
+    .brand--header .brand__word { font-size: 1.875rem; }
   }
   @media print {
     .site-header,.site-footer,.art-window,.page-toc,.prototype-message,.student-index,.closing { display:none; }

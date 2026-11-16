@@ -59,7 +59,7 @@ test.describe("keyboard", () => {
     await expect(page.locator("main#main")).toBeFocused();
   });
 
-  test("tab order walks brand, header nav and motion toggle before main, each with a visible focus ring", async ({ page }) => {
+  test("tab order walks brand, header nav before main, each with a visible focus ring", async ({ page }) => {
     await serve(page);
     await page.goto(`${ORIGIN}/`);
     const order: string[] = [];
@@ -74,25 +74,16 @@ test.describe("keyboard", () => {
       expect(info.ring, `focus ring on ${info.label}`).toBe(true);
       order.push(info.inMain ? `main:${info.label}` : info.label);
     }
-    expect(order.slice(0, 10)).toEqual(["#main", "/", "/lessons/", "/about/", "/results/", "/voices/", "/notes/", "/faq/", "/contact/", "motion-toggle"]);
-    expect(order[10]).toMatch(/^main:/);
+    expect(order.slice(0, 9)).toEqual(["#main", "/", "/lessons/", "/about/", "/results/", "/voices/", "/notes/", "/faq/", "/contact/"]);
+    expect(order[9]).toMatch(/^main:/);
   });
 
-  test("the brand and the motion toggle are named by their visible text (WCAG 2.5.3)", async ({ page }) => {
-    await page.emulateMedia({ reducedMotion: "no-preference" });
+  test("the header and footer brands are named by their own visible text", async ({ page }) => {
     await serve(page);
     await page.goto(`${ORIGIN}/`);
-    await expect(page.locator("a.brand")).toHaveCount(2);
-    for (const brand of await page.locator("a.brand").all()) await expect(brand).toHaveAccessibleName("Pinsel ART STUDY IN GERMANY");
-    const toggle = page.locator("[data-motion-toggle]");
-    await expect(toggle).toHaveAccessibleDescription("装飾の動きと色の変化");
-    for (let i = 0; i < 2; i++) {
-      const visible = (await toggle.locator("[data-motion-label]").innerText()).trim();
-      expect(visible).toMatch(/^動き (ON|OFF)$/);
-      await expect(toggle).toHaveAccessibleName(visible);
-      await toggle.click();
-      await expect(toggle.locator("[data-motion-label]")).not.toHaveText(visible);
-    }
+    await expect(page.locator(".site-header a.brand")).toHaveAccessibleName("Pinsel ONLINE PREPARATION FOR GERMAN ART SCHOOLS");
+    await expect(page.locator("footer a.brand")).toHaveAccessibleName("Pinsel ART STUDY IN GERMANY");
+    await expect(page.locator(".site-header [data-motion-toggle]")).toHaveCount(0);
   });
 
   test("the mobile menu opens from the keyboard; Escape closes it and returns focus", async ({ page }) => {
@@ -168,19 +159,20 @@ test.describe("keyboard", () => {
 test.describe("motion", () => {
   test.use({ viewport: { width: 1440, height: 900 } });
 
-  test("toggle OFF removes smooth scrolling; reduced motion does too", async ({ page }) => {
+  test("stored OFF removes smooth scrolling; runtime reduced motion does too", async ({ page }) => {
     await page.emulateMedia({ reducedMotion: "no-preference" });
     await serve(page);
     await page.goto(`${ORIGIN}/faq/`);
     const behavior = () => page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior);
     await expect.poll(behavior).toBe("smooth");
-    await page.locator("[data-motion-toggle]").click();
+    await page.evaluate(() => localStorage.setItem("pinsel-motion", "off"));
+    await page.reload();
     await expect.poll(behavior).toBe("auto");
     await page.evaluate(() => localStorage.clear());
     await page.emulateMedia({ reducedMotion: "reduce" });
     await page.reload();
     await expect.poll(behavior).toBe("auto");
-    await expect(page.locator("[data-motion-toggle]")).toBeDisabled();
+    await expect(page.locator(".site-header [data-motion-toggle]")).toHaveCount(0);
   });
 
   test("a hidden document suspends the pigment clock and resumes on return", async ({ page }) => {
@@ -258,9 +250,9 @@ test.describe("robustness", () => {
     });
   }
 
-  // 200% browser zoom on a 1440px window is a 720px layout viewport; text-only enlargement raises the root font size.
+  // A 720px viewport approximates the layout at 200% zoom; this is not a browser zoom check.
   // An overflow the approved prototype has to the same extent is inherited, logged, and not a regression.
-  for (const { name, width, rootFont } of [{ name: "200% zoom", width: 720, rootFont: null }, { name: "150% text", width: 1440, rootFont: "150%" }, { name: "150% text, narrow", width: 390, rootFont: "150%" }]) {
+  for (const { name, width, rootFont } of [{ name: "720px simulated zoom viewport", width: 720, rootFont: null }, { name: "150% text", width: 1440, rootFont: "150%" }, { name: "150% text, narrow", width: 390, rootFont: "150%" }]) {
     test(`${name}: no clipped text and no horizontal scroll`, async ({ page }) => {
       await page.setViewportSize({ width, height: 900 });
       await serve(page);
