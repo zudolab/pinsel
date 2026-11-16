@@ -338,3 +338,14 @@ the creation-time target in the original build proof is explicitly distinguished
 Integration state is tracked in [Pinsel #60](https://github.com/zudolab/pinsel/pull/60)
 and [Composer #977](https://github.com/Takazudo/zudo-composer/pull/977).
 T5–T7, actual owner-data cutover and authenticated inference remain separate work.
+
+### Final migration inventory review
+
+Independent review found that the final migration source check reused its initial
+public-file list, which could omit a newly added file. The course migration now
+re-enumerates before each supported source-currentness check and verifies the list
+again afterward. A real installed-API regression adds a file between checks,
+observes refusal and verifies canonical state remains unchanged. Native-authoring
+and course-migration tests passed22 cases; after correcting a helper type error,
+the focused regression and Content typecheck passed. No staged data was changed.
+This follow-up changes migration tooling, not the accepted renderer or Composer pin.

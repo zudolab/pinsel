@@ -15,6 +15,8 @@ import type { TrustedComponentPack } from "@zudo-composer/component-contract";
 import { renderDocument } from "@pinsel/ui/host-document";
 import { readContentEntries } from "../site/entries";
 import { buildPinselSite } from "../site/structure";
+import { checkNativeMigrationSource } from "../site/check-native-migration-source";
+import { nativePublicFiles } from "../site/prepare-native-public";
 
 // This small migration rehearsal keeps Pinsel's actual Mapping/Content owners
 // and components, avoiding 177 sequential Composition imports per unit test.
@@ -56,7 +58,7 @@ beforeAll(async () => {
   await mkdir(join(root, "styles"));
   await writeFile(join(root, "styles/authoring.css"), await readFile(join(packageRoot, "styles/authoring.css")));
   await writeFile(join(root, "zudo-composer.config.ts"), `export default ${JSON.stringify({
-    pack: "@pinsel/ui/composer-pack", dataDir: "native-data", styles: "styles/authoring.css", authoringAuthority: "workspace",
+    pack: "@pinsel/ui/composer-pack", dataDir: "native-data", styles: "styles/authoring.css", authoringAuthority: "workspace", publicAssetsDir: "public/uploaded-assets",
     nativeEditing: { source: "workspace", paragraph: { componentId: "pinsel.paragraph", textProp: "text" } },
     hostDocument: { module: "@pinsel/ui/host-document", rendererId: "pinsel-zfb", rendererVersion: "native-v3" },
   })};\n`);
@@ -85,6 +87,20 @@ it("uses installed immutable Composer APIs for Pinsel's actual nested consultati
   expect(pages.get("/lessons")).toContain(price);
   expect(pages.get("/contact")).toContain(String(consultation.values["course-contact-option-label"]));
   expect(pages.get("/lessons")).toContain('id="consultation"');
+}, 120_000);
+
+it("re-enumerates migration source public files on the final check", async () => {
+  const publicRoot = join(root, "public");
+  await mkdir(publicRoot, { recursive: true });
+  await writeFile(join(publicRoot, "original.txt"), "captured asset");
+  const saved = await captureAuthoringWorkspace({ ...inputs, publicFiles: await nativePublicFiles(root, publicRoot) });
+  expect(await checkNativeMigrationSource(host, saved)).toBe(true);
+  const before = await captureAuthoringWorkspace(inputs);
+  await writeFile(join(publicRoot, "added-during-staging.txt"), "must not be omitted");
+  expect(await checkNativeMigrationSource(host, saved)).toBe(false);
+  expect((await captureAuthoringWorkspace(inputs)).digest).toBe(before.digest);
+  await rm(join(publicRoot, "added-during-staging.txt"));
+  expect(await checkNativeMigrationSource(host, saved)).toBe(true);
 }, 120_000);
 
 it("reviews and saves a nested local Lessons insertion; restart/capture/build and guarded undo preserve ownership", async () => {
