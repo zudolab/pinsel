@@ -194,7 +194,7 @@ Apply and Undo. The local field case creates a journaled human paragraph fixture
 and removes it using the actual Remove component button after Undo. Course Apply
 loses a real committed response, closes the browser process and recovers through
 the retained product request in the persistent profile. Separate Course cases
-exercise stale candidate refusal and guarded Undo with a human price change;
+exercise stale Apply refusal (`stale-plan`) and guarded Undo (`revision-conflict`) with a human price change;
 these use an explicit human inverse after the guard refuses. All refusals have
 public capture comparisons.
 
@@ -204,3 +204,9 @@ Unexpected values or unresolved receipts stop cleanup for review. An interrupted
 fixture insertion records its exact operation/UUID before dispatch; uncertain
 state must be reconciled, never reseeded. Do not treat a prepared script, pure
 proof tests, or a successful subset as passing the integrated scenario.
+
+The stale case retains an actual exact-candidate Apply request by aborting its
+initial transport before dispatch, then performs a human edit and retries through
+Recover retained Apply. Immutable candidate rendering itself is allowed; refusal
+is asserted at Apply. The known-refused pending request stays in that case’s
+isolated browser profile as evidence; it is not silently discarded.

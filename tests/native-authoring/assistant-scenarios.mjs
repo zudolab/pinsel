@@ -88,6 +88,22 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
     if (spec.id === 'course-stale') {
       journal.preview = await observeAssistantOperation(page, 'previewHostReview', () => renderExactCandidate(card, { pathname: spec.pathname, text: marker }));
       assert(journal.preview.body.ok); await persist();
+      // Retain the real exact-ack Apply request without dispatching it yet.
+      // The later human edit must make recovery of this request refuse.
+      let heldResolve;
+      const held = new Promise(resolve => { heldResolve = resolve; });
+      const hold = async route => {
+        let request; try { request = route.request().postDataJSON(); } catch {}
+        if (request?.operation !== 'applyHostReview') { await route.continue(); return; }
+        journal.heldApply = request; await persist(); await route.abort(); heldResolve();
+      };
+      await page.route('**/*', hold);
+      let timeout;
+      try {
+        await card.getByRole('button', { name: 'Apply content', exact: true }).click();
+        await Promise.race([held, new Promise((_, reject) => { timeout = setTimeout(() => reject(Error('Exact Apply request not emitted')), 180000); })]);
+      } finally { clearTimeout(timeout); await page.unroute('**/*', hold); }
+
     }
     await shot(`assistant-${caseId}-proposed`);
     record('assistant-proposed', journal);
@@ -107,8 +123,6 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
     await page.locator('button[title="All changes saved"]').waitFor({ timeout: 120000 });
     journal.human.saved = true; await persist(); return;
   }
-  let assistantTransport;
-  page.on('request', request => { try { if (request.postDataJSON()?.operation === 'hostReview') assistantTransport = { url: request.url(), headers: request.headers() }; } catch {} });
   const origin = new URL(page.url()).origin;
   const resume = async () => {
     await page.goto(new URL('/composer?assistant=1', origin).href);
@@ -121,15 +135,16 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
   if (phase === 'stale-refuse') {
     await expect(card.getByText(/^Status: stale/)).toBeVisible();
     await expect(card.getByRole('button', { name: `Apply ${spec.domain}`, exact: true })).toHaveCount(0);
-    assert(assistantTransport && journal.preview?.request, 'Missing real prior preview request/current authorized transport');
-    const response = await page.request.post(assistantTransport.url, { headers: assistantTransport.headers, data: journal.preview.request });
-    const evidence = { request: journal.preview.request, status: response.status(), body: await response.json() };
-    assert.equal(evidence.body.ok, false, 'Stale proposal unexpectedly rendered as current');
+    assert(journal.heldApply, 'Missing retained exact candidate Apply request');
+    const evidence = await observeAssistantOperation(page, 'applyHostReview', () => card.getByRole('button', { name: 'Recover retained Apply', exact: true }).click());
+    assert.deepEqual(evidence.request, journal.heldApply, 'Stale test changed the reviewed Apply request');
+    assert.equal(evidence.body.ok, false, 'Stale Apply unexpectedly committed');
     assert.equal(evidence.body.error?.code, 'stale-plan');
     journal.stale = evidence; await persist(); record('stale-proposal-refused', evidence); return;
   }
   if (phase === 'guard-refuse') {
     journal.guard = await undoReviewed(page, card, spec.domain, { refused: true });
+    assert.equal(journal.guard.body.error?.code, 'revision-conflict');
     await persist(); record('guarded-undo-refused', journal.guard); return;
   }
   if (phase === 'restore') {

@@ -35,7 +35,7 @@ const executablePath = process.env.NATIVE_ACCEPTANCE_CHROMIUM || chromium.execut
 const frame = () => page.frameLocator('iframe[title="Host rendered page"]');
 let profileCounter = 0;
 async function launch() {
-    context = await chromium.launchPersistentContext((mode.startsWith('assistant:') ? join(artifacts, 'assistant-profile') : run + '/browser-profile-' + (mode === 'negative' ? profileCounter++ : 0)), { executablePath, headless: true, viewport: { width: 1600, height: 1050 } });
+    context = await chromium.launchPersistentContext((mode.startsWith('assistant:') ? join(artifacts, 'assistant-profile-' + mode.split(':')[1]) : run + '/browser-profile-' + (mode === 'negative' ? profileCounter++ : 0)), { executablePath, headless: true, viewport: { width: 1600, height: 1050 } });
     page = context.pages()[0] ?? await context.newPage();
     page.on('request', request => { if (request.url().endsWith('/__zudo-native-edit')) nativeHeaders = request.headers(); });
     page.on('pageerror', e => record('pageerror', e.message));
