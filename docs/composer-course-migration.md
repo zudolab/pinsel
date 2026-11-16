@@ -18,8 +18,15 @@ for the original aliases. Unknown or duplicate rendered identities never select 
 fallback option. Contact selects an
 option by `data-course-id`, preserving its editable label as the form value.
 `order` controls Home/Contact arrangement, never identity. Consultation is pinned
-to its existing qualified entry; tuition pins explicitly order `two-month` then
-`four-month`. That tuition arrangement is independent of Content sort order.
+to its existing qualified entry; tuition pins preserve the captured paid-course
+order (normally `two-month` then `four-month`). After migration, that arrangement
+is owned by explicit Mapping pins, independently of later Content sort edits.
+The converter accepts only the reviewed published-only query, limit 1000 and one
+ascending `course-order` sort. All three records must be published with finite
+numeric order values, and the old membership must still select Consultation alone
+and the two paid courses separately. Customized query shapes or changed membership
+refuse before import; they need a separately reviewed migration. Paid-course order
+changes and ties are preserved using the existing numeric/record-ID ordering.
 
 ## Capture and review the source
 

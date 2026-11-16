@@ -211,3 +211,35 @@ untouched; the migration map records exact structural/reference changes. Missing
 managed-asset import support causes refusal before destination creation rather
 than data loss; the known rehearsal has no managed Assets. All prepared public
 assets are captured separately. No actual owner-data cutover or live inference.
+
+
+### Staged migration and static proof
+
+The known source capture `9d9d33461da5b79fb4faaa118ca11e7939fdb7cc4efa36f681c6b392ca1a75bb`
+migrated into the separate explicitly selected `course-identity-v1` stage. The
+97-second rehearsal passed with source currentness checked again after import:
+17 project/reference changes, all 181 fields and 246 entries retained. The actual
+post-import public capture comparison permits only positive entry generations
+resetting to 1 in the newly initialized store; Consultation changed from 9 to 1.
+All Content values, timestamps, lifecycle, model schemas and qualified identities
+matched. This is an initializer metadata reset, not a Content mutation-token claim.
+
+Initial staged snapshot:
+`5b338c602b1ed8570eba0996a3cae3d593ab1e0220ee9e639a6da9d57dff1986`,
+pack `pinsel@0.3.0`, renderer `pinsel-zfb@native-v2`. Its exact static build passed
+in 8 seconds: 14 HTML routes and all 143 captured public-file hashes matched.
+Compared with the old source, only the Contact visitor script changed and the
+course identity helper was added; CSS and assets remained unchanged. Original
+`.native-authoring` and `.native-public` remain authoritative unless the stage
+is explicitly selected. No owner-data import or cutover occurred.
+
+The first browser inspection became stale after a concurrent test-file edit;
+Composer's Vite watcher correctly invalidates the preview for watched changes.
+A frozen-source retry reached the current preview and selected the semantic
+Consultation owner correctly. The installed read-only browser inspection then passed (152 seconds): semantic
+Consultation selection at depth 2, advanced wrapper visibility, shared controls
+disabled, legacy aliases 1/2/3/01 and all three canonical IDs selecting the correct
+Contact option, and Home links using canonical IDs. Full mutation/restart/build
+browser acceptance remains pending.
+
+[Migration checkpoint](https://github.com/zudolab/pinsel/issues/54#issuecomment-6929759951).
