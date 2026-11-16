@@ -150,7 +150,7 @@ After installing the exact Composer revision recorded in the compatibility ledge
 
 ```sh
 pnpm --filter @pinsel/content authoring:init
-pnpm --filter @pinsel/content authoring:dev
+pnpm dev
 ```
 
 Initialization is explicit and refuses an existing workspace. It stages committed
@@ -158,8 +158,20 @@ Content and `buildPinselSite` structure under
 `packages/pinsel-content/.native-authoring`, prepares approved public assets and the
 same production visitor script sources under `.native-public`, and records
 `.native-import-evidence.json`. Neither command changes legacy D1 authority. Normal
-`authoring:dev` never initializes or reseeds stores. Keep this staged authoring state
+`pnpm dev`, `pnpm dev:dogfood` and the underlying `authoring:dev` open full native
+Composer. Startup uses public coherent capture to verify the existing saved workspace
+and prepared public files before listening on loopback port 4190. It refuses missing,
+incomplete or busy state and never initializes or reseeds stores. To choose a port,
+run `pnpm --filter @pinsel/content authoring:dev --port 4191 --strict-port`.
+Keep this staged authoring state
 for restart testing; do not delete it as disposable output after editing.
+
+The previous Hosted Content launcher remains explicitly available as
+`pnpm dev:legacy-hosted` for legacy recovery work. It retains its documented D1
+behavior; do not start it as an alternate writer during an actual authority cutover.
+Changing the repository's normal command does not migrate owner data or switch an
+already running owner editor. The staged native workspace still contains committed
+known inputs until a separately authorized owner-data import is completed.
 
 Open the displayed loopback URL, choose Sitemap `main`, Lessons and Consultation.
 Check the nested section, intro and shared course-price ownership. Save, stop the

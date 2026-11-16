@@ -17,7 +17,7 @@
     "content:validate": "tsx --tsconfig tsconfig.scripts.json src/site/validate.ts",
     "content:check": "tsx --tsconfig tsconfig.scripts.json src/site/check.ts",
     "authoring:init": "tsx --tsconfig tsconfig.scripts.json src/site/initialize-native.ts",
-    "authoring:dev": "zudo-composer dev",
+    "authoring:dev": "tsx --tsconfig tsconfig.scripts.json src/site/start-native.ts",
     "authoring:capture": "tsx --tsconfig tsconfig.scripts.json src/site/capture-native.ts",
     "authoring:build": "tsx --tsconfig tsconfig.scripts.json src/site/build-native-snapshot.ts"
   },

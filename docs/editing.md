@@ -1,8 +1,10 @@
 # ローカルで文章・料金を編集する
 
+This is the retained Hosted/D1 workflow. Normal native authoring and its separate cutover hold are documented in [Composer adoption](composer-adoption.md).
+
 現在の編集画面はローカル dogfooding 用です。本番ログインや公開配信は未提供で、「保存」は公開ではありません。実行環境と保存契約は [dogfooding.md](dogfooding.md)、AIの限定受け入れは [note-ai-acceptance.md](note-ai-acceptance.md) を参照してください。
 
-1. Node 24とrepo指定pnpmで `pnpm install --frozen-lockfile`、続けてrootで `pnpm dev:dogfood`。`http://127.0.0.1:8787/editor/` を開きます。
+1. Node 24とrepo指定pnpmで `pnpm install --frozen-lockfile`、続けてrootで `pnpm dev:legacy-hosted`。`http://127.0.0.1:8787/editor/` を開きます。
 2. 「編集する項目」でNote、FAQ、料金を選びます。Noteのタイトル・説明・Markdown本文、FAQの質問・回答、料金の表示テキストを変更し「保存」します。
 3. 保存後「プレビュー」で現在のsnapshotを確認します。ページ切替は「プレビューページ」で行います。Note AIの候補previewはまだ保存されていない内容です。
 4. 「履歴を読み込む」で変更内容を確認します。復元は新しいrevisionとして保存します。2タブの競合では新しい保存内容を黙って上書きせず、入力を保持します。

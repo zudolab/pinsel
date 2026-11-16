@@ -1,27 +1,33 @@
 # Pinsel
 
-Website for Pinsel (online preparation classes for German art universities). It is built as static HTML with ZFB, and a constrained Composer-based CMS lets editors change content only.
+Website for Pinsel (online preparation classes for German art universities). It is built as static HTML with ZFB. Composer adoption is extending authoring from Content records to Sitemap pages, nested components and explicit shared ownership.
 
-**Status: local Hosted Content dogfooding; not deployed.** Run `pnpm dev:dogfood` and open **http://127.0.0.1:8787/editor/**. Persistent local D1 is `apps/authoring-worker/.wrangler/dogfood/`; normal startup never resets it. Note/FAQ/pricing editing, exact snapshot preview, history, conflict/recovery, Note title/body Content-AI (fake by default; explicit Apply and guarded Undo), and immutable local snapshot builds use the current public Composer API. Publication/delivery remains disabled. [Daily commands, recovery and migration details](docs/dogfooding.md).
+**Status: native Composer adoption in progress; not deployed.** For an already staged native workspace, run `pnpm dev` (or `pnpm dev:dogfood`) and open **http://127.0.0.1:4190/composer?native=1**. Startup validates existing authority and refuses missing/incomplete state; it never initializes or reseeds. Known-input rehearsal initialization and exact capture/build commands are in [the adoption guide](docs/composer-adoption.md). Browser acceptance and owner-data cutover remain separate: committed seed inputs are not the owner's latest draft.
+
+The retained Hosted editor is explicitly `pnpm dev:legacy-hosted` at **http://127.0.0.1:8787/editor/**. Its persistent local D1 remains `apps/authoring-worker/.wrangler/dogfood/`; neither native startup nor native builds change it. [Legacy recovery and Note-only AI recipes](docs/dogfooding.md) remain available. Native AI acceptance is still in progress; publication/delivery remains disabled.
 
 ## Stack
 
 - **Public site** (`apps/site`): [ZFB](https://github.com/Takazudo/zudo-front-builder) 5.1.5 with zudo-react. It emits static HTML with no JS by default, plus three visitor scripts (`*.client.ts`). It is served as Cloudflare Workers Static Assets (`apps/site/wrangler.jsonc`, no `main`).
 - **Styleguide** (`apps/styleguide`): a zudo-sg 0.8.1 host (zudo-doc 9.1.1, zdtp 0.9.0) over `packages/pinsel-ui`. It is for developers only and is never part of the public output.
-- **Editor** (`apps/editor`): Vite and Preact. It hosts the Composer content-only editor (`zudo-composer/hosted-content/editor`) and shows the Japanese save and publication states.
+- **Native authoring** (`packages/pinsel-content`): installed full Composer with an explicit filesystem workspace, trusted production ZFB document renderer and exact public snapshot build path.
+- **Legacy editor** (`apps/editor`): Vite and Preact. It hosts the Composer content-only editor (`zudo-composer/hosted-content/editor`) and shows the Japanese save and publication states.
 - **Authoring Worker** (`apps/authoring-worker`): a private Cloudflare Worker (wrangler 4.149.0). It provides Access JWT checks with jose, D1 drafts, revisions, immutable snapshots and publication jobs, the JSON content API, server-side preview rendering; publication is disabled. It is never deployed from this repository.
 - **Shared packages**: `packages/pinsel-ui` holds the zudo-react components, the approved CSS and assets, and the `renderRouteDocument` bridge. `packages/pinsel-content` holds the content models, the editable-field policy, the site structure and the assemble, project and check scripts.
-- **Composer**: consumed only through exact git pins of two distinct package-root commits of `Takazudo/zudo-composer` (not a Pinsel or Composer `main` SHA): `zudo-composer` at `git+https://github.com/Takazudo/zudo-composer.git#13ed855a3268d91c114c3f5ee167d9ace9078d57` and `@zudo-composer/component-contract` at `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0`. Both are declared by the four importers and resolved once in `pnpm-lock.yaml`. See [`docs/dependencies.md`](docs/dependencies.md#current-state).
+- **Composer**: consumed only through immutable Git package pins for the tool and separately distributed component contract. All four importers and the lockfile share the identities recorded in [dependencies](docs/dependencies.md#current-state) and the [compatibility ledger](docs/composer-compatibility.md).
 
 ## Commands
 
 Requires Node 24.x (`>=24 <25`) and pnpm 11.5.2 through corepack (`corepack enable`).
 
-CI runs these in this order (`.github/workflows/ci.yml`, job `build`). `pnpm build:site` must come before `pnpm check`, because the Worker tests compare their in-workerd render with `apps/site/dist/index.html`.
+The historical source/Hosted baseline CI runs these in this order (`.github/workflows/ci.yml`, job `build`). These baseline generators do not consume or overwrite native authoring authority. `pnpm build:site` must come before `pnpm check`, because the Worker tests compare their in-workerd render with `apps/site/dist/index.html`.
 
 | Command | What it does |
 | --- | --- |
-| `pnpm dev:dogfood` | Prepare and run the persistent real local Worker/D1 editor |
+| `pnpm dev` / `pnpm dev:dogfood` | Validate and open the existing native Composer workspace without initialization |
+| `pnpm dev:legacy-hosted` | Run the retained persistent local Worker/D1 editor |
+| `pnpm --filter @pinsel/content authoring:capture -- <new-file>` | Capture saved native authority after stopping the editor |
+| `pnpm --filter @pinsel/content authoring:build -- <snapshot>` | Build only the captured native state into an isolated output directory |
 | `pnpm build:snapshot -- <file>` | Build immutable snapshot HTML without writing the working draft |
 | `pnpm install --frozen-lockfile` / `pnpm dedupe --check` | Install the pinned workspace and confirm there are no duplicate identities |
 | `pnpm no-deploy:check` | Fail if any script or workflow could deploy, promote or publish |

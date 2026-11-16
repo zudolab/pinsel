@@ -72,12 +72,12 @@ no deployment or production authority switch follows from this ledger.
 - Immutable install, frozen reinstall and dedupe check pass. The candidate adds
   local parent-placement editing, durable recovery, conservative frame settlement
   and isolated `@takazudo/zfb/zudo-react` JSX evaluation with runtime attestation.
-- Earlier b33 static rehearsal passed all 14 routes and exact142 public bytes;
+- Earlier b33 static rehearsal passed all 14 routes and exact 142 public bytes;
   its independent live preview failed on the missing iframe settlement bridge.
   That is retained evidence, not a live authoring pass. New installed browser
   acceptance and exact recapture/build remain pending; existing staged data stays.
-- ZFB remains5.1.5. Registry/release inspection verified7.0.0 availability for the
+- ZFB remains 5.1.5. Registry/release inspection verified 7.0.0 availability for the
   main/runtime/WASM/slugify and macOS arm64/x64, Linux x64, Windows x64 packages.
-  Linux arm64 npm7 is intentionally suspended (latest6.0.1); the GitHub standalone
+  Linux arm64 npm 7 is intentionally suspended (latest 6.0.1); the GitHub standalone
   artifact is separate. Publication alone does not prove Pinsel compatibility,
   so no framework upgrade is bundled into this Composer acceptance cycle.

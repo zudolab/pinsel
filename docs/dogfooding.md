@@ -1,9 +1,11 @@
 # Pinsel Hosted Content dogfooding
 
+This is the retained Hosted/D1 workflow. Normal native authoring and its separate cutover hold are documented in [Composer adoption](composer-adoption.md).
+
 Node.js **24.x** と pnpm **11.5.2** を使用します。初回は `pnpm install --frozen-lockfile`、以後はルートで次を実行します。
 
 ```sh
-pnpm dev:dogfood
+pnpm dev:legacy-hosted
 ```
 
 URL: **http://127.0.0.1:8787/editor/**
@@ -46,7 +48,7 @@ publication/deliveryは**実装経路を停止**しています。公開操作�
 
 ## Note Content-AI (S5)
 
-`pnpm dev:dogfood` はNode24推論hostとreal Worker/D1を一緒に起動・停止します。既定は **fake (offline deterministic)**。画面のprovider表示には、選択済みproviderとavailabilityを分けて表示します。fake成功は実CLI/model成功ではありません。
+`pnpm dev:legacy-hosted` はNode24推論hostとreal Worker/D1を一緒に起動・停止します。既定は **fake (offline deterministic)**。画面のprovider表示には、選択済みproviderとavailabilityを分けて表示します。fake成功は実CLI/model成功ではありません。
 
 1. Noteを選択し、通常編集に未保存内容があれば先に「保存」する。
 2. 「変更の指示」→「提案を作る」。タイトル・本文のみが候補となり、この段階では下書きは変わらない。
@@ -63,9 +65,9 @@ publication/deliveryは**実装経路を停止**しています。公開操作�
 実CLIを使う場合だけ、既存の認証済みCLIがある環境で明示選択します。
 
 ```sh
-PINSEL_AI_PROVIDER=claude-cli PINSEL_AI_MODEL=opus PINSEL_AI_EFFORT=medium pnpm dev:dogfood
+PINSEL_AI_PROVIDER=claude-cli PINSEL_AI_MODEL=opus PINSEL_AI_EFFORT=medium pnpm dev:legacy-hosted
 # または
-PINSEL_AI_PROVIDER=codex-cli PINSEL_AI_MODEL=gpt-6-astra PINSEL_AI_EFFORT=medium PINSEL_AI_SERVICE_TIER=default pnpm dev:dogfood
+PINSEL_AI_PROVIDER=codex-cli PINSEL_AI_MODEL=gpt-6-astra PINSEL_AI_EFFORT=medium PINSEL_AI_SERVICE_TIER=default pnpm dev:legacy-hosted
 ```
 
 CLIは別Node24 processで動き、workerd内では実行しません。選択はstartupのみ。Composerの隔離CLIは個人設定を読み込みません。上記はx0xで確認済みの設定をその呼び出しに明示するcommandです。model/effortは両CLIで必須、service tierはCodexだけ必須です。欠落・空値・不正値は準備やDB作成前に拒否し、既定値を推測しません。Claudeへのtier指定、fakeへのmodel/effort/tier指定も拒否します。個人の設定ファイル・資格情報は変更しません。別環境では本人が確認した設定値を明示してください。別providerへの暗黙fallbackもありません。ブラウザからprovider/executable/model/file/shell操作を渡せません。Nodeは127.0.0.1のランダムport、毎回生成するsecretで認証し、Origin付きbrowser直通を拒否します。secretはprivate temporary `.dev.vars` とNode envにだけ渡し、CLIには継承しません。通常停止でWorker/Node両方のprocess groupを終了し、temporary configを削除します。
