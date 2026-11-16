@@ -47,3 +47,20 @@ package pin, migration rehearsal, browser selection/ownership, shared Content,
 restart/recovery and static output evidence before claiming completion. Owner-data
 import/cutover remains held for the current export and authorized reachable host;
 no deployment or production authority switch follows from this ledger.
+
+## Candidate rehearsal — 2026-11-16
+
+- Composer source/package candidate: `b33f92aef1c94a366970808cd72264a1e0d9c402`
+  ([draft PR #974](https://github.com/Takazudo/zudo-composer/pull/974)); not merged.
+- Contract: `c0b452da075b66757c60bd0d721a47062d4354d0` (unchanged).
+- Pinsel branch: `feat/full-composer-adoption`, [draft PR #59](https://github.com/zudolab/pinsel/pull/59).
+- Workspace: explicit staged `pinsel` under `packages/pinsel-content/.native-authoring`;
+  new snapshot envelope schema version 1, Composition schema remains upstream v2.
+- Validation: Node 24.19.0 / pnpm 11.5.2 immutable Git install, frozen install and
+  dedupe check passed. UI renderer tests 13 passed; public preparation test passed.
+- Actual staged initialization and coherent capture passed using the installed Git package.
+  Capture `ba87916a98db118b7609ab637b365731f32668b5a4eeba1309f408e807ff9060`
+  contains 177 Compositions, 246 Content entries, 163 Mappings and 142 public files.
+  Exact static build and browser acceptance are in progress.
+  No full scenario is accepted yet. No owner data migrated, no legacy writer switched.
+- Upstream aggregate gate, independent installed review and final dependency pin remain pending.

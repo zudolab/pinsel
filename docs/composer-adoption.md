@@ -141,3 +141,37 @@ environment, review or CI holds. Do not change credentials to bypass a blocker.
 The in-product Assistant must receive architectural rules, selection, ownership,
 references and generated capability grammar through its actual context/tool path.
 This Markdown file alone does not establish that behavior.
+
+## Staged native workspace recipe (implementation acceptance pending)
+
+After installing the exact Composer revision recorded in the compatibility ledger:
+
+```sh
+pnpm --filter @pinsel/content authoring:init
+pnpm --filter @pinsel/content authoring:dev
+```
+
+Initialization is explicit and refuses an existing workspace. It stages committed
+Content and `buildPinselSite` structure under
+`packages/pinsel-content/.native-authoring`, prepares approved public assets and the
+same production visitor script sources under `.native-public`, and records
+`.native-import-evidence.json`. Neither command changes legacy D1 authority. Normal
+`authoring:dev` never initializes or reseeds stores. Keep this staged authoring state
+for restart testing; do not delete it as disposable output after editing.
+
+Open the displayed loopback URL, choose Sitemap `main`, Lessons and Consultation.
+Check the nested section, intro and shared course-price ownership. Save, stop the
+server, and capture through the supported offline API:
+
+```sh
+pnpm --filter @pinsel/content authoring:capture -- /absolute/path/pinsel-native.json
+pnpm --filter @pinsel/content authoring:build -- /absolute/path/pinsel-native.json
+```
+
+Capture creates a new file exclusively, binding native domain tokens, actual pack
+and renderer identities, managed Assets and the explicit prepared public-file list.
+Build verifies that capture and writes a new `.native-builds/<digest>` directory,
+using captured public asset/CSS/script bytes. Existing output is refused rather than
+overwritten. Reopen the server and confirm saved edits remain unchanged by capture
+and build. These commands are a recipe, not a recorded end-to-end pass; use the ledger
+for actual installed-acceptance results.

@@ -15,7 +15,11 @@
     "content:render-home": "tsx --tsconfig tsconfig.scripts.json src/site/render-home.ts",
     "content:import": "node ../../scripts/content/import-seed.mjs",
     "content:validate": "tsx --tsconfig tsconfig.scripts.json src/site/validate.ts",
-    "content:check": "tsx --tsconfig tsconfig.scripts.json src/site/check.ts"
+    "content:check": "tsx --tsconfig tsconfig.scripts.json src/site/check.ts",
+    "authoring:init": "tsx --tsconfig tsconfig.scripts.json src/site/initialize-native.ts",
+    "authoring:dev": "zudo-composer dev",
+    "authoring:capture": "tsx --tsconfig tsconfig.scripts.json src/site/capture-native.ts",
+    "authoring:build": "tsx --tsconfig tsconfig.scripts.json src/site/build-native-snapshot.ts"
   },
   "dependencies": {
     "@pinsel/ui": "workspace:*",
@@ -23,6 +27,6 @@
     "@zudo-composer/component-contract": "git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0",
     "preact": "^10.29.8",
     "zod": "^4.3.6",
-    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#13ed855a3268d91c114c3f5ee167d9ace9078d57"
+    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#b33f92aef1c94a366970808cd72264a1e0d9c402"
   }
 }
