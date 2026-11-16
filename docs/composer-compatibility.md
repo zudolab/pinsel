@@ -104,3 +104,39 @@ no deployment or production authority switch follows from this ledger.
   fix is in progress; this candidate is not an accepted completion or merge-ready state.
 - Staged known-data workspace and history remain intact. No owner-data cutover,
   authenticated model inference, production deployment or framework upgrade occurred.
+
+## Installed browser acceptance and final foundation candidate — 2026-11-16
+
+The independently installed `10f331bc2212c407693909d1e6eb6d03e73ccb72` passed:
+
+- Cold load of all 25 Content models; Home → Lessons and Sitemap → Lessons;
+  nested Consultation selection at tree depth 3 with the exact rendered owner;
+  actual visitor links, Contact `?course=1`, and query/hash preservation on reload.
+- Live Content saves: consultation price appeared on both Home and Lessons;
+  option-label change appeared on Contact. Supported UI saves restored original
+  values and lifecycle, retaining legitimate Content history.
+- A deliberately withheld successful placement-save response was recovered in a
+  fresh Chromium process using the same operation ID
+  `62b909cd-de7b-4eb1-85c9-375e9a69f987`. A supported inverse restored the exact
+  original Lessons document. Mapping, Sitemap and shared composition bytes stayed
+  unchanged. All owned servers and leases were released.
+
+These were normal `pnpm dev` runs with unflagged Chromium. Node's Fetch port policy
+rejects 4190; the readiness harness uses direct HTTP, while Chromium works normally.
+Early harness readiness, nonexistent-link and required-label selector failures are
+retained as failed attempts, not product acceptance. The three completed guarded
+runs passed in 216, 369 and 270 seconds; the last includes a subsequently corrected
+harness timeout timer draining after its assertions completed.
+
+The current pin is now `e62e1a6ab3b2b783e56533ee510e4cfc27b24547`, with unchanged
+contract `c0b452da075b66757c60bd0d721a47062d4354d0`. Immutable install, frozen reinstall
+and dedupe check passed. It adds the reviewed Assistant state/readiness fixes and
+neutral route-helper placement. Upstream full unchanged Assistant browser acceptance
+passed (583 seconds, scripted provider only). Payload digest is
+`6279138d1e5a80fc231144e24a5f591c196bc56170aa032001de6eb892f8a98a` for 750 files;
+Composer evidence/source head `10e36be2f92082d02b748ce2c67cc89ae40f0199` also refreshes
+generated demo identities. Final CI and this pin's changed-state browser → stop →
+public capture → exact build → restart/inverse rehearsal remain pending.
+
+No owner D1 data, active editor authority or real model provider was migrated or
+accepted. Native staged data, original assets and all recovery evidence remain.
