@@ -15,7 +15,9 @@ The normal authoring experience must be the independently installed full Compose
 Sitemap → route-backed page → nested semantic components → inspector and real
 rendered preview. Internal compositions, mappings and patterns are not pages.
 Pinsel supplies its actual component pack and `renderRouteDocument` through a
-supported trusted host document renderer. Composer remains independent of ZFB;
+supported trusted host document renderer. Its `hostDocument.jsxImportSource` is
+explicitly `@takazudo/zfb/zudo-react`; Composer evaluates that trusted document
+graph separately from its Preact editor graph. Composer remains independent of ZFB;
 a handwritten Preact duplicate or public-site framework conversion is not a solution.
 
 Component instances have stable owner-qualified IDs, typed properties and constrained

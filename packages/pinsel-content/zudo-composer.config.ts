@@ -7,5 +7,5 @@ export default defineComposerConfig({
   styles: "styles/authoring.css",
   authoringAuthority: "workspace",
   nativeEditing: { source: "workspace", paragraph: { componentId: "pinsel.paragraph", textProp: "text" } },
-  hostDocument: { module: "@pinsel/ui/host-document", rendererId: "pinsel-zfb", rendererVersion: "native-v1", publicDir: ".native-public" },
+  hostDocument: { module: "@pinsel/ui/host-document", jsxImportSource: "@takazudo/zfb/zudo-react", rendererId: "pinsel-zfb", rendererVersion: "native-v1", publicDir: ".native-public" },
 });
