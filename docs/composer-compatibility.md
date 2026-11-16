@@ -349,3 +349,55 @@ observes refusal and verifies canonical state remains unchanged. Native-authorin
 and course-migration tests passed22 cases; after correcting a helper type error,
 the focused regression and Content typecheck passed. No staged data was changed.
 This follow-up changes migration tooling, not the accepted renderer or Composer pin.
+
+## T4 integration and next installed candidate
+
+T4 merged as Composer `5f400c7dd3af9225c1d5485ab0b624ec9298a92b`
+([#977](https://github.com/Takazudo/zudo-composer/pull/977)) and Pinsel
+`ce455399ed3a3f5c4e0de65990a90f70f9a44287`
+([#60](https://github.com/zudolab/pinsel/pull/60)). Required premerge CI passed;
+Pinsel postmerge run43978590970 passed. Composer postmerge43977935192 remains
+under observation at this checkpoint. Both primary checkouts returned to main;
+new implementation work is isolated in separate worktrees.
+
+The next candidate is immutable Composer
+`5e16a34363a0763a5a8bd852805117ff79e5c2f9`, from
+[draft #979](https://github.com/Takazudo/zudo-composer/pull/979), with unchanged
+contract `c0b452da075b66757c60bd0d721a47062d4354d0`. All four manifests and lock
+use this revision. Its766-file payload digest is
+`b8c5758a5ef03940bd2d7de18df89c346bad8d28df33d262b0705678da07442b`.
+It adds owner-aware host Assistant review and guarded human removal of local
+children. Independent source reviews passed30 T5 tests and20 removal tests;
+whole-repository TypeScript and scoped lint passed. Public Node9/hosted16 entries
+and all four demo hosts were regenerated and checked. A conservative no-deploy
+scan initially mistook a local helper named `run` for a command wrapper; renaming
+that helper fixed the scan without changing the guard or locking behavior.
+Fourteen service tests passed after the rename; generated output stayed current.
+
+The preceding `0eb2456408b8779f8c64ffd4e27307e962efad9a` consumer install passed18
+focused tests and Content typecheck. The final5e16 install passed8.9s, frozen
+reinstall450ms and dedupe. Browser acceptance for this candidate is **NOT_RUN** at
+this checkpoint; source checks are not a substitute for the installed scenarios.
+
+### Separate Note-route stage
+
+The reviewed migration ran with the previous87b399f0 package against fresh source
+`640425ae7b0b900132dd98efcfef2591090e2dc5b8cd2d0714747f0c11b6db40`.
+Its explicit `notes-v1` target has pack0.4.0 / renderer `pinsel-zfb@native-v3`,
+workspace `pinsel`, snapshot schema1. Snapshot:
+`06316fad72e5db58719e8876c2045eb6076ac94e1a73c1042314fa48711f057e`.
+The guarded100-second import retained25 models and246 entries, with only the
+documented new-store generation reset;23 structural/reference deltas produced179
+Compositions,165 Mappings and199 attachments. Original source and course-stage
+stores/public bytes remained unchanged, including their recovery history.
+
+The exact staged build passed7s:14 HTML routes and143 public-file hashes matched;
+no prepared public bytes changed. Dynamic Note-route, new-page and new-Course
+fixtures additionally pass, but their live creation/publication/restart flows
+still require browser acceptance. See [the migration recipe](composer-note-migration.md),
+[portable acceptance](native-authoring-acceptance.md),
+[route-authoring recipe](native-route-acceptance.md), and
+[Assistant ownership/configuration](composer-assistant.md).
+
+T5/T6/T7 and human Remove task[978](https://github.com/Takazudo/zudo-composer/issues/978)
+remain open. No owner-data cutover, authenticated inference or deployment occurred.
