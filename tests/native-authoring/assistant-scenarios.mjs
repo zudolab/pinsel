@@ -82,7 +82,7 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
     await writeFile(journalPath, JSON.stringify(journal, null, 2), spec.id === 'local' ? {} : { flag: 'wx' });
     await frame().locator('[data-composer-target]').evaluateAll((elements, id) => { const element = elements.find(e => e.getAttribute('data-composer-target') === id); if (!element) throw Error('Target absent'); element.click(); }, target.renderedNodeId);
     const card = await proposeFromSelection(page, { prop, prompt, domain: spec.domain });
-    journal.conversationId = await page.getByLabel('Conversation', { exact: true }).inputValue();
+    journal.conversationId = await page.getByRole('combobox', { name: /^Conversation/ }).inputValue();
     assert(journal.conversationId);
     await persist();
     if (spec.id === 'course-stale') {
@@ -126,7 +126,7 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
   const origin = new URL(page.url()).origin;
   const resume = async () => {
     await page.goto(new URL('/composer?assistant=1', origin).href);
-    await page.getByLabel('Conversation', { exact: true }).selectOption(journal.conversationId);
+    await page.getByRole('combobox', { name: /^Conversation/ }).selectOption(journal.conversationId);
     const card = page.getByRole('region', { name: `${spec.domain} review`, exact: true });
     await expect(card).toHaveCount(1, { timeout: 180000 });
     return card;

@@ -75,10 +75,9 @@ The full scenario:
    and static text, every baseline route plus any additional authored routes, and
    every captured public/managed-asset file's exact bytes/hash/length. A fresh
    public capture must equal B exactly: building A may not overwrite later B.
-5. Restarts and checks the stable node. Removes only that test node with the
-   supported `document-edit` API using its current qualified target/revision/session;
-   restores Content through the UI. This is an **API inverse**, not evidence of a
-   human Remove button. Final public capture proves canonical values, references,
+5. Restarts and checks the stable node. Removes only that test node using the
+   actual **Remove component** button with its current qualified target, then
+   restores Content through the UI. Final public capture proves canonical values, references,
    assets and public files restored. Legitimate timestamps/history are retained.
 
 Baseline routes are asserted as a set, so new authored routes are permitted. The

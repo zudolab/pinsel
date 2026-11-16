@@ -1,3 +1,4 @@
+import { assertCompositionOwnership } from "./ownership-assertions.mjs";
 import { assistantCases } from './assistant-scenarios.mjs';
 import { assertContentOwnership, assertProposalReadOnly } from './assistant-ui.mjs';
 import assert from 'node:assert/strict';
@@ -80,6 +81,7 @@ try {
         await browser(`assistant:${spec.id}:apply`);
         await capture(`assistant-${spec.id}-applied.json`);
         if (spec.domain === 'content') assertContentOwnership(caseBefore, await readJson(join(run, `assistant-${spec.id}-applied.json`)), await readJson(join(run, `assistant-${spec.id}.json`)));
+        else assertCompositionOwnership(caseBefore, await readJson(join(run, `assistant-${spec.id}-applied.json`)), await readJson(join(run, `assistant-${spec.id}.json`)));
         await browser(`assistant:${spec.id}:undo`);
         await capture(`assistant-${spec.id}-undone.json`);
         assertRestored(caseBefore, await readJson(join(run, `assistant-${spec.id}-undone.json`)));

@@ -5,7 +5,9 @@ import { canonicalProject } from './support.mjs';
 /** Real DOM driver for the supported fake provider. It never fabricates an acknowledgement. */
 export async function proposeFromSelection(page, { prop, prompt, domain }) {
     assert(['content', 'composition'].includes(domain));
-    await page.getByLabel('Selected property', { exact: true }).selectOption(prop ?? '');
+    const property = page.getByRole('region', { name: 'Assistant selection', exact: true }).getByRole('combobox');
+    await expect(property).toHaveCount(1);
+    await property.selectOption(prop ?? '');
     await page.getByRole('link', { name: 'Ask Assistant', exact: true }).click();
     await page.getByRole('button', { name: 'New conversation', exact: true }).click();
     await page.getByLabel('Request', { exact: true }).fill(prompt);
@@ -16,7 +18,8 @@ export async function proposeFromSelection(page, { prop, prompt, domain }) {
     return card;
 }
 export async function renderExactCandidate(card, { pathname, text }) {
-    const choices = card.getByLabel('Candidate route', { exact: true });
+    const choices = card.getByRole('combobox');
+    await expect(choices).toHaveCount(1);
     const values = await choices.locator('option').evaluateAll(options => options.map(option => option.value));
     const value = values.find(value => value && value.replace(/\/$/, '') === pathname.replace(/\/$/, ''));
     assert(value, `Candidate route unavailable: ${pathname}`);
@@ -88,5 +91,7 @@ export function assertContentOwnership(before, after, { providerId, entryId, fie
     const original = a.providers.content.find(item => item.id === providerId)?.entries.find(item => item.id === entryId);
     assert(original && Object.hasOwn(original.values, fieldId));
     entry.values[fieldId] = original.values[fieldId];
-    assert.deepEqual(b.providers.content, a.providers.content, 'Apply changed unrelated Content values');
+    assert.deepEqual(b, a, 'Apply changed unrelated authored values');
+    assert.deepEqual(after.assets, before.assets, 'Content Apply changed Assets');
+    assert.deepEqual(after.publicFiles, before.publicFiles, 'Content Apply changed public bytes');
 }
