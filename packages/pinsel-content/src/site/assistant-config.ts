@@ -12,7 +12,7 @@ export function pinselAssistantConfig(env: Readonly<Record<string, string | unde
       { providerId: "content-filesystem", modelId: "note", fieldIds: ["note-title", "note-body"] },
     ],
   };
-  if (provider === "fake") return { ...common, provider, model: "fake" as const };
+  if (provider === "fake") return { ...common, provider };
   if (provider !== "anthropic" && provider !== "claude-cli" && provider !== "codex-cli") {
     throw new Error("Unsupported PINSEL_ASSISTANT_PROVIDER; choose anthropic, claude-cli, codex-cli or explicit offline fake.");
   }

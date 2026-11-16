@@ -1,8 +1,31 @@
 import { describe, expect, it } from "vitest";
 import { pinselAssistantConfig } from "../site/assistant-config";
 import { PINSEL_MODELS } from "../models";
+import { loadHostContext } from "zudo-composer/vite";
+import { mkdtemp, rm, symlink, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 describe("native Assistant configuration", () => {
+  it.each(["fake", "anthropic", "claude-cli", "codex-cli"])("passes the installed public parser for %s", async provider => {
+    const input = pinselAssistantConfig({
+      PINSEL_ASSISTANT_PROVIDER: provider,
+      PINSEL_ASSISTANT_MODEL: "test-model",
+      PINSEL_ASSISTANT_EFFORT: "medium",
+    });
+    const root = await mkdtemp(join(tmpdir(), "pinsel-assistant-config-"));
+    try {
+      await symlink(fileURLToPath(new URL("../../node_modules", import.meta.url)), join(root, "node_modules"), "dir");
+      await writeFile(join(root, "zudo-composer.config.ts"), `export default ${JSON.stringify({ pack: "@pinsel/ui/composer-pack", assistant: input })};`);
+      const { composerConfig } = await loadHostContext({ workspaceRoot: root });
+      expect(composerConfig.assistant?.provider).toBe(provider);
+      expect(composerConfig.assistant?.contentFields).toEqual(input?.contentFields);
+    } finally {
+      await rm(root, { recursive: true, force: true });
+    }
+  });
+
   it("requires explicit opt-in and never falls back to an offline provider", () => {
     expect(pinselAssistantConfig({})).toBeUndefined();
     expect(() => pinselAssistantConfig({ PINSEL_ASSISTANT_PROVIDER: "unknown" })).toThrow("Unsupported");
