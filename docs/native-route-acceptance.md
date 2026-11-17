@@ -186,8 +186,15 @@ state runner consumes an ordered15-proof manifest:
 
 The example array is schematic; provide all15 actual ordered paths. The loader
 checks each kind and digest chain, the original successful record/release response,
-full accepted domain delta and owner allocations. Recovery requires full unchanged
-before/after capture and an actual successful public record read. Installation
+full accepted domain delta and owner allocations. Content evidence binds the qualified allocation, every ordered acknowledged save,
+and the exact final record. Recovery requires the original failure journal, its
+committed reconciliation and original after-capture, full unchanged recovery
+before/after capture, and an exact paired public `get`/loaded-record response.
+The historical page-create exception preserves its missing original after-capture
+as a limitation and requires its acknowledged write and later capture-reconciliation
+artifacts; it does not invent an original capture. Historical journals identify
+fixed public adapters by their protocol-specific phase names; they do not contain
+HTTP headers for every read. Unsupported event shapes refuse. Installation
 changes permit only the four attested identity fields, require recorded public
 pack/renderer identities, and validate an explicit bridge when supplied. Every
 input is hashed and frozen for the child; original failure/recovery statuses remain
