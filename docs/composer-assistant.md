@@ -68,3 +68,8 @@ New live-provider acceptance is held in [Pinsel #58](https://github.com/zudolab/
 Record the actual provider, model, effort and tier, exact package/workspace
 identities, and observed result when the supported capability is available.
 Historical Note-only inference and scripted tests do not complete that hold.
+
+The [canonical-read-only Inspector/Assistant proof](composer-assistant-readonly-acceptance.md)
+checks shared affected-use display, actual fake-provider tools and explicit unsupported-request
+reasons without Apply. Its stream-evidence recovery reads an existing run and remains
+separate from canonical receipt recovery.

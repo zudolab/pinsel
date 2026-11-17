@@ -434,3 +434,10 @@ intentionally lost initial response is handled by fresh-browser recovery first.
 Run `assistant-ui-settlement.test.mjs` separately under the heavy guard: its small
 browser fixture verifies that an open review or disabled Undo does not count as
 settled. It starts no authoring server and touches no canonical workspace.
+
+## Bounded shared-source and unsupported-request proof
+
+The [canonical-read-only Assistant recipe](composer-assistant-readonly-acceptance.md)
+provides repository-relative Inspector/Assistant checks and exact existing-run event
+recovery. It preserves full capture equality and explicitly allows derived JSX repair
+as a normal read effect. It supplements the mutation/Undo matrix; it does not replace it.
