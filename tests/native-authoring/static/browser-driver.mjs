@@ -1,3 +1,4 @@
+import {contentPreviewOperations,contentPreviewReadGate,isNativeRead} from '../native-preview-reads.mjs';
 import {navigationBoundary,closeAfterNavigation} from './navigation-boundary.mjs';
 import {publicRecordReadback,assertSelectedEditorSaved} from './public-record-readback.mjs';
 import {settleBrowserReads} from './browser-quiescence.mjs';
@@ -9,6 +10,7 @@ import {compositionDerivedReadGate} from './composition-output.mjs';
 import {record,page as findPage,admitCompositionCreate,admitSectionRoot,admitPageCreate,admitPageField,admitReparent,admitNavigation,admitNavigationField,admitSectionTitle} from './intents.mjs';
 /** One persisted operation per phase. Intent contains exact public-snapshot identities. */
 export async function staticUi(page,{base,snapshot,intent,persist,expect,setClose}){
+ const nativeReads=contentPreviewReadGate({page,snapshot,persist});
  let result,held,attempted=false,closing=false;
  const isComposition=['composition-create','section-root','section-title'].includes(intent.kind),domain=isComposition?'compositions':'sitemaps';
  const owner=intent.kind==='composition-create'?null:record(snapshot,domain,intent.owner);
@@ -38,15 +40,16 @@ export async function staticUi(page,{base,snapshot,intent,persist,expect,setClos
  };
  const gate=isComposition?compositionAuthoringGate({page,snapshot,persist,admit:(input,request)=>{validate(input,request);return result;},accept:()=>{}}):requestGate({page,persist,validate,accept:(_,body)=>assert.equal(body.ok,true)});
  const composition=isComposition?gate:compositionDerivedReadGate({page,snapshot,persist});
- const navigation=navigationBoundary({page,composition,lanes:[gate,readback],persist,check:()=>{assert(!held&&!closing,held?.message);gate.check();readback.check();}});
- setClose(closeAfterNavigation(navigation,async ctx=>{closing=true;let failure;try{await drainAll(gate,composition,readback);}catch(error){failure=error;}try{await ctx.close();}catch(error){failure??=error;}try{await drainAll(gate,composition,readback);assert(!held,held?.message);}catch(error){failure??=error;}finally{readback.dispose();}if(failure)throw failure;}));
+ const navigation=navigationBoundary({page,composition,lanes:[nativeReads,gate,readback],persist,check:()=>{assert(!held&&!closing,held?.message);gate.check();readback.check();}});
+ setClose(closeAfterNavigation(navigation,async ctx=>{closing=true;let failure;try{await drainAll(nativeReads,gate,composition,readback);}catch(error){failure=error;}try{await ctx.close();}catch(error){failure??=error;}try{await drainAll(nativeReads,gate,composition,readback);assert(!held,held?.message);}catch(error){failure??=error;}finally{readback.dispose();}if(failure)throw failure;}));
  await page.route('**/__zudo*',async route=>{
   const req=route.request(),path=new URL(req.url()).pathname;let input;try{input=req.postDataJSON();}catch{}
   const op=req.headers()['x-zudo-composer-operation']??req.headers()['x-zudo-composer-asset-operation']??input?.operation;
+  if(path==='/__zudo-native-edit'&&contentPreviewOperations.has(input?.operation))return nativeReads.handle(route);
   if(req.method()==='GET')return route.continue();
   if(path==='/__zudo_composer_file_provider')return composition.handle(route);
   if(path===endpoint&&['put','save-lifecycle-record'].includes(op))return gate.handle(route);
-  const nativeRead=path==='/__zudo-native-edit'&&['inspect','document-preview','review','receipt'].includes(op);
+  const nativeRead=isNativeRead(path,input,snapshot.workspaceId);
   const providerRead=/^\/__zudo_composer_.*provider$/.test(path)&&new Set(['initialize','list','get','open','selection','generation','snapshot','read-all','list-models','get-model','get-entry','count-entries','page-entries','scan-entries','find-seeding','missing-directories']).has(op);
   if(nativeRead||providerRead)return route.continue();
   held=Error(`Unexpected ${path} ${op}`);try{await persist({phase:'held',path,operation:op});}finally{await route.abort();}
@@ -79,7 +82,7 @@ export async function staticUi(page,{base,snapshot,intent,persist,expect,setClos
    }
    await save();
   }
-  await expect.poll(()=>isComposition?gate.committed:attempted,{timeout:180000}).toBe(true);await drainAll(gate,composition);assert(!held,held?.message);await assertSaved();await settleBrowserReads(page,composition,{persist,check:()=>{assert(!held&&!closing);gate.check();},boundary:'before-reload'});await persist({phase:'static-reload-before'});readback.beginReload({ref:{providerId,recordId:result.id},record:result});const reloadResponse=await page.reload({waitUntil:'commit'});readback.documentCommitted(reloadResponse);await persist({phase:'static-reload-returned'});await settleBrowserReads(page,composition,{persist,check:()=>{assert(!held&&!closing);gate.check();},boundary:'after-reload'});await expect.poll(()=>readback.verified,{timeout:180000}).toBe(true);await drainAll(gate,composition,readback);assert(!held,held?.message);await assertSaved();
+  await expect.poll(()=>isComposition?gate.committed:attempted,{timeout:180000}).toBe(true);await drainAll(nativeReads,gate,composition);assert(!held,held?.message);await assertSaved();await settleBrowserReads(page,composition,{persist,check:()=>{assert(!held&&!closing);gate.check();},boundary:'before-reload'});await persist({phase:'static-reload-before'});readback.beginReload({ref:{providerId,recordId:result.id},record:result});const reloadResponse=await page.reload({waitUntil:'commit'});readback.documentCommitted(reloadResponse);await persist({phase:'static-reload-returned'});await settleBrowserReads(page,composition,{persist,check:()=>{assert(!held&&!closing);gate.check();},boundary:'after-reload'});await expect.poll(()=>readback.verified,{timeout:180000}).toBe(true);await drainAll(nativeReads,gate,composition,readback);assert(!held,held?.message);await assertSaved();
   await persist({phase:'ui-acknowledged-offline-audit-required',domain,record:result});return{domain,ref:{providerId:isComposition?'files':intent.owner.providerId,recordId:result.id},record:result};
- }finally{await drainAll(gate,composition,readback);}
+ }finally{await drainAll(nativeReads,gate,composition,readback);}
 }

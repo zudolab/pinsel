@@ -1,3 +1,4 @@
+import {isNativeRead,contentPreviewOperations,assertContentPreviewHeaders} from '../native-preview-reads.mjs';
 import assert from 'node:assert/strict';
 import {contentReadOperations} from '../content-browser-transport.mjs';
 import {compositionRead} from './composition-read.mjs';
@@ -12,7 +13,7 @@ const providerReads = {
 };
 export function classifyRead(path, headers, body, workspaceId) {
   if (path === '/__zudo-native-edit') {
-    assert(['inspect','review','receipt','document-preview'].includes(body?.operation), 'Native mutation refused');
+    assert(isNativeRead(path,body,workspaceId), 'Native mutation or malformed read refused');if(contentPreviewOperations.has(body.operation))assertContentPreviewHeaders(headers);
     return 'native';
   }
   if (path === '/__zudo-release') {
@@ -134,12 +135,12 @@ export function busyReadTracker(){
   get outstanding(){return pending.size;},
   claimRetry(path,headers,input){const key=requestKey(path,headers,input);if(!pending.has(key)||retrying.has(key))return false;retrying.add(key);return true;},
   observe(path,headers,input,response,workspaceId){
-   const operation=headers['x-zudo-composer-operation'];
+   const operation=headers['x-zudo-composer-operation']??input?.operation;
    const key=requestKey(path,headers,input);retrying.delete(key);
    if(response.status===409&&response.body?.ok===false&&response.body.error?.code==='authoring-busy'){
-    assert.equal(classifyRead(path,headers,input,workspaceId),'provider','Busy retry is only a domain provider read');
+    const kind=classifyRead(path,headers,input,workspaceId);assert(kind==='provider'||(kind==='native'&&contentPreviewOperations.has(operation)),'Busy retry requires an exact installed marked read');
     assert.equal(headers['x-zudo-authoring-read'],'1','Busy read lacks installed retry hint');
-    assert(retryable.has(operation),'Read has no installed retry contract');
+    assert(retryable.has(operation)||(path==='/__zudo-native-edit'&&contentPreviewOperations.has(operation)),'Read has no installed retry contract');
     assert(typeof headers['x-zudo-native-client']==='string'&&headers['x-zudo-native-client']);
     assert(/^\d+$/.test(headers['x-zudo-native-epoch']??''),'Busy read has no coordinated epoch');
     pending.add(key);return true;

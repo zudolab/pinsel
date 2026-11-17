@@ -1,3 +1,4 @@
+import {contentPreviewOperations,assertContentPreviewResponse} from '../native-preview-reads.mjs';
 import {readFrozenBundle,assertInputsUnchanged} from '../families/frozen-inputs.mjs';
 import assert from 'node:assert/strict';
 import {readFile,writeFile,open,mkdir} from 'node:fs/promises';
@@ -53,6 +54,7 @@ await context.route('**/*',route=>{
         return; // Original409 already delivered; only installed client may retry.
       }
       assertReadScope(url.pathname,request.headers(),response.body.result,snapshot.workspaceId);
+      if(kind==='native'&&contentPreviewOperations.has(body.operation))assertContentPreviewResponse(body,response,snapshot,{revision:snapshot.digest});
       if(kind==='native' && body.operation==='document-preview'){assertPreviewIdentity(snapshot,response.body.result);assert.equal(response.body.result.identity.pathname.replace(/\/$/,'')||'/',destination.pathname.replace(/\/$/,'')||'/');previewCount++;}
       if(kind==='release' && intent.kind==='active-identity')active.observe(body.request,response.body.result);
     } catch(cause) {blocked??=cause;await route.abort().catch(()=>{});await persist({phase:'read-held',endpoint:url.pathname,error:cause.message}).catch(()=>{});}

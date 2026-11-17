@@ -1,3 +1,4 @@
+import {contentPreviewResponseTracker,contentPreviewOperations,assertContentPreviewRequest,assertContentPreviewHeaders,assertContentPreviewResponse} from '../native-preview-reads.mjs';
 import assert from 'node:assert/strict';
 import { mkdir, readFile, writeFile, appendFile, realpath } from 'node:fs/promises';
 import { createWriteStream } from 'node:fs';
@@ -30,6 +31,7 @@ const base = 'http://127.0.0.1:' + port, env = { ...process.env, PINSEL_AUTHORIN
 const record = (kind, value) => appendFile(join(run, 'events.jsonl'), JSON.stringify({ time: new Date().toISOString(), kind, value }) + '\n');
 const command = async (args) => { await record('command', args); await new Promise((ok, bad) => { const out = createWriteStream(join(run, 'commands.log'), { flags: 'a' }); const p = spawn(args[0], args.slice(1), { cwd: repo, env, stdio: ['ignore', 'pipe', 'pipe'] }); p.stdout.pipe(out, { end: false }); p.stderr.pipe(out, { end: false }); p.on('error', bad); p.on('exit', (code, signal) => { out.end(); code === 0 ? ok() : bad(Error(JSON.stringify(args) + ' ' + (code ?? signal))); }); }); };
 const capture = async (name) => { await command(['pnpm', '--filter', '@pinsel/content', 'authoring:capture', '--', join(run, name)]); return JSON.parse(await readFile(join(run, name), 'utf8')); };
+let contentReads;
 let server, context, page, preview, blocked, observerFailure, assistantReadHeaders, error, result, before, after, resumePrice;
 const pending = new Set(), streams = [];
 const track = p => { pending.add(p); p.finally(() => pending.delete(p)).catch(() => { }); return p; };
@@ -127,6 +129,7 @@ try {
             const h = req.headers();
             assistantReadHeaders = Object.fromEntries(['content-type', 'x-zudo-native-client', 'x-zudo-native-capability'].map(key => { assert(h[key], 'Actual Assistant read header missing'); return [key, h[key]]; }));
         }
+        if(new URL(req.url()).pathname==='/__zudo-native-edit'&&contentPreviewOperations.has(body?.operation)){try{assertContentPreviewRequest(body,before.workspaceId);assertContentPreviewHeaders(req.headers());}catch(cause){observerFailure??=cause;await record('content-preview-request-held',{error:String(cause)});return route.abort();}}
         if (req.method() === 'POST')
             await record('request', { path: new URL(req.url()).pathname, operation, body });
         return route.continue();
@@ -144,17 +147,20 @@ try {
             return;
         track((async () => { try {
             const body = await res.json();
+            if(path==='/__zudo-native-edit'&&contentPreviewOperations.has(input?.operation))(contentReads??=contentPreviewResponseTracker(before,{revision:before.digest})).observe(input,{status:res.status(),body},res.request().headers());
             if (input?.operation === 'document-preview' && body.ok)
                 preview = body.result;
             await record('response', { path, operation: input?.operation, status: res.status(), body });
         }
         catch (cause) {
+            if(contentPreviewOperations.has(input?.operation))observerFailure??=cause;
             await record('observer-error', { path, operation: input?.operation, error: String(cause) });
         } })());
     });
     const recoverPrice = async () => { assert(resumePrice, 'No selected recovery run'); assert(assistantReadHeaders, 'No actual current app Assistant read headers'); await page.evaluate(async ({ headers, workspaceId, runId }) => { const res = await fetch('/__zudo-assistant', { method: 'POST', credentials: 'same-origin', redirect: 'error', headers, body: JSON.stringify({ operation: 'events', workspaceId, input: { runId, afterSeq: 0 } }) }); if (!res.ok)
         throw Error('Existing-run events unavailable'); await res.text(); }, { headers: assistantReadHeaders, workspaceId: before.workspaceId, runId: resumePrice.runId }); };
     result = await checks({ page, base, before, resumePrice, recoverPrice, getPreview: () => preview, getStreams: () => streams, expect, record, shot: name => page.screenshot({ path: join(run, name + '.png'), fullPage: true }) });
+    contentReads?.finish();
     if (blocked || observerFailure)
         throw blocked ?? observerFailure;
 }
@@ -177,6 +183,7 @@ finally {
         error ??= cause;
         await record('cleanup-or-capture-failure', { message: String(cause) });
     }
+    try{contentReads?.finish();}catch(cause){observerFailure??=cause;}
     if (blocked || observerFailure)
         error ??= blocked ?? observerFailure;
     await writeFile(join(run, 'result.json'), JSON.stringify({ status: error ? 'FAIL' : 'PASS', error: error ? String(error) : null, result, beforeDigest: before?.digest, afterDigest: after?.digest, fullCaptureEqual: !!before && !!after && JSON.stringify(before) === JSON.stringify(after), blocked: blocked ? String(blocked) : null, retained: 'All conversations, review records, browser profile, captures and logs; no inverse/delete/reset attempted.' }, null, 2));

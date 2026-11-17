@@ -1,3 +1,4 @@
+import {contentPreviewOperations,contentPreviewReadGate,isNativeRead} from '../native-preview-reads.mjs';
 import {navigationBoundary,closeAfterNavigation} from '../static/navigation-boundary.mjs';
 import {releaseLifecycle} from './release-lifecycle.mjs';
 import {orderedReleaseGate} from './release-queue.mjs';
@@ -8,17 +9,18 @@ import { requestGate, originalResponse, drainAll } from './original-request.mjs'
 const key = ref => JSON.stringify([ref.providerId,ref.modelId,ref.recordId]);
 /** Called only after exact offline source precondition and an exclusive journal begin. */
 export async function publishReviewed(page,{base,snapshot,refs,excluded=[],expectedActive,persist,expect,setClose,setNavigation,proofFactory=releaseProof}) {
+ const nativeReads=contentPreviewReadGate({page,snapshot,persist});
   const proof=proofFactory({snapshot,expectedActive,requested:refs.map(ref => ({ref,action:'publish'}))});
   let blocked, activationRequestId, releaseChallenge;
   const composition=compositionDerivedReadGate({page,snapshot,persist});
   page.on('websocket',socket=>{if(new URL(socket.url()).host!==new URL(base).host)return;socket.on('framereceived',({payload})=>{let frame;try{frame=JSON.parse(String(payload));}catch{return;}if(frame.event!=='release:challenge' || frame.data?.payload?.kind!=='reconcile')return;try{assert.equal(frame.data.requestId,activationRequestId);assert.equal(frame.data.operation,'activate');proof.reconcileChallenge(frame.data.payload);releaseChallenge=structuredClone(frame.data.payload);}catch(error){blocked ??=error;}});});
   const refuse=async(route,operation)=>{blocked ??= Error(`Unexpected canonical request ${operation}`);try{await persist({phase:'unexpected-request',operation,endpoint:new URL(route.request().url()).pathname});}finally{await route.abort();}};
-  await page.route('**/__zudo*',async route=>{const request=route.request();if(lifecycle.closing&&request.method()!=='GET')return refuse(route,'request-after-close-fence');if(request.method()==='GET')return route.continue();let input;try{input=request.postDataJSON();}catch{}if(new URL(request.url()).pathname==='/__zudo-native-edit' && ['inspect','review','receipt','document-preview'].includes(input?.operation))return route.continue();return refuse(route,input?.operation);});
-  const gate=orderedReleaseGate({persist,gate:requestGate({page,persist,decode:(wire,request)=>{assert.equal(wire.clientId,request.headers()['x-zudo-release-client']);assert.equal(wire.requestId,request.headers()['x-zudo-release-request']);assert(wire.clientId && wire.requestId && wire.request);if(wire.request.operation==='activate')activationRequestId=wire.requestId;return wire.request;},validate:input=>{lifecycle.requireOpen();composition.check();if(['plan','apply','build','activate'].includes(input.operation))lifecycle.requireSettled();assert(!blocked,blocked?.message);proof.before(input);},accept:(input,body)=>proof.after(input,body)})});
+  await page.route('**/__zudo*',async route=>{const request=route.request();if(lifecycle.closing&&request.method()!=='GET')return refuse(route,'request-after-close-fence');if(request.method()==='GET')return route.continue();let input;try{input=request.postDataJSON();}catch{}if(new URL(request.url()).pathname==='/__zudo-native-edit'&&contentPreviewOperations.has(input?.operation))return nativeReads.handle(route);if(isNativeRead(new URL(request.url()).pathname,input,snapshot.workspaceId))return route.continue();return refuse(route,input?.operation);});
+  const gate=orderedReleaseGate({persist,gate:requestGate({page,persist,decode:(wire,request)=>{assert.equal(wire.clientId,request.headers()['x-zudo-release-client']);assert.equal(wire.requestId,request.headers()['x-zudo-release-request']);assert(wire.clientId && wire.requestId && wire.request);if(wire.request.operation==='activate')activationRequestId=wire.requestId;return wire.request;},validate:input=>{lifecycle.requireOpen();nativeReads.check();composition.check();if(['plan','apply','build','activate'].includes(input.operation))lifecycle.requireSettled();assert(!blocked,blocked?.message);proof.before(input);},accept:(input,body)=>proof.after(input,body)})});
   const reconcile=requestGate({page,persist:event=>persist({...event,releaseChallenge}),validate:input=>{lifecycle.requireSettled();assert(!blocked,blocked?.message);gate.check();proof.reconcileBefore(input);},accept:(_,body)=>proof.reconcileAfter(body)});
   assert.equal(typeof setClose,'function','Publication needs caller-owned close/drain lifecycle');
-  const lifecycle=releaseLifecycle({lanes:[gate,reconcile,composition],composition,blocked:()=>blocked});
-  const navigation=navigationBoundary({page,composition,lanes:[gate,reconcile],persist,check:()=>{lifecycle.requireOpen();gate.check();reconcile.check();assert(!blocked,blocked?.message);}});
+  const lifecycle=releaseLifecycle({lanes:[nativeReads,gate,reconcile,composition],composition,blocked:()=>blocked});
+  const navigation=navigationBoundary({page,composition,lanes:[nativeReads,gate,reconcile],persist,check:()=>{lifecycle.requireOpen();gate.check();reconcile.check();assert(!blocked,blocked?.message);}});
   if(setNavigation)setNavigation(navigation);
   setClose(closeAfterNavigation(navigation,lifecycle.close));
   await page.route('**/__zudo-release',gate.handle);
@@ -58,9 +60,9 @@ export async function publishReviewed(page,{base,snapshot,refs,excluded=[],expec
     assert(excluded.every(ref=>seen.has(key(ref))),'Excluded draft must appear as an explicitly unchecked qualified choice');
     assert([...desired].every(id=>seen.has(id)),'Missing exact publication choice');
     for(const name of ['Run release checks','Approve reviewed candidate','Apply / stage exact candidate','Build staged candidate','Activate locally']) {
-      composition.check();gate.check();reconcile.check();assert(!blocked,blocked?.message);
+      nativeReads.check();composition.check();gate.check();reconcile.check();assert(!blocked,blocked?.message);
       const button=page.getByRole('button',{name,exact:true});await expect(button).toBeEnabled({timeout:180000});
-      await drainAll(gate,reconcile);composition.check();gate.check();reconcile.check();assert(!blocked,blocked?.message);
+      await drainAll(nativeReads,gate,reconcile);nativeReads.check();composition.check();gate.check();reconcile.check();assert(!blocked,blocked?.message);
       await persist({phase:'release-ui-intent',name});await button.click();
       await gate.drain();await reconcile.drain();
     }
@@ -75,6 +77,6 @@ export async function publishReviewed(page,{base,snapshot,refs,excluded=[],expec
   } finally {
     // Settle both independent admitted lanes even when the first one failed.
     // Rejecting handlers remain installed until the caller closes the browser.
-    await drainAll(gate,reconcile,composition);
+    await drainAll(nativeReads,gate,reconcile,composition);
   }
 }

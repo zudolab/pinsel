@@ -1,3 +1,4 @@
+import {contentPreviewResponseTracker,contentPreviewOperations,assertContentPreviewRequest,assertContentPreviewHeaders,assertContentPreviewResponse} from './native-preview-reads.mjs';
 import { randomUUID } from 'node:crypto';
 import { assertRecoveryRequest, assertRecoveryReceipt, assertRecoveryCleanup, assertRecoveryInverse, recoveryObservation } from './recovery-proof.mjs';
 import { continueContentRequest, readBrowserContent, contentReadOperations } from './content-browser-transport.mjs';
@@ -30,7 +31,7 @@ await assertFreePort(port);
 const base = 'http://127.0.0.1:' + port;
 const notes = [];
 let serverLog = '', context, page, preview, nativeHeaders;
-let cleanupError;
+let cleanupError,contentPreviewFailure;const contentPreviewPending=new Set();const nativeReadSnapshot=JSON.parse(await readFile(join(artifacts,'before.json'),'utf8'));const contentReads=contentPreviewResponseTracker(nativeReadSnapshot);
 const recoveryObservations = [];
 const record = (key, value) => { notes.push({ key, value, time: new Date().toISOString() }); console.log(key, JSON.stringify(value)); };
 const server = spawn('pnpm', ['dev', '--port', String(port), '--strict-port'], { cwd: repoRoot, env: process.env, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
@@ -44,11 +45,12 @@ async function launch() {
     page = context.pages()[0] ?? await context.newPage();
     page.on('request', request => { if (request.url().endsWith('/__zudo-native-edit')) nativeHeaders = request.headers(); });
     page.on('pageerror', e => record('pageerror', e.message));
-    page.on('response', async (response) => {
+    page.on('response', (response) => {const observed=(async()=>{
         try {
             if (response.url().endsWith('/__zudo-native-edit')) {
-                const body = await response.json();
-                if (body.result?.targets)
+                const body = await response.json();const input=response.request().postDataJSON();
+                if(contentPreviewOperations.has(input?.operation)){assertContentPreviewRequest(input,nativeReadSnapshot.workspaceId);assertContentPreviewHeaders(response.request().headers());const observed=contentReads.observe(input,{status:response.status(),body},response.request().headers());record('content-preview-observed',{input,status:response.status(),evidence:observed});}
+                if (input?.operation==='document-preview'&&body.result?.targets)
                     preview = body.result;
                 record('native-response', { operation: response.request().postDataJSON()?.operation, status: response.status(), error: body.error });
             }
@@ -56,11 +58,12 @@ async function launch() {
                 record('provider-error', { url: response.url(), status: response.status(), body: (await response.text()).slice(0, 1500) });
         }
         catch (e) {
+            try{if(contentPreviewOperations.has(response.request().postDataJSON()?.operation))contentPreviewFailure??=e;}catch{}
             record('observer-disposed', e.message);
         }
-    });
+    })();contentPreviewPending.add(observed);observed.finally(()=>contentPreviewPending.delete(observed)).catch(()=>{});});
 }
-async function ready() { await page.getByText('Saved snapshot rendered', { exact: true }).waitFor({ timeout: 180000 }); assert(preview?.targets?.length, 'No captured targets'); }
+async function ready() { if(contentPreviewFailure)throw contentPreviewFailure;await page.getByText('Saved snapshot rendered', { exact: true }).waitFor({ timeout: 180000 }); assert(preview?.targets?.length, 'No captured targets'); }
 async function open(visitor = '/') { await page.goto(base + '/composer?native=1&visitor=' + encodeURIComponent(visitor)); await ready(); }
 async function browse() {
     const button = page.getByRole('button', { name: 'Select components', exact: true });
@@ -622,6 +625,7 @@ catch (error) {
 }
 finally {
     await context?.close().catch(error => { cleanupError = error.message; });
+    while(contentPreviewPending.size)await Promise.allSettled([...contentPreviewPending]);try{contentReads.finish();}catch(error){contentPreviewFailure??=error;}if(contentPreviewFailure){cleanupError=contentPreviewFailure.message;process.exitCode=1;record('FAIL',contentPreviewFailure.stack);}
     for (const observation of recoveryObservations) {
         try { await observation.drain(); } catch (error) { cleanupError = error.message; process.exitCode = 1; record('FAIL', error.stack); }
     }

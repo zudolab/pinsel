@@ -1,5 +1,6 @@
 import {validateSavedMapping} from './mapping-recovery.mjs';
 import {familyRecordReadback,assertSelectedEditorSaved} from './structural-readback.mjs';
+import {contentPreviewOperations,assertContentPreviewResponse} from '../native-preview-reads.mjs';
 import {validateSavedReference,validateCapturedReference} from '../header/saved-reference.mjs';
 import {settleTerminalReads,observeRequestDiagnostics} from '../header/terminal-settlement.mjs';
 import {settleBrowserReads} from '../static/browser-quiescence.mjs';
@@ -49,7 +50,7 @@ await context.route('**/*',route=>{
       assert.equal(request.method(),'POST');
       const body=request.postDataJSON(),kind=classifyRead(url.pathname,request.headers(),body,snapshot.workspaceId);
       if(lifecycle.closing||terminalClosing){
-        const retry=terminalClosing&&!lifecycle.closing&&kind==='provider'&&busyReads.claimRetry(url.pathname,request.headers(),body);
+        const retry=terminalClosing&&!lifecycle.closing&&(kind==='provider'||(kind==='native'&&contentPreviewOperations.has(body.operation)))&&busyReads.claimRetry(url.pathname,request.headers(),body);
         if(!retry){
         const action=closingReadAction(url.pathname,request.headers(),body,snapshot.workspaceId);
         if(action==='settle-composition'){readEpoch++;originalPending++;admitted=true;return await composition.handle(route);}
@@ -68,6 +69,7 @@ await context.route('**/*',route=>{
         return; // Original409 already delivered; only installed client may retry.
       }
       assertReadScope(url.pathname,request.headers(),response.body.result,snapshot.workspaceId);
+      if(kind==='native'&&contentPreviewOperations.has(body.operation))assertContentPreviewResponse(body,response,snapshot,{revision:snapshot.digest});
       if(kind==='native' && body.operation==='document-preview'){assertPreviewIdentity(snapshot,response.body.result);previewCount++;previewPaths.add(response.body.result.identity.pathname);}
       if(kind==='release' && intent.kind==='active-identity')active.observe(body.request,response.body.result);
     } catch(cause) {blocked??=cause;await route.abort().catch(()=>{});await persist({phase:'read-held',endpoint:url.pathname,error:cause.message}).catch(()=>{});}finally{if(admitted)originalPending--;}
