@@ -306,3 +306,10 @@ foreign scopes still fail the run. Already admitted responses must settle, and
 Composition output continuations still require the existing exact outstanding
 challenge gate. A failed close attempt remains failed even when its public capture
 is unchanged; the next run is read-only inspection, never another activation.
+
+A coordinated provider read marked by the installed client as
+`x-zudo-authoring-read: 1` may return an original `409 authoring-busy` response.
+The runner retains that refusal and lets the installed client perform its bounded
+retry; it never sends a replacement request or fabricates success. The same
+operation, input, client and epoch must later yield an original successful response
+before completion. Unmarked, unsupported, unresolved or other errors still fail.

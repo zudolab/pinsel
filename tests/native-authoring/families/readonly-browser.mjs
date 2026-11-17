@@ -7,7 +7,7 @@ import {repoRoot} from './config.mjs';
 import {originalResponse} from './original-request.mjs';
 import {compositionDerivedReadGate} from './composition-output.mjs';
 import {releaseLifecycle} from './release-lifecycle.mjs';
-import {classifyRead,closingReadAction,assertReadScope,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from './readonly-proof.mjs';
+import {classifyRead,closingReadAction,busyReadTracker,assertReadScope,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from './readonly-proof.mjs';
 import {verifySavedHeader,verifySavedKnowledge} from '../header/driver.mjs';
 import {verifyFamilyRendering} from './verify-render.mjs';
 const [bundlePath,bundleHash,artifacts,base] = process.argv.slice(2);
@@ -27,7 +27,8 @@ const page=context.pages()[0], pending=new Set(), active=activeReadback(snapshot
 let blocked,error,result,previewCount=0;
 const headerProof=intent.kind==='header-restart'?validateHeaderRestart(snapshot,inputs.headerProof):null;
 const composition=compositionDerivedReadGate({page,snapshot,persist});
-const lane={async drain(){while(pending.size)await Promise.allSettled([...pending]);if(blocked)throw blocked;}};
+const busyReads=busyReadTracker();
+const lane={async drain(){while(pending.size)await Promise.allSettled([...pending]);if(blocked)throw blocked;busyReads.assertSettled();}};
 const lifecycle=releaseLifecycle({lanes:[lane,composition],composition,blocked:()=>blocked});
 await context.route('**/*',route=>{
   const work=(async()=>{
@@ -49,7 +50,10 @@ await context.route('**/*',route=>{
       await persist({phase:'read-before-dispatch',endpoint:url.pathname,input:body});
       const response=await originalResponse(page,route);
       await persist({phase:'read-response',endpoint:url.pathname,input:body,...response});
-      assert.equal(response.status,200);assert.equal(response.body.ok,true);
+      if(busyReads.observe(url.pathname,request.headers(),body,response,snapshot.workspaceId)){
+        await persist({phase:'read-busy-awaiting-client-retry',endpoint:url.pathname,input:body,operation:request.headers()['x-zudo-composer-operation']});
+        return; // Original409 already delivered; only installed client may retry.
+      }
       assertReadScope(url.pathname,request.headers(),response.body.result,snapshot.workspaceId);
       if(kind==='native' && body.operation==='document-preview'){assertPreviewIdentity(snapshot,response.body.result);previewCount++;}
       if(kind==='release' && intent.kind==='active-identity')active.observe(body.request,response.body.result);

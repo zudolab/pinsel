@@ -1,6 +1,6 @@
 import {releaseLifecycle} from './release-lifecycle.mjs';
 import {describe,it,expect} from 'vitest';
-import {classifyRead,closingReadAction,validateReadIntent,activeReadback} from './readonly-proof.mjs';
+import {classifyRead,closingReadAction,busyReadTracker,validateReadIntent,activeReadback} from './readonly-proof.mjs';
 const headers={'x-zudo-composer-workspace':'pinsel','x-zudo-composer-capability':'fixture-capability'};
 const release=operation=>({clientId:'c',requestId:'r',request:{protocolVersion:2,operation}});
 const rh={'x-zudo-release-client':'c','x-zudo-release-request':'r'};
@@ -112,4 +112,21 @@ it('late known read abort settles cleanly, but late mutation still poisons close
   if(operation==='read-all')await close;else await expect(close).rejects.toThrow();
   expect(aborted).toBe(1);expect(dispatched).toBe(0);
  }
+});
+
+describe('installed read retry observation',()=>{
+ const path='/__zudo_composer_content_provider',input={id:'about-copy'};
+ const marked={...headers,'x-zudo-composer-operation':'get-model','x-zudo-authoring-read':'1','x-zudo-native-client':'browser','x-zudo-native-epoch':'3'};
+ const busy={status:409,body:{ok:false,error:{code:'authoring-busy',message:'retained'}}};
+ const ok={status:200,body:{ok:true,result:{}}};
+ it('retains busy obligation until matching original response; never treats409 as success',()=>{
+  const tracker=busyReadTracker();expect(tracker.observe(path,marked,input,busy,'pinsel')).toBe(true);expect(()=>tracker.assertSettled()).toThrow();
+  tracker.observe(path,marked,{id:'other'},ok,'pinsel');expect(()=>tracker.assertSettled()).toThrow();
+  tracker.observe(path,{...marked,'x-zudo-native-epoch':'4'},input,ok,'pinsel');expect(()=>tracker.assertSettled()).toThrow();
+  expect(tracker.observe(path,marked,input,ok,'pinsel')).toBe(false);tracker.assertSettled();
+ });
+ it('rejects unmarked, mutation, uncoordinated, unsupported and unknown failures',()=>{
+  for(const changed of [{'x-zudo-authoring-read':undefined},{'x-zudo-composer-operation':'transact'},{'x-zudo-native-epoch':undefined},{'x-zudo-composer-operation':'initialize'},{'x-zudo-composer-workspace':'other'}])expect(()=>busyReadTracker().observe(path,{...marked,...changed},input,busy,'pinsel')).toThrow();
+  for(const response of [{status:500,body:busy.body},{status:409,body:{ok:false,error:{code:'stale-browser'}}},{status:200,body:{ok:false}}])expect(()=>busyReadTracker().observe(path,marked,input,response,'pinsel')).toThrow();
+ });
 });

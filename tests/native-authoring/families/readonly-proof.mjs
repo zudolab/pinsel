@@ -122,3 +122,26 @@ export function validateHeaderRestart(snapshot, proof) {
   assert.deepEqual(entry.values[proof.field],proof.value);
   return proof;
 }
+
+/** Observe the installed client's bounded read retry; never issue a request here. */
+export function busyReadTracker(){
+ const pending=new Set();
+ const retryable=new Set(['list','get','snapshot','read-all','list-models','get-model','get-entry','count-entries','page-entries','scan-entries','selection','generation','find-seeding','missing-directories']);
+ return{
+  observe(path,headers,input,response,workspaceId){
+   const operation=headers['x-zudo-composer-operation'];
+   const key=JSON.stringify([path,operation,headers['x-zudo-native-client'],headers['x-zudo-native-epoch'],input]);
+   if(response.status===409&&response.body?.ok===false&&response.body.error?.code==='authoring-busy'){
+    assert.equal(classifyRead(path,headers,input,workspaceId),'provider','Busy retry is only a domain provider read');
+    assert.equal(headers['x-zudo-authoring-read'],'1','Busy read lacks installed retry hint');
+    assert(retryable.has(operation),'Read has no installed retry contract');
+    assert(typeof headers['x-zudo-native-client']==='string'&&headers['x-zudo-native-client']);
+    assert(/^\d+$/.test(headers['x-zudo-native-epoch']??''),'Busy read has no coordinated epoch');
+    pending.add(key);return true;
+   }
+   assert.equal(response.status,200);assert.equal(response.body?.ok,true);
+   pending.delete(key);return false;
+  },
+  assertSettled(){assert.equal(pending.size,0,'Retryable read never produced matching successful original response');},
+ };
+}
