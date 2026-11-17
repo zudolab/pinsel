@@ -1,3 +1,4 @@
+import {retainExpectedHash} from '../families/expected-hashes.mjs';
 import {installationIdentityPaths,loadFinalInstallationBridge} from './final-installation-bridge.mjs';
 import {publicationRecoveryStatus,verifyPublicationRecovery} from './publication-recovery.mjs';
 import {metadataRecoveryStatus,verifyMetadataRecovery} from './metadata-recovery.mjs';
@@ -23,7 +24,7 @@ export function assertRetainedReceipt(events,result,before){
 }
 /** Read actual external evidence; never turn recovered failures into native phase PASS. */
 export async function loadRetained(manifestPath,{complete=true,installation}={}){
- const hashes={};const bytes=async p=>{assert(p?.startsWith('/'));const b=await readFile(p);hashes[p]=inputHash(b);return b;};const json=async p=>JSON.parse(await bytes(p)),events=async p=>(await bytes(p)).toString().split('\n').filter(Boolean).map(JSON.parse);
+ const hashes={};const bytes=async p=>{assert(p?.startsWith('/'));const b=await readFile(p);retainExpectedHash(hashes,p,inputHash(b));return b;};const json=async p=>JSON.parse(await bytes(p)),events=async p=>(await bytes(p)).toString().split('\n').filter(Boolean).map(JSON.parse);
  const manifest=await json(manifestPath);assert.equal(manifest.kind,'retained-static-evidence');assert(Array.isArray(manifest.proofPaths));assert(complete?manifest.proofPaths.length===15:manifest.proofPaths.length>0&&manifest.proofPaths.length<=15);const phasesEvidence=[];let previous;
  for(let i=0;i<manifest.proofPaths.length;i++){
   const proofPath=manifest.proofPaths[i],proof=await json(proofPath);assert.equal(proof.kind,phases[i]);assert(proof.status===undefined||recovered.has(proof.status)||proof.status==='STATIC_PHASE_CAPTURE_VERIFIED');

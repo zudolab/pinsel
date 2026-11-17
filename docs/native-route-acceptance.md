@@ -417,3 +417,73 @@ Composition reads settle; the caller fences host-preview navigation and preserve
 the publication-owned close/drain lifecycle. Settlement failures still close and
 drain the browser, retain the first error, and never replay a request. These are
 harness source guarantees, not evidence that remaining installed phases passed.
+
+### Retain static acceptance across the closed Header href cycle
+
+The ordinary final installation bridge still permits only `digest`,
+`componentPack.digest`, `componentPack.compiler` and `renderer.digest`. A Header
+edit followed by its inverse legitimately advances Content history metadata; do
+not erase those advances or add them to the installation allowlist.
+
+For this specific completed cycle, supply an optional typed supplement to the
+evidence-only preparer. It accepts only the original failed forward's one
+acknowledged href save, its completed `SAVED_HEADER_HREF_RECOVERY_VERIFIED`
+recovery, one accepted inverse restoring `nav-about` to `/about/`, and a separate
+`READ_ONLY_RESTART_VERIFIED` inverse restart. Original failure evidence stays
+FAIL. Other edits, open cycles, schema changes and unknown field changes refuse.
+
+Create an exclusive JSON outside the checkout:
+
+```json
+{
+  "schemaVersion": 1,
+  "kind": "closed-header-href-cycle",
+  "priorInstallationBridge": {
+    "proofPath": "/absolute/prior-aa8/bridge.json",
+    "freezeManifestPath": "/absolute/prior-aa8/freeze.json",
+    "freezeManifestSha256": "ACTUAL_PRIOR_FREEZE_SHA256"
+  },
+  "forwardRecoveryProofPath": "/absolute/header-recovery/recovery-proof.json",
+  "inverseProofPath": "/absolute/header-inverse/proof.json",
+  "inverseRestartProofPath": "/absolute/header-inverse-restart/proof.json"
+}
+```
+
+Use the **original unbridged fifteen-phase manifest** as `--chain`. Keep the
+original prior installation bridge, all original journals, accepted bundles,
+provenance, captures, UI results and recovery/restart proofs available at their
+recorded paths. The loader replays only evidence validation, never browser edits.
+It reads their complete dependency closure, verifies original hashes, exactly one
+successful inverse receipt and its qualified readback, the original failed
+forward receipt/recovery, current preview identities and full captures. The closed
+cycle must preserve every original field and value except digest, Content token
+advancing exactly two, and the acknowledged owner's generation/update time.
+All previous source/package identities remain historical evidence.
+
+After the manager captures the stopped post-cycle state, performs the separately
+approved installation, and captures its result, run the existing evidence-only
+preparer with the additional argument:
+
+```bash
+node tests/native-authoring/static/prepare-final-installation.mjs \
+  --composer "$EXPECTED_COMPOSER_SHA" --stage "$PINSEL_AUTHORING_STAGE" \
+  --chain /absolute/original-fifteen-phase-manifest.json \
+  --header-cycle /absolute/closed-header-cycle.json \
+  --before /absolute/stopped-post-cycle-before-install.json \
+  --after /absolute/stopped-after-install.json \
+  --artifacts /absolute/new-final-installation-evidence
+```
+
+The supplied before capture must equal the completed inverse restart's entire
+capture. The final installation step **still** uses the unchanged four-field-only
+validator; a token, content, schema, asset, renderer-name or unknown field change
+at this step refuses. The stage must stay the same. The producer seals all prior
+and cycle inputs in the new freeze manifest, along with actual current installed
+public pack/renderer identities and source/package provenance. The final loader
+refuses any unsealed cycle dependency or changed repeated input read.
+
+`CLOSED_HEADER_HREF_CYCLE_VERIFIED` qualifies the metadata advance separately from
+`FINAL_INSTALLATION_IDENTITY_BRIDGE_VERIFIED`. Neither is a current runtime pass.
+Only a later separately authorized `run-retained.mjs` on the new immutable
+installation can establish current restart/exact-build acceptance. Do not rerun
+the fifteen phases or either Header save to obtain that proof.

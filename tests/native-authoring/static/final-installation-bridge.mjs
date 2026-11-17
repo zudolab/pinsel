@@ -1,3 +1,4 @@
+import {loadClosedHeaderCycle} from './closed-header-cycle.mjs';
 import assert from 'node:assert/strict';
 import {isDeepStrictEqual} from 'node:util';
 import {createRequire} from 'node:module';
@@ -28,17 +29,19 @@ export async function loadFinalInstallationBridge({descriptor,chainCapture,chain
  const freezeBytes=await bytes(descriptor.freezeManifestPath);assert.equal(inputHash(freezeBytes),descriptor.freezeManifestSha256);const frozen=JSON.parse(freezeBytes);assert(frozen&&typeof frozen==='object'&&!Array.isArray(frozen));
  for(const [path,hash]of Object.entries(frozen)){assert.match(hash,/^[a-f0-9]{64}$/);assert.equal(inputHash(await bytes(path)),hash,`Frozen bridge input changed: ${path}`);}
  const proof=await json(descriptor.proofPath);assert.equal(proof.schemaVersion,1);assert.equal(proof.kind,'static-final-installation-only');
- assert.deepEqual(Object.keys(proof).sort(),['afterCapture','afterCaptureDigest','beforeCapture','beforeCaptureDigest','changes','composerSha','identitiesPath','kind','pinselSha','provenancePath','schemaVersion','stage']);
- assert.equal(proof.beforeCapture,chainCapturePath);assert.equal(proof.afterCapture,capturePath);
+ assert.deepEqual(Object.keys(proof).sort(),['afterCapture','afterCaptureDigest','beforeCapture','beforeCaptureDigest','changes','composerSha','identitiesPath','kind','pinselSha','provenancePath','schemaVersion','stage',...(proof.closedHeaderCycle?['closedHeaderCycle']:[])].sort());
+ let cycle;if(proof.closedHeaderCycle){assert.equal(typeof proof.closedHeaderCycle,'string');const sealedBytes=async path=>{assert(Object.hasOwn(frozen,path),`Unfrozen closed-cycle dependency: ${path}`);return bytes(path);};cycle=await loadClosedHeaderCycle({path:proof.closedHeaderCycle,chainCapture,chainCapturePath,bytes:sealedBytes,json:async path=>JSON.parse(await sealedBytes(path)),loadInstallationBridge:loadFinalInstallationBridge});}
+ assert.equal(proof.beforeCapture,cycle?cycle.afterCapture:chainCapturePath);assert.equal(proof.afterCapture,capturePath);
  for(const path of [descriptor.proofPath,proof.beforeCapture,proof.afterCapture,proof.identitiesPath,proof.provenancePath])assert(Object.hasOwn(frozen,path),`Unfrozen bridge dependency: ${path}`);
- const before=await json(proof.beforeCapture),after=await json(proof.afterCapture);assert.deepEqual(before,chainCapture);assert.deepEqual(after,snapshot);assert.equal(proof.beforeCaptureDigest,before.digest);assert.equal(proof.afterCaptureDigest,after.digest);
+ const before=await json(proof.beforeCapture),after=await json(proof.afterCapture);assert.deepEqual(before,cycle?cycle.snapshot:chainCapture);assert.deepEqual(after,snapshot);assert.equal(proof.beforeCaptureDigest,before.digest);assert.equal(proof.afterCaptureDigest,after.digest);
  const changes=assertInstallationOnly(before,after,proof.changes);
  assert.match(proof.pinselSha,/^[a-f0-9]{40}$/);assert.match(proof.composerSha,/^[a-f0-9]{40}$/);
- assert.equal(proof.pinselSha,installation.source.head);assert.equal(proof.composerSha,installation.composer);assert.equal(proof.stage,installation.stage);
+ assert.equal(proof.pinselSha,installation.source.head);assert.equal(proof.composerSha,installation.composer);assert.equal(proof.stage,installation.stage);if(cycle)assert.equal(proof.stage,cycle.priorInstallationBridge.stage);
  const identities=await json(proof.identitiesPath);assert.deepEqual(identities,installation.identities);assertInstalledIdentities(after,identities);
  const provenance=await json(proof.provenancePath);assert.deepEqual(provenance,{source:installation.source,installed:installation.installed,composer:installation.composer,stage:installation.stage});
  // Recheck every sealed byte after dependent reads, before the caller freezes its child bundle.
  for(const [path,hash]of Object.entries(frozen))assert.equal(inputHash(await bytes(path)),hash);assert.equal(inputHash(await bytes(descriptor.freezeManifestPath)),descriptor.freezeManifestSha256);
  assert(isDeepStrictEqual(await json(descriptor.proofPath),proof));
- return {status:'FINAL_INSTALLATION_IDENTITY_BRIDGE_VERIFIED',...descriptor,beforeCapture:proof.beforeCapture,afterCapture:proof.afterCapture,beforeDigest:before.digest,afterDigest:after.digest,changes,source:installation.source,composer:installation.composer,stage:installation.stage,qualification:'Original fifteen-phase evidence remains on its original installation. This bridge proves identity-only preservation; current restart/build acceptance is separate.'};
+ const cycleEvidence=cycle?(({snapshot,...evidence})=>evidence)(cycle):undefined;
+ return {status:'FINAL_INSTALLATION_IDENTITY_BRIDGE_VERIFIED',...(cycleEvidence?{closedHeaderCycle:cycleEvidence}:{}),...descriptor,beforeCapture:proof.beforeCapture,afterCapture:proof.afterCapture,beforeDigest:before.digest,afterDigest:after.digest,changes,source:installation.source,composer:installation.composer,stage:installation.stage,qualification:'Original fifteen-phase evidence remains on its original installation. This bridge proves identity-only preservation; current restart/build acceptance is separate.'};
 }
