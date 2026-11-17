@@ -342,7 +342,11 @@ loses a real committed response, closes the browser process and recovers through
 the retained product request in the persistent profile. Separate Course cases
 exercise stale Apply refusal (`stale-plan`) and guarded Undo (`revision-conflict`) with a human price change;
 these use an explicit human inverse after the guard refuses. All refusals have
-public capture comparisons.
+public capture comparisons. The stale lifecycle stays on one dev server: candidate
+acknowledgements are process-local, so restarting between review and attempted
+Apply would test an unrelated approval mismatch. The runner compares coherent
+native-preview identities around the refusal, records actual public Content reads
+for both human Saves, then checks all domains in the final offline capture.
 
 A failed run retains journals, receipts, browser profiles and snapshots. Resume
 supported cleanup with the same scope and `--scenario assistant --restore DIR`.

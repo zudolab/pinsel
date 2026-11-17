@@ -129,6 +129,14 @@ try {
         if (spec.id === 'local') await browser(`assistant:${spec.id}:cleanup`);
       }
       for (const id of ['course-stale', 'course-guard']) {
+        if (id === 'course-stale') {
+          const baselineName = `assistant-${id}-before.json`; await capture(baselineName);
+          await browser(`assistant:${id}:stale-cycle`, { NATIVE_ACCEPTANCE_BEFORE_CAPTURE: baselineName });
+          const restoredName = `assistant-${id}-restored.json`; await capture(restoredName);
+          const restored = await readJson(join(run, restoredName));
+          assertRestored(before, restored, await generationsFromJournals(before, restored));
+          continue;
+        }
         await browser(`assistant:${id}:propose`);
         await capture(`assistant-${id}-proposed.json`);
         assertRestored(before, await readJson(join(run, `assistant-${id}-proposed.json`)), await generationsFromJournals(before, await readJson(join(run, `assistant-${id}-proposed.json`))));

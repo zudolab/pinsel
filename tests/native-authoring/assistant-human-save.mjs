@@ -25,18 +25,26 @@ export async function assertAssistantRunHumanSettled(root) {
   return journals;
 }
 /** One actual UI Save plus read-only public Content proof. No receipt or token is invented. */
-export async function observeAssistantHumanSave(page, { journal, prior, beforeCapture, phase, current, value, persist, action, waitSaved, dispatchTimeoutMs = 120000, requestTimeoutMs = 120000 }) {
+export async function observeAssistantHumanSave(page, { journal, prior, priorContent, beforeCapture, phase, current, value, persist, action, waitSaved, dispatchTimeoutMs = 120000, requestTimeoutMs = 120000 }) {
   assertAssistantHumanJournalSettled(journal);
   assert(['intervene', 'human-inverse'].includes(phase));
   assert.deepEqual({ providerId: journal.providerId, modelId: journal.spec.modelId, entryId: journal.entryId }, courseOwner);
-  const expected = contentSnapshot(prior), original = contentOwner(prior.project, courseOwner);
+  assert(Boolean(prior) !== Boolean(priorContent), 'Require exactly one public workspace or Content baseline');
+  if (priorContent) {
+    assert.equal(phase, 'human-inverse', 'Live Content baseline is only for same-server inverse');
+    const previous = journal.humanContentAttempts?.at(-1);
+    assert.equal(previous?.status, 'verified');
+    assert.deepEqual(priorContent, previous.after, 'Live inverse must use the last verified public Content read');
+  }
+  const expected = prior ? contentSnapshot(prior) : structuredClone(priorContent);
+  const original = contentOwner({ providers: { content: [{ id: expected.providerId, models: expected.models, entries: expected.entries }] } }, courseOwner);
   assert.equal(current, original.values[fieldId], 'UI value differs from immediately preceding public capture');
   const intended = phase === 'intervene' ? `${journal.marker} human intervening` : journal.old;
   assert.equal(value, intended); assert([journal.old, journal.value, `${journal.marker} human intervening`].includes(current));
   if (current === value) {
-    journal.humanContentNoops ??= []; journal.humanContentNoops.push({ phase, beforeCapture, beforeDigest: prior.digest, value }); await persist(); return null;
+    journal.humanContentNoops ??= []; journal.humanContentNoops.push({ phase, beforeCapture, beforeDigest: prior?.digest ?? null, evidenceKind: prior ? 'workspace-capture' : 'public-content-read', value }); await persist(); return null;
   }
-  const attempt = { phase, fieldId, beforeCapture, beforeDigest: prior.digest, before: expected, status: 'awaiting-dispatch' };
+  const attempt = { phase, fieldId, beforeCapture, beforeDigest: prior?.digest ?? null, evidenceKind: prior ? 'workspace-capture' : 'public-content-read', before: expected, status: 'awaiting-dispatch' };
   journal.humanContentAttempts ??= []; journal.humanContentAttempts.push(attempt); await persist();
   const admission = createHumanSaveAdmission();
   let stopped = false, completed = false, timer, settle;

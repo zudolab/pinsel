@@ -130,3 +130,30 @@ test('observed Content-AI scope read does not consume or interrupt the one Save 
   assert.equal(proof.generation, 8); assert.equal(scope.state.continued, 1); assert.equal(scope.state.aborted, 0); assert.equal(first.state.fetched, 1);
   assertAssistantHumanJournalSettled(f.journal);
 });
+test('same-server inverse uses the last verified public Content read without inventing workspace digest', async () => {
+  const f = fixture(); await observeAssistantHumanSave(f.page, f.options);
+  const g = fixture(); Object.assign(g.content, structuredClone(f.after));
+  g.after.mutationToken = 9; g.after.entries[0].generation = 9; g.after.entries[0].values[field] = 'Original';
+  g.request.record = structuredClone(g.after.entries[0]);
+  await observeAssistantHumanSave(g.page, { ...g.options, journal: f.journal, phase: 'human-inverse', current: f.options.value, value: 'Original', prior: undefined, priorContent: structuredClone(f.after) });
+  const inverse = f.journal.humanContentAttempts[1];
+  assert.equal(inverse.evidenceKind, 'public-content-read'); assert.equal(inverse.beforeDigest, null);
+  assert.deepEqual(inverse.before, f.after); assertAssistantHumanJournalSettled(f.journal);
+  for (const baseline of [{ prior: f.prior, priorContent: f.content }, { prior: undefined, priorContent: undefined }, { prior: undefined, priorContent: f.content }]) {
+    const h = fixture(); let called = false;
+    await assert.rejects(observeAssistantHumanSave(h.page, { ...h.options, ...baseline, action: async () => { called = true; } }));
+    assert.equal(called, false);
+  }
+});
+test('live inverse rejects missing, unresolved, or mismatched prior public proof before any action', async () => {
+  const f = fixture(); await observeAssistantHumanSave(f.page, f.options);
+  for (const kind of ['missing', 'unresolved', 'mismatched']) {
+    const journal = structuredClone(f.journal), priorContent = structuredClone(f.after);
+    if (kind === 'missing') { journal.humanContentAttempts = []; journal.humanContentWrites = []; }
+    if (kind === 'unresolved') journal.humanContentAttempts[0].status = 'uncertain';
+    if (kind === 'mismatched') priorContent.entries[0].values[field] = 'Foreign value';
+    let called = false;
+    await assert.rejects(observeAssistantHumanSave(f.page, { ...f.options, journal, phase: 'human-inverse', current: f.options.value, value: 'Original', prior: undefined, priorContent, action: async () => { called = true; } }));
+    assert.equal(called, false, kind);
+  }
+});

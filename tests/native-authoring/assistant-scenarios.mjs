@@ -12,12 +12,38 @@ export const assistantCases = [
   { id: 'local', pathname: '/lessons/', domain: 'composition', routes: ['/lessons/'] },
   { id: 'insert', pathname: '/lessons/', domain: 'composition', routes: ['/lessons/'] },
 ];
-export async function runAssistantPhase({ phase, caseId, page, open, getPreview, frame, record, shot, journalPath, before, restart }) {
+export async function runAssistantPhase({ phase, caseId, page, open, getPreview, frame, record, shot, journalPath, before, restart, humanPrior }) {
   const spec = assistantCases.find(value => value.id === caseId) ?? (['course-stale', 'course-guard'].includes(caseId) ? { ...assistantCases[0], id: caseId } : null);
   assert(spec, 'Unknown Assistant case');
-  if (['setup', 'cleanup', 'apply', 'undo', 'restore', 'intervene', 'human-inverse', 'stale-refuse', 'guard-refuse'].includes(phase)) await assertAssistantRunHumanSettled(dirname(journalPath));
+  if (['setup', 'cleanup', 'apply', 'undo', 'restore', 'intervene', 'human-inverse', 'stale-refuse', 'guard-refuse', 'stale-cycle'].includes(phase)) await assertAssistantRunHumanSettled(dirname(journalPath));
   let journal;
   const persist = () => writeFile(journalPath, JSON.stringify(journal, null, 2));
+  if (phase === 'stale-cycle') {
+    assert.equal(caseId, 'course-stale');
+    const baselineName = process.env.NATIVE_ACCEPTANCE_BEFORE_CAPTURE;
+    assert(baselineName, 'Same-server stale cycle requires fresh offline baseline');
+    const baseline = JSON.parse(await readFile(artifactPath(dirname(journalPath), baselineName), 'utf8'));
+    const context = { caseId, page, open, getPreview, frame, record, shot, journalPath, before: baseline, restart };
+    await runAssistantPhase({ ...context, phase: 'propose' });
+    await open(spec.pathname);
+    assert.equal(getPreview().identity.revision, baseline.digest, 'Proposal changed canonical workspace');
+    await runAssistantPhase({ ...context, phase: 'intervene' });
+    await open(spec.pathname);
+    const beforeRefusal = structuredClone(getPreview().identity);
+    await runAssistantPhase({ ...context, phase: 'stale-refuse' });
+    await open(spec.pathname);
+    const afterRefusal = structuredClone(getPreview().identity);
+    assert.deepEqual(afterRefusal, beforeRefusal, 'Refused stale Apply changed coherent workspace identity');
+    journal = JSON.parse(await readFile(journalPath, 'utf8'));
+    journal.sameServerStale = { baselineDigest: baseline.digest, beforeRefusal, afterRefusal, unchanged: true };
+    await persist();
+    const verified = journal.humanContentAttempts.at(-1);
+    assert.equal(verified.status, 'verified'); assert(verified.after);
+    const liveName = `assistant-${caseId}-live-before-inverse.json`;
+    await writeFile(artifactPath(dirname(journalPath), liveName), JSON.stringify(verified.after, null, 2), { flag: 'wx' });
+    await runAssistantPhase({ ...context, phase: 'human-inverse', humanPrior: { snapshot: verified.after, evidenceName: liveName } });
+    return;
+  }
   const select = async target => frame().locator('[data-composer-target]').evaluateAll((elements, id) => { const element = elements.find(e => e.getAttribute('data-composer-target') === id); if (!element) throw Error('Target absent'); element.click(); }, target.renderedNodeId);
   const humanEdit = async (action, onRequest) => {
     const previous = getPreview().identity.revision;
@@ -123,10 +149,11 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
     const changed = `${journal.marker} human intervening`;
     assert([journal.old, journal.value, changed].includes(current), 'Intervening value is outside this test journal');
     const value = phase === 'intervene' ? changed : journal.old;
-    const beforeCapture = process.env.NATIVE_ACCEPTANCE_BEFORE_CAPTURE;
+    const beforeCapture = humanPrior?.evidenceName ?? process.env.NATIVE_ACCEPTANCE_BEFORE_CAPTURE;
     assert(beforeCapture, 'Human Save needs immediately preceding public capture');
     const prior = JSON.parse(await readFile(artifactPath(dirname(journalPath), beforeCapture), 'utf8'));
-    await observeAssistantHumanSave(page, { journal, prior, beforeCapture, phase, current, value, persist,
+    if (humanPrior) assert.deepEqual(prior, humanPrior.snapshot);
+    await observeAssistantHumanSave(page, { journal, ...(humanPrior ? { priorContent: prior } : { prior }), beforeCapture, phase, current, value, persist,
       action: async () => { await field.fill(value); const save = page.getByRole('button', { name: 'Save', exact: true }); if (await save.isEnabled()) await save.click(); },
       waitSaved: () => page.locator('button[title="All changes saved"]').waitFor({ timeout: 120000 }),
     });
@@ -146,6 +173,7 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
     await expect(card.getByRole('button', { name: `Apply ${spec.domain}`, exact: true })).toHaveCount(0);
     assert(journal.heldApply, 'Missing retained exact candidate Apply request');
     const evidence = await observeAssistantOperation(page, 'applyHostReview', () => card.getByRole('button', { name: 'Recover retained Apply', exact: true }).click());
+    journal.stale = evidence; await persist();
     assert.deepEqual(evidence.request, journal.heldApply, 'Stale test changed the reviewed Apply request');
     assert.equal(evidence.body.ok, false, 'Stale Apply unexpectedly committed');
     assert.equal(evidence.body.error?.code, 'stale-plan');
