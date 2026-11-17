@@ -258,3 +258,13 @@ Evidence must identify the installed pin, workspace/renderer/pack identities,
 before/after digests, actual generated IDs, releases/receipts, route counts,
 screenshots, exact build output and retained resources. Real-provider inference,
 owner D1 import/cutover and deployment remain outside this local rehearsal.
+
+Remaining static metadata and publication phases use bounded browser quiescence
+plus exact Composition continuation settlement before navigation and close.
+Metadata route editing requires Saved status before reload, checks the persisted
+value afterward, and tracks pending write-admission waits through shutdown.
+Publication returns only after its original release/reconciliation lanes and
+Composition reads settle; the caller fences host-preview navigation and preserves
+the publication-owned close/drain lifecycle. Settlement failures still close and
+drain the browser, retain the first error, and never replay a request. These are
+harness source guarantees, not evidence that remaining installed phases passed.

@@ -1,3 +1,4 @@
+import {navigationBoundary,closeAfterNavigation} from '../static/navigation-boundary.mjs';
 import {releaseLifecycle} from './release-lifecycle.mjs';
 import {orderedReleaseGate} from './release-queue.mjs';
 import {compositionDerivedReadGate} from './composition-output.mjs';
@@ -6,7 +7,7 @@ import { releaseProof } from './release-proof.mjs';
 import { requestGate, originalResponse, drainAll } from './original-request.mjs';
 const key = ref => JSON.stringify([ref.providerId,ref.modelId,ref.recordId]);
 /** Called only after exact offline source precondition and an exclusive journal begin. */
-export async function publishReviewed(page,{base,snapshot,refs,excluded=[],expectedActive,persist,expect,setClose,proofFactory=releaseProof}) {
+export async function publishReviewed(page,{base,snapshot,refs,excluded=[],expectedActive,persist,expect,setClose,setNavigation,proofFactory=releaseProof}) {
   const proof=proofFactory({snapshot,expectedActive,requested:refs.map(ref => ({ref,action:'publish'}))});
   let blocked, activationRequestId, releaseChallenge;
   const composition=compositionDerivedReadGate({page,snapshot,persist});
@@ -17,7 +18,9 @@ export async function publishReviewed(page,{base,snapshot,refs,excluded=[],expec
   const reconcile=requestGate({page,persist:event=>persist({...event,releaseChallenge}),validate:input=>{lifecycle.requireSettled();assert(!blocked,blocked?.message);gate.check();proof.reconcileBefore(input);},accept:(_,body)=>proof.reconcileAfter(body)});
   assert.equal(typeof setClose,'function','Publication needs caller-owned close/drain lifecycle');
   const lifecycle=releaseLifecycle({lanes:[gate,reconcile,composition],composition,blocked:()=>blocked});
-  setClose(lifecycle.close);
+  const navigation=navigationBoundary({page,composition,lanes:[gate,reconcile],persist,check:()=>{lifecycle.requireOpen();gate.check();reconcile.check();assert(!blocked,blocked?.message);}});
+  if(setNavigation)setNavigation(navigation);
+  setClose(closeAfterNavigation(navigation,lifecycle.close));
   await page.route('**/__zudo-release',gate.handle);
   await page.route('**/__zudo_composer_*provider',async route=>{
     const path=new URL(route.request().url()).pathname;if(lifecycle.closing)return refuse(route,'provider-request-after-close-fence');
@@ -68,7 +71,7 @@ export async function publishReviewed(page,{base,snapshot,refs,excluded=[],expec
     await page.getByRole('button',{name:'Inspect current state',exact:true}).click();
     await expect.poll(()=>{try{proof.finish();return true;}catch{return false;}},{timeout:180000}).toBe(true);
     await gate.drain();await reconcile.drain();assert(!blocked,blocked?.message);
-    const result=proof.finish();await persist({phase:'release-exact-identity',result});return result;
+    const result=proof.finish();await persist({phase:'release-exact-identity',result});await navigation('after-publication-before-preview');return result;
   } finally {
     // Settle both independent admitted lanes even when the first one failed.
     // Rejecting handlers remain installed until the caller closes the browser.

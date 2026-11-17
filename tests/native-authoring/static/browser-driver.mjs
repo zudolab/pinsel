@@ -1,3 +1,4 @@
+import {navigationBoundary,closeAfterNavigation} from './navigation-boundary.mjs';
 import {publicRecordReadback,assertSelectedEditorSaved} from './public-record-readback.mjs';
 import {settleBrowserReads} from './browser-quiescence.mjs';
 import {waitForCompositionReadiness} from './composition-readiness.mjs';
@@ -37,7 +38,8 @@ export async function staticUi(page,{base,snapshot,intent,persist,expect,setClos
  };
  const gate=isComposition?compositionAuthoringGate({page,snapshot,persist,admit:(input,request)=>{validate(input,request);return result;},accept:()=>{}}):requestGate({page,persist,validate,accept:(_,body)=>assert.equal(body.ok,true)});
  const composition=isComposition?gate:compositionDerivedReadGate({page,snapshot,persist});
- setClose(async ctx=>{closing=true;let failure;try{await drainAll(gate,composition,readback);}catch(error){failure=error;}try{await ctx.close();}catch(error){failure??=error;}try{await drainAll(gate,composition,readback);assert(!held,held?.message);}catch(error){failure??=error;}finally{readback.dispose();}if(failure)throw failure;});
+ const navigation=navigationBoundary({page,composition,lanes:[gate,readback],persist,check:()=>{assert(!held&&!closing,held?.message);gate.check();readback.check();}});
+ setClose(closeAfterNavigation(navigation,async ctx=>{closing=true;let failure;try{await drainAll(gate,composition,readback);}catch(error){failure=error;}try{await ctx.close();}catch(error){failure??=error;}try{await drainAll(gate,composition,readback);assert(!held,held?.message);}catch(error){failure??=error;}finally{readback.dispose();}if(failure)throw failure;}));
  await page.route('**/__zudo*',async route=>{
   const req=route.request(),path=new URL(req.url()).pathname;let input;try{input=req.postDataJSON();}catch{}
   const op=req.headers()['x-zudo-composer-operation']??req.headers()['x-zudo-composer-asset-operation']??input?.operation;
