@@ -20,7 +20,7 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 | Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
 | Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping phase13 PASS260s and full human regression PASS1001s, both independently audited. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
-| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. History has16 entries after phase13 count-binding PASS260s, phase14 collection PASS250s and phase15 limit PASS291s. Phase16 pin failed before writes; phases16–44 and FAQ remain pending. |
+| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. History has17 entries after phase13 count-binding PASS260s, phase14 collection PASS250s, phase15 limit PASS291s and the new phase16 pin PASS391s. Original phase16 prewrite failure remains recorded; phases17–44 and FAQ remain pending or in progress. |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current c5 human, negative, response-loss recovery and static gates passed; complete current-pin Assistant acceptance remains open. |
 | Holds | Remaining T6/T7 scenarios, current-head checks/review/merges; actual owner-data cutover and new authenticated-provider acceptance. Deployment remains disabled. |
 
@@ -99,10 +99,17 @@ error, not evidence of a product failure. The local Apply and Undo both committe
 the original HTTP200 Undo receipt matches the retained durable receipt and undone
 status. A fresh stopped public capture equals the full pre-Apply local fixture state:
 `81a30b26896ed76e875bc787c978b69ffe15df6207849f23a5bbc5b99a8d49f0`.
-Undo UI completion was interrupted. The temporary Paragraph remains; cleanup,
-insertion, stale Apply and guarded Undo cases are not completed. No old Undo was
-replayed. Preserve the original failed run and use separately reviewed cleanup and
-fresh-run evidence. Receipt revisions do not establish History UI verification.
+Undo UI completion was interrupted. A separately reviewed, exact one-paragraph
+cleanup dispatched once and committed. Its runtime remains FAIL134s because the
+original CDP response body was unavailable. The retained durable receipt and full
+public capture independently prove that only the intended Paragraph was removed;
+all original values are restored with Content token30 unchanged. The resulting
+capture is `743d9533774f6c31c11b28709bbeb183aed156aa6eea41442aab9011c7f3a62e`.
+No Undo or remove was replayed. Fresh complete seven-case execution is prepared
+with an explicit5400-second guard limit but has not started. Insertion, stale Apply
+and guarded Undo acceptance remain open. Preserve both failed runs and their
+separate reconciliation evidence. Receipt revisions do not establish History UI
+verification. Cleanup evidence: `t7-c5-local-cleanup-independent-review.json`.
 Evidence: `t7-c5-assistant-{course,faq,note}-independent-review.json`,
 `t7-c5-assistant-local-interruption-independent-review.json`.
 
@@ -115,10 +122,17 @@ of a terminal harness assertion; its complete observations and unchanged capture
 are retained. Reviewed selector/readiness and source-rebind helpers passed262 family
 tests. The consumer source upgrade to7b72430 preserves1003 raw files,790 runtime
 files, eight manifest/config/lock files and all four installations. Distinct stopped
-public captures fully equal the accepted phase15 state. The evidence-only rebind
-preparation is in progress; no subsequent pin save is claimed. Evidence:
-`source-rebind-baseline-7b72430-final-audit.json`,
-`results-source-rebind-7b72430-inputs-independent-review.json`.
+public captures fully equal the accepted phase15 state. The emitted source-rebind
+record independently verifies272 frozen inputs. A new phase16 then passed391s:
+one acknowledged pin save, exact public Mapping readback after browser reload,
+settled reads and a complete pin-only delta. Existing bindings and unrelated state
+remain unchanged. History17 preserves history16 and appends its genuine proof once.
+The final capture is
+`6a7e3bca691245240e7ca120f76e6c7ff817c74ac4cd003bc85ca10ca4f8a608`.
+This is browser reload persistence, not a separate process restart or placed-family
+rendering proof. Evidence: `source-rebind-baseline-7b72430-final-audit.json`,
+`results-source-rebind-7b72430-descriptor-independent-review.json`,
+`results-phase16-c5-independent-completion-review.json`.
 
 Remaining Results/FAQ scenarios, complete current-pin Assistant acceptance and final
 integration gates remain open. Actual owner-data cutover and new live-provider
