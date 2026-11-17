@@ -1,3 +1,4 @@
+import { assertAssistantRunHumanSettled, assertAssistantHumanCapture } from "./assistant-human-save.mjs";
 import { fullHumanGenerationChanges } from "./human-content-proof.mjs";
 import { assertCompositionOwnership } from "./ownership-assertions.mjs";
 import { assistantCases } from './assistant-scenarios.mjs';
@@ -40,8 +41,9 @@ async function command(args, overrides = {}) {
 }
 const capture = name => command(['pnpm', '--filter', '@pinsel/content', 'authoring:capture', '--', join(run, name)]);
 const browser = (mode, overrides) => command([process.execPath, join(repoRoot, 'tests/native-authoring/browser.mjs'), mode], overrides);
-async function generationsFromJournals(baseline) {
-    const byOwner = new Map();
+async function generationsFromJournals(baseline, after) {
+    await assertAssistantRunHumanSettled(run);
+    const byOwner = new Map(); let latestToken = baseline.tokens.content;
     for (const spec of [...assistantCases, { id: 'course-stale' }, { id: 'course-guard' }]) {
         const path = join(run, `assistant-${spec.id}.json`);
         if (!await exists(path)) continue;
@@ -49,7 +51,7 @@ async function generationsFromJournals(baseline) {
         if (journal.spec.domain !== 'content') continue;
         const ref = { providerId: journal.providerId, modelId: journal.spec.modelId, entryId: journal.entryId };
         const add = (generation, evidence) => {
-            assert(Number.isSafeInteger(generation) && generation > 0);
+            assert(Number.isSafeInteger(generation) && generation > 0); latestToken = Math.max(latestToken, generation);
             const key = JSON.stringify(ref), prior = byOwner.get(key);
             if (!prior || prior.generation < generation) byOwner.set(key, { ...ref, generation, evidence });
         };
@@ -60,15 +62,19 @@ async function generationsFromJournals(baseline) {
             assert(receipt.operationKey && receipt.revisionId);
             add(Number(receipt.expected), `receipt:${receipt.operationKey}:${receipt.revisionId}`);
         }
-        for (const write of journal.humanWrites ?? []) if (write.saved && write.changed) add(write.expectedContentToken, `human-ui:${write.beforeCapture}:${write.phase}`);
+        for (const write of journal.humanContentWrites ?? []) add(write.generation, `human-ui-public-read:${write.beforeToken}:${write.generation}:${write.phase}`);
     }
+    assert.equal(after.tokens.content, latestToken, 'Final Content token differs from successful Assistant/human evidence');
     return [...byOwner.values()].filter(change => change.generation > contentOwner(baseline.project, change).generation);
 }
 async function humanBrowser(id, phase) {
+    await assertAssistantRunHumanSettled(run);
     const name = `assistant-${id}-${phase}-before-${Date.now()}.json`;
     await capture(name);
     const prior = await readJson(join(run, name));
-    await browser(`assistant:${id}:${phase}`, { NATIVE_ACCEPTANCE_CONTENT_TOKEN: String(prior.tokens.content + 1), NATIVE_ACCEPTANCE_BEFORE_CAPTURE: name });
+    await browser(`assistant:${id}:${phase}`, { NATIVE_ACCEPTANCE_BEFORE_CAPTURE: name });
+    const afterName = name.replace('-before-', '-after-'); await capture(afterName);
+    assertAssistantHumanCapture(prior, await readJson(join(run, afterName)), await readJson(join(run, `assistant-${id}.json`)), name);
 }
 
 const exists = async (path) => { try {
@@ -116,13 +122,13 @@ try {
         else assertCompositionOwnership(caseBefore, await readJson(join(run, `assistant-${spec.id}-applied.json`)), await readJson(join(run, `assistant-${spec.id}.json`)));
         await browser(`assistant:${spec.id}:undo`);
         await capture(`assistant-${spec.id}-undone.json`);
-        assertRestored(caseBefore, await readJson(join(run, `assistant-${spec.id}-undone.json`)), await generationsFromJournals(caseBefore));
+        assertRestored(caseBefore, await readJson(join(run, `assistant-${spec.id}-undone.json`)), await generationsFromJournals(caseBefore, await readJson(join(run, `assistant-${spec.id}-undone.json`))));
         if (spec.id === 'local') await browser(`assistant:${spec.id}:cleanup`);
       }
       for (const id of ['course-stale', 'course-guard']) {
         await browser(`assistant:${id}:propose`);
         await capture(`assistant-${id}-proposed.json`);
-        assertRestored(before, await readJson(join(run, `assistant-${id}-proposed.json`)), await generationsFromJournals(before));
+        assertRestored(before, await readJson(join(run, `assistant-${id}-proposed.json`)), await generationsFromJournals(before, await readJson(join(run, `assistant-${id}-proposed.json`))));
         if (id === 'course-guard') await browser(`assistant:${id}:apply`);
         await humanBrowser(id, 'intervene');
         await capture(`assistant-${id}-intervened.json`);
@@ -131,7 +137,7 @@ try {
         assert.deepEqual(await readJson(join(run, `assistant-${id}-intervened.json`)), await readJson(join(run, `assistant-${id}-refused.json`)), 'Refused stale/Undo operation wrote canonical state');
         await humanBrowser(id, 'human-inverse');
         await capture(`assistant-${id}-restored.json`);
-        assertRestored(before, await readJson(join(run, `assistant-${id}-restored.json`)), await generationsFromJournals(before));
+        assertRestored(before, await readJson(join(run, `assistant-${id}-restored.json`)), await generationsFromJournals(before, await readJson(join(run, `assistant-${id}-restored.json`))));
       }
     }
     else if (scenario === 'full') {
@@ -156,11 +162,14 @@ catch (error) {
 }
 finally {
     if (scopeVerified && before && scenario === 'assistant') {
+      try {
+      await assertAssistantRunHumanSettled(run);
       for (const id of ['course-stale', 'course-guard']) {
         const path = join(run, `assistant-${id}.json`);
         if (!await exists(path)) continue;
-        try { const journal = await readJson(path); if (journal.human || journal.apply) await humanBrowser(id, 'human-inverse'); }
+        try { const journal = await readJson(path); if (journal.humanContentAttempts?.length || journal.apply) await humanBrowser(id, 'human-inverse'); }
         catch (error) { errors.push(`Assistant ${id} human inverse held: ${error.stack ?? error}`); }
+        await assertAssistantRunHumanSettled(run);
       }
       for (const spec of [...assistantCases].reverse()) {
         const path = join(run, `assistant-${spec.id}.json`);
@@ -170,7 +179,9 @@ finally {
           if (journal.conversationId) await browser(`assistant:${spec.id}:restore`);
           if (journal.fixture && !journal.cleanup) await browser(`assistant:${spec.id}:cleanup`);
         } catch (error) { errors.push(`Assistant ${spec.id} restoration held: ${error.stack ?? error}`); }
+        await assertAssistantRunHumanSettled(run);
       }
+      } catch (error) { errors.push(`ALL automatic Assistant restoration held; reconcile human Save evidence first: ${error.stack ?? error}`); }
     }
     if (!options['--restore'] && scenario === 'full' && await exists(journalPath)) {
         try {
@@ -194,7 +205,7 @@ finally {
                 }
             }
             else
-                { const generationChanges = assertRestored(before, after, scenario === 'assistant' ? await generationsFromJournals(before) : scenario === 'full' && await exists(journalPath) ? fullHumanGenerationChanges(before, after, await readJson(journalPath)) : []); await writeFile(join(run, `generation-audit-${Date.now()}.json`), JSON.stringify(generationChanges, null, 2)); }
+                { const generationChanges = assertRestored(before, after, scenario === 'assistant' ? await generationsFromJournals(before, after) : scenario === 'full' && await exists(journalPath) ? fullHumanGenerationChanges(before, after, await readJson(journalPath)) : []); await writeFile(join(run, `generation-audit-${Date.now()}.json`), JSON.stringify(generationChanges, null, 2)); }
             await writeFile(join(run, 'restoration-proof.json'), JSON.stringify({ before: before.digest, after: after.digest, canonicalValuesRestored: true, metadataAndHistoryRetained: true }, null, 2));
         }
         catch (error) {

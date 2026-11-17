@@ -29,7 +29,7 @@ export function assertHumanSaveRequest(before, request, fieldId, value) {
 }
 /** Supplemental proof from two public Content reads surrounding one observed successful UI save. */
 export function proveHumanContentSave(before, after, { request, status, response, fieldId, value, phase }) {
-  assert(['stage', 'restore'].includes(phase));
+  assert(['stage', 'restore', 'intervene', 'human-inverse'].includes(phase));
   assertHumanSaveRequest(before, request, fieldId, value);
   assert.equal(before.providerId, courseOwner.providerId); assert.equal(after.providerId, courseOwner.providerId);
   assert(status >= 200 && status < 300 && response?.ok === true, 'Human Save was not acknowledged successfully');

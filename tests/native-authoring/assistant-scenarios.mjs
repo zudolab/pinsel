@@ -1,3 +1,6 @@
+import { dirname } from "node:path";
+import { artifactPath } from "./support.mjs";
+import { observeAssistantHumanSave, assertAssistantRunHumanSettled } from "./assistant-human-save.mjs";
 import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
 import { expect } from '@playwright/test';
@@ -12,6 +15,7 @@ export const assistantCases = [
 export async function runAssistantPhase({ phase, caseId, page, open, getPreview, frame, record, shot, journalPath, before, restart }) {
   const spec = assistantCases.find(value => value.id === caseId) ?? (['course-stale', 'course-guard'].includes(caseId) ? { ...assistantCases[0], id: caseId } : null);
   assert(spec, 'Unknown Assistant case');
+  if (['setup', 'cleanup', 'apply', 'undo', 'restore', 'intervene', 'human-inverse', 'stale-refuse', 'guard-refuse'].includes(phase)) await assertAssistantRunHumanSettled(dirname(journalPath));
   let journal;
   const persist = () => writeFile(journalPath, JSON.stringify(journal, null, 2));
   const select = async target => frame().locator('[data-composer-target]').evaluateAll((elements, id) => { const element = elements.find(e => e.getAttribute('data-composer-target') === id); if (!element) throw Error('Target absent'); element.click(); }, target.renderedNodeId);
@@ -118,14 +122,14 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
     const changed = `${journal.marker} human intervening`;
     assert([journal.old, journal.value, changed].includes(current), 'Intervening value is outside this test journal');
     const value = phase === 'intervene' ? changed : journal.old;
-    const expectedContentToken = Number(process.env.NATIVE_ACCEPTANCE_CONTENT_TOKEN);
     const beforeCapture = process.env.NATIVE_ACCEPTANCE_BEFORE_CAPTURE;
-    assert(Number.isSafeInteger(expectedContentToken) && expectedContentToken > 0 && beforeCapture, 'Human generation proof requires immediately preceding public capture');
-    journal.human = { before: current, after: value, intended: true, changed: current !== value, expectedContentToken, beforeCapture, phase };
-    journal.humanWrites ??= []; journal.humanWrites.push(journal.human); await persist();
-    if (current !== value) { await field.fill(value); await page.getByRole('button', { name: 'Save', exact: true }).click(); }
-    await page.locator('button[title="All changes saved"]').waitFor({ timeout: 120000 });
-    journal.human.saved = true; await persist(); return;
+    assert(beforeCapture, 'Human Save needs immediately preceding public capture');
+    const prior = JSON.parse(await readFile(artifactPath(dirname(journalPath), beforeCapture), 'utf8'));
+    await observeAssistantHumanSave(page, { journal, prior, beforeCapture, phase, current, value, persist,
+      action: async () => { await field.fill(value); const save = page.getByRole('button', { name: 'Save', exact: true }); if (await save.isEnabled()) await save.click(); },
+      waitSaved: () => page.locator('button[title="All changes saved"]').waitFor({ timeout: 120000 }),
+    });
+    return;
   }
   const origin = new URL(page.url()).origin;
   const resume = async () => {
