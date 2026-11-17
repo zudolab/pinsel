@@ -337,6 +337,25 @@ named `generation` remain strict.
 
 The initial Course run on package `1af2023` passed UI Apply/recovery and Undo but
 was reported FAIL because the older assertion treated generation metadata as an
-unexpected authored change. Its evidence remains unchanged. The general `full`
-scenario still needs equivalent journal-backed human Content generation accounting
-before a new passing run can be claimed; this fix is scoped to `assistant`.
+unexpected authored change. Its evidence remains unchanged.
+
+The `full` runner now records each actual human `put-entry` Save acknowledgement
+and supplemental public Content reads immediately before and after it. The Save
+response itself returns no generation; the read-back supplies the committed token
+and qualified entry generation. These reads are operation evidence, never a
+substitute for coherent `authoring:capture` snapshots or build inputs. Capability
+and session headers are reused in memory and are not written to the journal.
+
+Each changed Save must advance the global token once and change only its intended
+Course field. The final restoration checks the exact original→test→original field
+transitions, every verified request/read/response record, and the final global token.
+Only the proven qualified owner generation is allowed to differ. Unchanged controls
+send no mutation and authorize no metadata difference. Extra UI write requests are
+refused. An uncertain attempt prevents automatic restoration, including component
+removal; retain its evidence and reconcile it before further writes. A concurrent
+write can invalidate this proof: the supplemental reads do not form a transaction.
+
+The new full-scenario proof has focused test coverage but **has not yet passed an
+installed full browser run**. Keep that acceptance held until the actual command
+completes, including exact snapshot A/build and restoration checks. Older full-run
+journals without successful per-save evidence cannot authorize generation changes.

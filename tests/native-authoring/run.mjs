@@ -1,3 +1,4 @@
+import { fullHumanGenerationChanges } from "./human-content-proof.mjs";
 import { assertCompositionOwnership } from "./ownership-assertions.mjs";
 import { assistantCases } from './assistant-scenarios.mjs';
 import { assertContentOwnership, assertProposalReadOnly } from './assistant-ui.mjs';
@@ -193,7 +194,7 @@ finally {
                 }
             }
             else
-                { const generationChanges = assertRestored(before, after, scenario === 'assistant' ? await generationsFromJournals(before) : []); await writeFile(join(run, `generation-audit-${Date.now()}.json`), JSON.stringify(generationChanges, null, 2)); }
+                { const generationChanges = assertRestored(before, after, scenario === 'assistant' ? await generationsFromJournals(before) : scenario === 'full' && await exists(journalPath) ? fullHumanGenerationChanges(before, after, await readJson(journalPath)) : []); await writeFile(join(run, `generation-audit-${Date.now()}.json`), JSON.stringify(generationChanges, null, 2)); }
             await writeFile(join(run, 'restoration-proof.json'), JSON.stringify({ before: before.digest, after: after.digest, canonicalValuesRestored: true, metadataAndHistoryRetained: true }, null, 2));
         }
         catch (error) {
