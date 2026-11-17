@@ -13,7 +13,7 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `7b72430aceb964d8459991d5bb707725f59a9f75`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
+| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `027bec0949fbd7b477584d49811e1c6fc67aa6a1`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
 | Installed package / upstream attestation | `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
@@ -165,6 +165,37 @@ as is the completed route-matrix shell. All sixteen previously hashed AI interru
 and cleanup inputs remain unchanged; that equality alone does not prove the orphan
 harmless. Fresh AI2 admission verifies no live owned helper before startup. Evidence:
 `t7-c5-old-ai-artifacts-post-orphan-independent-rehash.json`.
+
+The second complete Assistant attempt was interrupted after Course restoration and
+FAQ Apply. Its explicit5400-second guard limit had not elapsed; the cause is unknown.
+An identified orphan server was stopped, then a supported stopped capture exactly
+matched the FAQ-applied state
+`49e79c4644bc68c7a7ebb2a96f946f00752c2eb801123de66c45cc4b9374639b`,
+Content token33. The Apply revision is `37cf531c-4332-4444-ba9b-6c520b8ad773`.
+No FAQ Undo was committed. A separately reviewed recovery wrapper subsequently
+failed its request preflight in71s before dispatch; complete before/after captures
+remained unchanged. A separate read-only diagnostic failed260s and identified a
+Composition list request encoded in the body rather than an operation header;
+it also left the full state unchanged with zero Undo dispatches. These are harness
+preflight failures, not successful restoration or completed Assistant acceptance.
+The original first/second interrupted attempts and both subsequent failures remain
+preserved. Evidence: `t7-c5-assistant-2/interruption-reconciliation.json`,
+`t7-c5-faq-undo-1-independent-failure-review.json`, and
+`t7-c5-faq-readonly-preflight-1/terminal-reconciliation.json`.
+
+The fixed boundary17 source successor was independently reviewed, then integrated
+with295 passing family tests. The stopped Results consumer moved from7b72430 to027bec0
+through an exact18-file tests/docs allowlist. Separate captures passed12s and10s;
+both complete objects equal the accepted phase16 state `6a7e3bca…`. All1003 stored
+files,790 runtime files, eight manifest/config/lock files and four c5 installations
+were preserved. The old tracked source was archived. The emitted successor descriptor
+`8d7de672be22e5a47382decbe4fea925529794b060c35613da2199eebc498b75`
+binds freeze `34b70546ced41c4a2f4208e2d6aebb566d167621a225be5e3e0660ef09813fef`;
+independent review rechecked all300 frozen files and retained the298 prior hash
+expectations. This qualifies the test-source transition only: original phase17 is
+still FAIL, history17 is unchanged, and a new browser pass remains required.
+Evidence: `source-successor-027-baseline-final-audit.json` and
+`results-source-successor-027-descriptor-independent-review.json`.
 
 Remaining Results/FAQ scenarios, complete current-pin Assistant acceptance and final
 integration gates remain open. Actual owner-data cutover and new live-provider
