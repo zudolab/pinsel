@@ -42,7 +42,8 @@ requires an object with exactly:
 
 The phase22 manifest contains exactly `artifactDirectory`, `capturePath`,
 `reconciliationPath`, `beforeAuditPath`, `laterInventoryPath`, `leaseRemovalPath`,
-`originalLogPath`, `captureLogPath`, `processResultPath`. These are actual immutable
+`originalLogPath`, `captureLogPath`, `processResultPath`, `leaseBackupPath`,
+`leaseScriptPath`, `leaseExecutionPath`, `serverLogPath`. These are actual immutable
 artifact paths, never commands. Original source/package provenance, original
 bundle hash and every transitive input hash are verified. Unknown fields refuse.
 The recovered capture SHA, original workflow lease identity/metadata/authorization,
@@ -89,3 +90,18 @@ recovery and later transport negative cases, spawned CLI entry-point resolution,
 historical event payload length. Synthetic tests do not establish real history,
 actual default-memory completion, or phase23 runtime. Those require separately
 reviewed input/preparer evidence and explicit manager admission.
+
+The fixed historical recovery additionally requires the exact reviewed one-unlink
+script and retained execution-log digests (validated as bytes, never executed),
+backup lease bytes/metadata, dev-server PID identity, original before/lease/browser
+chronology, exact authoring-busy/EEXIST host lease failure and SIGTERM evidence.
+Later inventory start/completion timestamps must follow removal and remain
+explicitly later measured. This is recorded operator evidence, not a syscall trace.
+
+Later receipt validation follows actual installed c5 contracts: Mapping put has
+`{ok:true,result:null}`; workspace update returns the original opened WorkspaceRecord
+with only the exact attachment metadata and token advance, and reload must match
+that whole acknowledged record. Composition saves carry canonical saved plus the
+qualified derived-output closure. Failed or duplicate reload observations refuse;
+a Composition needs-output reload must match a separately audited, settled original
+read exchange and cannot substitute for the one successful qualified reload.
