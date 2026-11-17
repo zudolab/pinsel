@@ -1074,3 +1074,26 @@ operation, so those warnings cannot be classified conclusively as read responses
 The finite case handler separately read and asserted all seven actual refusal
 bodies before replacement; none of those mutation outcomes is missing. Capture
 and receipt-inclusive file equality independently establish the no-write result.
+
+## Incomplete-page capture candidate
+
+Composer #987 source `42306257ddfb507a8cd8754171b423bd77b01aed` is integrated as
+`13dd89dd`. Native authoring capture alone tolerates the compiler's source-confirmed
+unassigned-page diagnostic while retaining exact references from all Content,
+Composition/defaults and materialized routes. Strict release/inspection/trash
+helpers remain unchanged; compiling an incomplete snapshot still refuses. Other
+compiler diagnostics, missing/unknown/corrupt Assets and concurrent changes remain
+blocking. Independent capture/concurrency tests and CLI type/lint checks passed;
+27 integrated capture tests passed in 9.91s. Public generation/check/type surface
+passed in 40s. CMS currentness failed on generated host metadata and requires its
+normal regeneration; this failure is not waived.
+
+Immutable package `26862ff8aa26bcede896a4d5c12ae62c8ca1b86d` is attested by
+`1c63a3b8de8d240946f683730c648289ec29e3e1`: 778 files, payload digest
+`ef01f944a234f73721ab9b8b30472bb3e3e75cd113083c5b3c3c8ef9e49b8c30`.
+All four Pinsel manifests and the lockfile use this pin; installation passed in
+9.4s, followed by frozen install, dedupe and no-deploy checks. Main public capture
+`6ffa4a5d…` → `e9d6ffa587adff79302c87f985a60e339f81dedac4982b2c07dcdbe3b64f0d0d`
+changes only snapshot/pack/renderer digests and compiler identity; all other
+fields, including data/tokens/Assets, remain exact. Installed recovery of the
+retained unassigned page is pending; no startup bypass or reseed has occurred.
