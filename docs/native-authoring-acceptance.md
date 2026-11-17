@@ -10,6 +10,9 @@ Use Node 24 and pnpm 11.5.2, an immutable Composer Git pin, and a **verified dis
 stage containing known data**. Use the fresh-checkout bootstrap below, or follow
 the applicable migration recipe for an existing saved workspace first; the runner never initializes, migrates or reseeds anything. Do not point it
 at owner drafts. Keep the original source store/history and stop other editors.
+Review a fresh public capture against the accepted predecessor digest before each
+run. Restored runs retain legitimate timestamps, generations and history; use their
+verified restored capture as the next predecessor, not the original digest.
 Freeze repository source while the browser runs: source changes legitimately
 invalidate reviewed previews. No deployment, external model inference or inquiry
 submission is performed.
@@ -71,7 +74,10 @@ upload is a prerequisite. Retain the resulting stage and import evidence; verify
 `ownerData: false`, source `committed-content-and-structure`, and ready status.
 
 For existing saved native state, use the [course migration](composer-course-migration.md)
-and [Note migration](composer-note-migration.md) as applicable instead. Keep the
+and [Note migration](composer-note-migration.md), then the
+[canonical shared-source migration](canonical-shared-sources.md) as applicable instead.
+A verified stage that already completed these migrations must not be initialized or
+migrated again. Keep the
 matching source runtime and recovery history. Never substitute fresh initialization
 for migration of saved edits. In the current checkout, use `notes-v1` consistently
 for authoring, capture, build and the runner; `course-identity-v1` is the older

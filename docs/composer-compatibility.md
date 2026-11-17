@@ -17,8 +17,8 @@ Historical entries below retain their original outcomes. Latest complete Assista
 | Current candidate package / attestation | `4f1191d682995438380fccdb5bb692a299415402` / `75df80f75c0a34f99bcc8cbd02447fd47ddc70a9` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
-| Installed bounded cases | Exact stale Apply and guarded Undo PASS; full seven-case run remains incomplete |
-| Current-head CI | Both Pinsel 198 runs and Composer ed909 run passed; integration remains pending |
+| Installed acceptance | Complete seven-case Assistant PASS at bc20; human provenance/refusal and canonical migration PASS at4f; remaining scenarios tracked below |
+| Latest checked CI | Composer75df all26 jobs passed; Pinsel2f48ea9 run44026306585 in progress; later heads require fresh gates |
 | Separate holds | Remaining T6/T7 acceptance, owner-data cutover and new real-provider acceptance |
 
 ## Refreshed baseline — 2026-11-16

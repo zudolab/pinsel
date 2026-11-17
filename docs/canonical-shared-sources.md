@@ -70,6 +70,9 @@ hashes, initializer generation changes and final source-current check. Authority
 NOT switched. Run `authoring:build -- /absolute/new-evidence-directory/snapshot.json`
 from the target, verify all captured assets/routes and representative shared values,
 then restart only that explicitly selected staged workspace for browser checks.
+Build directories are exclusive: if that snapshot was already built, retain and
+inspect its existing proof rather than rebuilding over the directory. A subsequent
+authoring scenario captures a new reviewed state and uses its own output directory.
 Actual cutover, owner D1 data, remote deployment and inference remain separately held.
 
 ## Required acceptance and recovery
@@ -77,8 +80,12 @@ Actual cutover, owner D1 data, remote deployment and inference remain separately
 Pure tests cover all five models, old-output equivalence, extra draft/published
 records leaving the declared owner unchanged, missing/unpublished pin refusal,
 custom/ambiguous migration refusal, exact capture binding and unchanged Content.
-This is not installed browser/release acceptance. A staged rehearsal and actual
-local release refusal before stage/activation remain required. Observe disposable
+The staged migration and exact build comparison passed at00bb/4f:14 identical HTML
+routes and143 identical public files. The installed compiler also passed20 explicitly
+synthetic missing/draft-owner and extra-record cases with unchanged canonical state.
+See the [compatibility ledger](composer-compatibility.md) for exact identities.
+These are not browser/release acceptance: actual local release refusal before
+stage/activation remains required. Observe disposable
 collection duplicate behavior as allowed unused Content, then delete only its
 journaled record through supported UI; never claim New Entry is disabled.
 
