@@ -17,14 +17,43 @@ These passes do not close the remaining T6/T7 scenarios or imply actual-data cut
 | Pinsel complete human / Assistant tested source | `b434c8fefd4c9659a9306c4e8481ae3262b46385` |
 | Current integration source | This adoption commit on [PR61](https://github.com/zudolab/pinsel/pull/61), based on `caad5d6b3e10cc5349e5440de827a992c2a9935c`; current-head gates remain required |
 | Installed package / attestation | `d49b0a988cd61f34a778c613ef156b7aa95c5a23` / `bcc9b134035b9c9d3ecf6dd4b962a611c0e01fdd` |
-| New upstream package candidate | `d49b0a988cd61f34a778c613ef156b7aa95c5a23`: public/CMS/full typecheck PASS192s; frozen install and state preservation PASS; installed geometry acceptance pending |
+| New upstream package candidate | `aa8d0df2feec56f6f3f887f9653db9bf7b30d6e0` / attestation `4a0f57f984298cf17829e1f558c1139fe11c9475`: qualified Mapping navigation; public/CMS/full typecheck PASS146s and independent packed-byte review; adoption pending |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | At b434/5fe: full human PASS969s, seven semantic refusals PASS256s, controlled outer interruption/recovery PASS270s, complete Assistant seven-case PASS3455s |
-| Independent operator progress | Header label forward/restart/inverse/restart complete; Knowledge saved-reference recovery PASS110s and two-stage inverse PASS299s; Results phases 00–10 accepted (11/45); phase11 acknowledged Mapping awaits separate read-only recovery; FAQ configuration only |
+| Independent operator progress | Header label forward/restart/inverse/restart complete; Knowledge saved-reference recovery PASS110s and two-stage inverse PASS299s; Results phases 00–10 accepted (11/45); phase11 acknowledged Mapping has separate read-only recovery PASS394s; phase12 remains unwritten after three failed readiness attempts and a readonly diagnostic; FAQ configuration only |
 | Static pilot | Original09 FAIL retained; separate read-only recovery PASS68s and exact 16-route / 143-asset build + visitor PASS14s. Phases10–15 now PASS; final phase15 production build PASS8s and visitor PASS14s (same16routes/143assets) |
 | Latest checked CI | Pinsel `b8b9af7d14bc4f2aa41f2cbf8c7ba87a3107ea5d` [CI44086510566 PASS](https://github.com/zudolab/pinsel/actions/runs/44086510566); Composer `cffa0bf3a946e566cfdee311272a4ae9f6b8ecdf` [CI44090546656 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44090546656) (26 jobs). These are historical passes, not proof for ca600 or the new package attestation |
 | Separate holds | Remaining T6/T7 acceptance/current-head checks/review/merges, owner-data cutover and new authenticated-provider acceptance; deployment remains disabled |
+
+## Qualified Mapping navigation candidate — 2026-11-17
+
+Results phase11 Mapping creation was acknowledged, followed by a separate readonly
+recovery (PASS394s); creation was not replayed. Phase12 has not written a binding.
+Three readiness attempts failed with the full capture unchanged. A further readonly
+diagnostic observed 170 samples over180s: the Mapping library showed the target
+row Ready while the selected editor remained absent. This diagnostic is not a
+binding pass. The accepted Results history retains twelve entries, including the
+explicit phase11 recovery; original failed attempts remain recorded.
+
+Composer's qualified deep-link initialization now resolves the selected Mapping
+before unrelated library definitions. Attachment checks still precede the handoff.
+Library diagnostics remain complete on return, with bounded per-refresh qualified
+read sharing. Source review and81 focused tests passed independently; integrated
+public entries, CMS fixtures and full typecheck passed146s. The reviewed candidate
+`aa8d0df2feec56f6f3f887f9653db9bf7b30d6e0` has782 packed files, payload
+`6dc60a8942f1872df263b4c44224f2a7b68536b7f2c9de6d5a3d26080a07ffe7`.
+Installed Pinsel acceptance remains pending. A frozen installation bridge must
+preserve the complete existing history and saved state before continuing phase12.
+
+The initial d49 geometry attempt failed in a test selector, with equal complete
+before/after captures. A corrected selector has a real isolated Playwright proof
+and independently reviewed source and binding; installed two-visit acceptance is
+running separately. Static retained-preview validation reached its UI assertions
+but failed during port release before the final capture/build. A stopped capture
+matched the original exactly. Its reviewed shutdown correction waits for the owned
+wrapper, port, lease and live process group;82 tests pass. It does not kill foreign
+processes or remove leases. These repairs do not relabel the original runs as passes.
 
 ## Responsive Content preview package — 2026-11-17
 
