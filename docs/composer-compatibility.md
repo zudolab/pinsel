@@ -13,14 +13,14 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `2322a14455df50ba5c72822ce64f52fce0c48cbe`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
+| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `d03e953d7f5e40fb09d69d1f427186f7dcf77eb6`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
 | Installed package / upstream attestation | `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
 | Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping phase13 PASS260s and full human regression PASS1001s, both independently audited. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
-| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. History has18 entries after phase13 count-binding PASS260s, phase14 collection PASS250s, phase15 limit PASS291s, phase16 pin PASS391s and the separate phase17 duplicate PASS400s. Phase18 saved its Mapping once, then failed before reload; separate read-only recovery is pending. Original failures remain recorded; phases19–44 and FAQ remain pending. |
+| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. History has18 entries after phase13 count-binding PASS260s, phase14 collection PASS250s, phase15 limit PASS291s, phase16 pin PASS391s and the separate phase17 duplicate PASS400s. Phase18 saved its Mapping once, then failed before reload; separate read-only recovery PASS178s preserves the full saved capture. Its fixed19 continuation record is being prepared; accepted history still has18 entries. Original failures remain recorded; phases19–44 and FAQ remain pending. |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current c5 human, negative, response-loss recovery and static gates passed; seven current-pin Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
 | Holds | Remaining T6/T7 scenarios, current-head checks/review/merges; actual owner-data cutover and new authenticated-provider acceptance. Deployment remains disabled. |
 
@@ -279,6 +279,46 @@ no recovery run has yet been accepted at this checkpoint.
 No push, merge, publication, deployment, owner-data switch or new real-provider run
 occurred in this reconnect wave. Remaining Results/FAQ acceptance and current-head
 integration gates stay open; issues57/58 remain held.
+
+The separate Mapping recovery then passed178s at consumer
+`e5e6e662a36aa908e313e66fd7efce771df42784`. It opened the existing qualified
+Mapping, observed its public record after actual reload, settled admitted reads and
+preserved the complete saved capture `29003f70…`; no canonical write occurred.
+Original FAIL607 remains. The downstream history validator initially rejected
+18 browser failure diagnostics caused by its terminal read fence. A reviewed narrow
+classifier now pairs those denied reads by request identity, interval, path and
+payload, rejects admitted failures, and requires zero outstanding work. Independent
+actual-record validation passed; original admission failures remain retained.
+
+The screenshot shows Saved and the correct copied Composition, but also an Entry
+provider unavailable banner after the terminal fence denied a new sample scan.
+All admitted provider responses succeeded. Source and timing suggest the fence
+caused that banner; the screenshot is not healthy Content-preview evidence.
+See `mapping-saved-create-actual-independent-review.json`,
+`mapping-denied-terminal-789ebc3-independent-review.json` and
+`mapping-saved-create-e5e-manager-visual-review.json`.
+
+The consumer subsequently moved to d03e953 through reviewed tests/docs changes;
+409 integrated family tests passed in7.80s. The actual e5e recovery identity remains
+unchanged. Exact2322→d03 and e5e→d03 allowlists, immutable historical Git bytes,
+installed identities and full saved-state equality qualify the transition.
+All1006 stored files,790 runtime files, eight manifest/config/lock files, four
+installs and2801 historical evidence hashes were preserved. The new stopped capture
+passed10s and equals the actual recovery after-capture. Independent fixed19 input
+review passed across381 frozen files. Descriptor preparation is in progress; no
+new Create, history19 append or phase19 write has occurred at this checkpoint.
+
+A terminal-audit correction also records that some general AI lease checks used
+the wrong root. Those old checks do not prove lease absence. The installed protocol
+uses `packages/pinsel-content/.zudo-authoring.lock`; a fresh read-only check found
+that exact path absent, without deletion. The Results lane already used this exact
+host-root protocol path. Corrections are append-only in the AI aggregate.
+
+Artifact comparison found that historical readonly-capability and invalid-value
+proofs cannot be relabeled as current-c5 passes: relevant runtime paths changed.
+A bounded current-pin five-case readonly run has started; separate human422 and AI
+invalid-value checks remain held pending its result. No redundant complete seven-case
+edit rerun is claimed or required by that attribution finding.
 
 ## Mapping save completion candidate — 2026-11-17
 
