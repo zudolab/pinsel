@@ -1130,3 +1130,22 @@ Sitemap, Assets and public files are exact. Composition revision metadata and
 receipt history remain. Original evidence hashes are unchanged; checkout clean,
 port 4197 closed, lease absent. Evidence: `t7-6522-recovery-restoration-1`.
 This is not a normal full recovery pass; a fresh committed-runner run is required.
+
+## 26862 normal receipt-recovery acceptance
+
+The fresh, normal committed runner at Pinsel
+`80ff25f53ed078cbe47a6c3e0ad3ed6561f06055` / Composer
+`26862ff8aa26bcede896a4d5c12ae62c8ca1b86d` passed recovery in 251s. It withheld
+forward operation `6a3baed2-c73a-40b5-8086-6968c019fdf6` after commitment,
+recovered the exact same receipt in a fresh browser, then issued the approved UI
+inverse `49aa0243-75b7-4978-b27f-d2d95761e3cf`; all observed server responses were
+HTTP 200. This is a normal scenario pass, distinct from the earlier failed run
+and restoration-only proof.
+
+Full final capture is
+`213a49bb911fde8bcf26cb9f3ea640a6b52864595558c40f9344edccecdc46f7`.
+Authored values are restored; Content generations/token, Mapping, Sitemap, Assets
+and public files remain exact. Composition revision metadata and receipt history
+remain. Evidence under `t7-26862-recovery-1` includes original requests/responses,
+captures, pending/recovered screenshots and terminal audit. The checkout was clean,
+port 4197 closed and the actual lease absent at completion.
