@@ -35,3 +35,13 @@ terminal fencing/settlement. Full public captures must remain equal after server
 shutdown. `MAPPING_PINS_DIAGNOSTIC_OBSERVED` with `ready:false` is diagnostic
 completion, never permission to apply pins or a sequence PASS. Review actual
 predicates and DOM before proposing a driver change or any subsequent operation.
+
+## Selector regression fixture
+
+`node tests/native-authoring/families/pins-selector-fixture.mjs [retained-diagnostic-dom.html]`
+runs a browser against inert local HTML with every network request aborted. The
+synthetic case includes nested sections and an unrelated Choose button. The
+optional retained DOM reproduces the actual installed markup. It asserts original
+exact heading absence and exactly one enabled Choose under the corrected exact
+heading; it never clicks. Run this browser fixture through the shared guard after
+source review. Its result is not native authoring or pin-save acceptance.
