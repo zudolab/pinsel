@@ -1,4 +1,5 @@
 import {isNativeRead,contentPreviewOperations,assertContentPreviewHeaders} from '../native-preview-reads.mjs';
+import {validateBindingDiagnostic} from './binding-diagnostic.mjs';
 import assert from 'node:assert/strict';
 import {contentReadOperations} from '../content-browser-transport.mjs';
 import {compositionRead} from './composition-read.mjs';
@@ -65,7 +66,8 @@ export function assertReadScope(path,headers,result,workspaceId) {
 }
 
 export function validateReadIntent(intent, snapshot) {
-  assert(['family-render','active-identity','header-restart','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind));
+  assert(['mapping-binding-diagnostic','family-render','active-identity','header-restart','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind));
+  if(intent.kind==='mapping-binding-diagnostic')validateBindingDiagnostic(intent,snapshot);
   assert.equal(intent.captureDigest, snapshot.digest);
   assert(/^[a-f0-9]{64}$/.test(snapshot.digest));
   assert(intent.capturePath?.startsWith('/'));
