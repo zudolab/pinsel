@@ -345,3 +345,21 @@ public open. Challenged Composition output alone is not a loaded-record proof.
 Bounded browser quiescence and derived-read settlement bracket reload; an empty
 request queue alone does not establish readiness. These checks do not replace the
 outer stopped-server full capture, domain delta or later independent restart run.
+
+## Before each canonical write
+
+Family UI gestures now wait for browser quiescence and the bounded Composition
+read protocol before Save, Create, Duplicate, attachment, binding and field actions.
+Choosing a Mapping's Composition can start a `get`/derived-output challenge; an
+empty pending request set alone is not readiness. Original write requests also
+wait **outside** the serial write gate, so the matching read continuation can
+complete. The existing 180-second read budget, exact owner/one-write validators,
+original-response transport and no-replay behavior remain unchanged.
+
+Composition's own nonempty generated-output continuation bypasses that prewrite
+wait only when its write gate reports an outstanding write challenge; the same
+exact gate still validates the record and challenged output closure before sending
+it. This avoids waiting on the continuation's own obligation. Pending admissions
+remain tracked through close, and failure/closing refuses an unstarted write.
+A refused attempt stays failed; inspect its complete stopped capture and generate
+fresh reviewed inputs before any separately authorized next attempt.
