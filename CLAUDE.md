@@ -10,9 +10,9 @@ Do not reseed authored state or treat a source generator as its authority. Prese
 historical migration evidence, existing recovery guarantees and the no-deployment
 boundary. Owner-data cutover and new live-provider acceptance are separate holds.
 
-## Current authorized Hosted Content migration
+## Retained legacy Hosted Content migration
 
-The provisional old API/editor/publication design has been replaced for persistent local dogfooding. See docs/dogfooding.md for the authoritative runtime contract and tests. Old design-fixed test details below do not require restoring removed public APIs. Approved-seed/assets/user drafts stay preserved; no production deployment or delivery is enabled.
+The provisional old API/editor/publication design was replaced for persistent local dogfooding. See docs/dogfooding.md for that retained legacy runtime contract and tests; the full-adoption authority contract above governs the new native workspace. Old design-fixed test details below do not require restoring removed public APIs. Approved-seed/assets/user drafts stay preserved; no production deployment or delivery is enabled.
 
 # Pinsel — repository rules
 

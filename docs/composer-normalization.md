@@ -34,8 +34,11 @@ Home excerpts, instructor biographies and course descriptions remain distinct fr
 detailed records. Knowledge-card copy remains independent of Note copy. Result
 counts remain authored values rather than inferred totals.
 
-[T6](https://github.com/zudolab/pinsel/issues/55) still owns new Note/static-page
-creation, explicit Results-year/FAQ-group placement, singleton duplication behavior
-and removal controls. A supported schema does not establish that those installed
-user scenarios pass. These boundaries must remain visible until verified; source
+[T6](https://github.com/zudolab/pinsel/issues/55) owns these installed scenarios.
+Since this audit, dynamic Note/Course creation and publication and supported
+component removal have passed at the exact pins in the compatibility ledger.
+Static-page creation, explicit Results-year/FAQ-group placement, actual canonical
+source duplication/deletion and current-pin policy acceptance remain incomplete.
+A supported schema does not establish that those installed user scenarios pass.
+These boundaries must remain visible until verified; source
 regeneration may never overwrite native authoring to simulate support.

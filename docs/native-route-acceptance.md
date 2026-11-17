@@ -2,8 +2,11 @@
 
 This extends [the portable acceptance runner](native-authoring-acceptance.md) and
 [the Note migration contract](composer-note-migration.md). The staged migration and
-exact fourteen-route build passed. The live creation/publication scenarios below
-remain **NOT_RUN** until their browser evidence and exact captured build are recorded.
+exact fourteen-route build passed. Note/Course creation, local publication and the
+fifteen-route production visitor check passed with Composer `bc20ea554d5d8de92934c9bf4ec989229d23047e`;
+see the [pin-qualified compatibility ledger](composer-compatibility.md#first-native-publication-and-production-visitor-acceptance).
+Static-page, Knowledge-reference and family scenarios remain incomplete, and the
+current package's new value-policy acceptance is separate from that earlier pass.
 `tests/native-authoring/routes.mjs` supplies UI helpers; it does not start a server,
 initialize a workspace, select authority, or constitute a completed live scenario.
 

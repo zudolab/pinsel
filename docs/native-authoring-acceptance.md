@@ -277,8 +277,10 @@ artifacts and inspect process/lease state before resuming.
 
 The suite runs on POSIX hosts with process-group signals; Windows requires a POSIX
 execution environment. Syntax/unit checks alone do not count as a browser pass.
-T5 owner-aware AI, T6 new-page/Note workflows and a reviewer following the complete
-recipe independently still need their integrated scenarios. Scripted model tests
+The [bc20 seven-case owner-aware AI run](composer-compatibility.md#bc20-complete-seven-case-assistant-acceptance)
+and Note/Course publication passed at their recorded pins. Current-pin validation,
+remaining T6 workflows and a reviewer following the complete recipe independently
+still need their integrated scenarios. Scripted model tests
 remain distinct from authenticated-provider acceptance and actual owner cutover.
 
 Restore safety: each new run writes an exclusive `run-manifest.json` before browser
