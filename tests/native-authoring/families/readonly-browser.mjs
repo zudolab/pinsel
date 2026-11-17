@@ -1,3 +1,4 @@
+import {validatePinsDiagnostic,observePinsDiagnostic} from './pins-diagnostic.mjs';
 import {validateSavedBinding} from './binding-recovery.mjs';
 import {validateSavedHref,savedHrefReadback} from '../header/saved-href.mjs';
 import {validateBindingDiagnostic,observeBindingDiagnostic} from './binding-diagnostic.mjs';
@@ -83,14 +84,15 @@ await context.route('**/*',route=>{
 });
 try {
   await persist({phase:'begin',intent});
-  if(intent.kind==='mapping-binding-diagnostic'){
-    const record=validateBindingDiagnostic(intent,snapshot),ref=intent.owner;
+  if(['mapping-binding-diagnostic','mapping-pins-diagnostic'].includes(intent.kind)){
+    const pins=intent.kind==='mapping-pins-diagnostic';
+    const record=(pins?validatePinsDiagnostic:validateBindingDiagnostic)(intent,snapshot),ref=intent.owner;
     await page.goto(`${base}/mapping?provider=${encodeURIComponent(ref.providerId)}&mapping=${encodeURIComponent(ref.recordId)}`,{waitUntil:'commit'});
-    const target=page.getByRole('button',{name:`Bind ${intent.title}.${intent.target.prop} on ${intent.target.nodeId}`,exact:true});
-    result=await observeBindingDiagnostic({page,ref,record,target,composition,persist,check:()=>{lifecycle.requireOpen();if(blocked)throw blocked;}});
+    const target=pins?null:page.getByRole('button',{name:`Bind ${intent.title}.${intent.target.prop} on ${intent.target.nodeId}`,exact:true});
+    result=await (pins?observePinsDiagnostic:observeBindingDiagnostic)({page,ref,record,target,composition,persist,check:()=>{lifecycle.requireOpen();if(blocked)throw blocked;}});
     await writeFile(join(artifacts,'diagnostic-dom.html'),await page.content(),{flag:'wx'});
     await page.screenshot({path:join(artifacts,'diagnostic.png'),fullPage:true});
-    await persist({phase:'mapping-binding-diagnostic-result',result,pendingRequests:diagnostics.snapshot()});
+    await persist({phase:pins?'mapping-pins-diagnostic-result':'mapping-binding-diagnostic-result',result,pendingRequests:diagnostics.snapshot()});
     await settleTerminalReads({fence:async()=>{terminalClosing=true;await persist({phase:'terminal-read-admission-fenced'});},status:()=>({pending:originalPending+composition.readiness.pending,challenges:composition.readiness.outstanding,busy:busyReads.outstanding,epoch:readEpoch}),check:()=>{lifecycle.requireOpen();composition.check();if(blocked)throw blocked;},drain:async()=>{await lane.drain();await composition.drain();composition.assertSettled();},persist,diagnostics:diagnostics.snapshot});
   } else if(savedMapping){
     const record=savedMapping.result.record,ref={providerId:'mapping-filesystem',recordId:record.id};

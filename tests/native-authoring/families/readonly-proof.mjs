@@ -1,3 +1,4 @@
+import {validatePinsDiagnostic} from './pins-diagnostic.mjs';
 import {recoveredHeaderHrefForward} from '../header/recovery-forward.mjs';
 import {isNativeRead,contentPreviewOperations,assertContentPreviewHeaders} from '../native-preview-reads.mjs';
 import {validateBindingDiagnostic} from './binding-diagnostic.mjs';
@@ -67,8 +68,9 @@ export function assertReadScope(path,headers,result,workspaceId) {
 }
 
 export function validateReadIntent(intent, snapshot) {
-  assert(['mapping-binding-diagnostic','family-render','active-identity','header-restart','header-saved-href','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create','mapping-saved-binding'].includes(intent.kind));
+  assert(['mapping-pins-diagnostic','mapping-binding-diagnostic','family-render','active-identity','header-restart','header-saved-href','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create','mapping-saved-binding'].includes(intent.kind));
   if(intent.kind==='mapping-binding-diagnostic')validateBindingDiagnostic(intent,snapshot);
+  if(intent.kind==='mapping-pins-diagnostic')validatePinsDiagnostic(intent,snapshot);
   assert.equal(intent.captureDigest, snapshot.digest);
   assert(/^[a-f0-9]{64}$/.test(snapshot.digest));
   assert(intent.capturePath?.startsWith('/'));

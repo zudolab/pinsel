@@ -1,3 +1,4 @@
+import {validatePinsEvidence} from './pins-diagnostic.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {inputHash,readExpectedBytes,mergeExpectedHashes} from './expected-hashes.mjs';
@@ -8,6 +9,18 @@ export async function freezeReadInputs(intentPath) {
   const read=async (path,lines=false)=>{const bytes=await readExpectedBytes(path,hashes);return lines?bytes.toString('utf8').trim().split('\n').map(line=>JSON.parse(line)):JSON.parse(bytes.toString('utf8'));};
   const intent=await read(intentPath),snapshot=await read(intent.capturePath);
   const headerProof=intent.kind==='header-restart'?await read(intent.forwardProofPath):null;
+  let pinsEvidence;
+  if(intent.kind==='mapping-pins-diagnostic'){
+    const paths=await read(intent.diagnosticEvidencePath);
+    assert.deepEqual(Object.keys(paths).sort(),['after','before','bundle','events','history','intent','provenance']);
+    pinsEvidence={};for(const [key,path]of Object.entries(paths)){assert(path.startsWith('/'));pinsEvidence[key]=await read(path,key==='events');}
+    for(const [path,hash]of Object.entries(pinsEvidence.bundle.hashes)){assert.equal(inputHash(await readExpectedBytes(path,hashes)),hash,'Original pin inputs changed');}
+    for(const path of pinsEvidence.history)await read(path);
+    pinsEvidence.lastProof=await read(pinsEvidence.history.at(-1));
+    pinsEvidence.lastCapture=await read(pinsEvidence.lastProof.afterCapture);
+    validatePinsEvidence(intent,snapshot,pinsEvidence);
+  }
+
   let savedReference=null;
   if(['header-saved-href','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create','mapping-saved-binding'].includes(intent.kind)){
     const paths=await read(intent.recoveryEvidencePath);assert.deepEqual(Object.keys(paths).sort(),['after','before','bundle','bundleHash','events','provenance',...(intent.kind==='knowledge-captured-reference'?['uiResult']:[])]);
@@ -28,7 +41,7 @@ export async function freezeReadInputs(intentPath) {
     if(intent.sequence.index===familyInstallationBridge.boundary)assert.equal(snapshot.digest,familyInstallationBridge.afterDigest);
     mergeExpectedHashes(hashes,familyInstallationBridge.hashes);
   }
-  return {intent,snapshot,headerProof,...(familyInstallationSupplement?{familyInstallationSupplement}:{}),...(familyInstallationBridge?{familyInstallationBridge}:{}),...(savedReference?{savedReference}:{}),hashes};
+  return {intent,snapshot,headerProof,...(pinsEvidence?{pinsEvidence}:{}),...(familyInstallationSupplement?{familyInstallationSupplement}:{}),...(familyInstallationBridge?{familyInstallationBridge}:{}),...(savedReference?{savedReference}:{}),hashes};
 }
 export async function assertInputsUnchanged(hashes) {
   for(const [path,hash] of Object.entries(hashes))assert.equal(inputHash(await readFile(path)),hash,`External acceptance input changed: ${path}`);
