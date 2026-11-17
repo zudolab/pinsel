@@ -73,3 +73,10 @@ stopped-state equality does `proof.json` record `ROUTE_OWNER_SELECTION_VERIFIED`
 Retain failed attempts separately; never treat a screenshot or source test as a
 runtime pass. A complete matrix requires six actual successful proofs at recorded
 consumer/package/capture identities; existing covered route evidence stays distinct.
+
+For locator changes, run `node tests/native-authoring/route-selection/selector-browser.mjs`
+under the shared heavy guard/reaper before another native attempt. This disposable
+DOM probe imports the actual owner-details helper and distinguishes the owner
+section from advanced properties and an unrelated aside. It requires Playwright
+Chromium but starts no native server and accesses no authoring store. Source-string
+assertions cannot establish Playwright's relative `has` locator semantics.

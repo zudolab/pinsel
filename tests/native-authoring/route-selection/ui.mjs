@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {selectionCandidates,targetEvidence} from './proof.mjs';
+export const ownerDetails=(page,inspector)=>inspector.locator('details').filter({has:page.locator('summary').filter({hasText:/^Component and owner$/})});
 /** No edit controls, links, forms, writes or synthetic renderer are invoked. */
 export async function verifyRouteSelection(page,{base,snapshot,intent,expect,getPreview,persist,shot}){
  await page.goto(`${base}/composer?native=1&visitor=${encodeURIComponent(intent.pathname)}`);
@@ -11,7 +12,7 @@ export async function verifyRouteSelection(page,{base,snapshot,intent,expect,get
  const inspect=async selected=>{
   await expect(frame.locator('[data-composer-selected]')).toHaveCount(1);await expect(frame.locator('[data-composer-selected]')).toHaveAttribute('data-composer-target',selected.renderedNodeId);
   const tree=page.getByRole('tree',{name:'Page components',exact:true});const row=tree.getByRole('treeitem',{selected:true});await expect(row).toHaveCount(1);await expect(row).toHaveAttribute('aria-label',selected.presentation.label);
-  const inspector=page.getByRole('complementary',{name:'Selected component inspector',exact:true});await expect(inspector.getByRole('heading',{name:selected.presentation.label,exact:true})).toBeVisible();const details=inspector.locator('details').filter({has:inspector.locator('summary').filter({hasText:/^Component and owner$/})});await expect(details).toHaveCount(1);if(!await details.evaluate(el=>el.open))await details.locator('summary').click();
+  const inspector=page.getByRole('complementary',{name:'Selected component inspector',exact:true});await expect(inspector.getByRole('heading',{name:selected.presentation.label,exact:true})).toBeVisible();const details=ownerDetails(page,inspector);await expect(details).toHaveCount(1);if(!await details.evaluate(el=>el.open))await details.locator('summary').click();
   await expect(details.locator('code').filter({hasText:new RegExp('^'+RegExp.escape(`${selected.providerId}/${selected.recordId}/${selected.nodeId}`)+'$')})).toHaveCount(1);
   await expect(details.locator('code').filter({hasText:new RegExp('^'+RegExp.escape(selected.componentId)+'$')})).toHaveCount(1);
   const link=inspector.getByRole('link',{name:'Edit owning composition',exact:true});await expect(link).toHaveCount(1);const url=new URL(await link.getAttribute('href'),base);assert.equal(url.pathname,'/composer');assert.equal(url.searchParams.get('provider'),selected.providerId);assert.equal(url.searchParams.get('composition'),selected.recordId);
