@@ -28,8 +28,14 @@ export async function freezeReadInputs(intentPath) {
     if(intent.kind==='mapping-saved-binding'){for(const [path,expected]of Object.entries(savedReference.bundle.hashes)){const bytes=await readExpectedBytes(path,hashes);assert.equal(inputHash(bytes),expected,'Original binding input changed');}}
     savedReference.hashes=intent.kind==='mapping-saved-binding'?{...hashes}:Object.fromEntries(Object.values(paths).map(path=>[path,hashes[path]]));
   }
-  let familyInstallationBridge,familyInstallationSupplement,familySourceRebind,familySourceRebindSuccessor;
-  if(intent.familySourceRebindSuccessor){
+  let familyInstallationBridge,familyInstallationSupplement,familySourceRebind,familySourceRebindSuccessor,familySourceCreateHandoff;
+  if(intent.familySourceCreateHandoff){
+    assert(intent.familySourceRebindSuccessor&&intent.familySourceRebind&&intent.familyInstallationBridge&&intent.familyInstallationSupplement);
+    const chain=await(await import('./source-create-loader.mjs')).loadFamilySourceCreateHandoff({descriptor:intent.familySourceCreateHandoff,successorDescriptor:intent.familySourceRebindSuccessor,parentDescriptor:intent.familySourceRebind,originalDescriptor:intent.familyInstallationBridge,supplementDescriptor:intent.familyInstallationSupplement,repo:(await import('./config.mjs')).repoRoot});
+    familyInstallationBridge=chain.originalBridge;familyInstallationSupplement=chain.supplement;familySourceRebind=chain.rebind;familySourceRebindSuccessor=chain.successor;familySourceCreateHandoff=chain.createHandoff;
+    assert(intent.sequence?.index>=18);if(intent.sequence.index===18)assert.deepEqual(snapshot,familySourceCreateHandoff.snapshot);
+    for(const part of [familyInstallationBridge,familyInstallationSupplement,familySourceRebind,familySourceRebindSuccessor,familySourceCreateHandoff])mergeExpectedHashes(hashes,part.hashes);
+  }else if(intent.familySourceRebindSuccessor){
     assert(intent.familySourceRebind&&intent.familyInstallationBridge&&intent.familyInstallationSupplement);
     const chain=await(await import('./source-successor-loader.mjs')).loadFamilySourceSuccessor({descriptor:intent.familySourceRebindSuccessor,parentDescriptor:intent.familySourceRebind,originalDescriptor:intent.familyInstallationBridge,supplementDescriptor:intent.familyInstallationSupplement,repo:(await import('./config.mjs')).repoRoot});
     familyInstallationBridge=chain.originalBridge;familyInstallationSupplement=chain.supplement;familySourceRebind=chain.rebind;familySourceRebindSuccessor=chain.successor;
@@ -53,7 +59,7 @@ export async function freezeReadInputs(intentPath) {
     if(intent.sequence.index===familyInstallationBridge.boundary)assert.equal(snapshot.digest,familyInstallationBridge.afterDigest);
     mergeExpectedHashes(hashes,familyInstallationBridge.hashes);
   }
-  return {intent,snapshot,headerProof,...(familySourceRebindSuccessor?{familySourceRebindSuccessor}:{}),...(familySourceRebind?{familySourceRebind}:{}),...(pinsEvidence?{pinsEvidence}:{}),...(familyInstallationSupplement?{familyInstallationSupplement}:{}),...(familyInstallationBridge?{familyInstallationBridge}:{}),...(savedReference?{savedReference}:{}),hashes};
+  return {intent,snapshot,headerProof,...(familySourceCreateHandoff?{familySourceCreateHandoff}:{}),...(familySourceRebindSuccessor?{familySourceRebindSuccessor}:{}),...(familySourceRebind?{familySourceRebind}:{}),...(pinsEvidence?{pinsEvidence}:{}),...(familyInstallationSupplement?{familyInstallationSupplement}:{}),...(familyInstallationBridge?{familyInstallationBridge}:{}),...(savedReference?{savedReference}:{}),hashes};
 }
 export async function assertInputsUnchanged(hashes) {
   for(const [path,hash] of Object.entries(hashes))assert.equal(inputHash(await readFile(path)),hash,`External acceptance input changed: ${path}`);
