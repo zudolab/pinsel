@@ -168,7 +168,7 @@ replace their guards with file-by-file private storage reconstruction.
 Unit validation (no browser, native writer or server):
 
 ```sh
-node --test scripts/verify/composer-families/*.test.mjs
+pnpm exec vitest run --config scripts/verify/composer-families/vitest.config.ts
 ```
 
 Runtime selectors, full sequence, publication, restart, visitor interactions and

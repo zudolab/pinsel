@@ -1,4 +1,4 @@
-import test from'node:test';import assert from'node:assert/strict';import{outputExchange,compositionDerivedReadGate}from'./composition-output.mjs';
+import { test } from 'vitest';import assert from'node:assert/strict';import{outputExchange,compositionDerivedReadGate}from'./composition-output.mjs';
 const record={id:'home',document:{root:[]}},records=[record],request={operation:'list',outputsById:{}},challenge={ok:'needs-output',request:{records,sourceOutcomes:[{id:'home',outcome:{status:'loaded',record}}],targetIds:['home']}};const continuation={operation:'list',outputsById:{home:{status:'generated',code:'export default []'}}};
 const exchange=()=>outputExchange({records,targetIds:['home'],input:request});
 test('one exact no-commit source challenge permits exactly one continuation',()=>{const x=exchange();x.response(challenge);x.continuation(continuation);x.response({ok:true,result:[]});assert.equal(x.phase,'complete');assert.throws(()=>x.continuation(continuation));});

@@ -1,4 +1,4 @@
-import test from 'node:test';
+import { test } from 'vitest';
 import assert from 'node:assert/strict';
 import { parseRuntimeArgs, repoRoot } from './config.mjs';
 const args = ['--composer', 'a'.repeat(40), '--stage', 'known-stage', '--intent', 'intent.json', '--artifacts', 'proof', '--port', '4198'];
