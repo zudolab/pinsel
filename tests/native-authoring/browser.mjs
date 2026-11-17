@@ -1,3 +1,4 @@
+import { assertRecoveryRequest, assertRecoveryReceipt, assertReceiptOnlyRetry, assertRecoveryInverse, recoveryObservation } from './recovery-proof.mjs';
 import { continueContentRequest, readBrowserContent, contentReadOperations } from './content-browser-transport.mjs';
 import { courseFields, proveHumanContentSave, assertHumanSaveRequest, assertHumanAttemptsVerified, createHumanSaveAdmission } from "./human-content-proof.mjs";
 import { runAssistantPhase } from './assistant-scenarios.mjs';
@@ -11,7 +12,7 @@ import { get } from 'node:http';
 const probe = url => new Promise((resolve, reject) => { const request = get(url, { headers: { Accept: 'text/html' }, timeout: 3000 }, response => { let body = ''; response.on('data', chunk => body += chunk); response.on('end', () => resolve({ status: response.statusCode, body: body.slice(0, 120) })); }); request.on('error', reject); request.on('timeout', () => request.destroy(new Error('HTTP readiness timeout'))); });
 const mode = process.argv[2];
 assert.match(process.env.PINSEL_AUTHORING_STAGE ?? '', /^[a-z0-9][a-z0-9-]+$/, 'Explicit staged authority required');
-assert(['inspect', 'stage', 'later', 'restore', 'recovery', 'negative'].includes(mode) || mode.startsWith('assistant:'), 'Unknown browser phase');
+assert(['inspect', 'stage', 'later', 'restore', 'recovery', 'recovery-restore', 'negative'].includes(mode) || mode.startsWith('assistant:'), 'Unknown browser phase');
 const expected = process.env.EXPECTED_COMPOSER_SHA;
 assert.match(expected ?? '', /^[a-f0-9]{40}$/, 'Set exact expected immutable SHA');
 await assertInstalledPin(repoRoot, expected);
@@ -29,6 +30,7 @@ const base = 'http://127.0.0.1:' + port;
 const notes = [];
 let serverLog = '', context, page, preview, nativeHeaders;
 let cleanupError;
+const recoveryObservations = [];
 const record = (key, value) => { notes.push({ key, value, time: new Date().toISOString() }); console.log(key, JSON.stringify(value)); };
 const server = spawn('pnpm', ['dev', '--port', String(port), '--strict-port'], { cwd: repoRoot, env: process.env, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
 server.stdout.on('data', b => serverLog += b);
@@ -448,93 +450,101 @@ try {
             await shot('t4-restored-content');
         }
     }
-    if (mode === 'recovery') {
+    if (mode === 'recovery' || mode === 'recovery-restore') {
+        const file = join(artifacts, 'recovery-journal.json');
+        const before = JSON.parse(await readFile(join(artifacts, 'before.json'), 'utf8'));
+        const current = mode === 'recovery-restore' ? JSON.parse(await readFile(join(artifacts, process.env.NATIVE_RECOVERY_CURRENT), 'utf8')) : null;
+        let journal;
+        const persist = () => writeFile(file, JSON.stringify(journal, null, 2));
         await open('/lessons/');
-        await selectConsultation();
-        const originalOrder = preview.targets.filter(t => t.recordId === 'lessons').map(t => t.nodeId);
-        await writeFile(run + '/placement-original-order.json', JSON.stringify(originalOrder));
-        let committed = false, restored = false;
-        try {
-            let lostResolve;
-            const lost = new Promise(resolve => lostResolve = resolve);
+        const section = await selectConsultation();
+        const coords = t => Object.fromEntries(['renderedNodeId', 'providerId', 'recordId', 'nodeId'].map(key => [key, t[key]]));
+        if (mode === 'recovery') {
+            journal = { version: 1, beforeDigest: before.digest, target: coords(section), placement: section.placement,
+                originalOrder: preview.targets.filter(t => t.recordId === 'lessons').map(t => t.nodeId) };
+            await writeFile(file, JSON.stringify(journal, null, 2), { flag: 'wx' });
+        } else {
+            journal = JSON.parse(await readFile(file, 'utf8'));
+            assert.deepEqual(coords(section), journal.target);
+            assert.deepEqual(section.placement, journal.placement);
+        }
+        const recoverReceipt = async (operation, inverse = false) => {
+            // New-run cleanup only retries a durably observed successful response.
+            // Resume also allows a proven stale request, never an executable uncertain mutation.
+            if (mode === 'recovery-restore') {
+                assert.equal(preview.identity.revision, current.digest, 'Preview changed since recovery capture; receipt reconciliation held');
+                assertReceiptOnlyRetry(before, current, journal, operation, inverse);
+            } else assertRecoveryReceipt(before, journal, operation, inverse);
+            const response = await page.request.post(base + '/__zudo-native-edit', { data: operation.request, headers: nativeHeaders });
+            const body = await response.json();
+            assert(response.ok() && body.ok, 'Exact retained receipt recovery refused; keep journal');
+            operation.response = body; assertRecoveryReceipt(before, journal, operation, inverse); await persist();
+        };
+        const observedMove = async (direction, loseResponse, recover = false) => {
+            const inverse = direction === 'down'; let resolveResult, timer;
+            const result = new Promise(resolve => { resolveResult = resolve; });
             let intercepted = false;
-            await page.route('**/__zudo-native-edit', async (route) => {
-                const input = route.request().postDataJSON();
-                if (intercepted || input.operation !== 'document-edit') {
-                    await route.continue();
-                    return;
-                }
+            const observation = recoveryObservation(); recoveryObservations.push(observation);
+            const handler = route => observation.run(async () => {
+                const request = route.request().postDataJSON();
+                if (request.operation !== 'document-edit') { await route.continue(); return; }
+                if (intercepted) { const error = Error('Unexpected extra placement mutation refused'); observation.fail(error); await route.abort(); resolveResult({ error }); return; }
                 intercepted = true;
                 try {
-                    await writeFile(run + '/lost-request.json', JSON.stringify(input, null, 2));
-                    const response = await route.fetch();
-                    const receipt = await response.json();
-                    await writeFile(run + '/lost-receipt.json', JSON.stringify(receipt, null, 2));
-                    assert(response.ok() && receipt.ok, 'Mutation refused; no lost committed response');
-                    await route.abort('failed');
-                    lostResolve({ receipt, input });
-                }
-                catch (e) {
-                    lostResolve({ error: e.message });
-                    try {
-                        await route.abort();
-                    }
-                    catch { }
-                }
+                    assertRecoveryRequest(before, journal, request, inverse);
+                    if (inverse) assertRecoveryInverse(before, current, journal, request);
+                    if (recover) assert.deepEqual(request, journal.forward.request, 'Fresh-browser recovery changed retained request');
+                    const operation = { request, status: 'dispatching' };
+                    journal[recover ? 'browserRecovery' : inverse ? 'inverse' : 'forward'] = operation; await persist();
+                    const response = await route.fetch({ timeout: 180000 });
+                    operation.response = await response.json(); operation.status = 'responded'; await persist();
+                    assert(response.ok()); assertRecoveryReceipt(before, journal, operation, inverse);
+                    if (recover) assert.deepEqual(operation.response, journal.forward.response, 'Recovered receipt differs from original committed receipt');
+                    if (loseResponse) await route.abort('failed'); else await route.fulfill({ response });
+                    resolveResult({ ok: true });
+                } catch (error) { observation.fail(error); await route.abort().catch(() => {}); resolveResult({ error }); }
             });
-            await page.getByRole('button', { name: 'Move page placement up', exact: true }).click();
-            let lossTimer;
-            const loss = await Promise.race([lost, new Promise(resolve => { lossTimer = setTimeout(() => resolve({ error: 'Lost-response capture timeout' }), 180000); })]);
-            clearTimeout(lossTimer);
-            assert(!loss.error, loss.error);
-            committed = true;
-            record('committed-response-withheld', { operation: loss.input.input.operationId });
-            await context.close();
-            context = null;
-            await launch();
-            await open('/lessons/');
-            const recover = page.getByRole('button', { name: /Recover pending save.*previous session/ });
-            await recover.waitFor({ timeout: 30000 });
-            await shot('fresh-browser-pending');
-            await recover.click();
-            await recover.waitFor({ state: 'detached', timeout: 180000 });
-            await ready();
-            record('fresh-browser-recovered', loss.input.input.operationId);
-            await selectConsultation();
-            await move('down');
-            assert.deepEqual(preview.targets.filter(t => t.recordId === 'lessons').map(t => t.nodeId), originalOrder);
-            restored = true;
-            record('placement-restored', originalOrder);
-            await shot('recovered-and-restored');
-        }
-        finally {
-            if (committed && !restored) {
-                record('recovery-cleanup', 'Attempting exact supported inverse after receipt recovery');
-                if (!context) {
-                    await launch();
-                }
-                await open('/lessons/');
-                const pending = page.getByRole('button', { name: /Recover pending save/ });
-                if (await pending.count()) {
-                    await pending.click();
-                    await pending.waitFor({ state: 'detached', timeout: 180000 });
-                    await ready();
-                }
-                const actual = preview.targets.filter(t => t.recordId === 'lessons').map(t => t.nodeId);
-                if (JSON.stringify(actual) !== JSON.stringify(originalOrder)) {
-                    const expected = [...originalOrder];
-                    const index = expected.indexOf('consultation');
-                    assert(index > 0);
-                    [expected[index - 1], expected[index]] = [expected[index], expected[index - 1]];
-                    assert.deepEqual(actual, expected, 'Intervening placement change: preserve and report, do not undo');
-                    await selectConsultation();
-                    await move('down');
-                    assert.deepEqual(preview.targets.filter(t => t.recordId === 'lessons').map(t => t.nodeId), originalOrder);
-                }
-                record('recovery-cleanup-restored', originalOrder);
+            await page.route('**/__zudo-native-edit', handler);
+            try {
+                if (recover) await page.getByRole('button', { name: /Recover pending save.*previous session/ }).click();
+                else await page.getByRole('button', { name: 'Move page placement ' + direction, exact: true }).click();
+                const outcome = await Promise.race([result, new Promise(resolve => { timer = setTimeout(() => resolve({ error: Error('Placement response timeout; retain journal') }), 180000); })]);
+                if (outcome.error) throw outcome.error;
+            } finally {
+                clearTimeout(timer); await observation.drain();
+                // Keep the refusing handler until this browser closes: late duplicate writes stay blocked.
             }
+        };
+        const restore = async () => {
+            assert(journal.forward?.request, 'No dispatched request; no automatic inverse');
+            await recoverReceipt(journal.forward);
+            if (journal.inverse?.request) await recoverReceipt(journal.inverse, true);
+            else {
+                await open('/lessons/'); await selectConsultation();
+                const expected = [...journal.originalOrder], index = expected.indexOf(journal.placement.nodeId);
+                assert(index > 0); [expected[index - 1], expected[index]] = [expected[index], expected[index - 1]];
+                assert.deepEqual(preview.targets.filter(t => t.recordId === 'lessons').map(t => t.nodeId), expected, 'Intervening placement change; inverse held');
+                await observedMove('down', false);
+            }
+            await open('/lessons/');
+            assert.deepEqual(preview.targets.filter(t => t.recordId === 'lessons').map(t => t.nodeId), journal.originalOrder);
+            journal.restored = true; await persist(); record('placement-restored', journal.originalOrder);
+        };
+        if (mode === 'recovery-restore') await restore();
+        else {
+            await observedMove('up', true);
+            record('committed-response-withheld', { operation: journal.forward.request.input.operationId });
+            await context.close(); context = null; await launch(); await open('/lessons/');
+            const recover = page.getByRole('button', { name: /Recover pending save.*previous session/ });
+            await recover.waitFor({ timeout: 30000 }); await shot('fresh-browser-pending');
+            await observedMove('up', false, true);
+            await recover.waitFor({ state: 'detached', timeout: 180000 }); await ready();
+            record('fresh-browser-recovered', journal.forward.request.input.operationId);
+            await shot('fresh-browser-recovered');
+            // Runner stops this server, captures exact current state, then runs the guarded inverse.
         }
     }
+
     if (mode === 'negative') {
         const names = ['shared-field-shadow', 'invalid-local-slot', 'forged-owner', 'shared-reorder', 'child-without-placement', 'forged-slot', 'forged-placement'];
         for (const name of names) {
@@ -598,6 +608,7 @@ try {
         before: JSON.parse(await readFile(join(artifacts, 'before.json'), 'utf8')),
         restart: async () => { await context.close(); await launch(); return page; } });
     }
+    for (const observation of recoveryObservations) await observation.drain();
     record('PASS', mode);
 }
 catch (error) {
@@ -612,6 +623,9 @@ catch (error) {
 }
 finally {
     await context?.close().catch(error => { cleanupError = error.message; });
+    for (const observation of recoveryObservations) {
+        try { await observation.drain(); } catch (error) { cleanupError = error.message; process.exitCode = 1; record('FAIL', error.stack); }
+    }
     try {
         process.kill(-server.pid, 'SIGTERM');
     }

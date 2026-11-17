@@ -1,3 +1,4 @@
+import { assertRestoreBoundary, assertRecoveryState, assertRecoveryReceipt } from './recovery-proof.mjs';
 import { assertAssistantRunHumanSettled, assertAssistantHumanCapture } from "./assistant-human-save.mjs";
 import { fullHumanGenerationChanges } from "./human-content-proof.mjs";
 import { assertCompositionOwnership } from "./ownership-assertions.mjs";
@@ -8,7 +9,7 @@ import { mkdir, mkdtemp, writeFile, access, realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
-import { repoRoot, readJson, assertInstalledPin, assertRestored, verifyBuild, hashTree, contentOwner, scopeIdentity, assertRunScope } from './support.mjs';
+import { repoRoot, readJson, assertInstalledPin, assertRestored, verifyBuild, hashTree, contentOwner, scopeIdentity } from './support.mjs';
 const options = {};
 for (let i = 2; i < process.argv.length; i += 2) {
     const flag = process.argv[i];
@@ -99,14 +100,16 @@ try {
         currentSnapshot = await readJson(join(run, currentName));
     }
     const scope = { canonicalRepoRoot: await realpath(repoRoot), stage: options['--stage'], composer: options['--composer'], ...scopeIdentity(currentSnapshot) };
-    if (options['--restore']) assertRunScope(await readJson(join(run, 'run-manifest.json')), scope);
+    if (options['--restore']) {
+        const manifest = await readJson(join(run, 'run-manifest.json'));
+        assertRestoreBoundary(manifest, scope, before, scenario);
+    }
     else await writeFile(join(run, 'run-manifest.json'), JSON.stringify({ scope, scenario, installation, beforeDigest: before.digest }, null, 2), { flag: 'wx' });
     scopeVerified = true;
     if (options['--audit-data-root'])
         fileHashes = await hashTree(resolve(options['--audit-data-root']));
     if (options['--restore']) {
-        assert.equal((await readJson(join(run, 'run-manifest.json'))).scenario, scenario, 'Restore requires original --scenario');
-        if (scenario !== 'assistant') await browser('restore');
+        if (!['assistant', 'recovery', 'negative', 'inspect'].includes(scenario)) await browser('restore');
     }
     else if (scenario === 'assistant') {
       for (const spec of assistantCases) {
@@ -183,7 +186,16 @@ finally {
       }
       } catch (error) { errors.push(`ALL automatic Assistant restoration held; reconcile human Save evidence first: ${error.stack ?? error}`); }
     }
-    if (!options['--restore'] && scenario === 'full' && await exists(journalPath)) {
+    if (scopeVerified && before && scenario === 'recovery') {
+        try {
+            const currentName = `recovery-current-${Date.now()}.json`;
+            await capture(currentName);
+            const current = await readJson(join(run, currentName));
+            assertRecoveryState(before, current, await readJson(join(run, 'recovery-journal.json')));
+            await browser('recovery-restore', { NATIVE_RECOVERY_CURRENT: currentName });
+        } catch (error) { errors.push(`Recovery inverse held; retain journal: ${error.stack ?? error}`); }
+    }
+    if (scopeVerified && !options['--restore'] && scenario === 'full' && await exists(journalPath)) {
         try {
             await browser('restore');
         }
@@ -191,7 +203,7 @@ finally {
             errors.push(`Supported inverse failed; retain journal and state: ${error.stack ?? error}`);
         }
     }
-    if (before) {
+    if (scopeVerified && before) {
         try {
             const name = `after-${Date.now()}.json`;
             await capture(name);
@@ -205,14 +217,20 @@ finally {
                 }
             }
             else
-                { const generationChanges = assertRestored(before, after, scenario === 'assistant' ? await generationsFromJournals(before, after) : scenario === 'full' && await exists(journalPath) ? fullHumanGenerationChanges(before, after, await readJson(journalPath)) : []); await writeFile(join(run, `generation-audit-${Date.now()}.json`), JSON.stringify(generationChanges, null, 2)); }
+                { if (scenario === 'recovery') {
+                    const journal = await readJson(join(run, 'recovery-journal.json'));
+                    assert.equal(assertRecoveryState(before, after, journal), 'original');
+                    assertRecoveryReceipt(before, journal, journal.forward);
+                    assertRecoveryReceipt(before, journal, journal.inverse, true);
+                  }
+                  const generationChanges = assertRestored(before, after, scenario === 'assistant' ? await generationsFromJournals(before, after) : scenario === 'full' && await exists(journalPath) ? fullHumanGenerationChanges(before, after, await readJson(journalPath)) : []); await writeFile(join(run, `generation-audit-${Date.now()}.json`), JSON.stringify(generationChanges, null, 2)); }
             await writeFile(join(run, 'restoration-proof.json'), JSON.stringify({ before: before.digest, after: after.digest, canonicalValuesRestored: true, metadataAndHistoryRetained: true }, null, 2));
         }
         catch (error) {
             errors.push(`Final public capture/audit failed: ${error.stack ?? error}`);
         }
     }
-    await writeFile(join(run, `result-${Date.now()}.json`), JSON.stringify({ scenario, composer: options['--composer'], stage: options['--stage'], status: errors.length ? 'FAIL' : 'PASS', errors }, null, 2));
+    await writeFile(join(run, `result-${Date.now()}.json`), JSON.stringify({ scenario, restorationOnly: Boolean(options['--restore']), composer: options['--composer'], stage: options['--stage'], status: errors.length ? 'FAIL' : 'PASS', errors }, null, 2));
 }
 if (errors.length) {
     console.error(errors.join('\n'));
