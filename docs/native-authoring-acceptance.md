@@ -268,6 +268,12 @@ before/after audits; this expanded run is not yet executed.
 
 ### Assistant scenario (partial evidence; full run failed)
 
+The complete seven-case workload can exceed a guard's default 1800-second
+runtime cap. Use its supported bounded `--max-run 5400` option for this aggregate,
+retaining serialization, memory checks and all operation timeouts. An interrupted
+run requires journal/receipt reconciliation and supported restoration before retry;
+it is never a pass. See the latest compatibility ledger for attributed subsets.
+
 `assistant-ui.mjs` provides actual DOM helpers for selection handoff, fake-provider
 proposal, candidate rendering, Apply observation, deliberately lost response,
 identical retained-request recovery, and Undo. It does not launch a server, select

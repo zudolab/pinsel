@@ -6,8 +6,11 @@ import { observeContentCreation } from './creation-observer.mjs';
 /** persist must durably write the journal; the create request waits for it. */
 export async function createContentEntry(page, { base, before, modelId, persist }) {
   await page.goto(`${base}/content?provider=content-filesystem&model=${encodeURIComponent(modelId)}`);
+  const button = page.getByRole('button', { name: 'New Entry', exact: true });
+  await expect(button).toBeVisible({ timeout: 180000 });
+  await expect(button).toBeEnabled({ timeout: 180000 });
   return observeContentCreation(page, { before, modelId, persist,
-    action: () => page.getByRole('button', { name: 'New Entry', exact: true }).click(),
+    action: () => button.click(),
   });
 }
 

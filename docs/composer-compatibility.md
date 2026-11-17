@@ -604,3 +604,40 @@ captures matched digest17725aa5bdb7adb67c79240fb096704f46c017247bdf8595cce9c7b0d
 all808 native and143 public files remained byte-identical. Server4194 stopped;
 the detached known-data consumer and its history remain preserved. Evidence:
 `composer-adoption-notes/t6-cold-content-3c30-1/OUTCOME.md` and `request-summary.json`.
+
+## Batched Content initialization candidate
+
+Package `62f014f4ae5acfa10ca551c116be6e3a909310fe`, attested by Composer
+`6a28dc8d698039c413da0b41773fdf95341cc319`, includes
+[983](https://github.com/Takazudo/zudo-composer/issues/983): Content initialization
+reads one coherent snapshot instead of separate per-model counts, descriptions and
+completeness scans. Later editing retains fresh reads; no cache, schema, storage or
+write-authority change is introduced. Semantic-invalid completeness remains unknown.
+Its773-file digest is
+`b08a99a3a4bb8c40ef315480891a2748409b12dc9245b61bb47f86326dbcfee9`.
+All192 Content tests, typecheck/lint and independent55-test review passed. Guarded
+public/CMS generation/check passed64s without generated drift; stopped-delivery and
+headless guards pass. Installed cold-start comparison and final-pin acceptance are
+pending; no latency improvement is claimed yet.
+
+The preceding3c30 run at Pinsel210e762 completed Note and local-field cases,
+including qualified ownership, proposal without canonical mutation, exact candidate,
+Apply, saved output, strict owning-domain delta and Undo. Local fixture removal also
+passed. AI insertion passed proposal, Apply, saved output and exact Composition
+change, then the aggregate guard hit its default1800s runtime limit as Undo started.
+That aggregate remains **ENV_SUSPECT**, not an assertion failure or complete pass.
+After confirming the original processes had stopped, recovery retained the journal,
+used the existing guarded Undo (no reapplication), and passed164s. Final public
+capture `9ecd27ad21308fcba54c01a4b11c6b0d0d8f5c5bed2ac8a4994e9f790065406c`
+restored all authored values/domains/assets/public against the original capture;
+only receipt-authorized Note generation9→11 and normal revision metadata/history
+remain. Ports4173/4194 closed and the stale owned lease was removed only after its
+PID and processes were verified absent. Stale Apply and guarded-Undo cases remain
+pending at the new pin. Evidence: `t5-note-remaining-1794882108/restoration-proof.json`
+and `t5-insertion-recovery.log` under the Cloud acceptance root.
+
+The final complete seven-case run uses the guard's documented bounded
+`--max-run 5400` option, based on measured aggregate duration, while retaining the
+single-run/memory gates and every browser/operation assertion timeout. This does not
+turn earlier interrupted runs into passes. Actual owner-data and provider holds,
+required current-head checks and integration remain open.
