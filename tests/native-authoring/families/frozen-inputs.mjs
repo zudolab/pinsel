@@ -14,7 +14,14 @@ export async function freezeReadInputs(intentPath) {
     savedReference={paths};for(const [key,path] of Object.entries(paths)){assert(path.startsWith('/'));savedReference[key]=await read(path,key==='events');}
     savedReference.hashes=Object.fromEntries(Object.values(paths).map(path=>[path,hashes[path]]));
   }
-  return {intent,snapshot,headerProof,...(savedReference?{savedReference}:{}),hashes};
+  let familyInstallationBridge;
+  if(intent.familyInstallationBridge){
+    familyInstallationBridge=await(await import('./installation-bridge.mjs')).loadFamilyInstallationBridge({descriptor:intent.familyInstallationBridge,repo:(await import('./config.mjs')).repoRoot});
+    assert(intent.sequence?.index>=familyInstallationBridge.boundary);
+    if(intent.sequence.index===familyInstallationBridge.boundary)assert.equal(snapshot.digest,familyInstallationBridge.afterDigest);
+    Object.assign(hashes,familyInstallationBridge.hashes);
+  }
+  return {intent,snapshot,headerProof,...(familyInstallationBridge?{familyInstallationBridge}:{}),...(savedReference?{savedReference}:{}),hashes};
 }
 export async function assertInputsUnchanged(hashes) {
   for(const [path,hash] of Object.entries(hashes))assert.equal(inputHash(await readFile(path)),hash,`External acceptance input changed: ${path}`);
