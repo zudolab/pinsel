@@ -1,0 +1,2 @@
+import assert from'node:assert/strict';import{readFile}from'node:fs/promises';import{assertMembershipDelta}from'./membership.mjs';
+const[beforePath,afterPath,familyPath,kind,direction]=process.argv.slice(2);assert(['move','inverse'].includes(direction));const read=async p=>JSON.parse(await readFile(p,'utf8'));console.log(JSON.stringify(assertMembershipDelta(await read(beforePath),await read(afterPath),await read(familyPath),kind,{inverse:direction==='inverse'})));

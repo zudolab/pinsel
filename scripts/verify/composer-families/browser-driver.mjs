@@ -1,0 +1,54 @@
+import {compositionAuthoringGate} from './composition-authoring.mjs';
+import {compositionDerivedReadGate} from './composition-output.mjs';
+import assert from 'node:assert/strict';
+import {requestGate,drainAll} from './original-request.mjs';
+import {getRecord,admitRecordEdit,admitDuplicate,admitContentCreate,admitContentField,admitMappingCreate,admitBinding,admitGroup,admitAttachment} from './intents.mjs';
+const endpoints={content:'/__zudo_composer_content_provider',compositions:'/__zudo_composer_file_provider',mappings:'/__zudo_composer_mapping_provider',workspace:'/__zudo_composer_workspace_provider'};
+const reads=new Set(['initialize','list','get','open','selection','generation','snapshot','read-all','list-models','get-model','get-entry','count-entries','page-entries','scan-entries','find-seeding','missing-directories','editorial-read','editorial-fields','editorial-revisions','editorial-revision','editorial-compare','editorial-publication','editorial-operation','content-ai-status','content-ai-scope','content-ai-read']);
+const providerReads={
+ [endpoints.content]:reads,
+ [endpoints.compositions]:new Set(['initialize','list','get','snapshot','find-seeding','missing-directories']),
+ [endpoints.mappings]:new Set(['initialize','list','get','snapshot']),
+ [endpoints.workspace]:new Set(['list','open','selection','generation','find-seeding','missing-directories']),
+ '/__zudo_composer_sitemapper_provider':new Set(['initialize','list','get','snapshot']),
+ '/__zudo_composer_asset_file_provider':new Set(['initialize','list','get','snapshot','resolve-version']),
+};
+/** Exactly one reviewed original browser mutation per phase; completion waits for the outer close. */
+export async function familyUi(page,{base,snapshot,intent,persist,expect,setClose}){
+ const domain=intent.kind==='attachment'?'workspace':intent.domain,endpoint=endpoints[domain];assert(endpoint);
+ const writeOps=[domain==='content'?'put-entry':domain==='workspace'?'update':'put'];
+ let result,attempted=false,held,closing=false,workspaceMutationToken;
+ const workspaceRead=requestGate({page,persist,validate:()=>{},accept:(_,body)=>{assert(body.ok);const record=body.result;assert.equal(record.id,snapshot.workspaceId);assert.equal(record.status,'ready');const metadata=structuredClone(snapshot.project);for(const domain of Object.keys(metadata.providers))metadata.providers[domain]=metadata.providers[domain].map(({id})=>({id}));assert.deepEqual(record.metadata,metadata);assert(Number.isSafeInteger(record.mutationToken));if(workspaceMutationToken!==undefined)assert.equal(record.mutationToken,workspaceMutationToken);workspaceMutationToken=record.mutationToken;}});
+ const validators={duplicate:admitDuplicate,'content-create':admitContentCreate,'content-field':admitContentField,'mapping-create':admitMappingCreate,binding:admitBinding,group:admitGroup,attachment:admitAttachment,'record-edit':admitRecordEdit};assert(validators[intent.kind]);
+ const composition=domain==='compositions'?compositionAuthoringGate({page,snapshot,persist,admit:(input)=>{workspaceRead.check();assert(!closing&&!held&&!attempted,'Unexpected extra canonical write');result=structuredClone(validators[intent.kind](snapshot,intent,input));attempted=true;return result;},accept:()=>{}}):compositionDerivedReadGate({page,snapshot,persist});
+ const gate=requestGate({page,persist,validate:(input,request)=>{composition.check();composition.assertSettled?.();workspaceRead.check();assert(!closing&&!held&&!attempted,'Unexpected extra canonical write');assert.equal(new URL(request.url()).pathname,endpoint);assert(writeOps.includes(request.headers()['x-zudo-composer-operation']));if(domain!=='workspace')assert.equal(request.headers()['x-zudo-composer-workspace'],snapshot.workspaceId);result=structuredClone(validators[intent.kind](snapshot,intent,input,workspaceMutationToken));attempted=true;},accept:(_,body)=>assert.equal(body.ok,true)});
+ const check=async()=>{await drainAll(gate,workspaceRead,composition);if(held)throw held;};
+ setClose(async ctx=>{closing=true;try{await check();}finally{await ctx.close();}await check();});
+ await page.route('**/__zudo*',async route=>{const request=route.request(),path=new URL(request.url()).pathname;let input;try{input=request.postDataJSON();}catch{}const op=request.headers()['x-zudo-composer-operation']??request.headers()['x-zudo-composer-asset-operation']??(path==='/__zudo-native-edit'?input?.operation:undefined);
+  if(path===endpoints.compositions){if(held||closing){await persist({phase:'composition-after-held-refused',path});return route.abort();}return composition.handle(route);}
+  if(intent.kind==='attachment'&&!attempted&&path===endpoints.workspace&&op==='open')return workspaceRead.handle(route);
+  if(request.method()==='GET'||providerReads[path]?.has(op)||(path==='/__zudo-native-edit'&&['inspect','document-preview','review','receipt'].includes(op)))return route.continue();
+  if(path===endpoint&&writeOps.includes(op))return gate.handle(route);
+  held??=Error(`Unexpected operation ${path} ${op}`);try{await persist({phase:'unexpected-refused',path,operation:op});}finally{await route.abort();}
+ });
+ const save=async()=>{const b=page.getByRole('button',{name:'Save',exact:true});if(await b.isEnabled())await b.click();};
+ const compositionUrl=ref=>`${base}/composer?provider=${encodeURIComponent(ref.providerId)}&composition=${encodeURIComponent(ref.recordId)}`;
+ const mappingUrl=ref=>`${base}/mapping?provider=${encodeURIComponent(ref.providerId)}&mapping=${encodeURIComponent(ref.recordId)}`;
+ if(domain==='content'){
+  const model=intent.modelId??intent.owner.modelId;await page.goto(`${base}/content?provider=content-filesystem&model=${encodeURIComponent(model)}${intent.owner?'&entry='+encodeURIComponent(intent.owner.recordId):''}`);
+  if(intent.kind==='content-create'){const b=page.getByRole('button',{name:'New Entry',exact:true});await expect(b).toBeEnabled({timeout:180000});await b.click();}
+  else{const field=snapshot.project.providers.content.find(p=>p.id==='content-filesystem').models.find(m=>m.id===model).document.fields.find(f=>f.id===intent.fieldId);assert(field);const target=page.locator(`[id="content-entry-${field.id}"]`);await expect(target).toBeVisible({timeout:180000});if(field.kind==='reference')await target.selectOption(intent.value.recordId);else{assert(['text','long-text','url','number'].includes(field.kind),'Unsupported family UI field kind');await target.fill(String(intent.value));}await save();}
+ }else if(intent.kind==='duplicate'){await page.goto(compositionUrl(intent.source));await page.getByRole('button',{name:'More composition actions',exact:true}).click();await page.getByRole('menuitem',{name:'Duplicate composition',exact:true}).click();}
+ else if(intent.kind==='mapping-create'){await page.goto(`${base}/mapping`);await page.getByRole('button',{name:'New mapping',exact:true}).click();const d=page.getByRole('dialog',{name:'Create mapping',exact:true});await d.getByLabel('Name',{exact:true}).fill(intent.name);await d.getByLabel('Content model',{exact:true}).selectOption(`${intent.contentModel.providerId}/${intent.contentModel.recordId}`);await d.getByLabel('Composition',{exact:true}).selectOption(`${intent.composition.providerId}/${intent.composition.recordId}`);await d.getByRole('button',{name:'Create',exact:true}).click();}
+ else if(intent.kind==='attachment'){await page.goto(mappingUrl(intent.mapping));await page.getByRole('button',{name:'Attach',exact:true}).click();const d=page.getByRole('dialog',{name:'Attach collection to a named slot',exact:true});await d.getByLabel('Composition named slot',{exact:true}).selectOption(`${intent.owner.providerId}/${intent.owner.recordId}/${intent.target.nodeId}/${intent.target.slotId}`);await d.getByRole('button',{name:'Attach collection',exact:true}).click();}
+ else{
+  await page.goto(domain==='compositions'?compositionUrl(intent.owner):mappingUrl(intent.owner));const a=intent.action;
+  if(intent.kind==='binding'){await page.getByRole('button',{name:`Bind ${intent.title}.${intent.target.prop} on ${intent.target.nodeId}`,exact:true}).click();const m=page.getByRole('menu',{name:`Bind ${intent.title}.${intent.target.prop} to…`,exact:true});await m.getByRole('menuitem').filter({has:page.locator('.cms-mapping-bind-menu__label').filter({hasText:new RegExp('^'+RegExp.escape(intent.fieldLabel)+'$')})}).click();}
+  else if(intent.kind==='group'){await page.getByRole('button',{name:`Add component to ${intent.slotId}`,exact:true}).click();await page.getByRole('button',{name:'Group',exact:true}).click();}
+  else if(a.kind==='query-reference'){await page.getByLabel('Filter 1 operator',{exact:true}).selectOption('equals');await page.getByLabel('Filter 1 value',{exact:true}).selectOption(JSON.stringify([a.ref.providerId,a.ref.modelId,a.ref.recordId]));}
+  else if(a.kind==='pins'){const section=page.locator('section').filter({has:page.getByRole('heading',{name:'Ordered pins',exact:true})});await section.getByRole('button',{name:'Choose',exact:true}).click();const d=page.getByRole('dialog',{name:'Choose ordered pins',exact:true});await d.getByLabel('Filter source Entries',{exact:true}).fill(a.ref.recordId);const row=d.getByRole('listitem').filter({has:page.locator('code',{hasText:a.ref.recordId})});await expect(row).toHaveCount(1);await row.getByRole('checkbox').check();await d.getByRole('button',{name:'Save pins',exact:true}).click();}
+  else{if(a.treeRoot)await page.getByRole('tree',{name:'Structure',exact:true}).getByRole('treeitem').first().click();if(a.treeLabel)await page.getByRole('treeitem').filter({hasText:a.treeLabel}).click();if(a.kind==='button')await page.getByRole('button',{name:a.label,exact:true}).click();else{const target=page.getByLabel(a.label,{exact:true});await expect(target).toBeEnabled({timeout:180000});if(a.kind==='select')await target.selectOption(a.value);else if(a.kind==='toggle'){if(await target.isChecked()!==a.value)await target.press('Space');else throw Error('No-op toggle forbidden');}else if(a.kind==='fill')await target.fill(String(a.value));else throw Error('Unsupported reviewed action');}}
+  await save();
+ }
+ await expect.poll(()=>{composition.check();gate.check();if(held)throw held;return domain==='compositions'?composition.committed:attempted;},{timeout:180000}).toBe(true);await check();await page.reload();await check();return{domain,record:result};
+}
