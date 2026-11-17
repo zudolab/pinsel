@@ -1,3 +1,4 @@
+import {readFrozenBundle,assertInputsUnchanged} from './frozen-inputs.mjs';
 import assert from 'node:assert/strict';
 import {readFile,writeFile,open,mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
@@ -9,9 +10,12 @@ import {releaseLifecycle} from './release-lifecycle.mjs';
 import {classifyRead,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from './readonly-proof.mjs';
 import {verifySavedHeader,verifySavedKnowledge} from '../header/driver.mjs';
 import {verifyFamilyRendering} from './verify-render.mjs';
-const [intentPath,artifacts,base] = process.argv.slice(2);
-const intent=JSON.parse(await readFile(intentPath,'utf8'));
+const [bundlePath,bundleHash,artifacts,base] = process.argv.slice(2);
+const inputs=await readFrozenBundle(bundlePath,bundleHash);
+await assertInputsUnchanged(inputs.hashes);
+const intent=inputs.intent;
 const snapshot=JSON.parse(await readFile(join(artifacts,'before.json'),'utf8'));
+assert.deepEqual(snapshot,inputs.snapshot,'Browser capture differs from frozen accepted input');
 validateReadIntent(intent,snapshot);
 const file=await open(join(artifacts,'events.ndjson'),'wx');
 let queue=Promise.resolve();
@@ -21,7 +25,7 @@ await mkdir(join(artifacts,'profile'));
 const context=await chromium.launchPersistentContext(join(artifacts,'profile'),{headless:true,executablePath:process.env.NATIVE_ACCEPTANCE_CHROMIUM||chromium.executablePath(),viewport:{width:1600,height:1050}});
 const page=context.pages()[0], pending=new Set(), active=activeReadback(snapshot.project.id);
 let blocked,error,result,previewCount=0;
-const headerProof=intent.kind==='header-restart'?validateHeaderRestart(snapshot,JSON.parse(await readFile(intent.forwardProofPath,'utf8'))):null;
+const headerProof=intent.kind==='header-restart'?validateHeaderRestart(snapshot,inputs.headerProof):null;
 const composition=compositionDerivedReadGate({page,snapshot,persist});
 const lane={async drain(){while(pending.size)await Promise.allSettled([...pending]);if(blocked)throw blocked;}};
 const lifecycle=releaseLifecycle({lanes:[lane,composition],composition,blocked:()=>blocked});
@@ -65,5 +69,7 @@ try {
 } catch(cause) {error=cause;await persist({phase:'held',error:cause.message});}
 finally {try{await lifecycle.close(context);}catch(cause){error??=cause;}await queue;await file.close();}
 if(error)throw error;
+await assertInputsUnchanged(inputs.hashes);
+await readFrozenBundle(bundlePath,bundleHash);
 if(intent.kind!=='active-identity')assert(previewCount>0,'Exact captured host preview response required');
 await writeFile(join(artifacts,'ui-result.json'),JSON.stringify({result},null,2),{flag:'wx'});

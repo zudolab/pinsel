@@ -185,7 +185,11 @@ guard and environment child-reaper. Do not run against owner drafts. Every inten
 and artifact path must be new; artifact directories must be outside the checkout.
 The runner starts its own server and fresh browser profile, fences source bytes,
 compares a fresh full public capture to the accepted input, then stops its server
-and requires unchanged public capture. It never initializes a stage or performs a
+and requires unchanged public capture. The parent captures the intent, accepted
+capture and optional Header proof into `accepted-inputs.json`; the child verifies
+its parent-supplied hash and consumes those exact objects. Original input hashes
+are rechecked before browser work and before proof creation, so changing a marker,
+mode or proof while startup is pending holds the attempt. It never initializes a stage or performs a
 canonical mutation. Ordinary reads can perform only server-challenged derived JSX
 repair through the existing Composition observer. Every admitted POST is observed
 through its original response and durably journaled; unsupported operations latch a
