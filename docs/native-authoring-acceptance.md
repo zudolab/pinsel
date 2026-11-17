@@ -7,8 +7,8 @@ results remain in the [compatibility ledger](composer-compatibility.md) at their
 actual source/package identities.
 
 Use Node 24 and pnpm 11.5.2, an immutable Composer Git pin, and a **verified disposable
-migration stage containing known data**. Follow the applicable migration recipe
-first; the runner never initializes, migrates or reseeds anything. Do not point it
+stage containing known data**. Use the fresh-checkout bootstrap below, or follow
+the applicable migration recipe for an existing saved workspace first; the runner never initializes, migrates or reseeds anything. Do not point it
 at owner drafts. Keep the original source store/history and stop other editors.
 Freeze repository source while the browser runs: source changes legitimately
 invalidate reviewed previews. No deployment, external model inference or inquiry
@@ -29,6 +29,103 @@ sibling source, a mutable branch or a copied package. Chromium uses Playwright's
 installed browser by default. If needed, set `NATIVE_ACCEPTANCE_CHROMIUM` to an
 existing executable, without unsafe-port or browser-security bypass flags.
 
+## Fresh known-data bootstrap or existing saved workspace
+
+Run the preparation commands above from the Pinsel repository root. For a fresh,
+separate disposable checkout with no native state, the current public initializer
+can create `notes-v1` directly. It reads committed `content/entries`, builds the
+known structure, and normalizes Note routes for pack `0.4.0` / renderer `native-v3`.
+It does not require reconstructing an older pack or running the two migrations.
+This bootstrap recipe has been inspected in source; it is **NOT_RUN** until its
+own install, initialization, capture and browser evidence are recorded.
+
+Before initialization, verify that all three paths are absent:
+
+- `packages/pinsel-content/.native-authoring-notes-v1`
+- `packages/pinsel-content/.native-public-notes-v1`
+- `packages/pinsel-content/.native-import-evidence.json`
+
+If any exists, preserve it and inspect its evidence; use another fresh checkout
+for a new rehearsal. The initializer checks all three destinations before public-file preparation or
+import and refuses existing files, directories and dangling symlinks. This preflight
+is not an atomic reservation: keep other writers stopped. Cross-store initialization
+is staged, and the shared import-evidence filename is written last. Preserve any
+partial output after a later failure; do not retry over it.
+
+```sh
+pnpm check:approved-seed
+pnpm assets:verify
+PINSEL_AUTHORING_STAGE=notes-v1 pnpm --filter @pinsel/content authoring:init
+```
+
+Approved assets must already exist at `packages/pinsel-ui/public` and
+`packages/pinsel-ui/src/art`; the checks above verify them. Initialization copies
+the committed public assets, combines `packages/pinsel-ui/styles/{tokens,colors,components}.css`,
+and prepares visitor scripts from `packages/pinsel-ui/src/scripts` into the named
+native public directory. No site build, Worker assembly, remote storage or asset
+upload is a prerequisite. Retain the resulting stage and import evidence; verify
+`ownerData: false`, source `committed-content-and-structure`, and ready status.
+
+For existing saved native state, use the [course migration](composer-course-migration.md)
+and [Note migration](composer-note-migration.md) as applicable instead. Keep the
+matching source runtime and recovery history. Never substitute fresh initialization
+for migration of saved edits. In the current checkout, use `notes-v1` consistently
+for authoring, capture, build and the runner; `course-identity-v1` is the older
+pack `0.3.0` / renderer `native-v2` migration source.
+
+## Independent manual saved-Paragraph recipe
+
+Use the verified disposable `notes-v1` stage, with other writers stopped and source
+frozen. Record the Pinsel commit and immutable Composer/contract pins. Create an
+external evidence directory and capture the before state while the editor is stopped:
+
+```sh
+export ACCEPTANCE_STAGE=notes-v1
+export EVIDENCE_DIR="$(mktemp -d /tmp/pinsel-manual-acceptance.XXXXXX)"
+PINSEL_AUTHORING_STAGE="$ACCEPTANCE_STAGE" pnpm --filter @pinsel/content authoring:capture -- "$EVIDENCE_DIR/before.json"
+PINSEL_AUTHORING_STAGE="$ACCEPTANCE_STAGE" pnpm dev
+```
+
+1. Open the printed loopback URL at `/composer?native=1`. Choose Sitemap `main`
+   and Lessons. Wait for **Saved snapshot rendered**. In the component tree,
+   enable **Show structural wrappers** if needed and select the page frame.
+   Expand **Component and owner** and verify `files/lessons/frame`.
+2. Under **Insert local component**, choose slot `main` and component Paragraph
+   (`pinsel.paragraph`), then **Insert at start of slot**. This insertion is a
+   canonical save. Select the inserted Paragraph in the tree, expand **Component
+   and owner**, and record its new UUID and full `files/lessons/<UUID>` owner.
+   Record the insertion response/receipt and a screenshot; do not create another
+   node if the response is uncertain.
+3. In the inspector's **本文** field, type `Independent saved Paragraph proof A`.
+   Before saving, confirm the input retains this text while preview still shows
+   saved content. Click **Save field**, wait for **Saved snapshot rendered**, and
+   confirm the text appears. Reload and reselect the same UUID; confirm the saved
+   field and rendered text. Record screenshots and the actual save result.
+4. Stop the owned server gracefully. Capture and build using the same explicit
+   stage, under the execution environment's shared heavy-test guard where required:
+
+   ```sh
+   PINSEL_AUTHORING_STAGE="$ACCEPTANCE_STAGE" pnpm --filter @pinsel/content authoring:capture -- "$EVIDENCE_DIR/saved-a.json"
+   PINSEL_AUTHORING_STAGE="$ACCEPTANCE_STAGE" pnpm --filter @pinsel/content authoring:build -- "$EVIDENCE_DIR/saved-a.json"
+   ```
+
+   Record the printed snapshot digest and output path. Verify `build-evidence.json`
+   names that exact digest and the expected workspace/pack/renderer, the emitted
+   `lessons/index.html` contains the exact marker, and the captured Lessons document
+   contains it on the recorded UUID. Baseline routes must remain present. Do not use
+   `build:site` as a substitute for this reviewed capture build.
+5. Restart with `PINSEL_AUTHORING_STAGE="$ACCEPTANCE_STAGE" pnpm dev`. Confirm the
+   same owner, text and preview survived restart. Select only the journaled
+   Paragraph and use **Remove component**. After successful save, stop the server
+   and capture to a new `$EVIDENCE_DIR/restored.json`. Compare the public canonical
+   documents and Content values with before; report legitimate history/timestamp
+   differences rather than erasing them. Keep receipts, captures and screenshots.
+   An uncertain save or inverse is a recovery hold, never permission to reset data.
+
+This manual exercise proves one representative local edit only. Run the full,
+negative, recovery and Assistant scenarios separately for their wider claims,
+including exact A after later B and byte-for-byte captured asset verification.
+
 ## Full authoring and exact-snapshot scenario
 
 Use your execution environment's shared heavy-test guard around the following
@@ -37,7 +134,7 @@ Set the actual installed SHA and verified stage name before running:
 
 ```sh
 export ACCEPTANCE_COMPOSER_SHA='<40-character immutable installed SHA>'
-export ACCEPTANCE_STAGE='course-identity-v1'
+export ACCEPTANCE_STAGE='notes-v1'
 node tests/native-authoring/run.mjs \
   --composer "$ACCEPTANCE_COMPOSER_SHA" \
   --stage "$ACCEPTANCE_STAGE" \

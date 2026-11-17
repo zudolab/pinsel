@@ -165,7 +165,12 @@ pnpm --filter @pinsel/content authoring:init
 pnpm dev
 ```
 
-Initialization is explicit and refuses an existing workspace. It stages committed
+Initialization is explicit and checks that the selected native data directory,
+prepared public root and `.native-import-evidence.json` are all absent before
+preparing files or importing stores. Existing files, directories and dangling
+symlinks refuse without initialization writes. Keep other writers stopped: this
+preflight is not an atomic reservation, and later initialization failures can leave
+partial staged output that must be preserved for review. It stages committed
 Content and `buildPinselSite` structure under
 `packages/pinsel-content/.native-authoring`, prepares approved public assets and the
 same production visitor script sources under `.native-public`, and records
