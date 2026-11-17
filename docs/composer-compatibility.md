@@ -551,3 +551,56 @@ blocked the read-only initialize operation. It stopped without canonical writes;
 before/after coherent capture remained exactly
 `afbaa4d849e75c5c7cc89d1bba1f1748ed2bc9313bff1d9e2530687d06b1c47e`.
 A corrected diagnostic remains required; this is not evidence of a product deadlock.
+
+
+## Installed Note ownership: Apply and restoration observed; run failed
+
+The `t5-note-remaining-1794881907` run used immutable Composer
+`3c30d18a13455b6adb51378c3cf957ecff186b1d`, workspace `pinsel`, explicit `notes-v1`,
+snapshot schema 1 / Composition schema 2, pack `pinsel@0.4.0` and renderer
+`pinsel-zfb@native-v3`. Its actual selected Prose target was
+`files/note-detail/note-prose`, with qualified Content provenance
+`content-filesystem/note/exam-schedule`, property `markdown` → `note-body`.
+This addresses the earlier missing-bound-target observation at package `1af2023`;
+it does not turn that earlier failed run into a pass.
+
+Fake-provider proposal completed. Before/proposed public captures had the identical
+digest `5c8dd6337880a27ccc79a4d82e178a1ac7524728cdd3306b83edc73ccdd28633`.
+The real candidate route rendered the marker before Apply; its acknowledgement
+bound `/notes/exam-schedule`, the exact renderer and candidate digest
+`f8515175a2aa352f5374c9abf1e4fd1d18ac395c5159f0bf01095b1000ae3cdb`.
+Actual Apply returned HTTP 200 with Content receipt revision
+`ecd73c90-0f59-44fe-b3e6-996031a77b51` for `note/exam-schedule`.
+The subsequent browser navigation to the saved Note route timed out waiting for
+load. This is a post-Apply navigation failure, not a refused Apply or missing
+provenance. The helper's completion/navigation race is being corrected; no retry
+pass is claimed. Saved-route verification and the complete Assistant run remain
+**FAIL/incomplete**, including remaining local and conflict scenarios.
+
+Supported cleanup Undo returned HTTP 200, revision
+`2a96c3c6-5778-45fb-9da1-6b310cfafaa0`, for the same qualified entry.
+The restore phase passed and `restoration-proof.json` records canonical values
+restored with legitimate metadata/history retained. Final public digest:
+`eb4ae3dc74c5498bf8d11d63f672b031d110da4d42c2efc60842e108b0a8b62a`.
+Evidence stays under `composer-adoption-notes/t5-note-remaining-1794881907`:
+`assistant-note.json`, phase `evidence.json` files, captures, restoration proof and
+aggregate `result-1794878439868.json` (**FAIL**). No live inference, owner-data
+cutover, deployment or new T5/T6/T7 completion claim follows from this subset.
+
+Pinsel source `34ee23bace32aabd6c36ce3998bffaa39266d8ca` CI runs
+[43993978604](https://github.com/zudolab/pinsel/actions/runs/43993978604) and
+[43993970909](https://github.com/zudolab/pinsel/actions/runs/43993970909) both passed.
+Those checks do not attest later helper changes. Composer source
+`80ae570706904e46cac75ec5804068077a01db20` validation remains pending at this
+checkpoint; source gates and installed end-to-end acceptance remain distinct.
+
+Corrected cold Content inspection at the same3c30 package / Pinsel34ee23b passed
+under guard144s: the Note library's New Entry control became visible and enabled
+between30 and60seconds. All210 completed requests succeeded; three background reads
+were pending when the read-only browser closed. The213 observed requests included
+25 count-entries calls (median16.685s),70 get-model calls and44 scan-entries calls.
+This proves progressing but slow loading, not a stalled transport. Both coherent
+captures matched digest17725aa5bdb7adb67c79240fb096704f46c017247bdf8595cce9c7b0d3e8b257;
+all808 native and143 public files remained byte-identical. Server4194 stopped;
+the detached known-data consumer and its history remain preserved. Evidence:
+`composer-adoption-notes/t6-cold-content-3c30-1/OUTCOME.md` and `request-summary.json`.
