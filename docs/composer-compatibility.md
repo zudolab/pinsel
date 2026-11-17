@@ -1103,3 +1103,30 @@ successful four-host check in 61s. Independent recursive comparison of all 16
 changed JSON files found only top-level mutation tokens changed; authored records
 are exact. Composer source head `d68a35fb79fad6386fcfbf39ed1e849182376200` retains
 the exact attested 26862 payload, verified after committing generated fixtures.
+
+## 6522 receipt recovery and separate restoration
+
+The normal recovery run on e63/6522 remains **FAIL** (193s). It did prove dropped
+forward-response handling and fresh-browser recovery of the exact committed
+receipt. Cleanup then refused before issuing an inverse because the test replayed
+a request outside the approved UI session path. The actual refusal body was not
+retained, so its observed error code is unknown. The public failure capture
+`b8c58e24a76e72751daf83769fe106eb0fc363b38aa9805ae4b4900cf2cda0c8`
+proved only the recorded Lessons placement remained moved.
+
+Reviewed fix `e26583115c0bb608fde43ac129b9934e2c1167da` (integrated `89edd23`)
+verifies the retained successful receipt and exact moved state, then uses the
+actual approved UI inverse. It records raw HTTP status/body durably before
+assertions and never retries an unknown mutation. Independent 32 tests and 24
+integrated recovery-proof tests passed.
+
+A separately reviewed, hash-bound restoration adapter preserved the original
+failed evidence and source/pin while copying recovery inputs to a new artifact
+directory. This restoration-only run passed in 138s. The approved UI inverse
+returned HTTP 200, operation `29d4349c-1d7f-4658-98c3-0257d4790448`.
+Final capture `aa1db648e32d890b40e5a7066e432c0815cb1aaaa80676dee6d2e24d20ca1ef6`
+restores all authored values; Content (including generation/token), Mapping,
+Sitemap, Assets and public files are exact. Composition revision metadata and
+receipt history remain. Original evidence hashes are unchanged; checkout clean,
+port 4197 closed, lease absent. Evidence: `t7-6522-recovery-restoration-1`.
+This is not a normal full recovery pass; a fresh committed-runner run is required.
