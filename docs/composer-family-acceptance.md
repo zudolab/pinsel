@@ -1,6 +1,6 @@
 # Results and FAQ family acceptance tooling
 
-The repo-relative tooling in `scripts/verify/composer-families/` prepares and checks
+The repo-relative tooling in `tests/native-authoring/families/` prepares and checks
 Results-year and FAQ-group authoring through the installed Composer UI. It is an
 acceptance harness, not another authoring implementation. **The complete installed
 family scenario is NOT_RUN.** Pure tests and source review do not establish an
@@ -43,7 +43,7 @@ Paths below stand for caller-owned files; use a new intent and artifact destinat
 for each phase. The generator writes exclusively and cannot dispatch mutations.
 
 ```sh
-node scripts/verify/composer-families/sequence.mjs \
+node tests/native-authoring/families/sequence.mjs \
   /absolute/config.json /absolute/accepted-capture.json \
   /absolute/proof-paths.json /absolute/active-identity.json /absolute/intent.json
 ```
@@ -53,7 +53,7 @@ review and an exclusive writer window, run this command **inside the shared heav
 guard** used by your environment:
 
 ```sh
-corepack pnpm exec node scripts/verify/composer-families/run-phase.mjs \
+corepack pnpm exec node tests/native-authoring/families/run-phase.mjs \
   --composer FULL_IMMUTABLE_COMPOSER_SHA --stage EXISTING_STAGE \
   --intent /absolute/intent.json --artifacts /absolute/new-phase-artifacts --port 4198
 ```
@@ -96,7 +96,7 @@ Build only an accepted capture using the existing public build recipe:
 ```sh
 PINSEL_AUTHORING_STAGE=EXISTING_STAGE corepack pnpm --filter @pinsel/content authoring:build -- /absolute/accepted-capture.json
 PINSEL_AUTHORING_STAGE=EXISTING_STAGE corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json \
-  scripts/verify/composer-families/verify-build.mjs \
+  tests/native-authoring/families/verify-build.mjs \
   /absolute/accepted-capture.json /absolute/family.json faq /absolute/exact-build-output
 ```
 
@@ -109,10 +109,10 @@ in the HTML cannot satisfy the family section assertion.
 For live membership, generate one exact Content reference edit:
 
 ```sh
-node scripts/verify/composer-families/membership.mjs \
+node tests/native-authoring/families/membership.mjs \
   /absolute/accepted.json /absolute/family.json faq move /absolute/move-intent.json
 # Review/run that one phase through run-phase, then:
-node scripts/verify/composer-families/verify-membership.mjs \
+node tests/native-authoring/families/verify-membership.mjs \
   /absolute/accepted.json /absolute/moved.json /absolute/family.json faq move
 ```
 
@@ -168,7 +168,7 @@ replace their guards with file-by-file private storage reconstruction.
 Unit validation (no browser, native writer or server):
 
 ```sh
-pnpm exec vitest run --config scripts/verify/composer-families/vitest.config.ts
+pnpm exec vitest run --config tests/native-authoring/families/vitest.config.ts
 ```
 
 Runtime selectors, full sequence, publication, restart, visitor interactions and
@@ -176,4 +176,4 @@ exact build outputs still require installed acceptance and separate evidence at 
 exact package and Pinsel revisions. Actual owner-data cutover and new authenticated
 model-provider acceptance remain held independently.
 
-A lightweight installed identity-shape check (no capture, build or native-store operation) is available through `corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json scripts/verify/composer-families/installed-identity-readcheck.mjs`. The public host identity omits `manifestDigest`; public snapshot compilation independently verifies that captured manifest digest.
+A lightweight installed identity-shape check (no capture, build or native-store operation) is available through `corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json tests/native-authoring/families/installed-identity-readcheck.mjs`. The public host identity omits `manifestDigest`; public snapshot compilation independently verifies that captured manifest digest.

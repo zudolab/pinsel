@@ -12,6 +12,13 @@ export default defineConfig({
           environment: "node",
         },
       },
+      {
+        test: {
+          name: "native-family-proofs",
+          include: ["tests/native-authoring/families/*.test.mjs"],
+          environment: "node",
+        },
+      },
       "apps/*/vitest.config.ts",
       "packages/*/vitest.config.ts",
     ],
