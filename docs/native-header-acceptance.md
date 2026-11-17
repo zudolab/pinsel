@@ -113,3 +113,7 @@ misclassified as a canonical write. Failures and unfinished derived-output
 challenges still hold the run. The restart verifier supplies the same navigation
 boundary and retains its original-response, busy-read and no-mutation guards.
 These source checks are not a new installed runtime acceptance result.
+
+For an acknowledged Knowledge save followed by terminal preview timeout, use the
+[read-only saved-reference recovery recipe](native-knowledge-recovery.md). Preserve
+the failed run; do not replay the save or fabricate its missing forward proof.

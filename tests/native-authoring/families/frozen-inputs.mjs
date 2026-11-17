@@ -5,10 +5,16 @@ export const inputHash=bytes=>createHash('sha256').update(bytes).digest('hex');
 /** Capture each external JSON once. Runtime consumes only these captured objects. */
 export async function freezeReadInputs(intentPath) {
   const hashes={};
-  const read=async path=>{const bytes=await readFile(path);hashes[path]=inputHash(bytes);return JSON.parse(bytes.toString('utf8'));};
+  const read=async (path,lines=false)=>{const bytes=await readFile(path);hashes[path]=inputHash(bytes);return lines?bytes.toString('utf8').trim().split('\n').map(line=>JSON.parse(line)):JSON.parse(bytes.toString('utf8'));};
   const intent=await read(intentPath),snapshot=await read(intent.capturePath);
   const headerProof=intent.kind==='header-restart'?await read(intent.forwardProofPath):null;
-  return {intent,snapshot,headerProof,hashes};
+  let savedReference=null;
+  if(intent.kind==='knowledge-saved-reference'){
+    const paths=await read(intent.recoveryEvidencePath);assert.deepEqual(Object.keys(paths).sort(),['after','before','bundle','bundleHash','events','provenance']);
+    savedReference={paths};for(const [key,path] of Object.entries(paths)){assert(path.startsWith('/'));savedReference[key]=await read(path,key==='events');}
+    savedReference.hashes=Object.fromEntries(Object.values(paths).map(path=>[path,hashes[path]]));
+  }
+  return {intent,snapshot,headerProof,...(savedReference?{savedReference}:{}),hashes};
 }
 export async function assertInputsUnchanged(hashes) {
   for(const [path,hash] of Object.entries(hashes))assert.equal(inputHash(await readFile(path)),hash,`External acceptance input changed: ${path}`);

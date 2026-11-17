@@ -64,10 +64,11 @@ export function assertReadScope(path,headers,result,workspaceId) {
 }
 
 export function validateReadIntent(intent, snapshot) {
-  assert(['family-render','active-identity','header-restart'].includes(intent.kind));
+  assert(['family-render','active-identity','header-restart','knowledge-saved-reference'].includes(intent.kind));
   assert.equal(intent.captureDigest, snapshot.digest);
   assert(/^[a-f0-9]{64}$/.test(snapshot.digest));
   assert(intent.capturePath?.startsWith('/'));
+  if(intent.kind==='knowledge-saved-reference')assert(intent.recoveryEvidencePath?.startsWith('/'));
   if (intent.kind === 'header-restart') assert(intent.forwardProofPath?.startsWith('/'));
   if (intent.kind === 'family-render') {
     assert(['results','faq'].includes(intent.family));
@@ -129,6 +130,7 @@ export function busyReadTracker(){
  const pending=new Set();
  const retryable=new Set(['list','get','snapshot','read-all','list-models','get-model','get-entry','count-entries','page-entries','scan-entries','selection','generation','find-seeding','missing-directories']);
  return{
+  get outstanding(){return pending.size;},
   observe(path,headers,input,response,workspaceId){
    const operation=headers['x-zudo-composer-operation'];
    const key=JSON.stringify([path,operation,headers['x-zudo-native-client'],headers['x-zudo-native-epoch'],input]);
