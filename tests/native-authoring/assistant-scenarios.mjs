@@ -118,7 +118,11 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
     const changed = `${journal.marker} human intervening`;
     assert([journal.old, journal.value, changed].includes(current), 'Intervening value is outside this test journal');
     const value = phase === 'intervene' ? changed : journal.old;
-    journal.human = { before: current, after: value, intended: true }; await persist();
+    const expectedContentToken = Number(process.env.NATIVE_ACCEPTANCE_CONTENT_TOKEN);
+    const beforeCapture = process.env.NATIVE_ACCEPTANCE_BEFORE_CAPTURE;
+    assert(Number.isSafeInteger(expectedContentToken) && expectedContentToken > 0 && beforeCapture, 'Human generation proof requires immediately preceding public capture');
+    journal.human = { before: current, after: value, intended: true, changed: current !== value, expectedContentToken, beforeCapture, phase };
+    journal.humanWrites ??= []; journal.humanWrites.push(journal.human); await persist();
     if (current !== value) { await field.fill(value); await page.getByRole('button', { name: 'Save', exact: true }).click(); }
     await page.locator('button[title="All changes saved"]').waitFor({ timeout: 120000 });
     journal.human.saved = true; await persist(); return;

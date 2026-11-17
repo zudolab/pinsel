@@ -57,10 +57,32 @@ export function canonicalProject(snapshot) {
     }
     return project;
 }
-export function assertRestored(before, after) {
-    assert.deepEqual(canonicalProject(after), canonicalProject(before), 'Authored workspace differs after supported inverses');
+export function contentOwner(project, ref) {
+    const providers = project.providers.content.filter(p => p.id === ref.providerId);
+    assert.equal(providers.length, 1, 'Content provider must resolve exactly once');
+    const entries = providers[0].entries.filter(e => e.modelId === ref.modelId && e.id === ref.entryId);
+    assert.equal(entries.length, 1, 'Qualified Content entry must resolve exactly once');
+    return entries[0];
+}
+export function assertRestored(before, after, generations = []) {
+    const a = canonicalProject(before), b = canonicalProject(after), report = [];
+    const seen = new Set();
+    for (const change of generations) {
+        const key = JSON.stringify([change.providerId, change.modelId, change.entryId]);
+        assert(!seen.has(key), 'Duplicate generation authorization'); seen.add(key);
+        const old = contentOwner(a, change), current = contentOwner(b, change);
+        assert(Number.isSafeInteger(old.generation) && old.generation >= 0);
+        assert(Number.isSafeInteger(change.generation) && change.generation > old.generation, 'Generation authorization must advance monotonically');
+        assert(Number.isSafeInteger(after.tokens.content) && change.generation <= after.tokens.content, 'Generation cannot exceed current Content token');
+        assert.equal(current.generation, change.generation, 'Entry generation differs from successful operation evidence');
+        assert(change.evidence, 'Generation authorization needs successful operation evidence');
+        report.push({ ...change, beforeGeneration: old.generation });
+        current.generation = old.generation;
+    }
+    assert.deepEqual(b, a, 'Authored workspace differs after supported inverses');
     assert.deepEqual(after.assets, before.assets, 'Assets changed');
     assert.deepEqual(after.publicFiles, before.publicFiles, 'Public bytes changed');
+    return report;
 }
 export function savedNode(snapshot, owner) {
     const provider = snapshot.project.providers.compositions.find(p => p.id === owner.providerId);

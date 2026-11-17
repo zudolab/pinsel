@@ -322,3 +322,21 @@ The generic activated-release visitor viewer is explicitly unavailable for this
 host. It must not display the current workspace as if it were that immutable release.
 Use the exact captured Pinsel static build for output verification; local release
 compilation/activation alone is not rendered-output evidence.
+
+### Content generation proof
+
+The installed native transactional store (`stampGenerations`) assigns a changed
+entry the **new global Content token**, not its previous entry generation plus
+one. Assistant Apply asserts one global-token increment, the exact qualified
+provider/model/entry generation, and its committed receipt token/owner. It then
+compares every other authored value, entry generation, domain and asset strictly.
+Restoration accepts only explicit qualified-owner generation transitions derived
+from successful receipts or journaled successful UI saves with a preceding public
+capture. The run writes their exact before/after metadata audit. Authored fields
+named `generation` remain strict.
+
+The initial Course run on package `1af2023` passed UI Apply/recovery and Undo but
+was reported FAIL because the older assertion treated generation metadata as an
+unexpected authored change. Its evidence remains unchanged. The general `full`
+scenario still needs equivalent journal-backed human Content generation accounting
+before a new passing run can be claimed; this fix is scoped to `assistant`.

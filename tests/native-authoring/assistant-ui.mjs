@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { expect } from '@playwright/test';
-import { canonicalProject } from './support.mjs';
+import { canonicalProject, contentOwner } from './support.mjs';
 
 /** Real DOM driver for the supported fake provider. It never fabricates an acknowledgement. */
 export async function proposeFromSelection(page, { prop, prompt, domain }) {
@@ -81,15 +81,25 @@ export function assertProposalReadOnly(before, after) {
     assert.deepEqual(after, before, 'Proposal/candidate changed canonical public capture');
 }
 /** Content Apply must never copy bound values into Composition props, Mapping or Sitemap. */
-export function assertContentOwnership(before, after, { providerId, entryId, fieldId, value }) {
+export function assertContentOwnership(before, after, { providerId, entryId, fieldId, value, spec, apply }) {
     const a = canonicalProject(before), b = canonicalProject(after);
     for (const domain of ['compositions', 'mappings', 'sitemaps']) assert.deepEqual(b.providers[domain], a.providers[domain], `${domain} changed during Content Apply`);
-    const provider = b.providers.content.find(item => item.id === providerId);
-    const entry = provider?.entries.find(item => item.id === entryId);
-    assert(entry, 'Expected Content owner absent');
+    const ref = { providerId, modelId: spec.modelId, entryId };
+    const entry = contentOwner(b, ref), original = contentOwner(a, ref);
     assert.equal(entry.values[fieldId], value);
-    const original = a.providers.content.find(item => item.id === providerId)?.entries.find(item => item.id === entryId);
-    assert(original && Object.hasOwn(original.values, fieldId));
+    assert(Object.hasOwn(original.values, fieldId));
+    assert(Number.isSafeInteger(before.tokens.content) && before.tokens.content >= 0);
+    assert(Number.isSafeInteger(after.tokens.content));
+    assert.equal(after.tokens.content, before.tokens.content + 1, 'Expected one Content commit');
+    assert(Number.isSafeInteger(original.generation) && original.generation >= 0);
+    assert.equal(entry.generation, after.tokens.content, 'Changed entry must carry committed global Content token');
+    assert(entry.generation > original.generation, 'Entry generation did not advance');
+    assert(apply.body.ok);
+    const receipt = apply.body.result.receipt;
+    assert.deepEqual(receipt.entry, { providerId, modelId: spec.modelId, recordId: entryId });
+    assert.equal(receipt.expected, String(entry.generation));
+    assert(receipt.operationKey && receipt.revisionId);
+    entry.generation = original.generation;
     entry.values[fieldId] = original.values[fieldId];
     assert.deepEqual(b, a, 'Apply changed unrelated authored values');
     assert.deepEqual(after.assets, before.assets, 'Content Apply changed Assets');

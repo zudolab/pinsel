@@ -4,9 +4,9 @@ import { mkdtemp, mkdir, writeFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { artifactPath, assertRestored, baselineRoutes, canonicalProject, savedNode, verifyBuild, sha256, assertRunScope } from './support.mjs';
-const fixture = () => ({ digest: 'a'.repeat(64), assets: { files: [] }, publicFiles: [], project: { providers: {
+const fixture = () => ({ digest: 'a'.repeat(64), tokens: { content: 3 }, assets: { files: [] }, publicFiles: [], project: { providers: {
             compositions: [{ id: 'files', records: [{ id: 'lessons', updatedAt: 'old', document: { root: [{ id: 'frame', slots: { main: [{ id: 'owned', props: { text: 'saved A' }, slots: {} }] } }] } }] }],
-            content: [{ id: 'content-filesystem', models: [], entries: [{ id: 'consultation', modelId: 'course', updatedAt: 'old', values: { price: 'price A', updatedAt: 'authored date' } }] }], mappings: [], sitemaps: []
+            content: [{ id: 'content-filesystem', models: [], entries: [{ id: 'consultation', modelId: 'course', generation: 1, updatedAt: 'old', values: { price: 'price A', updatedAt: 'authored date' } }] }], mappings: [], sitemaps: []
         } } });
 test('restoration ignores store timestamps but detects changed authored fields and node state', () => {
     const before = fixture();
@@ -69,9 +69,48 @@ test('Content ownership proof rejects shadows and unrelated authored changes', a
     const { assertContentOwnership, assertProposalReadOnly } = await import('./assistant-ui.mjs');
     const before = fixture(), after = structuredClone(before);
     after.project.providers.content[0].entries[0].values.price = 'new';
-    const change = { providerId: 'content-filesystem', entryId: 'consultation', fieldId: 'price', value: 'new' };
+    after.tokens.content = 4; after.project.providers.content[0].entries[0].generation = 4;
+    const change = { providerId: 'content-filesystem', entryId: 'consultation', fieldId: 'price', value: 'new', spec: { modelId: 'course' }, apply: { body: { ok: true, result: { receipt: { entry: { providerId: 'content-filesystem', modelId: 'course', recordId: 'consultation' }, expected: '4', operationKey: 'apply-test', revisionId: 'revision-test' } } } } };
     assertContentOwnership(before, after, change);
     assert.throws(() => assertProposalReadOnly(before, after));
     after.project.providers.compositions[0].records[0].document.root[0].slots.main[0].props.price = 'new';
     assert.throws(() => assertContentOwnership(before, after, change));
+});
+
+test('generation restoration is qualified, evidence-bound and does not strip authored generation', () => {
+    const before = fixture();
+    before.project.providers.content[0].entries[0].values.generation = 'authored';
+    before.project.providers.content[0].entries.push({ id: 'consultation', modelId: 'other', generation: 2, values: { generation: 'other authored' } });
+    const after = structuredClone(before); after.tokens.content = 5; after.project.providers.content[0].entries[0].generation = 5;
+    const proof = { providerId: 'content-filesystem', modelId: 'course', entryId: 'consultation', generation: 5, evidence: 'receipt:undo:revision' };
+    assert.equal(assertRestored(before, after, [proof])[0].beforeGeneration, 1);
+    assert.throws(() => assertRestored(before, after));
+    for (const generation of [0, 1, 4, 6, 1.5, Number.MAX_SAFE_INTEGER + 1]) assert.throws(() => assertRestored(before, after, [{ ...proof, generation }]));
+    assert.throws(() => assertRestored(before, after, [{ ...proof, modelId: 'other' }]));
+    after.project.providers.content[0].entries[1].generation = 5;
+    assert.throws(() => assertRestored(before, after, [proof]));
+    after.project.providers.content[0].entries[1].generation = 2;
+    after.project.providers.content[0].entries[0].values.generation = 'shadowed';
+    assert.throws(() => assertRestored(before, after, [proof]));
+});
+test('Content Apply uses global token rather than old entry generation and rejects wrong owner/metadata', async () => {
+    const { assertContentOwnership } = await import('./assistant-ui.mjs');
+    const before = fixture();
+    before.project.providers.content[0].entries.unshift({ id: 'consultation', modelId: 'other', generation: 2, values: { price: 'other', generation: 'authored' } });
+    const after = structuredClone(before); after.tokens.content = 4;
+    const entry = after.project.providers.content[0].entries[1]; entry.generation = 4; entry.values.price = 'new';
+    const journal = { providerId: 'content-filesystem', entryId: 'consultation', fieldId: 'price', value: 'new', spec: { modelId: 'course' }, apply: { body: { ok: true, result: { receipt: { entry: { providerId: 'content-filesystem', modelId: 'course', recordId: 'consultation' }, expected: '4', operationKey: 'apply', revisionId: 'rev' } } } } };
+    assertContentOwnership(before, after, journal); // entry 1 -> global 4
+    for (const generation of [1, 2, 3, 5, 4.5, Number.MAX_SAFE_INTEGER + 1]) {
+        const wrong = structuredClone(after); wrong.project.providers.content[0].entries[1].generation = generation;
+        assert.throws(() => assertContentOwnership(before, wrong, journal));
+    }
+    const unrelated = structuredClone(after); unrelated.project.providers.content[0].entries[0].generation = 4;
+    assert.throws(() => assertContentOwnership(before, unrelated, journal));
+    const wrongReceipt = structuredClone(journal); wrongReceipt.apply.body.result.receipt.entry.modelId = 'other';
+    assert.throws(() => assertContentOwnership(before, after, wrongReceipt));
+    const unsafeBefore = structuredClone(before), unsafeAfter = structuredClone(after);
+    unsafeBefore.tokens.content = Number.MAX_SAFE_INTEGER; unsafeAfter.tokens.content = Number.MAX_SAFE_INTEGER + 1;
+    unsafeAfter.project.providers.content[0].entries[1].generation = unsafeAfter.tokens.content;
+    assert.throws(() => assertContentOwnership(unsafeBefore, unsafeAfter, journal));
 });
