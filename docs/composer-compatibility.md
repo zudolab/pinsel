@@ -995,4 +995,8 @@ identity changed. No source authority was switched or data migrated.
 
 Installed invalid-human/AI/publication refusals, supported Apply/Undo and final
 current-pin scenarios remain pending. Source tests and package installation are
-not completion of those checks. Composer CI run44030617593 is in progress.
+not completion of those checks. Composer CI run44030617593 finished with 25 jobs
+passing and validation failing on resolved-config/test TypeScript contracts.
+The original required-key assertion remains intact; source correction and a new
+declaration package are pending integration. Pinsel CI run44031065105 passed all
+four jobs.
