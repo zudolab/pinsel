@@ -1024,3 +1024,34 @@ captures/screenshots, exact-build proof and restoration audit. The acceptance
 checkout was clean, port 4197 closed, and its lease absent at completion. This
 pass belongs to package 711; the declaration correction, negative/recovery cases,
 policy-specific acceptance and remaining T6 scenarios are separate work.
+
+## Resolved-config declaration correction
+
+Composer source `b7453de4bacdac3477927cca0324e57a097a1704` preserves the original
+all-required resolved-config contract: an omitted authored Content policy resolves
+to an own property with value `undefined`. The authored option remains optional.
+The full typecheck passed, including the original invariant; two focused config
+and nine ownership tests passed. Public generation/checks passed in 31s/29s.
+
+Package `6522f2c78fd59744b56d1717bb93f68d2bddc255`, attested by
+`17579d3cbf6c405c900087cae14bf50e676b898a`, contains 778 files with payload digest
+`882444ae528ff7530a90d93c13f15da919cdd12421bd60b9acc4ae108837cebb`.
+A complete payload comparison with 711 finds exactly five changed files: the
+single TypeScript resolved-property declaration and its four public declaration
+outputs. Every other shipped file is byte/mode-identical. This does not relabel
+711's browser run as a new-pin run.
+
+All four Pinsel manifests and the generated lockfile use 6522; install passed in
+13.3s, followed by frozen install, dedupe and no-deploy checks. Public capture
+`ee5f1dac…` → `6ffa4a5dc0a6a493c33b753d39b6ee43e8d0f959fd2a398ffce740ed73e374c0`
+changes only the enclosing digest and pack/renderer digests. All other capture
+fields, including compiler identity, authored data/tokens and Assets, are exact.
+Independent policy and recovery acceptance remains pending on this candidate.
+
+The [portable Header/Knowledge recipe](native-header-acceptance.md) is integrated
+with 27 focused tests and independent source review; its browser forward/inverse
+scenarios remain NOT_RUN. Separately, ordinary new Sitemap child creation exposed
+[Composer #987](https://github.com/Takazudo/zudo-composer/issues/987): capture and
+normal restart reject a saved unassigned page. The acknowledged child and failed
+proofs are preserved; no blind replay/inverse or next write was performed. That
+scenario remains held for a narrow generic capture fix and installed recovery.

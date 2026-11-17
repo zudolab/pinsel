@@ -21,6 +21,6 @@
     "@takazudo/zfb": "5.1.5",
     "@zudo-composer/component-contract": "git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0",
     "preact": "^10.29.8",
-    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#71126775a97feab004145dde63a768684e8e3cd9"
+    "zudo-composer": "git+https://github.com/Takazudo/zudo-composer.git#6522f2c78fd59744b56d1717bb93f68d2bddc255"
   }
 }
