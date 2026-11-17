@@ -73,4 +73,34 @@ Pure checks (no browser/native writes):
 corepack pnpm exec vitest run --config tests/native-authoring/header/vitest.config.ts
 ```
 
-`fixture.json` is reduced synthetic baseline material with an invalid capture digest and no usable Assets. It is for tests only, never a workspace import/build input. The root Vitest project should include `tests/native-authoring/header/*.test.mjs`; standalone execution does not prove that root CI has been wired.
+`fixture.json` is reduced synthetic baseline material with an invalid capture digest and no usable Assets. It is for tests only, never a workspace import/build input. The root Vitest project includes `tests/native-authoring/header/*.test.mjs`; this wiring is not evidence that current-head CI or installed browser acceptance passed.
+
+## Explicit restart verification before inverse
+
+A successful phase includes reload and offline capture/build, but that alone is not
+browser evidence after a server restart. With the server stopped, use the successful
+forward or inverse `proof.json` and its exact `afterCapture` to write a new intent:
+
+```json
+{"kind":"header-restart","capturePath":"/absolute/phase/after.json","captureDigest":"ACTUAL_AFTER_DIGEST","forwardProofPath":"/absolute/phase/proof.json"}
+```
+
+Here `forwardProofPath` means the already accepted phase to inspect (it can also be
+an accepted inverse). The runner refuses a changed capture or owner value. Inside
+the shared heavy guard/reaper, run:
+
+```sh
+corepack pnpm exec node tests/native-authoring/families/run-readonly.mjs \
+  --composer FULL_IMMUTABLE_COMPOSER_SHA --stage notes-v1 --port 4199 \
+  --intent /absolute/restart-intent.json --artifacts /absolute/new-restart-attempt
+```
+
+It starts a new server and browser, admits only observed read operations and the
+existing challenged derived JSX repair protocol, and invokes the same Header or
+Knowledge rendering/navigation assertions without Save. Host preview responses
+must bind the exact accepted capture, workspace, pack and renderer identity. After
+shutdown, the complete public capture must remain identical before it writes
+`READ_ONLY_RESTART_VERIFIED` proof. Preserve screenshots and the request journal.
+Run this after forward and again after inverse when claiming full restart coverage;
+it neither reruns a write nor rebuilds the already accepted digest output. The
+standalone restart command remains installed-runtime NOT_RUN until executed.

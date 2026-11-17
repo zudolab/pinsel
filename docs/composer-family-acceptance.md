@@ -85,11 +85,10 @@ or invent a timing-based pass. `equals → not-equals → equals` are separately
 
 ## Exact rendering, builds and live membership
 
-The exported `verifyFamilyRendering` helper must run in a separately reviewed
-browser phase with a canonical-write-blocking observer and exact public before/after
-captures. It selects Browse page, checks the actual host iframe section and TOC,
-checks the resulting iframe hash, and checks FAQ `details.open`. It is **not** a
-standalone browser command or permission to attach to an active owner session.
+Use the standalone read-only restart runner below. It calls `verifyFamilyRendering`
+to select Browse page, inspect the actual host iframe section and TOC, check the
+resulting iframe hash, and check FAQ `details.open`. Runtime acceptance remains
+NOT_RUN until this runner succeeds at the recorded installed revision.
 
 Build only an accepted capture using the existing public build recipe:
 
@@ -177,3 +176,59 @@ exact package and Pinsel revisions. Actual owner-data cutover and new authentica
 model-provider acceptance remain held independently.
 
 A lightweight installed identity-shape check (no capture, build or native-store operation) is available through `corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json tests/native-authoring/families/installed-identity-readcheck.mjs`. The public host identity omits `manifestDigest`; public snapshot compilation independently verifies that captured manifest digest.
+
+## Standalone read-only restart and active-release handoff
+
+These commands require the same clean committed consumer checkout, frozen install,
+existing stage and stopped writers as mutation phases. Run through the shared heavy
+guard and environment child-reaper. Do not run against owner drafts. Every intent
+and artifact path must be new; artifact directories must be outside the checkout.
+The runner starts its own server and fresh browser profile, fences source bytes,
+compares a fresh full public capture to the accepted input, then stops its server
+and requires unchanged public capture. It never initializes a stage or performs a
+canonical mutation. Ordinary reads can perform only server-challenged derived JSX
+repair through the existing Composition observer. Every admitted POST is observed
+through its original response and durably journaled; unsupported operations latch a
+hold. It drains observations before/after browser closure and never retries writes.
+
+First save a fresh public capture with the editor stopped. For release identity,
+write this intent, substituting the actual capture path and its digest:
+
+```json
+{"kind":"active-identity","capturePath":"/absolute/accepted.json","captureDigest":"ACTUAL_SHA256"}
+```
+
+Run the same command for either intent kind:
+
+```sh
+corepack pnpm exec node tests/native-authoring/families/run-readonly.mjs \
+  --composer FULL_IMMUTABLE_COMPOSER_SHA --stage EXISTING_STAGE \
+  --intent /absolute/readonly-intent.json --artifacts /absolute/new-readonly-attempt --port 4198
+```
+
+The browser opens Review & release and clicks only **Inspect current state**.
+Successful public `list` and exact active `get` responses must agree on the selected
+project and revision; an absent active release or a different staged head refuses.
+Only after browser settlement and unchanged offline capture does the runner write
+`proof.json` (`READ_ONLY_RESTART_VERIFIED`) and `active-identity.json`. Pass that exact
+identity file to `sequence.mjs`; retain the proof and original response journal.
+It proves public active identity, not a Pinsel production-rendered release artifact.
+Do not run publication to manufacture this prerequisite without separate review.
+
+For rendering, use the actual completed family descriptor to supply marker,
+childText and kind. For the created/restored state use:
+
+```json
+{"kind":"family-render","capturePath":"/absolute/accepted.json","captureDigest":"ACTUAL_SHA256","family":"faq","marker":"ACTUAL_MARKER","childText":"ACTUAL_CHILD_TEXT","present":true}
+```
+
+For moved membership set `present:false` and add `oldFragment` from the accepted
+family descriptor. Results uses `family:"results"`. Review these values against the
+saved descriptor before execution. Each run starts a new server/browser, checks
+section containment and TOC navigation; FAQ present-state checks its disclosure.
+Successful output includes `verified.png`, requests/responses, source provenance,
+before/after captures and the proof. Follow with the exact accepted-snapshot build
+and `verify-build.mjs` recipe above: browser proof alone does not establish static
+output or captured asset fidelity. Membership inverse gets its own fresh intent,
+artifact directory, restart proof and exact build; it does not delete family records
+or release history. Preserve failures and reconcile public readback before advancing.

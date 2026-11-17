@@ -295,7 +295,7 @@ lockfile text cryptographically attests every installed byte. The negative mode
 now attempts all seven defined endpoint refusals, with public and receipt-inclusive
 before/after audits; this expanded run is not yet executed.
 
-### Assistant scenario (partial evidence; full run failed)
+### Assistant scenario (historical failures and later pin-qualified passes)
 
 The complete seven-case workload can exceed a guard's default 1800-second
 runtime cap. Use its supported bounded `--max-run 5400` option for this aggregate,
@@ -421,10 +421,14 @@ refused. An uncertain attempt prevents automatic restoration, including componen
 removal; retain its evidence and reconcile it before further writes. A concurrent
 write can invalidate this proof: the supplemental reads do not form a transaction.
 
-The new full-scenario proof has focused test coverage but **has not yet passed an
-installed full browser run**. Keep that acceptance held until the actual command
-completes, including exact snapshot A/build and restoration checks. Older full-run
-journals without successful per-save evidence cannot authorize generation changes.
+The earlier full-run failures remain retained evidence. Later installed acceptance
+passed the complete seven-case Assistant workload at package `bc20ea554d5d8de92934c9bf4ec989229d23047e`
+and the normal human-authoring full scenario at package
+`71126775a97feab004145dde63a768684e8e3cd9`; see the pin-qualified compatibility
+ledger for source revisions, commands and evidence. These passes do not establish
+a runtime pass for the current `5fe6d8d92f5013943053491794c0502b83228d53` candidate.
+Older full-run journals without successful per-save evidence still cannot authorize
+generation changes.
 
 Assistant response observation journals the successful receipt before waiting for
 UI completion. A normal Apply (or recovered lost Apply) must show `Status: applied`
