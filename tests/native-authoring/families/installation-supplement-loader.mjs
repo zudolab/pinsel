@@ -1,18 +1,16 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {execFile} from 'node:child_process';
-import {promisify} from 'node:util';
+import {historicalGitBatch} from './historical-git-batch.mjs';
 import {inputHash,readExpectedBytes,mergeExpectedHashes} from './expected-hashes.mjs';
 import {loadFamilyInstallationBridge,currentFamilyInstallation} from './installation-bridge.mjs';
 import {familyInstallationSupplementProof,validateBindingRestartEvidence} from './installation-supplement.mjs';
 import {familyConsumers} from './installation-history.mjs';
-const exec=promisify(execFile);
 /** Verify historical committed bytes, without reading current install as the old one. */
 export async function assertHistoricalFamilySource(repo,installation){
  const {source,composer}=installation;assert.match(source.head,/^[a-f0-9]{40}$/);assert.match(composer,/^[a-f0-9]{40}$/);
- const {stdout}=await exec('git',['ls-tree','-r','--name-only','-z',source.head],{cwd:repo,maxBuffer:16*1024*1024});const paths=stdout.split('\0').filter(Boolean).sort();assert.deepEqual(Object.keys(source.hashes).sort(),paths,'Historical full source inventory changed');
- for(let i=0;i<paths.length;i+=8)await Promise.all(paths.slice(i,i+8).map(async path=>{const{stdout:bytes}=await exec('git',['show',`${source.head}:${path}`],{cwd:repo,encoding:'buffer',maxBuffer:16*1024*1024});assert.equal(inputHash(bytes),source.hashes[path],`Historical source bytes changed: ${path}`);}));
- for(const consumer of familyConsumers){const{stdout:manifest}=await exec('git',['show',`${source.head}:${consumer}/package.json`],{cwd:repo});assert.equal(JSON.parse(manifest).dependencies['zudo-composer'],`git+https://github.com/Takazudo/zudo-composer.git#${composer}`);}
+ const entries=await historicalGitBatch(repo,source.head),paths=entries.map(e=>e.path).sort();assert.deepEqual(Object.keys(source.hashes).sort(),paths,'Historical full source inventory changed');
+ for(const entry of entries)assert.equal(inputHash(entry.bytes),source.hashes[entry.path],`Historical source bytes changed: ${entry.path}`);
+ for(const consumer of familyConsumers){const manifest=entries.find(e=>e.path===`${consumer}/package.json`);assert(manifest);assert.equal(JSON.parse(manifest.bytes).dependencies['zudo-composer'],`git+https://github.com/Takazudo/zudo-composer.git#${composer}`);}
 }
 export async function loadHistoricalFamilyBridge({descriptor,repo,bytes=readFile}){
  const hashes={},read=path=>readExpectedBytes(path,hashes,bytes),json=async path=>JSON.parse(await read(path));
