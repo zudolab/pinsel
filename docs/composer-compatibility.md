@@ -16,15 +16,15 @@ These passes do not close the remaining T6/T7 scenarios or imply actual-data cut
 | Identity or gate | Current recorded value |
 | --- | --- |
 | Pinsel complete human / Assistant tested source | `b434c8fefd4c9659a9306c4e8481ae3262b46385` |
-| Current integration source | `e78dd52596f404a943792174798c2ffd09b25bc3` on the integration branch; latest current-head CI not yet recorded as passed |
+| Current integration source | `ca600a106698e5c3207f4c928c1e054953940d54` on the integration branch; current-head CI pending at this checkpoint |
 | Installed package / attestation | `5fe6d8d92f5013943053491794c0502b83228d53` / `4e9c642050bed7f2597245ae4ad4ab3f278c3de5` |
-| New upstream source candidate | `02f8085114981fcc4b59fe0c483950397888dc4e`, source only; checks pending, not an adopted package revision |
+| New upstream package candidate | `bd056471996984dd39bba219b19add25eb092982`, attestation `077a1b1a8545e963bcca7f4330a2b4e9fc4e5f95`; generated/public checks PASS118s, not yet adopted or accepted in Pinsel |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | At b434/5fe: full human PASS969s, seven semantic refusals PASS256s, controlled outer interruption/recovery PASS270s, complete Assistant seven-case PASS3455s |
-| Independent operator progress | Header label forward/restart/inverse/restart complete; Knowledge saved-reference recovery PASS110s and two-stage inverse PASS299s; Results phases 00–09 accepted (10/45), FAQ configuration only |
-| Static pilot | Phase09 publication committed and reconciled, original preview attempt FAIL; separate read-only preview recovery pending, no publication replay |
-| Latest checked CI | Pinsel `b8b9af7d14bc4f2aa41f2cbf8c7ba87a3107ea5d` [CI44086510566 PASS](https://github.com/zudolab/pinsel/actions/runs/44086510566); Composer `4e9c642` CI44050158945 PASS (26 jobs). Neither proves newer heads passed |
+| Independent operator progress | Header label forward/restart/inverse/restart complete; Knowledge saved-reference recovery PASS110s and two-stage inverse PASS299s; Results phases 00–10 accepted (11/45); phase11 acknowledged Mapping awaits separate read-only recovery; FAQ configuration only |
+| Static pilot | Original09 FAIL retained; separate read-only recovery PASS68s and exact 16-route / 143-asset build + visitor PASS14s. Phases10–15 now PASS; final phase15 production build/visitor still pending |
+| Latest checked CI | Pinsel `b8b9af7d14bc4f2aa41f2cbf8c7ba87a3107ea5d` [CI44086510566 PASS](https://github.com/zudolab/pinsel/actions/runs/44086510566); Composer `cffa0bf3a946e566cfdee311272a4ae9f6b8ecdf` [CI44090546656 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44090546656) (26 jobs). These are historical passes, not proof for ca600 or the new package attestation |
 | Separate holds | Remaining T6/T7 acceptance/current-head checks/review/merges, owner-data cutover and new authenticated-provider acceptance; deployment remains disabled |
 
 ## Current 5fe installed checkpoint — 2026-11-17
@@ -80,22 +80,66 @@ The separate `knowledge-inverse-b8b9af7/proof.json` now records an actual
 `65e99639902bf5f34299fc1f4a545a6ef60e094d126581c5d3e6a0d769a4d500`.
 The original forward FAIL remains distinct from the recovery and inverse passes.
 
-Results `results-family/00-0014ca2` through `09` retain ten accepted phase proofs;
-phase09 local pair publication preserves the baseline and advances the capture to
-`7d2ce8c1c56c37ebe189371fbcc4e436e1fa92ddd9e3d5fdcc512c4de7384cd6`.
-This is 10/45 creation/configuration phases, not completed family rendering.
+Results `results-family/00-0014ca2` through `10` retain eleven accepted phase
+proofs (11/45), including pair publication and duplication of Composition
+`composition-49940615-0119-4700-9171-dcfde8f74718`. The accepted predecessor is
+`c760809f4c1686bda8f1b6fd0b5fd18cb32e7ccd22aa737f233267ebd183310a`, with
+`results-family-history-11.json` containing successes only. This is not completed
+family rendering. Phase11 first failed before dispatch (FAIL169s; full capture
+unchanged). The separate `results-family/11-readiness` failed after exactly one
+acknowledged Mapping creation (FAIL234s), producing
+`mapping-b22b89eb-6ba3-4472-9543-92ccb7670669` at capture
+`c21a9435009b15892ef923780a0fdf38fe0e0b5774fdfbe926f159ac09399af8`.
+Its immediate URL assertion failed before asynchronous navigation completed;
+`results-family11-readiness-delta-reconciliation.json` verifies only the intended
+Mapping delta. Neither attempt is a PASS. Separate read-only saved-Mapping/restart
+recovery is queued; no creation replay or accepted-history advance is authorized
+by the delta proof. See `docs-operator-0180/operator-status-report.md` and
+`results-family11-readiness-failure-reconciliation.json` for the retained failures.
 FAQ's 43-phase sequence, membership/inverse, two-child order, three-state native
-and actual static visitor evidence remain pending.
+and actual static visitor evidence remain pending; follow the
+[family acceptance recipe](composer-family-acceptance.md).
 
 Static `t6-static-sequence-1/09/committed-reconciliation.json` proves the selected
 metadata publication committed once, at capture
 `20a67272091e8550588da52931a3ca6ba1e14e027655ed0f477f0f4218431474`.
-The original attempt still failed its title assertion; read-only recovery and later
-phases remain pending. The reviewed title-property correction changes the harness,
-not the saved publication outcome. Do not replay that publication to obtain a PASS.
+The original attempt remains FAIL278s at its title assertion. The distinct
+`static09-readonly-recovery-1/recovered-phase-proof.json` now proves normal restart
+and preview, PASS68s with the complete capture unchanged. Publication was not
+replayed. `static09-production-visitor-1/proof.json` then verifies the actual
+production build (PASS7s) and browser visitor run (PASS14s): 16 routes, 143 assets,
+705 requests, zero errors and zero canonical writes. Checks include metadata,
+internal fragments, mobile navigation, FAQ keyboard use, TOC and invalid Contact
+submission without delivery. The authored destination is intentionally Section-only;
+its source page's Header remains the navigation owner.
+
+The accepted static continuation is recorded in these original `proof.json` files
+under `t6-static-sequence-1/` and in `static-resume-checkpoint-20261117.json`:
+
+| Phase / artifact directory | Actual result | Saved operation |
+| --- | --- | --- |
+| 10 / `10-menu-label-v2` | PASS132s | Add navigation entry |
+| 11 / `11` | PASS127s | Set navigation label |
+| 12 / `12` | PASS126s | Set navigation target |
+| 13 / `13` | PASS139s | Reparent authored page under About |
+| 14 / `14` | PASS236s | Update page-copy route |
+| 15 / `15` | PASS177s | Publish updated page-copy |
+
+The earlier phase10 attempt remains FAIL229s before mutation, with full capture
+unchanged; the later unique-heading selector fix does not relabel it. Phase15's
+accepted capture is
+`3777470221d254f0dea6134a30c4515e4647c2d1932542674359d85ef8fe22ab`.
+Its final production build is queued/running at this checkpoint; no final
+post-reparenting visitor PASS is claimed. The phase09 visitor proof applies only
+to its own earlier snapshot. Header label and Knowledge representative cycles
+are complete; Header href-to-new-page acceptance remains a separate pending gate.
 
 All these runs use known staged data and the unchanged 5fe package. The new upstream
-02f808 source has not been adopted or accepted in Pinsel. Preserve original failures,
+`bd056471996984dd39bba219b19add25eb092982` package has not been adopted or
+accepted in Pinsel. `host-content-public-build-regenerate.log`,
+`host-content-cms-generated-audit.json` and
+`host-content-package-bd056-independent-review.json` retain its build, generated
+identity and package review evidence; these are not installed-consumer passes. Preserve original failures,
 retained histories and the separate actual-data/provider/deployment holds. Continue
 [T7 #56](https://github.com/zudolab/pinsel/issues/56) with the live operator checkpoint,
 remaining scenarios and required current-head integration gates.
