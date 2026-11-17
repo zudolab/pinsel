@@ -6,21 +6,24 @@ const input = { record: { id: 'fresh', modelId: 'note', lifecycle: 'draft' } };
 const response = { status: () => 200, json: async () => ({ ok: true }) };
 function fixture() {
   const events = []; let handler;
-  const page = { unroutes: 0, async route(_, callback) { handler = callback; }, async unroute() { this.unroutes++; handler = undefined; }, async send(operation = 'put-entry', options = {}) {
+  const page = { url: () => 'http://local/content', unroutes: 0, async route(_, callback) { handler = callback; }, async unroute() { this.unroutes++; handler = undefined; }, async send(operation = 'put-entry', options = {}) {
     const record = { fetched: 0, aborted: 0, continued: 0, fulfilled: 0 };
-    const route = { request: () => ({ headers: () => ({ 'x-zudo-composer-operation': operation }), postDataJSON: () => options.input ?? input }),
-      async fetch() { record.fetched++; return options.fetch ? options.fetch() : response; }, async abort() { record.aborted++; }, async continue() { record.continued++; }, async fulfill() { record.fulfilled++; } };
+    let actualResponse;
+    const request = { headers: () => ({ 'x-zudo-composer-operation': operation, origin: 'http://local' }), method: () => 'POST', url: () => 'http://local/__zudo_composer_content_provider', postDataJSON: () => options.input ?? input,
+      response: async () => actualResponse, redirectedFrom: () => null, redirectedTo: () => null };
+    const route = { request: () => request,
+      async abort() { record.aborted++; }, async continue() { record.continued++; if (operation !== 'put-entry') return; record.fetched++; const value = options.fetch ? await options.fetch() : response; actualResponse = { ...value, request: () => request, url: request.url, finished: async () => null }; } };
     const done = handler(route); return { record, done };
   } };
   const run = action => observeContentCreation(page, { before, modelId: 'note', persist: async event => { events.push(event); }, action, dispatchTimeoutMs: 15, requestTimeoutMs: 40 });
   return { page, events, run };
 }
-test('actual successful create is journaled before acknowledged and unroutes only on success', async () => {
+test('actual successful create is journaled before helper returns and unroutes only on success', async () => {
   const f = fixture(); let sent;
   const ref = await f.run(async () => { sent = await f.page.send(); });
   assert.deepEqual(ref, { providerId: 'content-filesystem', modelId: 'note', recordId: 'fresh' });
   assert.deepEqual(f.events.map(e => e.phase), ['create-request', 'create-response']);
-  assert.equal(sent.record.fetched, 1); assert.equal(sent.record.fulfilled, 1); assert.equal(f.page.unroutes, 1);
+  assert.equal(sent.record.fetched, 1); assert.equal(sent.record.fulfilled, 0); assert.equal(f.page.unroutes, 1);
 });
 test('admitted slow response survives dispatch deadline; no outer timer abandons it', async () => {
   const f = fixture();

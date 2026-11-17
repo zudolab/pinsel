@@ -16,12 +16,14 @@ function fixture() {
   let handler, reads = 0; const saved = [];
   const response = { ok: () => true, status: () => 200, json: async () => ({ ok: true }) };
   const page = {
-    unroutes: 0, readError: false, request: { post: async () => { reads++; if (page.readError && reads === 2) throw Error('post-write read lost'); return { ok: () => true, json: async () => ({ ok: true, result: structuredClone(reads === 1 ? content : after) }) }; } },
+    url: () => 'http://local/content', unroutes: 0, readError: false, evaluate: async () => { reads++; if (page.readError && reads === 2) throw Error('post-write read lost'); return { ok: true, body: { ok: true, result: structuredClone(reads === 1 ? content : after) } }; },
     async route(_, value) { handler = value; }, async unroute() { this.unroutes++; handler = undefined; },
     async send(operation = 'put-entry', options = {}) {
       const state = { fetched: 0, aborted: 0, fulfilled: 0, continued: 0 };
-      const route = { request: () => ({ headers: () => ({ 'x-zudo-composer-operation': operation, 'x-zudo-native-epoch': '3' }), url: () => 'http://local/__zudo_composer_content_provider', postDataJSON: () => request }),
-        async fetch() { state.fetched++; return options.fetch ? options.fetch() : response; }, async abort() { state.aborted++; }, async fulfill() { state.fulfilled++; }, async continue() { state.continued++; } };
+      let actualResponse;
+      const req = { headers: () => ({ 'x-zudo-composer-operation': operation, origin: 'http://local', 'x-zudo-native-epoch': '3', 'x-zudo-native-client': 'test', 'x-zudo-composer-capability': 'test', 'x-zudo-composer-workspace': 'test' }), method: () => 'POST', url: () => 'http://local/__zudo_composer_content_provider', postDataJSON: () => request,
+        response: async () => actualResponse, redirectedFrom: () => null, redirectedTo: () => null };
+      const route = { request: () => req, async abort() { state.aborted++; }, async continue() { state.continued++; if (operation !== 'put-entry') return; state.fetched++; const value = options.fetch ? await options.fetch() : response; actualResponse = { ...value, request: () => req, url: req.url, finished: async () => null }; } };
       return { state, done: handler(route) };
     },
   };

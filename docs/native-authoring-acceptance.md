@@ -369,6 +369,16 @@ and qualified entry generation. These reads are operation evidence, never a
 substitute for coherent `authoring:capture` snapshots or build inputs. Capability
 and session headers are reused in memory and are not written to the journal.
 
+Content observers let Chromium send the original admitted request and inspect that
+same request's response. They do not replay mutations through `route.fetch()`.
+Supplemental reads use same-origin browser fetches with observed session headers;
+Chromium supplies Origin and Fetch Metadata, and reads reject redirects. A redirected
+original write refuses proof and requires reconciliation. The editor may receive
+its acknowledgement before the journal finishes; the harness returns only after
+response/read-back evidence is persisted. An uncertain outcome retains the write
+fence. A standalone strict-origin browser fixture covers the old replay rejection
+and the original-request transport without accessing authoring stores.
+
 Each changed Save must advance the global token once and change only its intended
 Course field. The final restoration checks the exact original→test→original field
 transitions, every verified request/read/response record, and the final global token.

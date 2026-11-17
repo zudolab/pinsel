@@ -1,7 +1,7 @@
+import { continueContentRequest, contentReadOperations } from './content-browser-transport.mjs';
 import assert from 'node:assert/strict';
 import { assertNewRecord } from './routes-proof.mjs';
 const endpoint = '**/__zudo_composer_content_provider';
-const readOnly = new Set(['initialize', 'read-all', 'list-models', 'get-model', 'get-entry', 'count-entries', 'page-entries', 'scan-entries', 'editorial-read', 'editorial-fields', 'editorial-revisions', 'editorial-revision', 'editorial-compare', 'editorial-publication', 'editorial-operation', 'content-ai-status', 'content-ai-read', 'content-ai-operation']);
 /** Admit one actual UI create; retain a refusing interceptor on every uncertain outcome. */
 export async function observeContentCreation(page, { before, modelId, persist, action, dispatchTimeoutMs = 180000, requestTimeoutMs = 180000 }) {
   let admitted = false, stopped = false, unexpected = false, completed = false, timer, settle;
@@ -9,7 +9,7 @@ export async function observeContentCreation(page, { before, modelId, persist, a
   const active = new Set();
   const handle = async route => {
     const request = route.request(), operation = request.headers()['x-zudo-composer-operation'];
-    if (readOnly.has(operation)) { await route.continue(); return; }
+    if (contentReadOperations.has(operation)) { await route.continue(); return; }
     if (stopped || admitted || operation !== 'put-entry') {
       unexpected = true;
       try { await persist({ phase: 'create-unexpected-write', operation, admitted, stopped }); }
@@ -23,12 +23,11 @@ export async function observeContentCreation(page, { before, modelId, persist, a
       const input = request.postDataJSON(); ref = assertNewRecord(before, modelId, input.record);
       await persist({ phase: 'create-request', ref, input });
       if (unexpected || stopped) throw Error('Creation interrupted before dispatch');
-      const response = await route.fetch({ timeout: requestTimeoutMs });
+      const response = await continueContentRequest(page, route, requestTimeoutMs);
       const body = await response.json();
       await persist({ phase: 'create-response', ref, status: response.status(), body });
       assert(response.status() === 200 && body?.ok === true, 'Creation was not acknowledged successfully');
       if (unexpected || stopped) throw Error('Unexpected mutation refused; retain creation evidence for reconciliation');
-      await route.fulfill({ response });
       settle({ ref, status: response.status(), body });
     } catch (error) {
       stopped = true;

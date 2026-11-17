@@ -1,3 +1,4 @@
+import { continueContentRequest, readBrowserContent, contentReadOperations } from './content-browser-transport.mjs';
 import assert from 'node:assert/strict';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -5,7 +6,6 @@ import { canonicalProject, contentOwner } from './support.mjs';
 import { courseOwner, assertHumanSaveRequest, proveHumanContentSave, assertHumanAttemptsVerified, createHumanSaveAdmission } from './human-content-proof.mjs';
 const endpoint = '**/__zudo_composer_content_provider';
 const operationHeader = 'x-zudo-composer-operation';
-const reads = new Set(['initialize', 'read-all', 'list-models', 'get-model', 'get-entry', 'count-entries', 'page-entries', 'scan-entries', 'editorial-read', 'editorial-fields', 'editorial-revisions', 'editorial-revision', 'editorial-compare', 'editorial-publication', 'editorial-operation', 'content-ai-status', 'content-ai-read', 'content-ai-operation']);
 const fieldId = 'course-price';
 function contentSnapshot(capture) {
   const providers = capture.project.providers.content.filter(item => item.id === courseOwner.providerId);
@@ -44,7 +44,7 @@ export async function observeAssistantHumanSave(page, { journal, prior, beforeCa
   const active = new Set();
   const handle = async route => {
     const request = route.request(), operation = request.headers()[operationHeader];
-    if (reads.has(operation)) { await route.continue(); return; }
+    if (contentReadOperations.has(operation)) { await route.continue(); return; }
     if (stopped || operation !== 'put-entry' || !admission.admit()) {
       stopped = true; attempt.status = 'uncertain'; attempt.error = 'Unexpected additional Content mutation was refused';
       try { await persist(); } finally { await route.abort(); }
@@ -54,14 +54,13 @@ export async function observeAssistantHumanSave(page, { journal, prior, beforeCa
     clearTimeout(timer);
     try {
       attempt.request = request.postDataJSON(); attempt.status = 'admitted'; await persist();
-      const headers = { ...request.headers(), [operationHeader]: 'read-all' }; delete headers['content-length'];
-      const read = async () => { const response = await page.request.post(request.url(), { headers, data: '', timeout: requestTimeoutMs }); const body = await response.json(); assert(response.ok() && body.ok, 'Public Content read failed'); return body.result; };
+      const read = () => readBrowserContent(page, request, requestTimeoutMs);
       const observedBefore = await read(); attempt.observedBefore = observedBefore; await persist();
       assert.deepEqual(observedBefore, expected, 'Content changed since preceding public capture; Save refused');
       assertHumanSaveRequest(observedBefore, attempt.request, fieldId, value);
       assert(!stopped && !admission.unexpected, 'Human Save was interrupted before dispatch');
       attempt.status = 'dispatching'; await persist();
-      const response = await route.fetch({ timeout: requestTimeoutMs }); const body = await response.json();
+      const response = await continueContentRequest(page, route, requestTimeoutMs); const body = await response.json();
       attempt.response = { status: response.status(), body }; attempt.status = 'responded'; await persist();
       assert(response.ok() && body.ok, 'Human Save was not acknowledged successfully');
       attempt.after = await read(); await persist();
@@ -69,7 +68,7 @@ export async function observeAssistantHumanSave(page, { journal, prior, beforeCa
       const proof = proveHumanContentSave(observedBefore, attempt.after, { request: attempt.request, status: response.status(), response: body, fieldId, value, phase });
       journal.humanContentWrites ??= []; journal.humanContentWrites.push(proof); attempt.status = 'verified'; await persist();
       assert(!stopped && !admission.unexpected, 'Extra mutation interrupted verified Save');
-      await route.fulfill({ response }); settle({ proof });
+      settle({ proof });
     } catch (error) {
       stopped = true; attempt.status = 'uncertain'; attempt.error = String(error);
       try { await persist(); } catch (journalError) { error = new AggregateError([error, journalError], 'Human Save and journal require reconciliation'); }

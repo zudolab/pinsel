@@ -1,3 +1,4 @@
+import { continueContentRequest, readBrowserContent, contentReadOperations } from './content-browser-transport.mjs';
 import { courseFields, proveHumanContentSave, assertHumanSaveRequest, assertHumanAttemptsVerified, createHumanSaveAdmission } from "./human-content-proof.mjs";
 import { runAssistantPhase } from './assistant-scenarios.mjs';
 import { chromium } from '@playwright/test';
@@ -102,53 +103,54 @@ async function saveField(label, value) {
     const persistAttempt = () => writeFile(journalFile, JSON.stringify(savedJournal, null, 2));
     const handler = async route => {
         const request = route.request();
-        if (request.headers()[operationHeader] !== 'put-entry') { await route.continue(); return; }
+        const operation = request.headers()[operationHeader];
+        if (contentReadOperations.has(operation)) { await route.continue(); return; }
+        if (operation !== 'put-entry') { stopped = true; if (attempt) { attempt.status = 'uncertain'; attempt.error = 'Unexpected Content mutation refused'; await persistAttempt(); } await route.abort(); if (!admission.started) finish({ error: Error('Unexpected Content mutation refused') }); return; }
         if (stopped) { await route.abort(); return; }
         if (!admission.admit()) { if (attempt) { attempt.status = 'uncertain'; attempt.error = 'Unexpected extra Content write was refused'; await persistAttempt(); } await route.abort(); return; }
         clearTimeout(timeout); // Each admitted network step has its own bounded timeout.
 
         try {
             const payload = request.postDataJSON();
-            const headers = { ...request.headers(), [operationHeader]: 'read-all' };
-            delete headers['content-length'];
-            const read = async () => {
-                const response = await page.request.post(request.url(), { headers, data: '', timeout: 120000 });
-                const body = await response.json(); assert(response.ok() && body.ok, 'Supplemental Content read failed'); return body.result;
-            };
+            savedJournal = JSON.parse(await readFile(journalFile, 'utf8'));
+            attempt = { phase: mode, fieldId: field.fieldId, request: payload, status: 'admitted' };
+            savedJournal.humanContentAttempts ??= []; savedJournal.humanContentAttempts.push(attempt); await persistAttempt();
+            const read = () => readBrowserContent(page, request, 120000);
             const before = await read();
             // Check intended owner before forwarding the real UI write.
             assert.equal(payload.record?.id, 'consultation'); assert.equal(payload.record?.modelId, 'course');
-            savedJournal = JSON.parse(await readFile(journalFile, 'utf8'));
             const baseline = JSON.parse(await readFile(join(artifacts, 'before.json'), 'utf8'));
             const previous = savedJournal.humanContentWrites?.at(-1);
             assert.equal(before.mutationToken, previous?.generation ?? baseline.tokens.content, 'Content changed outside this full scenario; no write sent');
             assertHumanSaveRequest(before, payload, field.fieldId, field.numeric ? Number(value) : value);
-            attempt = { phase: mode, fieldId: field.fieldId, request: payload, before, status: 'dispatching' };
-            savedJournal.humanContentAttempts ??= []; savedJournal.humanContentAttempts.push(attempt); await persistAttempt();
-            const response = await route.fetch({ timeout: 120000 });
+            attempt.before = before; attempt.status = 'dispatching'; await persistAttempt();
+            assert(!stopped && !admission.unexpected, 'Human Save interrupted before dispatch');
+            const response = await continueContentRequest(page, route, 120000);
             const body = await response.json();
             attempt.response = { status: response.status(), body }; attempt.status = 'responded'; await persistAttempt();
             assert(response.ok() && body.ok, 'Human Content Save failed');
             const after = await read();
-            assert(!admission.unexpected, 'Unexpected extra Content write was refused');
+            assert(!stopped && !admission.unexpected, 'Unexpected extra Content write was refused');
             attempt.after = after; await persistAttempt();
             const proof = proveHumanContentSave(before, after, { request: payload, status: response.status(), response: body,
                 fieldId: field.fieldId, value: field.numeric ? Number(value) : value, phase: mode });
             savedJournal.humanContentWrites ??= []; savedJournal.humanContentWrites.push(proof);
-            assert(!admission.unexpected, 'Unexpected extra Content write was refused');
+            assert(!stopped && !admission.unexpected, 'Unexpected extra Content write was refused');
             attempt.status = 'verified'; await persistAttempt();
-            assert(!admission.unexpected, 'Unexpected extra Content write was refused');
-            // Persist successful evidence before delivering its acknowledgement to the editor.
-            await route.fulfill({ response }); finish({ proof });
+            assert(!stopped && !admission.unexpected, 'Unexpected extra Content write was refused');
+            // The browser may already show Saved; only return after durable proof.
+            finish({ proof });
         } catch (error) { if (attempt) { attempt.status = 'uncertain'; attempt.error = String(error); await persistAttempt().catch(() => {}); } await route.abort().catch(() => {}); finish({ error }); }
     };
     await page.route('**/__zudo_composer_content_provider', handler);
     try {
-        await control.fill(value);
-        const save = page.getByRole('button', { name: 'Save', exact: true });
-        if (await save.isEnabled()) await save.click();
-        const result = await Promise.race([observed, new Promise((_, reject) => { if (!admission.started) timeout = setTimeout(() => reject(Error('Human Content Save was not dispatched')), 120000); })]);
+        timeout = setTimeout(() => { if (!admission.started) { stopped = true; finish({ error: Error('Human Content Save was not dispatched') }); } }, 120000);
+        let actionError;
+        try { await control.fill(value); const save = page.getByRole('button', { name: 'Save', exact: true }); if (await save.isEnabled()) await save.click(); }
+        catch (error) { actionError = error; if (!admission.started) { stopped = true; finish({ error }); } }
+        const result = await observed; // Do not abandon an admitted original request after a UI error.
         if (result.error) throw result.error;
+        if (actionError) throw actionError;
         await page.locator('button[title="All changes saved"]').waitFor({ timeout: 120000 });
         assert(!admission.unexpected, 'Unexpected extra Content write was refused; retained attempt needs review');
         record('human-content-save', result.proof); completed = true;
