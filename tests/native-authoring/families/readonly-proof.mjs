@@ -1,3 +1,4 @@
+import {recoveredHeaderHrefForward} from '../header/recovery-forward.mjs';
 import {isNativeRead,contentPreviewOperations,assertContentPreviewHeaders} from '../native-preview-reads.mjs';
 import {validateBindingDiagnostic} from './binding-diagnostic.mjs';
 import assert from 'node:assert/strict';
@@ -66,12 +67,12 @@ export function assertReadScope(path,headers,result,workspaceId) {
 }
 
 export function validateReadIntent(intent, snapshot) {
-  assert(['mapping-binding-diagnostic','family-render','active-identity','header-restart','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind));
+  assert(['mapping-binding-diagnostic','family-render','active-identity','header-restart','header-saved-href','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind));
   if(intent.kind==='mapping-binding-diagnostic')validateBindingDiagnostic(intent,snapshot);
   assert.equal(intent.captureDigest, snapshot.digest);
   assert(/^[a-f0-9]{64}$/.test(snapshot.digest));
   assert(intent.capturePath?.startsWith('/'));
-  if(['knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind))assert(intent.recoveryEvidencePath?.startsWith('/'));
+  if(['header-saved-href','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind))assert(intent.recoveryEvidencePath?.startsWith('/'));
   if (intent.kind === 'header-restart') assert(intent.forwardProofPath?.startsWith('/'));
   if (intent.kind === 'family-render') {
     assert(['results','faq'].includes(intent.family));
@@ -117,6 +118,7 @@ export function assertPreviewIdentity(snapshot, preview) {
   assert(typeof identity.pathname==='string' && identity.pathname.startsWith('/'));
 }
 export function validateHeaderRestart(snapshot, proof) {
+  if(proof.status==='SAVED_HEADER_HREF_RECOVERY_VERIFIED')return recoveredHeaderHrefForward(snapshot,proof);
   assert.equal(proof.status,'PUBLIC_CAPTURE_VERIFIED');
   assert.equal(proof.afterDigest,snapshot.digest,'Header accepted state changed');
   assert(['header','knowledge-reference'].includes(proof.intent?.kind));

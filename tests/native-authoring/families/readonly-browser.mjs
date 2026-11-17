@@ -1,3 +1,4 @@
+import {validateSavedHref,savedHrefReadback} from '../header/saved-href.mjs';
 import {validateBindingDiagnostic,observeBindingDiagnostic} from './binding-diagnostic.mjs';
 import {validateSavedMapping} from './mapping-recovery.mjs';
 import {familyRecordReadback,assertSelectedEditorSaved} from './structural-readback.mjs';
@@ -33,7 +34,8 @@ const context=await chromium.launchPersistentContext(join(artifacts,'profile'),{
 const page=context.pages()[0], pending=new Set(), active=activeReadback(snapshot.project.id);
 let blocked,error,result,previewCount=0,readEpoch=0,originalPending=0,terminalClosing=false;const previewPaths=new Set();
 const diagnostics=observeRequestDiagnostics(page,persist);
-const recovered=intent.kind==='knowledge-saved-reference'?validateSavedReference(snapshot,inputs.savedReference):intent.kind==='knowledge-captured-reference'?validateCapturedReference(snapshot,inputs.savedReference):null;
+const recovered=intent.kind==='header-saved-href'?validateSavedHref(snapshot,inputs.savedReference):intent.kind==='knowledge-saved-reference'?validateSavedReference(snapshot,inputs.savedReference):intent.kind==='knowledge-captured-reference'?validateCapturedReference(snapshot,inputs.savedReference):null;
+const hrefReads=intent.kind==='header-saved-href'?savedHrefReadback(recovered):null;
 const savedMapping=intent.kind==='mapping-saved-create'?validateSavedMapping(snapshot,inputs.savedReference):null;
 const mappingReadback=savedMapping?familyRecordReadback({page,domain:'mappings',workspaceId:snapshot.workspaceId,providerId:'mapping-filesystem',persist}):null;
 const headerProof=intent.kind==='header-restart'?validateHeaderRestart(snapshot,inputs.headerProof):null;
@@ -62,6 +64,7 @@ await context.route('**/*',route=>{
       }
       lifecycle.requireOpen();readEpoch++;originalPending++;admitted=true;
       if(kind==='composition')return await composition.handle(route);
+      if(hrefReads&&url.pathname==='/__zudo_composer_content_provider')hrefReads.admit(request.headers()['x-zudo-composer-operation'],body);
       await persist({phase:'read-before-dispatch',endpoint:url.pathname,input:body});
       const response=await originalResponse(page,route);
       await persist({phase:'read-response',endpoint:url.pathname,input:body,...response});
@@ -69,6 +72,7 @@ await context.route('**/*',route=>{
         await persist({phase:'read-busy-awaiting-client-retry',endpoint:url.pathname,input:body,operation:request.headers()['x-zudo-composer-operation']});
         return; // Original409 already delivered; only installed client may retry.
       }
+      if(hrefReads&&url.pathname==='/__zudo_composer_content_provider')hrefReads.observe(request.headers()['x-zudo-composer-operation'],body,response);
       assertReadScope(url.pathname,request.headers(),response.body.result,snapshot.workspaceId);
       if(kind==='native'&&contentPreviewOperations.has(body.operation))assertContentPreviewResponse(body,response,snapshot,{revision:snapshot.digest});
       if(kind==='native' && body.operation==='document-preview'){assertPreviewIdentity(snapshot,response.body.result);previewCount++;previewPaths.add(response.body.result.identity.pathname);}
@@ -103,14 +107,17 @@ try {
   } else if(intent.kind==='header-restart'||recovered) {
     const shot=name=>page.screenshot({path:join(artifacts,name+'.png'),fullPage:true});
     const accepted=recovered??headerProof;
+    let publicHistory,targetPreview;
+    if(hrefReads){const ref=accepted.result.ref;await page.goto(`${base}/content?provider=${encodeURIComponent(ref.providerId)}&model=${encodeURIComponent(ref.modelId)}&entry=${encodeURIComponent(ref.recordId)}`);await expect.poll(()=>{try{hrefReads.finish();return true;}catch{return false;}},{timeout:180000}).toBe(true);publicHistory=hrefReads.finish();await expect(page.locator(`[data-history-entry="${ref.recordId}"] [data-revision-id="${publicHistory.history.revisions[0].id}"]`)).toHaveCount(1);await persist({phase:'saved-href-public-history-verified',publicHistory});}
     const options={base,snapshot,intent:accepted.intent,record:accepted.result.record,expect,shot,navigation:async boundary=>{
-      if(recovered&&boundary==='after-knowledge-preview'){
+      if(recovered&&(boundary==='after-knowledge-preview'||(hrefReads&&boundary==='after-header-preview'))){
+        if(hrefReads){assert([...previewPaths].some(path=>path.replace(/\/$/,'')===accepted.intent.value.replace(/\/$/,'')),'Exact Header target preview required');}else{
         const note=snapshot.project.providers.content.find(p=>p.id===accepted.intent.value.providerId).entries.find(e=>e.id===accepted.intent.value.recordId&&e.modelId==='note');
-        const target='/notes/'+note.values['note-slug'];assert([...previewPaths].some(path=>path.replace(/\/$/,'')===target),'Exact target preview response required');
+        const target='/notes/'+note.values['note-slug'];assert([...previewPaths].some(path=>path.replace(/\/$/,'')===target),'Exact target preview response required');}
         return settleTerminalReads({fence:async()=>{terminalClosing=true;await persist({phase:'terminal-read-admission-fenced'});},status:()=>({pending:originalPending+composition.readiness.pending,challenges:composition.readiness.outstanding,busy:busyReads.outstanding,epoch:readEpoch}),check:()=>{lifecycle.requireOpen();composition.check();if(blocked)throw blocked;},drain:async()=>{await lane.drain();await composition.drain();composition.assertSettled();},persist,diagnostics:diagnostics.snapshot});
       }await settleBrowserReads(page,composition,{persist,boundary,check:()=>{lifecycle.requireOpen();if(blocked)throw blocked;}});await lane.drain();composition.check();composition.assertSettled();}};
-    if(accepted.intent.kind==='knowledge-reference')await verifySavedKnowledge(page,options);else await verifySavedHeader(page,options);
-    result=recovered?{kind:intent.kind,savedWrite:recovered,terminalSettlement:'AUTHORITATIVE_READS_AND_CLOSE_FENCE'}:{kind:intent.kind,forwardProofPath:intent.forwardProofPath};
+    if(accepted.intent.kind==='knowledge-reference')await verifySavedKnowledge(page,options);else targetPreview=await verifySavedHeader(page,options);
+    result=recovered?{kind:intent.kind,savedWrite:recovered,...(hrefReads?{publicHistory,targetPreview}:{}),terminalSettlement:'AUTHORITATIVE_READS_AND_CLOSE_FENCE'}:{kind:intent.kind,forwardProofPath:intent.forwardProofPath};
   } else {
     await page.goto(`${base}/review`);
     const inspect=page.getByRole('button',{name:'Inspect current state',exact:true});

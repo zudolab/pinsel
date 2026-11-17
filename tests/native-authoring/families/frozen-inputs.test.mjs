@@ -30,10 +30,10 @@ it.each(['record-edit','header'])('seals mutating %s intent and whole snapshot e
  }finally{await rm(dir,{recursive:true});}
 });
 
-it('saved-reference recovery freezes original journal and all capture evidence before child use',async()=>{
+for(const kind of ['knowledge-saved-reference','header-saved-href'])it(`${kind} freezes original journal and all capture evidence before child use`,async()=>{
  const dir=await mkdtemp(join(tmpdir(),'saved-reference-inputs-'));
  try{const paths=Object.fromEntries(['bundle','bundleHash','before','after','events','provenance'].map(k=>[k,join(dir,k+'.json')]));for(const path of Object.values(paths))await writeFile(path,'{}');await writeFile(paths.events,'{"phase":"begin"}\n{"phase":"held"}\n');
- const intentPath=join(dir,'intent.json'),recoveryEvidencePath=join(dir,'recovery.json');await writeFile(recoveryEvidencePath,JSON.stringify(paths));await writeFile(intentPath,JSON.stringify({kind:'knowledge-saved-reference',capturePath:paths.after,recoveryEvidencePath}));
+ const intentPath=join(dir,'intent.json'),recoveryEvidencePath=join(dir,'recovery.json');await writeFile(recoveryEvidencePath,JSON.stringify(paths));await writeFile(intentPath,JSON.stringify({kind,capturePath:paths.after,recoveryEvidencePath}));
  const inputs=await freezeReadInputs(intentPath);expect(inputs.savedReference.events.map(e=>e.phase)).toEqual(['begin','held']);expect(Object.keys(inputs.savedReference.hashes)).toHaveLength(6);await assertInputsUnchanged(inputs.hashes);await writeFile(paths.events,'{"phase":"substituted"}');await expect(assertInputsUnchanged(inputs.hashes)).rejects.toThrow('input changed');expect(inputs.savedReference.events[1].phase).toBe('held');
  }finally{await rm(dir,{recursive:true});}
 });

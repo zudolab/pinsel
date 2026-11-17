@@ -117,3 +117,8 @@ These source checks are not a new installed runtime acceptance result.
 For an acknowledged Knowledge save followed by terminal preview timeout, use the
 [read-only saved-reference recovery recipe](native-knowledge-recovery.md). Preserve
 the failed run; do not replay the save or fabricate its missing forward proof.
+
+For an acknowledged href save whose responsive link click failed, use the separate
+[Header href recovery recipe](native-header-href-recovery.md). It retains the original
+FAIL and requires fresh native history, actual navigation and exact-build evidence
+before a guarded inverse is eligible. Never rerun the failed forward to repair a click.

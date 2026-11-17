@@ -1,3 +1,5 @@
+import {assertSavedHrefPublicHistory} from './saved-href.mjs';
+import {assertHeaderDestinationPreview,routePath} from './destination-preview.mjs';
 import assert from 'node:assert/strict';
 /** Genuine completed recovery has a distinct status; never relabel its failed run. */
 export function recoveredKnowledgeForward(snapshot,proof){
@@ -9,4 +11,16 @@ export function recoveredKnowledgeForward(snapshot,proof){
  const entry=snapshot.project.providers.content.find(p=>p.id===saved.intent.ref.providerId)?.entries.find(e=>e.modelId===saved.intent.ref.modelId&&e.id===saved.intent.ref.recordId);assert.deepEqual(entry,saved.result.record);assert.deepEqual(saved.result.ref,saved.intent.ref);
  const note=snapshot.project.providers.content.find(p=>p.id===saved.intent.value.providerId)?.entries.find(e=>e.modelId===saved.intent.value.modelId&&e.id===saved.intent.value.recordId);assert(note?.lifecycle==='published');assert.equal(proof.target.route.replace(/\/$/,''),'/notes/'+note.values['note-slug']);assert.equal(proof.target.verifiedH1,note.values['note-title']);
  return{status:proof.status,afterDigest:snapshot.digest,ref:saved.intent.ref,field:saved.intent.field,value:saved.intent.value,beforeValue:saved.intent.owner.record.values[saved.intent.field]};
+}
+
+/** A recovered Header forward is eligible only after history, actual navigation and exact build. */
+export function recoveredHeaderHrefForward(snapshot,proof){
+ assert.equal(proof.status,'SAVED_HEADER_HREF_RECOVERY_VERIFIED');assert.equal(proof.originalScenario,'FAIL');assert.equal(proof.captureDigest,snapshot.digest);
+ const saved=proof.savedWrite;assert.equal(saved.status,'SAVED_HREF_WRITE_EVIDENCE_AUDITED');assert.equal(saved.originalScenario,'FAIL');assert.equal(saved.intent.kind,'header');assert.equal(saved.intent.field,'nav-link-href');assert.equal(saved.intent.direction,'forward');assert.equal(saved.delta.afterDigest,snapshot.digest);assert.deepEqual(saved.delta.ref,saved.intent.owner.ref);assert.equal(saved.delta.field,saved.intent.field);assert(Object.keys(saved.evidenceHashes).length===6);for(const hash of Object.values(saved.evidenceHashes))assert.match(hash,/^[a-f0-9]{64}$/);
+ const restart=proof.restart;assert.equal(restart.status,'READ_ONLY_RESTART_VERIFIED');assert.equal(restart.intent.kind,'header-saved-href');assert.equal(restart.intent.captureDigest,snapshot.digest);assert.equal(restart.beforeDigest,snapshot.digest);assert.equal(restart.afterDigest,snapshot.digest);assert.deepEqual(restart.result.savedWrite,saved);assert.equal(restart.result.terminalSettlement,'AUTHORITATIVE_READS_AND_CLOSE_FENCE');assert.deepEqual(restart.source,proof.source);assert.match(proof.source.head,/^[a-f0-9]{40}$/);assert(Object.keys(proof.source.hashes).length>0);assert.equal(proof.composer,saved.composer);assert.match(restart.bundleHash,/^[a-f0-9]{64}$/);assert(Object.keys(restart.inputHashes).length>=8);
+ const current=snapshot.project.providers.content.find(p=>p.id===saved.result.ref.providerId)?.entries.find(e=>e.id===saved.result.ref.recordId&&e.modelId===saved.result.ref.modelId);assert.deepEqual(current,saved.result.record);assert.deepEqual(saved.result.ref,saved.intent.owner.ref);assert.equal(current.values[saved.intent.field],saved.intent.value);
+ const history=restart.result.publicHistory;assertSavedHrefPublicHistory(saved,history);assert.equal(history.status,'SAVED_HREF_PUBLIC_HISTORY_VERIFIED');assert.deepEqual(history.ref,saved.result.ref);assert.deepEqual(history.record,current);assert.deepEqual(history.history.revisions[0].values,current.values);assert.deepEqual(history.history.revisions[0].entry,saved.result.ref);
+ assertHeaderDestinationPreview(restart.result.targetPreview,snapshot,saved.intent);
+ assert.match(proof.build.buildEvidenceHash,/^[a-f0-9]{64}$/);assert.equal(proof.rendered.snapshotDigest,snapshot.digest);assert.equal(proof.rendered.headerAndFooterVerified,true);assert.equal(proof.rendered.buildEvidenceHash,proof.build.buildEvidenceHash);assert.match(proof.rendered.htmlSha256,/^[a-f0-9]{64}$/);assert.match(proof.target.htmlSha256,/^[a-f0-9]{64}$/);assert.equal(proof.target.route,routePath(saved.intent.value));assert(proof.build.routes.includes(proof.target.route));
+ return{status:proof.status,afterDigest:snapshot.digest,ref:saved.result.ref,field:saved.intent.field,value:saved.intent.value,beforeValue:saved.intent.owner.record.values[saved.intent.field],intent:saved.intent,result:saved.result};
 }

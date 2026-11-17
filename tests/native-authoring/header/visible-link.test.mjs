@@ -1,0 +1,11 @@
+import {test} from 'vitest';import assert from 'node:assert/strict';import {Window} from 'happy-dom';import {revealHeaderLink} from './visible-link.mjs';
+function fixture({mobile=true,expanded=false,broken=false,duplicate=false}={}){
+ const window=new Window(),doc=window.document;doc.body.innerHTML=`<style>.site-nav{display:${mobile?'none':'grid'}}.site-nav[data-open]{display:grid}.menu-toggle{display:${mobile?'flex':'none'}}</style><button class="menu-toggle" aria-controls="site-navigation" aria-expanded="${expanded}">Menu</button><nav id="site-navigation" class="site-nav"><a class="site-nav__item" href="/new/">About</a></nav>`;
+ const toggle=doc.querySelector('button'),nav=doc.querySelector('nav');let clicks=0;toggle.addEventListener('click',()=>{clicks++;toggle.setAttribute('aria-expanded','true');if(!broken)nav.setAttribute('data-open','');});if(duplicate)doc.body.append(toggle.cloneNode(true));
+ const visible=node=>{for(let p=node;p;p=p.parentElement)if(window.getComputedStyle(p).display==='none')return false;return!!node;};
+ const locator=selector=>({count:async()=>doc.querySelectorAll(selector).length,isVisible:async()=>visible(doc.querySelector(selector)),getAttribute:async key=>doc.querySelector(selector).getAttribute(key),click:async options=>{assert.equal(options,undefined);assert(visible(doc.querySelector(selector)));doc.querySelector(selector).click();}});
+ const expect=loc=>({toHaveCount:async n=>assert.equal(await loc.count(),n),toBeVisible:async()=>assert(await loc.isVisible()),toHaveAttribute:async(k,v)=>assert.equal(await loc.getAttribute(k),v)});
+ return{window,root:{locator},link:locator('a'),expect,clicks:()=>clicks};
+}
+for(const mobile of [true,false])test(`real DOM menu state ${mobile?'collapsed':'desktop'} uses only the needed click`,async()=>{const f=fixture({mobile});try{assert.deepEqual(await revealHeaderLink(f.root,f.link,f.expect),{menuOpened:mobile});assert.equal(f.clicks(),Number(mobile));}finally{await f.window.happyDOM.close();}});
+for(const options of [{expanded:true},{broken:true},{duplicate:true}])test(`refuses hidden target with ${JSON.stringify(options)}`,async()=>{const f=fixture(options);try{await assert.rejects(revealHeaderLink(f.root,f.link,f.expect));assert(f.clicks()<=1);}finally{await f.window.happyDOM.close();}});

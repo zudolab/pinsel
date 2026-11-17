@@ -1,3 +1,4 @@
+import {revealHeaderLink} from './visible-link.mjs';
 import {contentPreviewOperations,contentPreviewReadGate,isNativeRead} from '../native-preview-reads.mjs';
 import {assertHeaderDestinationPreview,routePath} from './destination-preview.mjs';
 import {createHeaderReadiness} from './readiness.mjs';
@@ -36,7 +37,7 @@ export async function verifySavedHeader(page,{base,snapshot,intent,record,expect
  // Shared Header/Footer copy and href belong to this source document.
  const link=await verifyHeaderDocument(frame(),{record,expect});let targetPreview;
  if(intent.field==='nav-link-href'&&intent.direction==='forward'){
-  await enterBrowseMode(page,expect);await navigation('before-header-visitor-link');
+  await enterBrowseMode(page,expect);await navigation('before-header-visitor-link');await revealHeaderLink(frame(),link,expect);
   const received=page.waitForResponse(response=>{const request=response.request();if(new URL(response.url()).origin!==base||new URL(response.url()).pathname!=='/__zudo-native-edit'||request.method()!=='POST')return false;try{const input=request.postDataJSON();return input.operation==='document-preview'&&input.input.workspaceId===snapshot.workspaceId&&routePath(input.input.pathname)===routePath(intent.value);}catch{return false;}},{timeout:180000});received.catch(()=>{});
   await link.click();const response=await received;assert.equal(response.status(),200);const body=await response.json();assert.equal(body.ok,true);targetPreview=assertHeaderDestinationPreview(body.result,snapshot,intent,revision);
   await expect.poll(()=>routePath(new URL(page.url()).searchParams.get('visitor')??''),{timeout:180000}).toBe(routePath(intent.value));await page.getByText('Saved snapshot rendered',{exact:true}).waitFor({timeout:180000});
