@@ -1,3 +1,4 @@
+import {isFamilyProviderRead} from './provider-reads.mjs';
 import {selectCanonicalRoot} from './root-selection.mjs';
 import {familyRecordReadback,assertSelectedEditorSaved} from './structural-readback.mjs';
 import {settleBrowserReads} from '../static/browser-quiescence.mjs';
@@ -7,15 +8,6 @@ import assert from 'node:assert/strict';
 import {requestGate,drainAll} from './original-request.mjs';
 import {getRecord,admitRecordEdit,admitDuplicate,admitContentCreate,admitContentField,admitMappingCreate,admitBinding,admitGroup,admitAttachment} from './intents.mjs';
 const endpoints={content:'/__zudo_composer_content_provider',compositions:'/__zudo_composer_file_provider',mappings:'/__zudo_composer_mapping_provider',workspace:'/__zudo_composer_workspace_provider'};
-const reads=new Set(['initialize','list','get','open','selection','generation','snapshot','read-all','list-models','get-model','get-entry','count-entries','page-entries','scan-entries','find-seeding','missing-directories','editorial-read','editorial-fields','editorial-revisions','editorial-revision','editorial-compare','editorial-publication','editorial-operation','content-ai-status','content-ai-scope','content-ai-read']);
-const providerReads={
- [endpoints.content]:reads,
- [endpoints.compositions]:new Set(['initialize','list','get','snapshot','find-seeding','missing-directories']),
- [endpoints.mappings]:new Set(['initialize','list','get','snapshot']),
- [endpoints.workspace]:new Set(['list','open','selection','generation','find-seeding','missing-directories']),
- '/__zudo_composer_sitemapper_provider':new Set(['initialize','list','get','snapshot']),
- '/__zudo_composer_asset_file_provider':new Set(['initialize','list','get','snapshot','resolve-version']),
-};
 /** Exactly one reviewed original browser mutation per phase; completion waits for the outer close. */
 export async function familyUi(page,{base,snapshot,intent,persist,expect,setClose}){
  const domain=intent.kind==='attachment'?'workspace':intent.domain,endpoint=endpoints[domain];assert(endpoint);
@@ -34,7 +26,7 @@ export async function familyUi(page,{base,snapshot,intent,persist,expect,setClos
  await page.route('**/__zudo*',async route=>{const request=route.request(),path=new URL(request.url()).pathname;let input;try{input=request.postDataJSON();}catch{}const op=request.headers()['x-zudo-composer-operation']??request.headers()['x-zudo-composer-asset-operation']??(path==='/__zudo-native-edit'?input?.operation:undefined);
   if(path===endpoints.compositions){if(held||closing){await persist({phase:'composition-after-held-refused',path});return route.abort();}return composition.handle(route);}
   if(intent.kind==='attachment'&&!attempted&&path===endpoints.workspace&&op==='open')return workspaceRead.handle(route);
-  if(request.method()==='GET'||providerReads[path]?.has(op)||(path==='/__zudo-native-edit'&&['inspect','document-preview','review','receipt'].includes(op)))return route.continue();
+  if(request.method()==='GET'||isFamilyProviderRead(path,op)||(path==='/__zudo-native-edit'&&['inspect','document-preview','review','receipt'].includes(op)))return route.continue();
   if(path===endpoint&&writeOps.includes(op))return gate.handle(route);
   held??=Error(`Unexpected operation ${path} ${op}`);try{await persist({phase:'unexpected-refused',path,operation:op});}finally{await route.abort();}
  });
