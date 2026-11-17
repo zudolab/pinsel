@@ -8,18 +8,92 @@ Tracking: [#51](https://github.com/zudolab/pinsel/issues/51),
 
 ## Current candidate at a glance
 
-Historical entries below retain their original outcomes. Latest complete Assistant evidence:
-[bc20 seven-case acceptance](#bc20-complete-seven-case-assistant-acceptance).
+Historical entries below retain their original outcomes. The current installed
+package now has complete normal human, refusal, recovery and seven-case Assistant
+acceptance; see [the 5fe checkpoint](#current-5fe-installed-checkpoint--2026-11-17).
+These passes do not close the remaining T6/T7 scenarios or imply actual-data cutover.
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel complete Assistant tested source | `f07e05b8f9e22379cb321bf80a11d47b26800e24` |
-| Current candidate package / attestation | `5fe6d8d92f5013943053491794c0502b83228d53` / `4e9c642050bed7f2597245ae4ad4ab3f278c3de5` |
+| Pinsel complete human / Assistant tested source | `b434c8fefd4c9659a9306c4e8481ae3262b46385` |
+| Current integration source | `e78dd52596f404a943792174798c2ffd09b25bc3` on the integration branch; latest current-head CI not yet recorded as passed |
+| Installed package / attestation | `5fe6d8d92f5013943053491794c0502b83228d53` / `4e9c642050bed7f2597245ae4ad4ab3f278c3de5` |
+| New upstream source candidate | `02f8085114981fcc4b59fe0c483950397888dc4e`, source only; checks pending, not an adopted package revision |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
-| Workspace / schemas / renderer | `pinsel`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
-| Installed acceptance | Complete seven-case Assistant PASS at bc20; human provenance/refusal and canonical migration PASS at4f; remaining scenarios tracked below |
-| Latest checked CI | Pinsel `b434c8f` CI44050658100 PASS; Composer `4e9c642` CI44050158945 PASS (26 jobs); earlier starter-template failure is retained below |
-| Separate holds | Remaining T6/T7 acceptance, owner-data cutover and new real-provider acceptance |
+| Workspace / schemas / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
+| Installed acceptance | At b434/5fe: full human PASS969s, seven semantic refusals PASS256s, controlled outer interruption/recovery PASS270s, complete Assistant seven-case PASS3455s |
+| Independent operator progress | Header label forward/restart/inverse/restart complete; Knowledge saved-reference recovery PASS110s, inverse in progress; Results phases 00–09 accepted (10/45), FAQ configuration only |
+| Static pilot | Phase09 publication committed and reconciled, original preview attempt FAIL; separate read-only preview recovery pending, no publication replay |
+| Latest checked CI | Pinsel `b8b9af7d14bc4f2aa41f2cbf8c7ba87a3107ea5d` [CI44086510566 PASS](https://github.com/zudolab/pinsel/actions/runs/44086510566); Composer `4e9c642` CI44050158945 PASS (26 jobs). Neither proves newer heads passed |
+| Separate holds | Remaining T6/T7 acceptance/current-head checks/review/merges, owner-data cutover and new authenticated-provider acceptance; deployment remains disabled |
+
+## Current 5fe installed checkpoint — 2026-11-17
+
+The four complete b434/5fe runs used the committed
+`tests/native-authoring/run.mjs` entrypoint with `--scenario full`, `negative`
+and `assistant`, plus the independently reviewed controlled interruption recipe
+and the unmodified `--scenario recovery --restore` runner. Evidence is retained
+under `/workspace/composer-adoption-notes/`, in each named run's
+`operator-summary.json`, original result, public captures, receipts and screenshots:
+
+- `t7-5fe6-full-1`: nested selection/edit/reload, shared pricing/contact labels and
+  ordering, restart and exact older snapshot build after a newer edit. The build
+  contains 14 routes / 143 public files and leaves the newer state unchanged.
+  Supported restoration retains history at
+  `c6b4ddbf00fcd40177263cd27d1f19b794efd6ac954eefd110ef29bad3192fe1`.
+- `t7-5fe6-negative-1`: all seven original case-specific responses are semantic
+  HTTP409 refusals; the complete capture and 816 canonical/receipt files remain
+  equal. Seven generic observer-disposed warnings are retained; the separate
+  original case responses were retained and asserted, not inferred from those warnings.
+- `t7-5fe6-controlled-recovery-1`: outer exit86 after the real save and fresh-browser
+  receipt recovery, followed by the actual guarded UI inverse. This is bounded
+  post-receipt interruption, not an arbitrary mid-write crash. Canonical values
+  restored with history retained at
+  `3b53b5dc441191e979c5d3c633fe89334fe8dc0dd718a55cc8f198064aad7314`.
+- `t7-5fe6-assistant-1`: Course, FAQ, Note, local field, structural insertion,
+  stale Apply and guarded Undo conflict all pass in the complete unfiltered run.
+  All five proposals leave canonical state unchanged. Lost-response recovery
+  returns the same request and receipt; stale Apply is `stale-plan`, conflicting
+  Undo is `revision-conflict`. Final canonical restoration retains history at
+  `96b956c6b91a6cbc8c2c5cb7644df9905b6d43af202671739b431173e0e3ae28`.
+  Eighteen screenshots are retained. This uses the deterministic fake provider;
+  it does not prove authenticated inference.
+
+Independent documentation-operator evidence is under `docs-operator-0180/`.
+`header-forward/proof.json` and `header-forward-restart-f54/proof.json`, followed by
+`header-inverse-06be9ad/proof.json` and its restart proof, complete the **label**
+cycle. The inverse restores `講師紹介` and its exact static output; the full restart
+capture remains `d0b19edc89b7bde72f5ff2f695e41d8bce9125f0ef33e58e710aee2b8487c36b`.
+Header href-to-new-page acceptance is still separate and incomplete.
+
+Knowledge's `knowledge-forward-06be9ad` remains FAIL397s after a confirmed original
+Content200 and public readback: its terminal global-idle wait timed out. The
+separate `knowledge-recovery-b8b9af7/recovery-proof.json` is an actual
+`SAVED_REFERENCE_RECOVERY_VERIFIED` PASS110s: read-only restart, Lessons card click,
+exact online-exam Note heading and 14-route / 143-asset build all succeed without
+replaying the save. Full capture stays
+`88860bcc15a36223f355ace89ca9f3522b92e7d6bdac6b9aab0cbebd9afa66c4`.
+The new two-stage inverse is in progress, not passed at this checkpoint.
+
+Results `results-family/00-0014ca2` through `09` retain ten accepted phase proofs;
+phase09 local pair publication preserves the baseline and advances the capture to
+`7d2ce8c1c56c37ebe189371fbcc4e436e1fa92ddd9e3d5fdcc512c4de7384cd6`.
+This is 10/45 creation/configuration phases, not completed family rendering.
+FAQ's 43-phase sequence, membership/inverse, two-child order, three-state native
+and actual static visitor evidence remain pending.
+
+Static `t6-static-sequence-1/09/committed-reconciliation.json` proves the selected
+metadata publication committed once, at capture
+`20a67272091e8550588da52931a3ca6ba1e14e027655ed0f477f0f4218431474`.
+The original attempt still failed its title assertion; read-only recovery and later
+phases remain pending. The reviewed title-property correction changes the harness,
+not the saved publication outcome. Do not replay that publication to obtain a PASS.
+
+All these runs use known staged data and the unchanged 5fe package. The new upstream
+02f808 source has not been adopted or accepted in Pinsel. Preserve original failures,
+retained histories and the separate actual-data/provider/deployment holds. Continue
+[T7 #56](https://github.com/zudolab/pinsel/issues/56) with the live operator checkpoint,
+remaining scenarios and required current-head integration gates.
 
 ## Refreshed baseline — 2026-11-16
 
