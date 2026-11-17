@@ -107,3 +107,16 @@ argument to `families/sequence.mjs`, after original bridge and supplement paths.
 The command refuses uncommitted source and changed production/config/manifest/lock
 files. The actual next phase still requires separate runtime admission. No generated
 descriptor is part of this source change.
+
+### Qualified control readiness
+
+The family driver also checks exact Mapping owner URL, name and Saved state before
+initial query, transform and attachment gestures. Controls must be unique, visible
+and enabled, with the requested select option available. Original read errors and
+outstanding Composition challenges still hold admission; the bound remains180s.
+After choosing a reference `equals` operator, the second local gesture explicitly
+requires the UI's `unsaved` draft state, the exact operator value and the qualified
+reference option. It never saves between those two local edits. Attachment dialogs
+must select and recheck the exact provider/Composition/node/slot option before the
+existing write fence and submit. These checks neither change canonical validation
+nor replace original response/reload evidence. Save/autosave behavior is unchanged.
