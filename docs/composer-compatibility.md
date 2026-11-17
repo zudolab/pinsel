@@ -13,15 +13,15 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `027bec0949fbd7b477584d49811e1c6fc67aa6a1`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
+| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `2322a14455df50ba5c72822ce64f52fce0c48cbe`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
 | Installed package / upstream attestation | `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
 | Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping phase13 PASS260s and full human regression PASS1001s, both independently audited. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
-| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. History has18 entries after phase13 count-binding PASS260s, phase14 collection PASS250s, phase15 limit PASS291s, phase16 pin PASS391s and the separate phase17 duplicate PASS400s. Original failures remain recorded; phases18–44 and FAQ remain pending or in progress. |
-| Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current c5 human, negative, response-loss recovery and static gates passed; complete current-pin Assistant acceptance remains open. |
+| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. History has18 entries after phase13 count-binding PASS260s, phase14 collection PASS250s, phase15 limit PASS291s, phase16 pin PASS391s and the separate phase17 duplicate PASS400s. Phase18 saved its Mapping once, then failed before reload; separate read-only recovery is pending. Original failures remain recorded; phases19–44 and FAQ remain pending. |
+| Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current c5 human, negative, response-loss recovery and static gates passed; seven current-pin Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
 | Holds | Remaining T6/T7 scenarios, current-head checks/review/merges; actual owner-data cutover and new authenticated-provider acceptance. Deployment remains disabled. |
 
 ## Current c5 installed checkpoint — 2026-11-17
@@ -230,6 +230,55 @@ the deterministic fake provider; it does not establish authenticated inference.
 Remaining Results/FAQ scenarios, complete current-pin Assistant acceptance and final
 integration gates remain open. Actual owner-data cutover and new live-provider
 acceptance remain held. No deployment or remote cutover occurred.
+
+## Recovered AI evidence and saved Mapping checkpoint — 2026-11-17
+
+The general consumer remains frozen at66865a with c5. Seven representative AI
+scenarios now have individual evidence, not a whole-suite PASS:
+
+| Scenario | Actual outcome |
+| --- | --- |
+| Shared Course pricing | Proposal, Apply, response-loss receipt recovery and Undo passed inside a subsequently interrupted suite. |
+| FAQ | Undo committed once; original response-body loss remains FAIL121. Separate public read-only reconciliation PASS103 verifies receipts, seven revisions, undone status and restored values. |
+| Note | Finite PASS355; all1787 body characters restored, Content token34→36. |
+| Local component fields | Proposal/Apply/Undo passed. Cleanup Remove committed but its original body was unavailable: overall FAIL692. Separate retained receipt and supported full capture prove fixture removal and original values restored. No cleanup replay. |
+| Structural insertion | Finite PASS402; one qualified Paragraph inserted and undone, with complete final capture equal to baseline. |
+| Stale proposal | Finite PASS373; exact held Apply refused409 `stale-plan`, same-server identity unchanged, explicit human inverse restored values. |
+| Guarded Undo | Finite PASS575; Undo refused409 `revision-conflict` with full capture unchanged. Explicit human inverse, not AI Undo, restored the price. |
+
+The artifact-only aggregate `t7-c5-ai-seven-case-aggregate/report.md` and manifest
+hash159 original evidence/review/screenshot files. Independent per-case reviews are
+linked there. Final supported capture is
+`79ca4df8bb73c42308ff5fbbe40fe451fa3165cea96991cb36c9f7a90c1f13f5`,
+Content token41. Whole-state comparison with the first c5 AI baseline preserves all
+values, arrangements, references and identities; only the named edited owners'
+generation/timestamp metadata, domain tokens and digest differ. The frozen consumer
+is clean and stopped. Original suite1 default-guard interruption and suite2 unknown
+interruption remain NOT_PASS. Deterministic fake-provider and intercepted transport
+qualifications remain; this is not authenticated inference or full History UI
+acceptance. Local cleanup has no separate rendered/restart proof.
+
+Results source moved from027bec0 to2322a14 through an independently reviewed
+16-file tests/docs change, preserving the four c5 installations and saved state.
+Integrated340 family tests passed. A create-specific semantic readiness check avoids
+waiting on unrelated library network idle while retaining read drains and exact
+mutation admission. Its fixed boundary18 handoff preserves all earlier evidence.
+The fresh phase18 created exactly one Mapping,
+`mapping-8bfc8c53-c134-4b82-94ae-52294218aa03`, with one original200 response.
+Full capture changed only by that Mapping from `5f20c17d…` to
+`29003f700865ae25baad818829a8ee0c16b11620d1a28d2273ea05f2aad1de17`.
+The run remains FAIL607: the subsequent pre-reload network-idle wait timed out.
+Derived challenge141 was abandoned and late read dispatches/refusals remain
+qualified; no original read settlement or reload success is claimed. Independent
+`results-phase18-independent-saved-recovery-review.json` confirms the exact saved
+delta. History remains18 entries. Do not repeat Create or append a successful phase
+until a fresh read-only selected-Mapping/reload proof settles and preserves the full
+saved capture. Source-only recovery work is on `test/mapping-create-saved-recovery`;
+no recovery run has yet been accepted at this checkpoint.
+
+No push, merge, publication, deployment, owner-data switch or new real-provider run
+occurred in this reconnect wave. Remaining Results/FAQ acceptance and current-head
+integration gates stay open; issues57/58 remain held.
 
 ## Mapping save completion candidate — 2026-11-17
 
