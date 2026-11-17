@@ -33,3 +33,25 @@ export function assertBaselineContentRetained(before, after) {
     }
   }
 }
+
+/** Exact authoring proof: only the requested new drafts may differ from the capture. */
+export function assertOnlyNewContentDrafts(before, after, expected) {
+  const retained = structuredClone(after.project), seen = new Set();
+  for (const { ref, values } of expected) {
+    const key = refKey(ref); assert(!seen.has(key), 'Duplicate expected draft'); seen.add(key);
+    assert(!contentRefs(before).some(prior => refKey(prior) === key), 'Expected draft already existed');
+    const provider = retained.providers.content.find(item => item.id === ref.providerId);
+    assert(provider, 'Missing draft provider');
+    const entry = provider.entries.find(item => item.id === ref.recordId && item.modelId === ref.modelId);
+    assert(entry, `Missing saved draft ${key}`); assert.equal(entry.lifecycle, 'draft');
+    assert.deepEqual(entry.values, values, `Saved draft values differ: ${key}`);
+    provider.entries = provider.entries.filter(item => item !== entry);
+  }
+  assert.deepEqual(retained, before.project, 'Original records, models, metadata or structure changed');
+  assert.deepEqual(after.assets, before.assets); assert.deepEqual(after.publicFiles, before.publicFiles);
+  const { content: oldContent, ...oldTokens } = before.tokens;
+  const { content: newContent, ...newTokens } = after.tokens;
+  assert.deepEqual(newTokens, oldTokens, 'A different authoring domain changed');
+  assert(Number.isSafeInteger(newContent) && newContent >= oldContent);
+  return { beforeDigest: before.digest, afterDigest: after.digest, refs: expected.map(item => item.ref), originalProjectExact: true, assetsExact: true };
+}
