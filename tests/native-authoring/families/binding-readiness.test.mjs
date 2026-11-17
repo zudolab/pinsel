@@ -5,13 +5,23 @@ import {mappingBindingReadiness} from './binding-readiness.mjs';
 
 function fixture(progress=()=>{}) {
   const ref={providerId:'mapping-filesystem',recordId:'actual-mapping'};
-  const state={url:'http://host/mapping?provider=mapping-filesystem&mapping=actual-mapping',saved:true,name:true,visible:false,enabled:true,pending:0,outstanding:0,held:null};
+  const state={url:'http://host/mapping?provider=mapping-filesystem&mapping=actual-mapping',shell:true,statusCount:1,targetCount:1,vanish:false,saved:true,name:true,visible:false,enabled:true,pending:0,outstanding:0,held:null};
   const events=[],polls=[];
-  const page={url:()=>state.url,locator(selector){return selector==='.cms-topbar__status'?{getAttribute:async name=>{assert.equal(name,'data-state');return state.saved?'saved':'dirty';}}:{getByText(name,options){assert.equal(name,'Actual Mapping');assert.deepEqual(options,{exact:true});return{isVisible:async()=>state.name};}};}};
+  const page={url:()=>state.url,locator(selector){return selector==='.cms-topbar__status'?{evaluateAll:async read=>read(state.shell?Array.from({length:state.statusCount},()=>({getAttribute:name=>{assert.equal(name,'data-state');return state.saved?'saved':'dirty';}})):[])}:{getByText(name,options){assert.equal(name,'Actual Mapping');assert.deepEqual(options,{exact:true});return{isVisible:async()=>state.name};}};}};
   const composition={check(){if(state.held)throw state.held;},get readiness(){return{pending:state.pending,outstanding:state.outstanding};},assertSettled(){assert.equal(state.pending+state.outstanding,0);}};
   const expect={poll(read,options){assert.equal(options.timeout,180000);return{async toBe(value){assert.equal(value,true);for(let step=0;step<8;step++){await progress(state,step);const ready=await read();polls.push(ready);if(ready)return;}throw Error('Bounded target readiness exhausted');}};}};
-  return {state,events,polls,run:()=>mappingBindingReadiness({page,expect,ref,record:{id:ref.recordId,document:{name:'Actual Mapping'}},target:{isVisible:async()=>state.visible,isEnabled:async()=>state.enabled},composition,check:()=>composition.check(),persist:async e=>events.push(e)})};
+  return {state,events,polls,run:()=>mappingBindingReadiness({page,expect,ref,record:{id:ref.recordId,document:{name:'Actual Mapping'}},target:{isVisible:async()=>state.visible,evaluateAll:async read=>read(state.visible&&!state.vanish?Array.from({length:state.targetCount},()=>({matches:selector=>{assert.equal(selector,':disabled');return !state.enabled;},getAttribute:name=>{assert.equal(name,'aria-disabled');return null;}})):[])},composition,check:()=>composition.check(),persist:async e=>events.push(e)})};
 }
+
+test('absent Mapping shell is a nonwaiting poll result until the exact editor mounts',async()=>{
+  const f=fixture((state,step)=>{state.visible=true;state.shell=step>=4;});await f.run();assert.deepEqual(f.polls,[false,false,false,false,true]);
+});
+test('target disappearing after visibility probe remains a false sample, never a locator wait',async()=>{
+  const f=fixture((state,step)=>{state.visible=true;state.vanish=step<3;});await f.run();assert.deepEqual(f.polls,[false,false,false,true]);
+});
+test('DOM probes reject duplicate status or target nodes',async()=>{
+  for(const patch of [{statusCount:2},{targetCount:2}]){const f=fixture(state=>Object.assign(state,{visible:true},patch));await assert.rejects(f.run(),/exhausted/);assert.equal(f.events.length,1);}
+});
 
 test('selected Saved Mapping may have no target until its asynchronous Composition definition resolves',async()=>{
   let resolveDefinition;const definition=new Promise(r=>resolveDefinition=r);
