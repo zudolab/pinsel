@@ -1,7 +1,7 @@
 import {mappingControlReadiness} from './control-readiness.mjs';
 import {mappingPinsReadiness} from './pins-readiness.mjs';
 import {contentPreviewOperations,contentPreviewReadGate,isNativeRead} from '../native-preview-reads.mjs';
-import {familyPrewriteReadiness,isChallengedWriteContinuation} from './prewrite-readiness.mjs';
+import {familyPrewriteReadiness,compositionWriteAdmission} from './prewrite-readiness.mjs';
 import {isFamilyProviderRead} from './provider-reads.mjs';
 import {selectCanonicalRoot} from './root-selection.mjs';
 import {mappingBindingReadiness} from './binding-readiness.mjs';
@@ -33,7 +33,7 @@ export async function familyUi(page,{base,snapshot,intent,persist,expect,setClos
  const check=async()=>{await drainAll(gate,workspaceRead,composition,readiness,nativeReads,...(readback?[readback]:[]));if(held)throw held;};
  setClose(async ctx=>{closing=true;try{await check();}finally{readback?.dispose();await ctx.close();}await check();});
  await page.route('**/__zudo*',async route=>{const request=route.request(),path=new URL(request.url()).pathname;let input;try{input=request.postDataJSON();}catch{}const op=request.headers()['x-zudo-composer-operation']??request.headers()['x-zudo-composer-asset-operation']??(path==='/__zudo-native-edit'?input?.operation:undefined);
-  if(path===endpoints.compositions){if(held||closing){await persist({phase:'composition-after-held-refused',path});return route.abort();}if(domain==='compositions'&&input?.operation==='put')return readiness.admit(route,()=>composition.handle(route),{writeContinuation:isChallengedWriteContinuation(composition,input)});return composition.handle(route);}
+  if(path===endpoints.compositions){if(held||closing){await persist({phase:'composition-after-held-refused',path});return route.abort();}if(domain==='compositions'&&input?.operation==='put')return readiness.admit(route,()=>composition.handle(route),compositionWriteAdmission(composition,input));return composition.handle(route);}
   if(intent.kind==='attachment'&&!attempted&&path===endpoints.workspace&&op==='open')return workspaceRead.handle(route);
   if(path==='/__zudo-native-edit'&&contentPreviewOperations.has(input?.operation))return nativeReads.handle(route);
   if(request.method()==='GET'||isFamilyProviderRead(path,op)||(isNativeRead(path,input,snapshot.workspaceId)))return route.continue();
