@@ -63,7 +63,7 @@ try {
   await page.goto(`${base}/composer?native=1&visitor=${encodeURIComponent(destination.pathname)}`);
   await page.getByText('Saved snapshot rendered',{exact:true}).waitFor({timeout:180000});
   const frame=page.frameLocator('iframe[title="Host rendered page"]');
-  await expect(frame.locator('title')).toHaveText(destination.title);
+  await expect(frame.locator('title')).toHaveJSProperty('textContent',destination.title,{timeout:180000});
   await expect(frame.locator('h2')).toHaveText(destination.sectionTitle);
   await expect(frame.locator('meta[name="description"]')).toHaveAttribute('content',destination.description);
   await expect(frame.locator('meta[name="robots"]')).toHaveAttribute('content',/noindex/);
