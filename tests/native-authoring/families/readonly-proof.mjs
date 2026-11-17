@@ -127,13 +127,15 @@ export function validateHeaderRestart(snapshot, proof) {
 
 /** Observe the installed client's bounded read retry; never issue a request here. */
 export function busyReadTracker(){
- const pending=new Set();
+ const pending=new Set(),retrying=new Set();
+ const requestKey=(path,headers,input)=>JSON.stringify([path,headers['x-zudo-composer-operation'],headers['x-zudo-native-client'],headers['x-zudo-native-epoch'],input]);
  const retryable=new Set(['list','get','snapshot','read-all','list-models','get-model','get-entry','count-entries','page-entries','scan-entries','selection','generation','find-seeding','missing-directories']);
  return{
   get outstanding(){return pending.size;},
+  claimRetry(path,headers,input){const key=requestKey(path,headers,input);if(!pending.has(key)||retrying.has(key))return false;retrying.add(key);return true;},
   observe(path,headers,input,response,workspaceId){
    const operation=headers['x-zudo-composer-operation'];
-   const key=JSON.stringify([path,operation,headers['x-zudo-native-client'],headers['x-zudo-native-epoch'],input]);
+   const key=requestKey(path,headers,input);retrying.delete(key);
    if(response.status===409&&response.body?.ok===false&&response.body.error?.code==='authoring-busy'){
     assert.equal(classifyRead(path,headers,input,workspaceId),'provider','Busy retry is only a domain provider read');
     assert.equal(headers['x-zudo-authoring-read'],'1','Busy read lacks installed retry hint');

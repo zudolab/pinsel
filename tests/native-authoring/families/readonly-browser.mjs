@@ -27,7 +27,7 @@ const {chromium,expect}=createRequire(join(repoRoot,'package.json'))('@playwrigh
 await mkdir(join(artifacts,'profile'));
 const context=await chromium.launchPersistentContext(join(artifacts,'profile'),{headless:true,executablePath:process.env.NATIVE_ACCEPTANCE_CHROMIUM||chromium.executablePath(),viewport:{width:1600,height:1050}});
 const page=context.pages()[0], pending=new Set(), active=activeReadback(snapshot.project.id);
-let blocked,error,result,previewCount=0,readEpoch=0;const previewPaths=new Set();
+let blocked,error,result,previewCount=0,readEpoch=0,originalPending=0,terminalClosing=false;const previewPaths=new Set();
 const diagnostics=observeRequestDiagnostics(page,persist);
 const recovered=intent.kind==='knowledge-saved-reference'?validateSavedReference(snapshot,inputs.savedReference):null;
 const headerProof=intent.kind==='header-restart'?validateHeaderRestart(snapshot,inputs.headerProof):null;
@@ -37,20 +37,24 @@ const lane={async drain(){while(pending.size)await Promise.allSettled([...pendin
 const lifecycle=releaseLifecycle({lanes:[lane,composition],composition,blocked:()=>blocked});
 await context.route('**/*',route=>{
   const work=(async()=>{
-    const request=route.request(),url=new URL(request.url());
+    const request=route.request(),url=new URL(request.url());let admitted=false;
     try {
       assert(!blocked, 'Read phase held');
       assert.equal(url.origin,base,'External request refused');
       if(request.method()==='GET')return await route.continue();
-      assert.equal(request.method(),'POST');readEpoch++;
+      assert.equal(request.method(),'POST');
       const body=request.postDataJSON(),kind=classifyRead(url.pathname,request.headers(),body,snapshot.workspaceId);
-      if(lifecycle.closing){
+      if(lifecycle.closing||terminalClosing){
+        const retry=terminalClosing&&!lifecycle.closing&&kind==='provider'&&busyReads.claimRetry(url.pathname,request.headers(),body);
+        if(!retry){
         const action=closingReadAction(url.pathname,request.headers(),body,snapshot.workspaceId);
-        if(action==='settle-composition')return await composition.handle(route);
+        if(action==='settle-composition'){readEpoch++;originalPending++;admitted=true;return await composition.handle(route);}
         await persist({phase:'read-aborted-at-close',endpoint:url.pathname,input:body,operation:request.headers()['x-zudo-composer-operation']??request.headers()['x-zudo-composer-asset-operation']??body?.operation??body?.request?.operation});
         return await route.abort();
+        }
+        await persist({phase:'terminal-existing-busy-retry',endpoint:url.pathname,input:body});
       }
-      lifecycle.requireOpen();
+      lifecycle.requireOpen();readEpoch++;originalPending++;admitted=true;
       if(kind==='composition')return await composition.handle(route);
       await persist({phase:'read-before-dispatch',endpoint:url.pathname,input:body});
       const response=await originalResponse(page,route);
@@ -62,7 +66,7 @@ await context.route('**/*',route=>{
       assertReadScope(url.pathname,request.headers(),response.body.result,snapshot.workspaceId);
       if(kind==='native' && body.operation==='document-preview'){assertPreviewIdentity(snapshot,response.body.result);previewCount++;previewPaths.add(response.body.result.identity.pathname);}
       if(kind==='release' && intent.kind==='active-identity')active.observe(body.request,response.body.result);
-    } catch(cause) {blocked??=cause;await route.abort().catch(()=>{});await persist({phase:'read-held',endpoint:url.pathname,error:cause.message}).catch(()=>{});}
+    } catch(cause) {blocked??=cause;await route.abort().catch(()=>{});await persist({phase:'read-held',endpoint:url.pathname,error:cause.message}).catch(()=>{});}finally{if(admitted)originalPending--;}
   })();pending.add(work);work.finally(()=>pending.delete(work)).catch(()=>{});return work;
 });
 try {
@@ -77,7 +81,7 @@ try {
       if(recovered&&boundary==='after-knowledge-preview'){
         const note=snapshot.project.providers.content.find(p=>p.id===accepted.intent.value.providerId).entries.find(e=>e.id===accepted.intent.value.recordId&&e.modelId==='note');
         const target='/notes/'+note.values['note-slug'];assert([...previewPaths].some(path=>path.replace(/\/$/,'')===target),'Exact target preview response required');
-        return settleTerminalReads({status:()=>({pending:pending.size+composition.readiness.pending,challenges:composition.readiness.outstanding,busy:busyReads.outstanding,epoch:readEpoch}),check:()=>{lifecycle.requireOpen();composition.check();if(blocked)throw blocked;},drain:async()=>{await lane.drain();await composition.drain();composition.assertSettled();},persist,diagnostics:diagnostics.snapshot});
+        return settleTerminalReads({fence:async()=>{terminalClosing=true;await persist({phase:'terminal-read-admission-fenced'});},status:()=>({pending:originalPending+composition.readiness.pending,challenges:composition.readiness.outstanding,busy:busyReads.outstanding,epoch:readEpoch}),check:()=>{lifecycle.requireOpen();composition.check();if(blocked)throw blocked;},drain:async()=>{await lane.drain();await composition.drain();composition.assertSettled();},persist,diagnostics:diagnostics.snapshot});
       }await settleBrowserReads(page,composition,{persist,boundary,check:()=>{lifecycle.requireOpen();if(blocked)throw blocked;}});await lane.drain();composition.check();composition.assertSettled();}};
     if(accepted.intent.kind==='knowledge-reference')await verifySavedKnowledge(page,options);else await verifySavedHeader(page,options);
     result=recovered?{kind:intent.kind,savedWrite:recovered,terminalSettlement:'AUTHORITATIVE_READS_AND_CLOSE_FENCE'}:{kind:intent.kind,forwardProofPath:intent.forwardProofPath};

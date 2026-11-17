@@ -125,6 +125,14 @@ describe('installed read retry observation',()=>{
   tracker.observe(path,{...marked,'x-zudo-native-epoch':'4'},input,ok,'pinsel');expect(()=>tracker.assertSettled()).toThrow();
   expect(tracker.observe(path,marked,input,ok,'pinsel')).toBe(false);tracker.assertSettled();
  });
+ it('terminal retry claim admits only one exact existing busy obligation',()=>{
+  const tracker=busyReadTracker();expect(tracker.claimRetry(path,marked,input)).toBe(false);
+  tracker.observe(path,marked,input,busy,'pinsel');expect(tracker.outstanding).toBe(1);
+  for(const [p,h,i] of [[path,marked,{id:'foreign'}],[path,{...marked,'x-zudo-native-epoch':'4'},input],[path,{...marked,'x-zudo-composer-operation':'put-entry'},input],['/foreign',marked,input]])expect(tracker.claimRetry(p,h,i)).toBe(false);
+  expect(tracker.claimRetry(path,marked,input)).toBe(true);expect(tracker.claimRetry(path,marked,input)).toBe(false);
+  tracker.observe(path,marked,input,busy,'pinsel');expect(tracker.claimRetry(path,marked,input)).toBe(true);
+  tracker.observe(path,marked,input,ok,'pinsel');expect(tracker.outstanding).toBe(0);expect(tracker.claimRetry(path,marked,input)).toBe(false);tracker.assertSettled();
+ });
  it('rejects unmarked, mutation, uncoordinated, unsupported and unknown failures',()=>{
   for(const changed of [{'x-zudo-authoring-read':undefined},{'x-zudo-composer-operation':'transact'},{'x-zudo-native-epoch':undefined},{'x-zudo-composer-operation':'initialize'},{'x-zudo-composer-workspace':'other'}])expect(()=>busyReadTracker().observe(path,{...marked,...changed},input,busy,'pinsel')).toThrow();
   for(const response of [{status:500,body:busy.body},{status:409,body:{ok:false,error:{code:'stale-browser'}}},{status:200,body:{ok:false}}])expect(()=>busyReadTracker().observe(path,marked,input,response,'pinsel')).toThrow();

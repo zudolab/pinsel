@@ -3,10 +3,12 @@ import {setTimeout as delay} from 'node:timers/promises';
 /** Terminal read-only verification only. Pre-navigation networkidle stays unchanged.
  * UI assertions + exact preview identity precede this barrier. All authoritative
  * responses/challenges/retries must settle; unrelated GET activity is diagnostic.
- * The existing close fence/drain still owns requests arriving after this barrier.
+ * Fence new admission first; exact existing continuations/retries may settle.
+ * The owned browser close/drain still checks late outcomes.
  */
-export async function settleTerminalReads({status,check,drain,persist,diagnostics,timeout=180000,quiet=500,interval=50}){
+export async function settleTerminalReads({fence,status,check,drain,persist,diagnostics,timeout=180000,quiet=500,interval=50}){
  assert([timeout,quiet,interval].every(Number.isFinite)&&timeout>0&&quiet>=0&&quiet<timeout&&interval>0);const deadline=performance.now()+timeout;let epoch,stableSince;
+ assert.equal(typeof fence,'function');check();await fence();
  await persist({phase:'terminal-read-settlement-start',diagnostics:diagnostics()});
  try{for(;;){
   check();const state=status();const now=performance.now();assert(now<deadline,'Terminal authoritative read settlement timed out');

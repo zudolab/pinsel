@@ -72,9 +72,11 @@ Pre-navigation/reload barriers retain their existing bounded global networkidle
 check. Only the final `after-knowledge-preview` boundary in this read-only recovery
 uses `header/terminal-settlement.mjs`: all required UI assertions and exact target
 preview identity have already passed, and no further navigation or write follows.
-It requires zero tracked authoritative requests, zero derived challenges and zero
+It first fences new read admission using the existing close classifier, then
+requires zero tracked authoritative requests, zero derived challenges and zero
 busy retry obligations, stable request epoch for 500 ms, checked lane drains, and
-a 180-second overall settlement deadline. Existing close fencing still refuses
+a 180-second overall settlement deadline. An exact previously observed busy-read retry (same endpoint/operation/body/client/epoch)
+may finish once; concurrent duplicate retries are not admitted. Existing close fencing still refuses
 unknown writes, aborts known new pure reads without dispatch, and settles already
 admitted reads and exact challenged continuations. Late errors still fail.
 
