@@ -1,7 +1,8 @@
-# Proposed boundary16 family harness source rebind (not implemented)
+# Boundary16 family harness source rebind
 
-This is a review proposal, not a descriptor, runtime authorization, or accepted
-family step. No package transition or authoring mutation is proposed.
+The source implementation provides a proof loader and evidence-only preparer.
+This document is not a descriptor, runtime authorization, or accepted family step.
+No package transition or authoring mutation is authorized by preparation.
 
 ## Exact boundary and inputs
 
@@ -45,9 +46,9 @@ not digest alone. The current expected digest is
    before descriptor emission and at generation/runtime boundaries. Exclusive
    outputs only; no mutation of old evidence or authoring state.
 
-## Intended wiring after review
+## Implemented wiring (manager preparation after review)
 
-Use a pure `source-rebind-core` proof/boundary module and separate loader/preparer.
+The pure `source-rebind-core` proof/boundary module has a separate loader/preparer.
 The CLI receives an optional final rebind descriptor argument after the original
 bridge and supplement. Validate current installation through the rebind while
 validating the original supplement using sealed historical installation. Carry all
@@ -67,3 +68,42 @@ change; rewritten recovery status; missing installation; and actual spawned CLI
 success/refusal (prevent the earlier ESM self-await cycle). Run the inert retained
 DOM selector fixture before any native retry. Manager independently reviews and
 prepares descriptors only after clean source integration and stopped captures.
+
+## Manager input recipe
+
+Create an exclusive inputs JSON with exactly the following keys (all paths
+absolute; `expectedSourceHead` is the reviewed40-character Git SHA):
+
+- `expectedSourceHead`: exact clean integrated source approved by review.
+- `originalDescriptorPath`: retained boundary12 descriptor.
+- `supplementDescriptorPath`: retained c81 boundary13 descriptor.
+- `historyPath`: original accepted history16; do not rewrite it.
+- `configPath`: original Results config.
+- `beforePath`, `afterPath`: distinct stopped public captures, both full-equal to
+  accepted phase15 after-image.
+- `reviewedChangesPath`: sorted exact `[{path,before,after}]` tracked Git hash delta
+  from original25e to the reviewed current source; absent files use null.
+- `failuresPath`: object with `pin`, `diagnostic`, `extra` as described below.
+
+`pin` maps `before`, `after`, `bundle`, `events`, `log`, `provenance` to the original
+failed16 files. `diagnostic` maps those same keys plus `dom`, `screenshot`, `verified`
+to the original diagnostic FAIL263 files. `extra` is an array of absolute retained
+reconciliation/checkpoint/additional evidence paths, including any later corrected
+diagnostic. Both mandatory failures remain failures; their public captures and
+original no-write journals are checked independently.
+
+After independent review and the manager's stopped-source audit, run:
+
+```sh
+node tests/native-authoring/families/prepare-source-rebind.mjs \
+  --inputs /absolute/new-source-rebind-inputs.json \
+  --artifacts /absolute/new-source-rebind-evidence
+```
+
+This command writes only new evidence outside the checkout. It performs no install,
+capture, browser navigation, server startup or canonical mutation. The manager must
+review `descriptor.json` and all frozen dependencies before using it as the eighth
+argument to `families/sequence.mjs`, after original bridge and supplement paths.
+The command refuses uncommitted source and changed production/config/manifest/lock
+files. The actual next phase still requires separate runtime admission. No generated
+descriptor is part of this source change.
