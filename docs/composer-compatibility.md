@@ -1000,3 +1000,27 @@ passing and validation failing on resolved-config/test TypeScript contracts.
 The original required-key assertion remains intact; source correction and a new
 declaration package are pending integration. Pinsel CI run44031065105 passed all
 four jobs.
+
+## 711 normal human-authoring acceptance
+
+Pinsel `6b0e683a27a4b34c6fe9537e273e13887f9210aa`, independently frozen-installed
+with Composer `71126775a97feab004145dde63a768684e8e3cd9`, passed the normal,
+unfiltered `--scenario full` in 890 seconds. This was not a restoration-only run:
+`result-1794897881969.json` records `PASS`, `restorationOnly: false`, and no errors.
+The existing canonical migration stage was preserved, not reimported.
+
+Sitemap/page selection, stable component identities, nested local insertion/save,
+shared Course price on Home and Lessons, Contact option labels, reordered Course
+selection with retained numeric aliases, and reload/restart passed. Reviewed
+snapshot A `2558d55818cd019d99a22727b5d16adc682d471df0fc42b06596f6e1bce6ab14`
+built all 14 baseline routes and 143 public files after a later edit produced B;
+the complete capture after that build remained B. Guarded inverse operations
+restored all authored values/assets. Course generation advanced from 1 to 7 for
+six receipt-evidenced human commits; normal timestamps/history remain. Final
+capture is `05f66c5f1c6ce05df79a3808d71f6370aa335cec1b7406327da4667a35f539a3`.
+
+Evidence is retained under `t7-711-full-1`, including request journals, per-phase
+captures/screenshots, exact-build proof and restoration audit. The acceptance
+checkout was clean, port 4197 closed, and its lease absent at completion. This
+pass belongs to package 711; the declaration correction, negative/recovery cases,
+policy-specific acceptance and remaining T6 scenarios are separate work.
