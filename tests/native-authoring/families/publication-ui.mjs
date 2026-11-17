@@ -6,8 +6,8 @@ import { releaseProof } from './release-proof.mjs';
 import { requestGate, originalResponse, drainAll } from './original-request.mjs';
 const key = ref => JSON.stringify([ref.providerId,ref.modelId,ref.recordId]);
 /** Called only after exact offline source precondition and an exclusive journal begin. */
-export async function publishReviewed(page,{base,snapshot,refs,excluded=[],expectedActive,persist,expect,setClose}) {
-  const proof=releaseProof({snapshot,expectedActive,requested:refs.map(ref => ({ref,action:'publish'}))});
+export async function publishReviewed(page,{base,snapshot,refs,excluded=[],expectedActive,persist,expect,setClose,proofFactory=releaseProof}) {
+  const proof=proofFactory({snapshot,expectedActive,requested:refs.map(ref => ({ref,action:'publish'}))});
   let blocked, activationRequestId, releaseChallenge;
   const composition=compositionDerivedReadGate({page,snapshot,persist});
   page.on('websocket',socket=>{if(new URL(socket.url()).host!==new URL(base).host)return;socket.on('framereceived',({payload})=>{let frame;try{frame=JSON.parse(String(payload));}catch{return;}if(frame.event!=='release:challenge' || frame.data?.payload?.kind!=='reconcile')return;try{assert.equal(frame.data.requestId,activationRequestId);assert.equal(frame.data.operation,'activate');proof.reconcileChallenge(frame.data.payload);releaseChallenge=structuredClone(frame.data.payload);}catch(error){blocked ??=error;}});});

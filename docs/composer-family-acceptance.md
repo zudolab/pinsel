@@ -236,3 +236,54 @@ and `verify-build.mjs` recipe above: browser proof alone does not establish stat
 output or captured asset fidelity. Membership inverse gets its own fresh intent,
 artifact directory, restart proof and exact build; it does not delete family records
 or release history. Preserve failures and reconcile public readback before advancing.
+
+## Fresh-stage first local baseline prerequisite
+
+The family sequence requires an already active local baseline. A fresh explicit
+known-data initialization does not create one. Do not invent an active identity or
+publish unrelated drafts to satisfy this prerequisite. The separate first-baseline
+runner implements the initial local activation described in
+[native route acceptance](native-route-acceptance.md), selecting **only** the
+published qualified identities in the reviewed public capture. It refuses any
+existing active release or staged project head. It creates no Content, pages or
+families, and it neither deploys nor claims production-rendered release output.
+Installed runtime acceptance of this new runner is **NOT_RUN**.
+
+With a clean committed frozen-install checkout, explicit known-data stage, stopped
+writers and a fresh public capture, prepare an exclusive intent:
+
+```sh
+node tests/native-authoring/families/prepare-first-baseline.mjs \
+  /absolute/accepted-capture.json /absolute/new-baseline-intent.json
+```
+
+Review its complete published identity list, capture digest and explicit
+`expectedActive: null`. Inside the environment's shared heavy guard and child reaper:
+
+```sh
+corepack pnpm exec node tests/native-authoring/families/run-first-baseline.mjs \
+  --composer FULL_IMMUTABLE_COMPOSER_SHA --stage EXISTING_STAGE --port 4198 \
+  --intent /absolute/new-baseline-intent.json --artifacts /absolute/new-baseline-attempt
+```
+
+The actual Review & release UI inspects the empty catalog, selects those exact
+published records, checks/approves/stages/builds the reviewed candidate and activates
+it locally. Original requests and responses are journaled; unsupported mutations,
+changed source/inputs, uncertain responses, nonempty catalog and unexpected deltas
+hold the run. Reconciliation must match the actual activation challenge and exact
+qualified publication list. Public active catalog and candidate readback must agree.
+No retry, reset, inverse, initialization or automatic cleanup is provided.
+
+Activation advances the native global Content token once for its reconciliation
+fence even when every selected entry was already published. The actual public
+reconciliation response must prove that token; the full offline capture comparison
+requires every original field, entry generation, lifecycle, model, Composition,
+Mapping, Sitemap, asset and other domain token to stay exact. Release history and
+the first baseline are retained. Success writes `FIRST_BASELINE_ACTIVATED_VERIFIED`
+and `active-identity.json`; failure retains all artifacts and requires public
+reconciliation before further writes. Do not replay an uncertain activation.
+
+Use the successful after capture and the standalone `active-identity` read-only
+restart recipe above to confirm its active identity before starting the family
+sequence. The first local release is a prerequisite, not a family-runtime or
+Pinsel exact-production-build pass. Family mutations remain separately reviewed.
