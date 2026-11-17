@@ -14,7 +14,7 @@ Historical entries below retain their original outcomes. Latest complete Assista
 | Identity or gate | Current recorded value |
 | --- | --- |
 | Pinsel complete Assistant tested source | `f07e05b8f9e22379cb321bf80a11d47b26800e24` |
-| Current candidate package / attestation | `69ca1f49198fefd262e525e22d3f190022f63cf0` / `94a34d5869427e45e3ebcfec081d449122d0e3f9` |
+| Current candidate package / attestation | `d5ac410b3c9e4b1781289ae47cc48be47efaa099` / `bc61dc483df4b342120ffd579b66d4aacd79e503` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | Complete seven-case Assistant PASS at bc20; human provenance/refusal and canonical migration PASS at4f; remaining scenarios tracked below |
@@ -1200,3 +1200,32 @@ valid human save. AI Apply/Undo stopped before mutation on review-card readiness
 its retained proposal is being reconciled. The extra canonical-record scenario
 stopped before Content edits after repeated startup busy refusals; full captures
 match and no record was created. These are unfinished checks, not passes.
+
+## Canonical workspace summary candidate — 2026-11-17
+
+[Composer #988](https://github.com/Takazudo/zudo-composer/issues/988) changes
+workspace summary metadata and Mapping source diagnostics to use validated
+canonical Composition snapshots where supported. Editor `list`/`get` and derived
+output validation remain unchanged. This addresses the observed summary-output
+continuation racing host-preview capture; installed verification remains required.
+
+Package `d5ac410b3c9e4b1781289ae47cc48be47efaa099`, attestation
+`bc61dc483df4b342120ffd579b66d4aacd79e503`, contains 778 files with payload
+`5452b4337d11c9e91b4f45f451b6a39c6c269b61a115cba2bc6330dd38bf02d6`.
+Only summary source and structural-authoring documentation differ in the shipped
+payload from69ca. Independent review and 42 focused regressions passed; integrated
+42 tests passed in3.51s. Public build/check, all four CMS fixture checks and public
+types passed in77s with no generated changes. App/Node types and scoped lint passed.
+
+Pinsel installed all four exact pins (11.6s), then frozen install, dedupe and
+no-deployment checks passed. Public capture changed from00a595 to
+`1099aaa3c4e03aca4902b63784b0eea6b4b3fc8cfd529ed3e3a1cbf07cfc4d56`: only
+snapshot, pack and renderer digests differ; compiler identity and all other
+public fields, authored domains, tokens, Assets and public files are exact.
+
+The separate creator-template CI failure was reproduced and fixed by provisioning
+its source-test public dependency outside the generated host inventory; unchanged
+portability assertions passed. This test-only change leaves shipped bytes intact.
+Current candidate CI and installed extra-record/title-recovery scenarios are pending.
+The title edit itself is already saved; its previous reload verification timed out
+on background catalog reads. It will be read back, never replayed.
