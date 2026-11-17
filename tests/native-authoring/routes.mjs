@@ -3,7 +3,7 @@ import { expect } from '@playwright/test';
 import { refKey } from './routes-proof.mjs';
 import { observeContentCreation } from './creation-observer.mjs';
 import { continueContentRequest } from './content-browser-transport.mjs';
-import { contentFieldPlan, markdownLinesText, createDraftSettlement, isAdmittedDraftSave, isProviderRead } from './routes-fields.mjs';
+import { contentFieldPlan, markdownLinesText, createDraftSettlement, isAdmittedDraftSave, isProviderRead, editContentBoolean } from './routes-fields.mjs';
 
 /** persist must durably write the journal; the create request waits for it. */
 export async function createContentEntry(page, { base, before, modelId, persist, settlement }) {
@@ -78,8 +78,10 @@ export async function fillContentFields(page, fields, { model, settlement }) {
       }
     }
     if (typeof plan.value === 'boolean') {
-      if (await control.isChecked() !== plan.value) await control.press('Space');
+      const unsetNo = page.getByRole('button', { name: `Set ${plan.field.label} to No`, exact: true });
+      await editContentBoolean(control, unsetNo, plan.value);
       await expect(control).toBeChecked({ checked: plan.value });
+      await expect(unsetNo).toHaveCount(0);
     } else await control.fill(String(plan.value));
   }
   const save = page.getByRole('button', { name: 'Save', exact: true });

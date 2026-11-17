@@ -90,3 +90,30 @@ test('new entry cannot bypass a prior held writer by installing its creation obs
   const settlement = createDraftSettlement(); settlement.hold('previous save uncertain');
   await assert.rejects(createContentEntry({}, { settlement }), /previous save uncertain/);
 });
+
+test('missing boolean false uses one explicit No action, never a toggle workaround', async () => {
+  const { editContentBoolean } = await import('./routes-fields.mjs');
+  const actions = [];
+  const control = { isChecked: async () => false, press: async key => { actions.push(key); } };
+  const no = { count: async () => 1, isVisible: async () => true, isEnabled: async () => true, click: async () => { actions.push('set-no'); } };
+  assert.equal(await editContentBoolean(control, no, false), 'set-no');
+  assert.deepEqual(actions, ['set-no']);
+});
+test('existing false is a no-op and existing true toggles to false once', async () => {
+  const { editContentBoolean } = await import('./routes-fields.mjs');
+  const actions = [], no = { count: async () => 0 };
+  assert.equal(await editContentBoolean({ isChecked: async () => false }, no, false), 'none');
+  assert.equal(await editContentBoolean({ isChecked: async () => true, press: async key => { actions.push(key); } }, no, false), 'toggle');
+  assert.deepEqual(actions, ['Space']);
+});
+test('unset true uses the normal switch; ambiguous or disabled unset No refuses', async () => {
+  const { editContentBoolean, booleanContentAction } = await import('./routes-fields.mjs');
+  const actions = [];
+  const control = { isChecked: async () => false, press: async key => { actions.push(key); } };
+  assert.equal(await editContentBoolean(control, { count: async () => 1 }, true), 'toggle');
+  assert.deepEqual(actions, ['Space']);
+  assert.throws(() => booleanContentAction({ value: false, checked: false, unsetChoices: 2 }));
+  assert.throws(() => booleanContentAction({ value: false, checked: true, unsetChoices: 1 }));
+  await assert.rejects(editContentBoolean(control, { count: async () => 1, isVisible: async () => true, isEnabled: async () => false }, false), /unavailable/);
+  assert.deepEqual(actions, ['Space']);
+});

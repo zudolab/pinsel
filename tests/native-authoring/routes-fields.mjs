@@ -56,3 +56,22 @@ const providerReads = new Map([
 ]);
 /** Unknown operations are denied, including non-prefix writes such as editorial-apply. */
 export function isProviderRead(pathname, operation) { return providerReads.get(pathname)?.has(operation) === true; }
+
+/** An unchecked unset field is not the authored value false. Never double-toggle it. */
+export function booleanContentAction({ value, checked, unsetChoices }) {
+  assert.equal(typeof value, 'boolean'); assert.equal(typeof checked, 'boolean');
+  assert(unsetChoices === 0 || unsetChoices === 1, 'Unset boolean action must be unambiguous');
+  assert(!(unsetChoices && checked), 'Unset boolean cannot already be checked');
+  if (!value && unsetChoices === 1) return 'set-no';
+  return checked === value ? 'none' : 'toggle';
+}
+
+/** Pass the exact `Set ${field.label} to No` button; caller verifies saved state. */
+export async function editContentBoolean(control, unsetNo, value) {
+  const action = booleanContentAction({ value, checked: await control.isChecked(), unsetChoices: await unsetNo.count() });
+  if (action === 'set-no') {
+    assert(await unsetNo.isVisible() && await unsetNo.isEnabled(), 'Explicit unset boolean action is unavailable');
+    await unsetNo.click();
+  } else if (action === 'toggle') await control.press('Space');
+  return action;
+}
