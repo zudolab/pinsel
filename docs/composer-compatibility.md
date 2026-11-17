@@ -906,3 +906,33 @@ corrected second run used a new pristine target.
 Browser owner selection, invalid-pin publication refusal and unused-extra-record
 acceptance remain pending. This rehearsal uses known fixtures, not the owner's
 current local database. Evidence is recorded in [T6 #55](https://github.com/zudolab/pinsel/issues/55#issuecomment-6939829800).
+
+
+## First native publication and production visitor acceptance
+
+Cold Pinsel `198065a4b8c3c872a2846bf23ed3710df068c7d2` with package
+`bc20ea554d5d8de92934c9bf4ec989229d23047e` passed the actual UI release
+plan/stage/build/activate/reconcile sequence in 116s. Only the intended newly
+authored Note and Course became published; the third complete Course with
+`featured=false` stayed draft. Canonical capture changed from
+`530e2f6a56c4aa6d70d50cd60e39392475b62d599d4f69d863538e923ea1a848` to
+`ae57baef30bb6d52e6dbd16b017130a2e42df51548eb6979e095dcfe7ce78146`;
+only the two authorized lifecycle/generation changes and Content token changed.
+Earlier harness attempts failed before forwarding Plan/Apply and are retained.
+
+Pinsel's exact captured static build and visitor checks then passed in 17s:
+15 routes (14 baseline plus the new Note), all 143 public files, route metadata,
+canonical/noindex output, internal links/fragments and duplicate IDs. Mobile menu
+Escape/focus, FAQ keyboard interaction, Note TOC focus and invalid-only Contact
+validation passed. The new Course appears in Home pricing with distinct excerpts
+and its stable Contact identity; legacy course aliases retain their meanings.
+Lessons remains intentionally curated by its pinned membership. The excluded
+draft does not appear. No inquiry was delivered. Full capture after visitor
+checks remained exactly `ae57baef…`.
+
+The Note renderer supports its documented limited syntax: the fixture's `# Live
+heading` is literal paragraph text, while `## Second heading` becomes a heading
+and TOC entry. This result does not prove arbitrary Markdown support or parity
+between native human-write and Assistant Markdown-policy validation. That parity
+is under investigation. New static page creation/hierarchy/navigation and family
+reference scenarios remain pending.
