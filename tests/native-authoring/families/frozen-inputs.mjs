@@ -15,14 +15,20 @@ export async function freezeReadInputs(intentPath) {
     if(intent.kind==='mapping-saved-binding'){for(const [path,expected]of Object.entries(savedReference.bundle.hashes)){const bytes=await readExpectedBytes(path,hashes);assert.equal(inputHash(bytes),expected,'Original binding input changed');}}
     savedReference.hashes=intent.kind==='mapping-saved-binding'?{...hashes}:Object.fromEntries(Object.values(paths).map(path=>[path,hashes[path]]));
   }
-  let familyInstallationBridge;
-  if(intent.familyInstallationBridge){
+  let familyInstallationBridge,familyInstallationSupplement;
+  if(intent.familyInstallationSupplement){
+    assert(intent.familyInstallationBridge,'Original bridge required');
+    const chain=await(await import('./installation-supplement-loader.mjs')).loadFamilyInstallationSupplement({originalDescriptor:intent.familyInstallationBridge,descriptor:intent.familyInstallationSupplement,repo:(await import('./config.mjs')).repoRoot});
+    familyInstallationBridge=chain.originalBridge;familyInstallationSupplement=chain.supplement;
+    assert(intent.sequence?.index>=13);if(intent.sequence.index===13)assert.equal(snapshot.digest,familyInstallationSupplement.afterDigest);
+    mergeExpectedHashes(hashes,familyInstallationBridge.hashes);mergeExpectedHashes(hashes,familyInstallationSupplement.hashes);
+  }else if(intent.familyInstallationBridge){
     familyInstallationBridge=await(await import('./installation-bridge.mjs')).loadFamilyInstallationBridge({descriptor:intent.familyInstallationBridge,repo:(await import('./config.mjs')).repoRoot});
     assert(intent.sequence?.index>=familyInstallationBridge.boundary);
     if(intent.sequence.index===familyInstallationBridge.boundary)assert.equal(snapshot.digest,familyInstallationBridge.afterDigest);
     mergeExpectedHashes(hashes,familyInstallationBridge.hashes);
   }
-  return {intent,snapshot,headerProof,...(familyInstallationBridge?{familyInstallationBridge}:{}),...(savedReference?{savedReference}:{}),hashes};
+  return {intent,snapshot,headerProof,...(familyInstallationSupplement?{familyInstallationSupplement}:{}),...(familyInstallationBridge?{familyInstallationBridge}:{}),...(savedReference?{savedReference}:{}),hashes};
 }
 export async function assertInputsUnchanged(hashes) {
   for(const [path,hash] of Object.entries(hashes))assert.equal(inputHash(await readFile(path)),hash,`External acceptance input changed: ${path}`);
