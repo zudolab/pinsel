@@ -256,7 +256,42 @@ workspace, tokens, Content, Composition, Mapping, Sitemap, assets, public files 
 all other identity fields must remain exactly equal. A bridge cannot authorize data
 migration. Preserve the original store and stop if another field changes.
 
-Write a separate bridge JSON with **exactly** these fields:
+The manager can generate the witness without hand-assembling its fields. Run the
+committed helper from the upgraded, clean, independently installed checkout, using
+the **actual current immutable package SHA** (there is no built-in default pin):
+
+```sh
+PINSEL_AUTHORING_STAGE=notes-v1 corepack pnpm exec tsx \
+  --tsconfig packages/pinsel-content/tsconfig.scripts.json \
+  tests/native-authoring/static/prepare-final-installation.mjs \
+  --composer FULL_CURRENT_IMMUTABLE_COMPOSER_SHA --stage notes-v1 \
+  --chain /absolute/original-fifteen-proof-manifest.json \
+  --before /absolute/manager-stopped-before-capture.json \
+  --after /absolute/manager-stopped-after-capture.json \
+  --artifacts /absolute/new-final-installation-evidence
+```
+
+The original chain manifest must still point to phase15's old final capture and
+include its actual recovery-freeze mappings. The manager's stopped-before capture
+must deeply equal that original final capture. The helper validates all15 original
+proofs, resolves actual current public identities and installation provenance, and
+writes only the exclusive external evidence directory. It never installs, captures,
+starts a server, initializes a workspace or replays authoring/publication. It freezes
+all original chain input hashes as well as both manager captures, the generated
+bridge, identity/provenance files and manager-input record. It then reloads the
+complete extended manifest and rechecks source, installation and frozen inputs.
+Failure preserves any partial evidence directory; do not overwrite it.
+
+Its output lists `retained-intent.json`, the freeze manifest and its SHA256. Obtain
+independent review of these actual files before passing that intent to
+`run-retained.mjs`. `FINAL_INSTALLATION_EVIDENCE_PREPARED_RUNTIME_NOT_RUN` means
+only offline evidence validation; the runner must still prove fresh full capture
+equality and current installed restart/build behavior. The helper deliberately
+does not claim that caller-supplied captures are fresh or that raw history files
+were preserved: the manager's stopped capture/preservation audit supplies that
+separate evidence.
+
+For review, the generated bridge JSON has **exactly** these fields:
 
 ```json
 {
