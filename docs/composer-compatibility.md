@@ -1149,3 +1149,31 @@ and public files remain exact. Composition revision metadata and receipt history
 remain. Evidence under `t7-26862-recovery-1` includes original requests/responses,
 captures, pending/recovered screenshots and terminal audit. The checkout was clean,
 port 4197 closed and the actual lease absent at completion.
+
+## Blank-path placeholder capture follow-up
+
+The first installed #987 candidate still refused the actual UI-created draft:
+its absent slug inherits `/`, producing collision diagnostics in addition to
+unassigned-page. All 1,002 retained cold native/public/release files stayed exact
+after installation and the failed capture. No recovery or next write was claimed.
+
+Follow-up source `e2ee0f81967a9e6cd271d73b8c4168d157091a95` (integrated `64635624`)
+handles only authoring collision groups whose participants are all accounted for:
+source-confirmed unassigned placeholders and at most one materialized assigned
+destination at that exact path. Assigned duplicates, including multiple expanded
+Mapping routes from the same node, remain blocked. Compiler/expansion and strict
+release/trash behavior are unchanged. Independent 73 regressions plus 20 asset
+tests passed; 36 integrated capture tests and the full typecheck passed. A readonly
+test-fixture construction error reported by CI was corrected without changing its
+assertions. Public/CMS generation, currentness and public type checks passed in
+96s; all 16 generated CMS changes are mutation-token-only.
+
+Package `69ca1f49198fefd262e525e22d3f190022f63cf0`, attested by
+`94a34d5869427e45e3ebcfec081d449122d0e3f9`, has 778 files and payload digest
+`3678285649899fcfa96cd294e994d5c292f0a89819c14aa9c945278548fd07a6`.
+All four Pinsel importers and the lockfile use this pin. Install passed in 10.7s,
+then frozen install/dedupe/no-deploy passed. Main capture is now
+`00a5956929993f102a8f90cbef5c7e1230aaf7dcb7785be02566548cc6f82278`;
+only snapshot/pack/renderer/compiler identities changed from e9d6, with every other
+public capture field exact. Installed cold recovery remains pending. This source
+fix and successful installation alone do not complete #987.
