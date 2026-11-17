@@ -354,7 +354,15 @@ corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json 
 This starts a fresh server/browser, admits only actual scoped reads and the existing
 challenged derived-output protocol, and checks the exact captured host preview's
 route, title, description, noindex and Section heading. It stops the server and
-requires complete capture equality. It then builds the exact snapshot if no build
+requires complete capture equality. `shutdown.json` records the owned detached
+spawn PID/PGID, signal and wrapper exit, followed by bounded observations of port
+release, host-root `.zudo-authoring.lock` absence and remaining live members of
+that exact process group. Wrapper exit alone is insufficient. Zombie members do
+not block settlement: the outer child reaper collects them after the runner exits.
+A held port/lease or live process beyond the deadline refuses the after-capture;
+there is no discovered-PID kill, forced kill or lease deletion. Preserve the failed
+attempt and reconcile a separate stopped capture before a reviewed retry.
+It then builds the exact snapshot if no build
 exists, or verifies the existing digest output without overwriting it; all public
 compiled routes/assets, metadata, actual parent, old-root-route retirement and
 production HTML are checked. A further public capture must remain identical.
