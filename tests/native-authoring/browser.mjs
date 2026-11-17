@@ -1,4 +1,4 @@
-import {contentPreviewResponseTracker,contentPreviewOperations,assertContentPreviewRequest,assertContentPreviewHeaders,assertContentPreviewResponse} from './native-preview-reads.mjs';
+import {contentPreviewResponseTracker,contentPreviewOperations,assertContentPreviewRequest,assertContentPreviewHeaders} from './native-preview-reads.mjs';
 import { randomUUID } from 'node:crypto';
 import { assertRecoveryRequest, assertRecoveryReceipt, assertRecoveryCleanup, assertRecoveryInverse, recoveryObservation } from './recovery-proof.mjs';
 import { continueContentRequest, readBrowserContent, contentReadOperations } from './content-browser-transport.mjs';
@@ -50,7 +50,7 @@ async function launch() {
             if (response.url().endsWith('/__zudo-native-edit')) {
                 const body = await response.json();const input=response.request().postDataJSON();
                 if(contentPreviewOperations.has(input?.operation)){assertContentPreviewRequest(input,nativeReadSnapshot.workspaceId);assertContentPreviewHeaders(response.request().headers());const observed=contentReads.observe(input,{status:response.status(),body},response.request().headers());record('content-preview-observed',{input,status:response.status(),evidence:observed});}
-                if (input?.operation==='document-preview'&&body.result?.targets)
+                if (!contentPreviewOperations.has(input?.operation)&&body.result?.targets)
                     preview = body.result;
                 record('native-response', { operation: response.request().postDataJSON()?.operation, status: response.status(), error: body.error });
             }
