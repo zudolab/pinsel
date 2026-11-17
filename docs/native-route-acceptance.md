@@ -111,7 +111,8 @@ corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json 
 Review that intent, then run inside the shared guard/reaper:
 
 ```sh
-corepack pnpm exec node tests/native-authoring/static/run-phase.mjs \
+corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json \
+  tests/native-authoring/static/run-phase.mjs \
   --composer FULL_IMMUTABLE_COMPOSER_SHA --stage EXISTING_STAGE --port 4194 \
   --intent /absolute/new-intent.json --artifacts /absolute/new-attempt
 ```
@@ -171,6 +172,52 @@ corepack pnpm exec vitest run --config tests/native-authoring/static/vitest.conf
 The reduced `fixture.json` has an invalid capture digest and no usable Assets; it
 is test data, never an import or build input. Source tests are not installed runtime
 acceptance. Use the compatibility ledger for exact tested revision and result.
+
+## Retained external-pilot state: verify without replay
+
+A completed external pilot may contain successful phases, explicitly recovered
+failed attempts and reviewed installation identity changes. Do not relabel them as
+portable phase passes or recreate their records. The separate read-only retained
+state runner consumes an ordered15-proof manifest:
+
+```json
+{"kind":"retained-static-evidence","proofPaths":["/absolute/phase01/proof.json","/absolute/recovered-phase02/recovered-phase-proof.json","...all remaining actual accepted phase proofs..."],"capturePath":"/absolute/accepted-final-capture.json"}
+```
+
+The example array is schematic; provide all15 actual ordered paths. The loader
+checks each kind and digest chain, the original successful record/release response,
+full accepted domain delta and owner allocations. Recovery requires full unchanged
+before/after capture and an actual successful public record read. Installation
+changes permit only the four attested identity fields, require recorded public
+pack/renderer identities, and validate an explicit bridge when supplied. Every
+input is hashed and frozen for the child; original failure/recovery statuses remain
+in the output. An incomplete sequence or caller-invented resource ID refuses.
+
+With stopped writers and a clean committed frozen-install checkout, run inside the
+shared guard/reaper:
+
+```sh
+corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json \
+  tests/native-authoring/static/run-retained.mjs \
+  --composer FULL_IMMUTABLE_COMPOSER_SHA --stage EXISTING_STAGE --port 4194 \
+  --intent /absolute/retained-manifest.json --artifacts /absolute/new-retained-check
+```
+
+This starts a fresh server/browser, admits only actual scoped reads and the existing
+challenged derived-output protocol, and checks the exact captured host preview's
+route, title, description, noindex and Section heading. It stops the server and
+requires complete capture equality. It then builds the exact snapshot if no build
+exists, or verifies the existing digest output without overwriting it; all public
+compiled routes/assets, metadata, actual parent, old-root-route retirement and
+production HTML are checked. A further public capture must remain identical.
+
+Only then does `static-route-proof.json` contain
+`COMPILED_AND_EXACT_BUILD_VERIFIED`, suitable for Header href acceptance. This is a
+new read-only restart and exact production-build proof for retained state, **not**
+a claim that all15 writes were repeated in the portable runner. It does not establish
+baseline visitor interactions, Header inclusion or authenticated inference. Those
+remain separate acceptance scenarios. No inverse or cleanup follows automatically.
+The retained runner's installed runtime acceptance is NOT_RUN until executed.
 
 ## Results, FAQ, and singleton-shaped records
 

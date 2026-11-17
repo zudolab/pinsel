@@ -7,7 +7,7 @@ import {repoRoot} from '../families/config.mjs';
 import {originalResponse} from '../families/original-request.mjs';
 import {compositionDerivedReadGate} from '../families/composition-output.mjs';
 import {releaseLifecycle} from '../families/release-lifecycle.mjs';
-import {classifyRead,assertReadScope,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from '../families/readonly-proof.mjs';
+import {classifyRead,closingReadAction,busyReadTracker,assertReadScope,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from '../families/readonly-proof.mjs';
 const [bundlePath,bundleHash,artifacts,base] = process.argv.slice(2);
 const inputs=await readFrozenBundle(bundlePath,bundleHash);
 await assertInputsUnchanged(inputs.hashes);
@@ -25,7 +25,8 @@ const page=context.pages()[0], pending=new Set(), active=activeReadback(snapshot
 let blocked,error,result,previewCount=0;
 
 const composition=compositionDerivedReadGate({page,snapshot,persist});
-const lane={async drain(){while(pending.size)await Promise.allSettled([...pending]);if(blocked)throw blocked;}};
+const busyReads=busyReadTracker();
+const lane={async drain(){while(pending.size)await Promise.allSettled([...pending]);if(blocked)throw blocked;busyReads.assertSettled();}};
 const lifecycle=releaseLifecycle({lanes:[lane,composition],composition,blocked:()=>blocked});
 await context.route('**/*',route=>{
   const work=(async()=>{
@@ -34,13 +35,23 @@ await context.route('**/*',route=>{
       assert(!blocked, 'Read phase held');
       assert.equal(url.origin,base,'External request refused');
       if(request.method()==='GET')return await route.continue();
-      lifecycle.requireOpen();assert.equal(request.method(),'POST');
+      assert.equal(request.method(),'POST');
       const body=request.postDataJSON(),kind=classifyRead(url.pathname,request.headers(),body,snapshot.workspaceId);
+      if(lifecycle.closing){
+        const action=closingReadAction(url.pathname,request.headers(),body,snapshot.workspaceId);
+        if(action==='settle-composition')return await composition.handle(route);
+        await persist({phase:'read-aborted-at-close',endpoint:url.pathname,input:body,operation:request.headers()['x-zudo-composer-operation']??request.headers()['x-zudo-composer-asset-operation']??body?.operation??body?.request?.operation});
+        return await route.abort();
+      }
+      lifecycle.requireOpen();
       if(kind==='composition')return await composition.handle(route);
       await persist({phase:'read-before-dispatch',endpoint:url.pathname,input:body});
       const response=await originalResponse(page,route);
       await persist({phase:'read-response',endpoint:url.pathname,input:body,...response});
-      assert.equal(response.status,200);assert.equal(response.body.ok,true);
+      if(busyReads.observe(url.pathname,request.headers(),body,response,snapshot.workspaceId)){
+        await persist({phase:'read-busy-awaiting-client-retry',endpoint:url.pathname,input:body,operation:request.headers()['x-zudo-composer-operation']});
+        return; // Original409 already delivered; only installed client may retry.
+      }
       assertReadScope(url.pathname,request.headers(),response.body.result,snapshot.workspaceId);
       if(kind==='native' && body.operation==='document-preview'){assertPreviewIdentity(snapshot,response.body.result);assert.equal(response.body.result.identity.pathname.replace(/\/$/,'')||'/',destination.pathname.replace(/\/$/,'')||'/');previewCount++;}
       if(kind==='release' && intent.kind==='active-identity')active.observe(body.request,response.body.result);
