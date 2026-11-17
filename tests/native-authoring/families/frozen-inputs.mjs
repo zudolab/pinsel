@@ -25,11 +25,18 @@ export async function freezeReadInputs(intentPath) {
   if(['header-saved-href','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create','mapping-saved-binding'].includes(intent.kind)){
     const paths=await read(intent.recoveryEvidencePath);assert.deepEqual(Object.keys(paths).sort(),['after','before','bundle','bundleHash','events','provenance',...(intent.kind==='knowledge-captured-reference'?['uiResult']:[])]);
     savedReference={paths};for(const [key,path] of Object.entries(paths)){assert(path.startsWith('/'));savedReference[key]=await read(path,key==='events');}
-    if(intent.kind==='mapping-saved-binding'){for(const [path,expected]of Object.entries(savedReference.bundle.hashes)){const bytes=await readExpectedBytes(path,hashes);assert.equal(inputHash(bytes),expected,'Original binding input changed');}}
-    savedReference.hashes=intent.kind==='mapping-saved-binding'?{...hashes}:Object.fromEntries(Object.values(paths).map(path=>[path,hashes[path]]));
+    if(['mapping-saved-binding','mapping-saved-create'].includes(intent.kind)){for(const [path,expected]of Object.entries(savedReference.bundle.hashes)){const bytes=await readExpectedBytes(path,hashes);assert.equal(inputHash(bytes),expected,'Original binding input changed');}}
+    if(intent.kind==='mapping-saved-create'&&savedReference.bundle.intent.familySourceCreateHandoff){const {dirname,join}=await import('node:path');savedReference.originalInstallation=await read(join(dirname(savedReference.bundle.intent.familySourceCreateHandoff.proofPath),'provenance.json'));}
+    savedReference.hashes=['mapping-saved-binding','mapping-saved-create'].includes(intent.kind)?{...hashes}:Object.fromEntries(Object.values(paths).map(path=>[path,hashes[path]]));
   }
-  let familyInstallationBridge,familyInstallationSupplement,familySourceRebind,familySourceRebindSuccessor,familySourceCreateHandoff;
-  if(intent.familySourceCreateHandoff){
+  let familyInstallationBridge,familyInstallationSupplement,familySourceRebind,familySourceRebindSuccessor,familySourceCreateHandoff,familySavedCreateHandoff;
+  if(intent.familySavedCreateHandoff){
+    assert(intent.familySourceCreateHandoff&&intent.familySourceRebindSuccessor&&intent.familySourceRebind&&intent.familyInstallationBridge&&intent.familyInstallationSupplement);
+    const chain=await(await import('./source-saved-create-loader.mjs')).loadFamilySavedCreateHandoff({descriptor:intent.familySavedCreateHandoff,createDescriptor:intent.familySourceCreateHandoff,successorDescriptor:intent.familySourceRebindSuccessor,parentDescriptor:intent.familySourceRebind,originalDescriptor:intent.familyInstallationBridge,supplementDescriptor:intent.familyInstallationSupplement,repo:(await import('./config.mjs')).repoRoot});
+    familyInstallationBridge=chain.originalBridge;familyInstallationSupplement=chain.supplement;familySourceRebind=chain.rebind;familySourceRebindSuccessor=chain.successor;familySourceCreateHandoff=chain.createHandoff;familySavedCreateHandoff=chain.savedCreateHandoff;
+    assert(intent.sequence?.index>=19);if(intent.sequence.index===19)assert.deepEqual(snapshot,familySavedCreateHandoff.snapshot);
+    for(const part of [familyInstallationBridge,familyInstallationSupplement,familySourceRebind,familySourceRebindSuccessor,familySourceCreateHandoff,familySavedCreateHandoff])mergeExpectedHashes(hashes,part.hashes);
+  }else if(intent.familySourceCreateHandoff){
     assert(intent.familySourceRebindSuccessor&&intent.familySourceRebind&&intent.familyInstallationBridge&&intent.familyInstallationSupplement);
     const chain=await(await import('./source-create-loader.mjs')).loadFamilySourceCreateHandoff({descriptor:intent.familySourceCreateHandoff,successorDescriptor:intent.familySourceRebindSuccessor,parentDescriptor:intent.familySourceRebind,originalDescriptor:intent.familyInstallationBridge,supplementDescriptor:intent.familyInstallationSupplement,repo:(await import('./config.mjs')).repoRoot});
     familyInstallationBridge=chain.originalBridge;familyInstallationSupplement=chain.supplement;familySourceRebind=chain.rebind;familySourceRebindSuccessor=chain.successor;familySourceCreateHandoff=chain.createHandoff;
@@ -59,7 +66,7 @@ export async function freezeReadInputs(intentPath) {
     if(intent.sequence.index===familyInstallationBridge.boundary)assert.equal(snapshot.digest,familyInstallationBridge.afterDigest);
     mergeExpectedHashes(hashes,familyInstallationBridge.hashes);
   }
-  return {intent,snapshot,headerProof,...(familySourceCreateHandoff?{familySourceCreateHandoff}:{}),...(familySourceRebindSuccessor?{familySourceRebindSuccessor}:{}),...(familySourceRebind?{familySourceRebind}:{}),...(pinsEvidence?{pinsEvidence}:{}),...(familyInstallationSupplement?{familyInstallationSupplement}:{}),...(familyInstallationBridge?{familyInstallationBridge}:{}),...(savedReference?{savedReference}:{}),hashes};
+  return {intent,snapshot,headerProof,...(familySavedCreateHandoff?{familySavedCreateHandoff}:{}),...(familySourceCreateHandoff?{familySourceCreateHandoff}:{}),...(familySourceRebindSuccessor?{familySourceRebindSuccessor}:{}),...(familySourceRebind?{familySourceRebind}:{}),...(pinsEvidence?{pinsEvidence}:{}),...(familyInstallationSupplement?{familyInstallationSupplement}:{}),...(familyInstallationBridge?{familyInstallationBridge}:{}),...(savedReference?{savedReference}:{}),hashes};
 }
 export async function assertInputsUnchanged(hashes) {
   for(const [path,hash] of Object.entries(hashes))assert.equal(inputHash(await readFile(path)),hash,`External acceptance input changed: ${path}`);

@@ -1,8 +1,10 @@
+import {validateSavedMappingQuiescence} from './mapping-quiescence-recovery.mjs';
 import assert from 'node:assert/strict';
 import {admitMappingCreate,auditDelta,getRecord} from './intents.mjs';
 import {auditOriginalCompositionReads} from '../header/saved-reference.mjs';
 /** Narrow acknowledged-create recovery. This never declares the original UI run passed. */
 export function validateSavedMapping(snapshot,evidence){
+ if(evidence.events.some(e=>e.phase==='held'&&e.error==='page.waitForLoadState: Timeout 180000ms exceeded.'))return validateSavedMappingQuiescence(snapshot,evidence);
  const {bundle,bundleHash,before,after,events,provenance,hashes,paths}=evidence;
  for(const key of ['bundle','bundleHash','before','after','events','provenance']){assert(paths[key]?.startsWith('/'));assert.match(hashes[paths[key]],/^[a-f0-9]{64}$/);}
  assert.equal(hashes[paths.bundle],bundleHash.sha256);assert.deepEqual(bundle.snapshot,before);assert.deepEqual(after,snapshot);
