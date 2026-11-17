@@ -8,12 +8,12 @@ Tracking: [#51](https://github.com/zudolab/pinsel/issues/51),
 
 ## Current candidate at a glance
 
-Historical entries below retain their original outcomes. Latest bounded evidence:
-[bc20 stale Apply and guarded Undo](#bc20-stale-apply-and-guarded-undo-passed).
+Historical entries below retain their original outcomes. Latest complete Assistant evidence:
+[bc20 seven-case acceptance](#bc20-complete-seven-case-assistant-acceptance).
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel tested source | `198065a4b8c3c872a2846bf23ed3710df068c7d2` |
+| Pinsel complete Assistant tested source | `f07e05b8f9e22379cb321bf80a11d47b26800e24` |
 | Composer package / attestation | `bc20ea554d5d8de92934c9bf4ec989229d23047e` / `ed909729c8abb3ddce02071f09e3762785fbe1a4` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
@@ -815,3 +815,37 @@ The third fixture must remain excluded from any first publication selection.
 Full seven-case, remaining T6 routes/publication/hierarchy/family work, final-pin
 exact-build/recovery and T7 integration gates remain open. No owner-data cutover,
 new authenticated inference or deployment occurred.
+
+
+## bc20 complete seven-case Assistant acceptance
+
+The normal unfiltered runner at Pinsel `f07e05b8f9e22379cb321bf80a11d47b26800e24`
+and immutable Composer `bc20ea554d5d8de92934c9bf4ec989229d23047e` passed all seven
+cases in 3,019 seconds under the shared heavy guard (5,400-second bound):
+
+- Shared Course pricing, including deliberately lost Apply response and exact-receipt
+  recovery in a fresh browser; FAQ and Note Content edits.
+- Local component field editing and supported removal; allowed-slot insertion.
+- Exact stale-Apply refusal and conflicting Undo refusal without canonical writes.
+
+Each positive case checked no canonical mutation before Apply, actual Pinsel candidate
+rendering, exact owning-domain changes and supported Undo. Aggregate cleanup also
+passed. Result `t7-bc20-assistant-1/result-1794892244743.json` records `PASS`,
+`restorationOnly: false` and no errors. The final public capture
+`db31ddcbbd942e86af2c0d3b903b6f7365deb974adab8b4a9b65e4b049914e48`
+restores the authored values/assets from baseline
+`07c868518c836e9bd3c00234e62434f46e2f91b07f163c0a7a8bdde5e75ecae5`.
+Only receipt-authorized Content generations (Course 18→29, FAQ 7→22, Note 11→24)
+and normal revision metadata/history remain. The restoration and generation audits,
+per-case captures/journals/screenshots and terminal audit are retained beside that
+result. The checkout was clean, port 4173 closed and its server/lease absent at the
+completed boundary. This is fake-provider integration, not authenticated inference.
+
+The reviewed URL/workspace acceptance guards (`2f0dbd2`) and explicit native model
+metadata projection (`be967371`) were integrated afterward at `04ccd860a99c80cb61f60d7d33a267c10ad45346`.
+They did not run during the frozen acceptance. Existing staged data was not reseeded
+or migrated by that source merge. Composer [985](https://github.com/Takazudo/zudo-composer/issues/985)
+separately corrects human shared-field source/affected-use presentation; its later
+immutable package needs its own installed checks. This bc20 result is not relabeled
+as a future-package pass. T6 publication/new-route/hierarchy/family/visitor scenarios,
+T7 exact A-after-B/negative/recovery and current-head integration remain open.
