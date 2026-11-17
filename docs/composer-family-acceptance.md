@@ -6,6 +6,10 @@ acceptance harness, not another authoring implementation. **The complete install
 family scenario is NOT_RUN.** Pure tests and source review do not establish an
 installed package pass. See the compatibility ledger for actual evidence.
 
+After creation/configuration, follow the [owned rendering, three-state membership,
+static visitor and two-child order recipe](native-family-followup-acceptance.md).
+The original 88-phase completion flag does not establish those follow-up results.
+
 ## Boundaries and inputs
 
 Use Node 24 and the repository's pnpm 11.5.2 through Corepack. Install the frozen
