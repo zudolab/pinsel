@@ -1292,3 +1292,74 @@ Explicit correction of the synthetic historical Note passed195s, token5→6,
 capture `de033ceadae702c6be6e315a70b948e26c2dd36403e92866901090aeb29c865a`.
 Selected publication and production static build remain pending. Original response
 observation failures are not relabeled as uninterrupted successes.
+
+
+## Installed 5fe6 acceptance progress — 2026-11-17
+
+The package remains `5fe6d8d92f5013943053491794c0502b83228d53`, Composer source
+`4e9c642050bed7f2597245ae4ad4ab3f278c3de5`, contract
+`c0b452da075b66757c60bd0d721a47062d4354d0`, renderer native-v3. Source-only
+Pinsel acceptance fixes through `9497fffb4acd6277d25f31fa3bad5ab21b91a46a`
+add executable family/restart/public-release-readback recipes and match the actual
+capability/workspace scopes of installed providers. Independent proof tests pass90
+cases. These are harness changes, not another package revision or browser pass.
+
+The independent final consumer at b434c8f/5fe6 passed the full human suite in969s:
+Sitemap/tree/preview ownership, nested Paragraph insertion/save/reload/restart,
+shared Home/Lessons price and Contact labels/order, stable legacy and canonical
+course links. Snapshot A
+`9c3fd2e28376acbf36fe964f2c8b610c691d0903f6ec0b1b2884ac5359680071`
+built exactly14 routes/143 public files after the workspace advanced to B
+`a7de1d36939f77a7f01263f6e7d76a3762ad4aa506e8fb1e6f12a40abf2f3e89`;
+full capture B remained unchanged by that build. Explicit inverses restored values,
+retaining legitimate history/token1→7 at
+`c6b4ddbf00fcd40177263cd27d1f19b794efd6ac954eefd110ef29bad3192fe1`.
+The separate negative suite passed256s with seven actual semantic refusal bodies,
+full capture equality and816 unchanged canonical/receipt files. Seven generic
+observer disposal warnings remain qualified by the retained case-specific bodies.
+
+Canonical extra-draft read-only recovery on b434c8f/5fe6 passed347s: the retained
+UUID, all six actual UI fields, whole public Content and the real About preview
+were verified without Content attempts. Before/after full capture equals
+`179d8e52b8f796a821ce0bfe9c24dd4079d8668bd8901acc1362e20cad0eee26`.
+Original create/reload failures remain failures. The reviewed one-time deletion
+and restart-absence continuation is pending; no extra draft was recreated.
+The retained static page's slug edit separately passed331s with one original
+Sitemap response, actual-document reload and qualified record readback. Source,
+hierarchy, page-copy publication and final static-route acceptance continue.
+
+The policy lane retains original6522 invalid-body/refusal and durable receipt
+proofs. After the original publication attempt stopped before Apply dispatch,
+an audited upgrade to0180c09/5fe6 preserved967 stored files and changed only the
+expected capture/pack/compiler/renderer identities. A fresh reviewed publication
+passed244s: public null-active/empty catalog, new plan/stage/build/activation and
+exact readback; Content token6→7 published only the corrected synthetic Note.
+Capture `3267f82ada33be93d9f061358984e9d215bcb83c835276df69e69606d5dfd131`
+produced15 actual Pinsel routes including `/notes/policy-986-historical`.
+Local active revision is
+`72c02153f185a962029aeb1e4e0ba4925be0bdf00b101a170be57903796e44ad`, build
+`61030a3dc97847a122e92fbf5a55558aaf16d7b5cdb84f04a3ee67d909e337be`.
+This proves local publication plus separate production-renderer output; the UI
+explicitly reports that activated-release preview is unavailable. Saved-host preview
+is not mislabeled as activated-release preview. Nothing was deployed.
+
+The independent documentation operator's Header forward edit passed326s and an
+exact14-route/143-file build at0180c09/5fe6. Its first read-only restart failed on
+an incorrect harness workspace-header requirement for Assets; full state stayed
+`9c33f5119625bfdca1a4f1795d907d98c27f745b4869fdf081b426b45115cc02`.
+The corrected stopped consumer was upgraded to9497 with1109 files preserved and
+unchanged frozen dependencies. Retry, explicit inverse/restart, Knowledge, Header
+href and Results/FAQ family runs remain pending. A separate known-data family
+consumer has246 published records/no drafts; its949-file source-only upgrade also
+preserved storage exactly. No existing stage was reinitialized.
+
+Two initial documentation-consumer imports were mistakenly run outside the shared
+heavy guard. Both exited0 against new known-data stages; original logs and the
+workflow deviation are retained. They are not claimed as guarded runs. Subsequent
+heavy work uses the shared guard. No owner data was available or touched.
+
+Current-package Assistant and controlled-interruption acceptance are still pending;
+older-package successes remain separately identified. See [T7 progress](https://github.com/zudolab/pinsel/issues/56)
+for current runtime artifacts and queue state. Actual owner-data cutover and new
+live-provider inference remain held under #57/#58. PR61/979 remain drafts until
+remaining acceptance and integration review are complete.
