@@ -18,7 +18,7 @@ Historical entries below retain their original outcomes. Latest complete Assista
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | Complete seven-case Assistant PASS at bc20; human provenance/refusal and canonical migration PASS at4f; remaining scenarios tracked below |
-| Latest checked CI | Pinsel1697467 CI44041039138 PASS; Composer94a34d58 CI44040102173 FAIL: starter-template module resolution (5456 tests and 25 other jobs PASS) |
+| Latest checked CI | Pinsel `b434c8f` CI44050658100 PASS; Composer `4e9c642` CI44050158945 PASS (26 jobs); earlier starter-template failure is retained below |
 | Separate holds | Remaining T6/T7 acceptance, owner-data cutover and new real-provider acceptance |
 
 ## Refreshed baseline — 2026-11-16
@@ -1263,3 +1263,32 @@ history, restored human body and full unchanged readback capture are proven. Tho
 original attempts remain FAIL/lost-response; the recovered chain is distinct.
 Restoration of the original seed body, corrected-draft publication and build checks
 continue. No authenticated inference or owner-data cutover is claimed.
+
+## Resumed current candidate verification — 2026-11-17
+
+Actual checkouts and remote heads were reconciled after the Cloud interruption.
+Pinsel `b434c8fefd4c9659a9306c4e8481ae3262b46385` and Composer
+`4e9c642050bed7f2597245ae4ad4ab3f278c3de5` remain protected on their existing
+PR branches. Current-head CI passed: [Pinsel44050658100](https://github.com/zudolab/pinsel/actions/runs/44050658100)
+and [Composer44050158945](https://github.com/Takazudo/zudo-composer/actions/runs/44050158945),
+including all26 Composer jobs. The earlier creator-fixture failure remains historical;
+its corrected current-head test passes. Delivery remains stopped.
+
+The already-installed cold, canonical and fresh final consumers retain all1002,
+971 and948 native/public/release files respectively, including exact paths, hashes,
+sizes and modes. Public before/after capture comparisons permit only the actual
+snapshot/pack/renderer digest changes; compiler and all other fields are exact.
+No reinstall, reseeding, title replay, extra-record recreation or repeated Undo
+was used during resume. The new current-pin runtime suites are separate evidence
+from these preservation checks and remain in progress.
+
+Frozen6522 policy readback confirms the durable Undo revision
+`fe1f528e-173b-44e5-af3c-c94049ece3bd`, expected token4, undone review status and
+history4→3→2→1. Its read-only before/after capture is exactly
+`a876727dd33365ecd6cb6e3b7a4b6ccfe7a7425bd706eb95d7579824f940db84`.
+The subsequent original-body human restoration also passed, producing
+`d634fae20f9aa61414b03a914e77b62a1505dcdea966fe615427a7c0326da5f9`.
+Explicit correction of the synthetic historical Note passed195s, token5→6,
+capture `de033ceadae702c6be6e315a70b948e26c2dd36403e92866901090aeb29c865a`.
+Selected publication and production static build remain pending. Original response
+observation failures are not relabeled as uninterrupted successes.
