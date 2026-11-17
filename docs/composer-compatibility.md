@@ -421,3 +421,27 @@ before `2a797d039c07394fa0b269709d6eb6efcf5e30c46eb2f3818f78586061c2b89f`.
 Neither counts as acceptance. Harness `e374b63` fixes scoped locators and asserts exact
 post-Apply ownership for Composition and Content;29 pure tests pass. No real-provider
 inference, owner-data import, deployment or actual-data authority switch occurred.
+
+## Combined readiness/reference-query candidate — 2026-11-17
+
+Current immutable package `960f2d5661b0d23006fbdfa7d079a7f3683f8362`
+(Composer attestation `2f982863`) includes the independently reviewed same-session
+readiness fix and qualified reference query editor (task980). The769-file payload
+digest is `36f13f27788974220311ac42b57cf63a7bc7b4a36b62bf1a159440a62cb0590f`.
+Readiness23 focused tests and reference-query8 independently rerun tests pass,
+including actual save/reload and no-write catalog loading. Public entries and
+four demo CMS hosts regenerated under guard65s, no generated drift.
+
+Diagnostic cafc evidence confirmed createConversation200 followed by locally
+refused read during preview reconciliation. Empty conversation IDs
+`conversation-e3f18ac3-6981-4306-b8dd-182de4b542d4` and
+`conversation-6bab881b-707b-48e7-80bb-68adf3fc03b3` are retained as history.
+No proposal/Apply occurred; canonical before/after capture matched
+`ba5abfa45099d70e3e12fab7361828fcdefbba5662fa982caa661571a4b6ef8b`.
+The bounded T6 draft pilot also stopped before any create due cold Content loading;
+its final public capture matched exactly. Direct-route timing diagnosis is pending.
+Pinsel CI43982372029 and43982363948 passed at a8b0b68/cafc; those passes are not
+attributed to this new candidate. Installed browser acceptance and current-head CI
+remain pending. Pinsel bb19d6a guards all initialization destinations before writes;
+5 filesystem tests and Content typecheck pass. Corrected bootstrap/manual recipes
+are documented but actual cold-operator saved edit is still NOT_RUN.
