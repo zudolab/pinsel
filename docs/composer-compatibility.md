@@ -14,11 +14,11 @@ Historical entries below retain their original outcomes. Latest complete Assista
 | Identity or gate | Current recorded value |
 | --- | --- |
 | Pinsel complete Assistant tested source | `f07e05b8f9e22379cb321bf80a11d47b26800e24` |
-| Current candidate package / attestation | `71126775a97feab004145dde63a768684e8e3cd9` / `f36f52ec4010eb2b97d0939e90e0cd631d97a9bd` |
+| Current candidate package / attestation | `69ca1f49198fefd262e525e22d3f190022f63cf0` / `94a34d5869427e45e3ebcfec081d449122d0e3f9` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | Complete seven-case Assistant PASS at bc20; human provenance/refusal and canonical migration PASS at4f; remaining scenarios tracked below |
-| Latest checked CI | Composer75df all26 jobs passed; Pinsel2f48ea9 run44026306585 in progress; later heads require fresh gates |
+| Latest checked CI | Pinsel1697467 CI44041039138 PASS; Composer94a34d58 CI44040102173 FAIL: starter-template module resolution (5456 tests and 25 other jobs PASS) |
 | Separate holds | Remaining T6/T7 acceptance, owner-data cutover and new real-provider acceptance |
 
 ## Refreshed baseline — 2026-11-16
@@ -1177,3 +1177,26 @@ then frozen install/dedupe/no-deploy passed. Main capture is now
 only snapshot/pack/renderer/compiler identities changed from e9d6, with every other
 public capture field exact. Installed cold recovery remains pending. This source
 fix and successful installation alone do not complete #987.
+
+## Blank-page recovery and current gates — 2026-11-17
+
+At Pinsel `1697467860626dccfcecafd4de1dc4bc0d44b481` with package
+`69ca1f49198fefd262e525e22d3f190022f63cf0`, the independent installed
+consumer reopened the original saved unassigned page successfully. Public Sitemap
+readback retained UUID `untitled-page-e8273cca-6b5c-4783-8463-4c62825f5854`,
+title, unassigned source and absent slug. Full captures before and after normal
+startup matched `d06a560fa2ebb34dd18e80316818b3bb028220cb0a585de389e5b95e09f46acb`.
+No canonical mutation occurred. This 65-second recovery pass does not relabel
+the original page-create timeout or the two older capture failures. Subsequent
+page configuration and exact static rendering remain in progress.
+
+Current-head Pinsel CI passes. Composer CI has one real failing starter-template
+test: its temporary host cannot resolve `zudo-composer/config`; 5,456 other tests
+and 25 other jobs passed. That gate remains blocking.
+
+Separate installed Content-policy checks at package6522 passed historical read,
+human invalid-save refusal, AI invalid-proposal refusal, publication refusal and
+valid human save. AI Apply/Undo stopped before mutation on review-card readiness;
+its retained proposal is being reconciled. The extra canonical-record scenario
+stopped before Content edits after repeated startup busy refusals; full captures
+match and no record was created. These are unfinished checks, not passes.
