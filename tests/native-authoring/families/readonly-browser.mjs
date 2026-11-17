@@ -7,7 +7,7 @@ import {repoRoot} from './config.mjs';
 import {originalResponse} from './original-request.mjs';
 import {compositionDerivedReadGate} from './composition-output.mjs';
 import {releaseLifecycle} from './release-lifecycle.mjs';
-import {classifyRead,assertReadScope,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from './readonly-proof.mjs';
+import {classifyRead,closingReadAction,assertReadScope,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from './readonly-proof.mjs';
 import {verifySavedHeader,verifySavedKnowledge} from '../header/driver.mjs';
 import {verifyFamilyRendering} from './verify-render.mjs';
 const [bundlePath,bundleHash,artifacts,base] = process.argv.slice(2);
@@ -36,8 +36,15 @@ await context.route('**/*',route=>{
       assert(!blocked, 'Read phase held');
       assert.equal(url.origin,base,'External request refused');
       if(request.method()==='GET')return await route.continue();
-      lifecycle.requireOpen();assert.equal(request.method(),'POST');
+      assert.equal(request.method(),'POST');
       const body=request.postDataJSON(),kind=classifyRead(url.pathname,request.headers(),body,snapshot.workspaceId);
+      if(lifecycle.closing){
+        const action=closingReadAction(url.pathname,request.headers(),body,snapshot.workspaceId);
+        if(action==='settle-composition')return await composition.handle(route);
+        await persist({phase:'read-aborted-at-close',endpoint:url.pathname,input:body,operation:request.headers()['x-zudo-composer-operation']??request.headers()['x-zudo-composer-asset-operation']??body?.operation??body?.request?.operation});
+        return await route.abort();
+      }
+      lifecycle.requireOpen();
       if(kind==='composition')return await composition.handle(route);
       await persist({phase:'read-before-dispatch',endpoint:url.pathname,input:body});
       const response=await originalResponse(page,route);

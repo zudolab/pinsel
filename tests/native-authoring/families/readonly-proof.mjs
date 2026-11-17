@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {compositionRead} from './composition-read.mjs';
 // Installed native transport: domain records are workspace-scoped; the workspace
 // registry and host Assets root are capability-scoped and send no workspace header.
 const providerReads = {
@@ -42,6 +43,16 @@ export function classifyRead(path, headers, body, workspaceId) {
     }
   } else assert.equal(headers['x-zudo-composer-workspace'],workspaceId);
   return 'provider';
+}
+/** Closing aborts new reads; only the existing gate may settle derived outputs. */
+export function closingReadAction(path,headers,body,workspaceId) {
+  const kind=classifyRead(path,headers,body,workspaceId);
+  if(kind!=='composition'||compositionRead(body))return 'abort-read';
+  assert(['list','get'].includes(body?.operation),'Canonical Composition mutation refused at close');
+  assert(body.outputsById&&typeof body.outputsById==='object'&&!Array.isArray(body.outputsById)&&Object.keys(body.outputsById).length,'Malformed Composition read refused at close');
+  // This is delegation, not admission: the gate must match an outstanding exact
+  // challenge and validate outputs before dispatch. Unchallenged output fails.
+  return 'settle-composition';
 }
 /** Registry reads have no workspace header; bind selected/opened results instead. */
 export function assertReadScope(path,headers,result,workspaceId) {

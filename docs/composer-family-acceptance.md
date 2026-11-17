@@ -296,3 +296,13 @@ Use the successful after capture and the standalone `active-identity` read-only
 restart recipe above to confirm its active identity before starting the family
 sequence. The first local release is a prerequisite, not a family-runtime or
 Pinsel exact-production-build pass. Family mutations remain separately reviewed.
+
+### Read-only shutdown boundary
+
+The read-only runner classifies late POST requests before applying its close fence.
+Known new reads are aborted and journaled as `read-aborted-at-close`; they are not
+forwarded or counted as readback. Unknown operations, canonical mutations and
+foreign scopes still fail the run. Already admitted responses must settle, and
+Composition output continuations still require the existing exact outstanding
+challenge gate. A failed close attempt remains failed even when its public capture
+is unchanged; the next run is read-only inspection, never another activation.

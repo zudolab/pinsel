@@ -1,5 +1,6 @@
+import {releaseLifecycle} from './release-lifecycle.mjs';
 import {describe,it,expect} from 'vitest';
-import {classifyRead,validateReadIntent,activeReadback} from './readonly-proof.mjs';
+import {classifyRead,closingReadAction,validateReadIntent,activeReadback} from './readonly-proof.mjs';
 const headers={'x-zudo-composer-workspace':'pinsel','x-zudo-composer-capability':'fixture-capability'};
 const release=operation=>({clientId:'c',requestId:'r',request:{protocolVersion:2,operation}});
 const rh={'x-zudo-release-client':'c','x-zudo-release-request':'r'};
@@ -77,4 +78,38 @@ describe('installed provider wire scopes',()=>{
   expect(()=>assertReadScope(selection.path,selection.headers,'pinsel','pinsel')).not.toThrow();
   const conflicting=wire('asset_file','snapshot');conflicting.headers['x-zudo-composer-workspace']='foreign';expect(()=>admit(conflicting)).toThrow();
  });
+});
+
+describe('readonly close fence classification',()=>{
+ it('aborts known late reads without dispatching or admitting a write',()=>{
+  expect(closingReadAction('/__zudo_composer_content_provider',{...headers,'x-zudo-composer-operation':'read-all'},{},'pinsel')).toBe('abort-read');
+  expect(closingReadAction('/__zudo-release',rh,release('list'),'pinsel')).toBe('abort-read');
+  expect(closingReadAction('/__zudo_composer_file_provider',headers,{operation:'list'},'pinsel')).toBe('abort-read');
+ });
+ it('keeps unknown, canonical mutation and foreign scope refusals during close',()=>{
+  for(const op of ['transact','put-entry','delete-entry'])expect(()=>closingReadAction('/__zudo_composer_content_provider',{...headers,'x-zudo-composer-operation':op},{},'pinsel')).toThrow();
+  for(const op of ['put','remove','transact'])expect(()=>closingReadAction('/__zudo_composer_file_provider',headers,{operation:op,outputsById:{x:{status:'generated',code:''}}},'pinsel')).toThrow();
+  expect(()=>closingReadAction('/unknown',headers,{},'pinsel')).toThrow();
+  expect(()=>closingReadAction('/__zudo-release',rh,release('activate'),'pinsel')).toThrow();
+  expect(()=>closingReadAction('/__zudo-native-edit',{}, {operation:'apply'},'pinsel')).toThrow();
+  expect(()=>closingReadAction('/__zudo_composer_content_provider',{...headers,'x-zudo-composer-workspace':'foreign','x-zudo-composer-operation':'read-all'},{},'pinsel')).toThrow();
+ });
+ it('delegates nonempty derived output only to the existing exact challenge gate',()=>{
+  expect(closingReadAction('/__zudo_composer_file_provider',headers,{operation:'get',id:'a',outputsById:{a:{status:'generated',code:'x'}}},'pinsel')).toBe('settle-composition');
+  expect(()=>closingReadAction('/__zudo_composer_file_provider',headers,{operation:'get',outputsById:[]},'pinsel')).toThrow();
+ });
+});
+
+it('late known read abort settles cleanly, but late mutation still poisons close',async()=>{
+ for(const operation of ['read-all','transact']){
+  let blocked,aborted=0,dispatched=0;
+  const lane={async drain(){if(blocked)throw blocked;}};
+  const lifecycle=releaseLifecycle({lanes:[lane],composition:{assertSettled(){}},blocked:()=>blocked});
+  const close=lifecycle.close({async close(){
+   expect(lifecycle.closing).toBe(true);
+   try{const action=closingReadAction('/__zudo_composer_content_provider',{...headers,'x-zudo-composer-operation':operation},{},'pinsel');if(action==='abort-read')aborted++;else dispatched++;}catch(error){blocked=error;aborted++;}
+  }});
+  if(operation==='read-all')await close;else await expect(close).rejects.toThrow();
+  expect(aborted).toBe(1);expect(dispatched).toBe(0);
+ }
 });
