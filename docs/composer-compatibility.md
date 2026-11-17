@@ -1363,3 +1363,72 @@ older-package successes remain separately identified. See [T7 progress](https://
 for current runtime artifacts and queue state. Actual owner-data cutover and new
 live-provider inference remain held under #57/#58. PR61/979 remain drafts until
 remaining acceptance and integration review are complete.
+
+
+## Restart, interruption and portable static recipes — 2026-11-17
+
+At b434c8f/5fe6, controlled interruption acceptance passed270s. The supervisor
+exited86 only after a real forward save and fresh-browser exact receipt recovery;
+it did not claim an arbitrary mid-write crash. The unmodified committed recovery
+runner performed the guarded UI inverse, HTTP200, and restored canonical values
+while retaining metadata/history. Forward operation
+`e39b3d23-ffe7-4185-af89-540c463189df`, inverse
+`a04561da-eecf-4783-973c-332d238bc3a4`; final capture
+`3b53b5dc441191e979c5d3c633fe89334fe8dc0dd718a55cc8f198064aad7314`.
+The seven-case current-package Assistant run starts from this actual restored state
+and remains in progress; individual subphases do not establish aggregate PASS.
+
+At f54fb9b/5fe6, independent Header restart passed64s with full9c33 capture equality.
+Three original authoring-busy responses were retained until matching original client
+successes;25 known reads arriving during close were aborted without dispatch.
+No held request or canonical mutation occurred. Independent public active-release
+restart passed63s with full76a34 capture equality and exact
+`d22c0d5e4d9e93550ee22cf8886fad597270360d434509e3efdbb161b9cc11cf` /
+`0cf148dac4192c0df2038128accac9c5eaa02e4b51fb6e499d72eb1b310d9fc1`.
+Earlier wire-scope, close-fence and busy-observation failures remain separately
+recorded. Neither read-only recovery reactivated the release.
+
+Static source assignment passed209s through the installed UI, reload and exact
+qualified record readback at b434c8f/5fe6, capture
+`50dd316d434404f96785591e1e4c1975744bae3ade6305c33d309ab8367677a9`.
+Earlier wrong-role/default-readiness attempts made no canonical writes; their full
+captures remained identical. The accepted runner seals both intent and full capture
+before launching its browser. Remaining page-copy/hierarchy/navigation/publication
+and production-output phases are still pending.
+
+Canonical extra-record deletion was executed once and confirmed by the original200
+transaction response and full public readback, token14→15. The original project is
+restored at `a88191c9dd0bdb769bf0de6d28764157acb3201e1882c99c547ac0516d1a6e44`,
+with all eight actual commit proofs retained. That continuation remains FAIL318s
+because a transient toast was not observed; a separate read-only restart-absence
+check is pending. No operation-key server receipt is claimed for this generic
+Content transaction, and no deletion is replayed.
+
+The repository now supplies the complete static acceptance recipe under
+`tests/native-authoring/static/`, plus a separately qualified retained-state
+verifier. Independent review found and fixed two provenance gaps before integration:
+Content responses must bind exact qualified owners/submitted values/ordered saves,
+and recovered records must bind actual original failure, acknowledgement, capture
+and paired public read evidence. The historical phase04 missing-original-capture
+exception is constrained to that exact Sitemap creation case and remains explicit.
+Final source d9835ad review passed48 tests and checked43 actual phases01–06 evidence
+hashes. Integrated standalone tests passed48 cases/11 files in3.10s; root Vitest
+now includes `native-static-proofs`. Source tests and partial evidence inspection
+are not the full15-phase installed pass. The retained runtime verifier and actual
+production-build proof remain pending the completed pilot.
+
+Independent integrated runtime-source review at Pinsel f54fb9b / Composer4e9c642
+found no concrete P1/P2 in inspected ownership, Assistant guards, capture/build,
+migration, renderer and delivery paths; it excludes the separately reviewed static
+recipe and does not replace runtime acceptance. Pinsel eede2d8 CI passed. The first
+f54 CI attempt failed when a subsequent local workerd launch reported an occupied
+address after the observed authentication assertions passed; downstream gates were
+skipped. The unchanged auth harness received one same-head failed-job retry, whose
+result must be read separately. No assertion or gate was weakened.
+
+A Header inverse was accidentally queued with incorrect cache-directory variables.
+Its exact owned guard was verified not admitted, terminated with exit143 and checked
+for no application/artifact/lease before a new corrected-environment invocation.
+This configuration-error cancellation did not stop the active foreign job or replay
+a write. The earlier unguarded initialization deviation also remains recorded.
+Owner-data, authenticated provider and no-deployment holds are unchanged.

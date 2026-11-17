@@ -26,6 +26,13 @@ export default defineConfig({
           environment: "node",
         },
       },
+      {
+        test: {
+          name: "native-static-proofs",
+          include: ["tests/native-authoring/static/*.test.mjs"],
+          environment: "node",
+        },
+      },
       "apps/*/vitest.config.ts",
       "packages/*/vitest.config.ts",
     ],
