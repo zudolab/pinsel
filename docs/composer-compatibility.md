@@ -716,3 +716,40 @@ publication/hierarchy/family workflows, exact-build scenarios, T7 final-pin gate
 review and eligible integration remain open. The upstream scripted-provider pass
 and consumer subsets do not complete those gates. Owner-data import/cutover and
 new authenticated-provider acceptance remain held; no deployment is authorized.
+
+
+## Explicit boolean package — installed acceptance pending
+
+The next immutable package is `bc20ea554d5d8de92934c9bf4ec989229d23047e`,
+attested by Composer source `ed909729c8abb3ddce02071f09e3762785fbe1a4`:
+774 shipped files, payload digest
+`64715b845ac03cc22b11569168219527c273889b58d8d94762c0c42060482175`.
+Contract `c0b452da075b66757c60bd0d721a47062d4354d0`, Pinsel pack/schema/renderer
+and ZFB 5.1.5 remain unchanged. All four consumer manifests and the lockfile use
+this exact package. [Composer #984](https://github.com/Takazudo/zudo-composer/issues/984)
+adds explicit unset boolean presentation and one deliberate Set to No operation,
+without defaults or mount-time writes. Top-level, nested and hosted controls share
+that behavior. Source tests/typecheck/lint and independent review passed. Public
+build initially failed because the UI barrel pulled CSS into hosted declarations;
+direct imports of the same controls fixed that boundary without relaxing the gate.
+Public builds, four-host CMS regeneration/check and public consistency passed
+under the shared guard in 134s. Fresh current-head CI and installed missing-to-false
+Pinsel acceptance remain pending; earlier 09f476 CI passed separately.
+
+The prior package62f cold two-draft slice passed: Note
+`content-entry-7ccd88dd-dd45-440f-83d7-c44abfdca113` and Course
+`content-entry-40369930-3eb7-4739-994f-ab82e3de7069` saved/reloaded, original project
+and assets remained exact, and both drafts were retained unpublished. Capture:
+`12f76c229fbd4945929feb16b46fc1270b3019af5e5385ab12e5cb3efac334fe`.
+[Recorded acceptance](https://github.com/zudolab/pinsel/issues/55#issuecomment-6936952733)
+does not prove the new false operation or publication.
+
+The reconciled stale segment on package62f failed its exact refusal-code assertion:
+it received approval-mismatch because server restarts discard in-memory candidate
+acknowledgements before the stale-revision check. This is not a stale-plan pass.
+Its verified human edit and inverse restored all authored values/assets, retaining
+only authorized Course generation/history changes. Final capture:
+`4d0a26dd17aff9117ea8ecb68f5e647e159a4c18437d318effabbddc0920962d`.
+The corrected fixture keeps candidate acknowledgement, intervention and refusal
+in one server process, preserving the original failure evidence. Full final-pin
+Assistant, route, exact-build, recovery and independent operator gates remain open.
