@@ -1,10 +1,11 @@
+import {validateAdditionalChild} from './second-child.mjs';
 import assert from 'node:assert/strict';
 const key = ref => JSON.stringify([ref.providerId, ref.modelId, ref.recordId]);
 const sorted = values => [...values].sort((a,b) => key(a.ref).localeCompare(key(b.ref)));
 /** Public release messages only. No private store reads or inferred model ownership. */
-export function releaseProof({ snapshot, requested, expectedActive }) {
+export function releaseProof({ snapshot, requested, expectedActive, additionalChild }) {
   let baseline, catalog, plan, staged, stageGeneration, completed, activated, activationPending=false, reconciliation, activeRead=false, candidateRead=false, challenge, workspaceToken;
-  assert.equal(requested.length,2,'Exactly the reviewed parent and child');const [parent,child]=requested.map(x=>x.ref);assert.equal(parent.providerId,'content-filesystem');assert.equal(child.providerId,parent.providerId);const field=parent.modelId==='result-year'&&child.modelId==='result-entry'?'result-entry-year':parent.modelId==='faq-group'&&child.modelId==='faq-item'?'faq-item-group':null;assert(field);const entry=snapshot.project.providers.content.find(p=>p.id===child.providerId).entries.find(e=>e.modelId===child.modelId&&e.id===child.recordId);assert(entry);assert.deepEqual(entry.values[field],parent);
+  if(additionalChild)validateAdditionalChild(snapshot,requested,additionalChild);else {assert.equal(requested.length,2,'Exactly the reviewed parent and child');const [parent,child]=requested.map(x=>x.ref);assert.equal(parent.providerId,'content-filesystem');assert.equal(child.providerId,parent.providerId);const field=parent.modelId==='result-year'&&child.modelId==='result-entry'?'result-entry-year':parent.modelId==='faq-group'&&child.modelId==='faq-item'?'faq-item-group':null;assert(field);const entry=snapshot.project.providers.content.find(p=>p.id===child.providerId).entries.find(e=>e.modelId===child.modelId&&e.id===child.recordId);assert(entry);assert.deepEqual(entry.values[field],parent);}
   const selected = () => {
     assert(catalog && baseline, 'Successful public catalog and exact active project read required');
     assert(expectedActive && expectedActive.projectId===snapshot.project.id);assert.deepEqual(catalog.active,expectedActive);const refs=[];
@@ -92,6 +93,7 @@ export function releaseProof({ snapshot, requested, expectedActive }) {
         for (const field of ['projectRevision','buildId','planDigest']) assert(typeof result[field] === 'string' && result[field]);
         assert(result.toolchain && result.candidate?.id === snapshot.project.id);
         assert(baseline);
+        if(additionalChild){for(const ref of [additionalChild.family.content.parent,additionalChild.family.content.child]){const entries=baseline.providers.content.find(p=>p.id===ref.providerId)?.entries??[];assert.equal(entries.filter(e=>e.modelId===ref.modelId&&e.id===ref.recordId&&e.lifecycle==='published').length,1,'Existing family must remain in active baseline');}}
         const expected=structuredClone(snapshot.project);
         for(const provider of expected.providers.content){
           const entries=new Map((baseline.providers.content.find(p=>p.id===provider.id)?.entries??[]).filter(e=>e.lifecycle==='published').map(e=>[e.id,structuredClone(e)]));

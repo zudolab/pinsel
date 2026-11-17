@@ -64,7 +64,7 @@ await context.route('**/*',route=>{
 try {
   await persist({phase:'begin',intent});
   if(intent.kind==='family-render') {
-    await verifyFamilyRendering(page,{base,kind:intent.family,marker:intent.marker,childText:intent.childText,present:intent.present,oldFragment:intent.oldFragment,expect});
+    await verifyFamilyRendering(page,{base,kind:intent.family,marker:intent.marker,childText:intent.childText,present:intent.present,oldFragment:intent.oldFragment,snapshot,family:intent.orderFamily,secondChild:intent.secondChild,expect});
     result={kind:intent.kind,family:intent.family,present:intent.present};
   } else if(intent.kind==='header-restart') {
     const shot=name=>page.screenshot({path:join(artifacts,name+'.png'),fullPage:true});
