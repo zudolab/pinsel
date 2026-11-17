@@ -6,6 +6,21 @@ results and linked issue/PR evidence. The manager owns pins and lockfiles.
 Tracking: [#51](https://github.com/zudolab/pinsel/issues/51),
 [T0 #52](https://github.com/zudolab/pinsel/issues/52).
 
+## Current candidate at a glance
+
+Historical entries below retain their original outcomes. Latest bounded evidence:
+[bc20 stale Apply and guarded Undo](#bc20-stale-apply-and-guarded-undo-passed).
+
+| Identity or gate | Current recorded value |
+| --- | --- |
+| Pinsel tested source | `198065a4b8c3c872a2846bf23ed3710df068c7d2` |
+| Composer package / attestation | `bc20ea554d5d8de92934c9bf4ec989229d23047e` / `ed909729c8abb3ddce02071f09e3762785fbe1a4` |
+| Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
+| Workspace / schemas / renderer | `pinsel`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
+| Installed bounded cases | Exact stale Apply and guarded Undo PASS; full seven-case run remains incomplete |
+| Current-head CI | Both Pinsel 198 runs and Composer ed909 run passed; integration remains pending |
+| Separate holds | Remaining T6/T7 acceptance, owner-data cutover and new real-provider acceptance |
+
 ## Refreshed baseline — 2026-11-16
 
 | Identity | Inspected value |
@@ -753,3 +768,50 @@ only authorized Course generation/history changes. Final capture:
 The corrected fixture keeps candidate acknowledgement, intervention and refusal
 in one server process, preserving the original failure evidence. Full final-pin
 Assistant, route, exact-build, recovery and independent operator gates remain open.
+
+
+## bc20 stale Apply and guarded Undo passed
+
+At Pinsel `198065a4b8c3c872a2846bf23ed3710df068c7d2` and installed Composer
+`bc20ea554d5d8de92934c9bf4ec989229d23047e`, two bounded fake-provider runs passed:
+
+- `t5-bc20-stale-1` passed in 394s. Candidate acknowledgement, verified human
+  intervention and retained Apply stayed in the same server process. Apply refused
+  with exactly `stale-plan`; before/after coherent preview identities matched
+  revision `89bea1b42d81c342c3a6d6abcb577bb0b10136bf9e68733f4d31dbe74717a172`.
+  The verified human inverse restored canonical values/assets/public files, allowing
+  only the journal-authorized Consultation generation 13→15 and normal history.
+  Restored capture: `85489d757d114468c8ca97380e325e8abf108d4aaf4395da6a43c88dce3ee1e5`.
+- `t5-bc20-guard-1` passed in 637s. Actual Content Apply succeeded, a verified human
+  edit intervened, and Undo refused with exactly `revision-conflict`. The complete
+  intervened/refused public captures were identical at
+  `3f76983bfa4ace1c941df93bdd78c8718895cdf9ebf37d8e4929c35a11c93d92`.
+  The supported human inverse restored canonical values/assets/public files,
+  allowing only authorized Consultation generation 15→18 and normal history.
+  Final main-stage capture: `07c868518c836e9bd3c00234e62434f46e2f91b07f163c0a7a8bdde5e75ecae5`.
+
+Each directory under `composer-adoption-notes` contains its actual result,
+qualified Course journal, `generation-audit-*.json`, public captures and
+`restoration-proof.json`. Results are bounded-case PASS, not the full seven-case
+matrix; the earlier `approval-mismatch` and harness failures remain failures.
+See [the stale-case checkpoint](https://github.com/Takazudo/zudo-composer/issues/973#issuecomment-6937431094).
+Main-stage work is restored and idle at this boundary.
+
+Live CI refresh confirmed Pinsel source 198 passed
+[44010519009](https://github.com/zudolab/pinsel/actions/runs/44010519009) and
+[44010511342](https://github.com/zudolab/pinsel/actions/runs/44010511342), and Composer
+attestation source ed909 passed
+[44010339167](https://github.com/Takazudo/zudo-composer/actions/runs/44010339167).
+These source checks do not replace installed scenario acceptance or merge review.
+
+The separately installed cold consumer retains its two known unpublished drafts
+at the bc20 installation-bridge capture
+`e919a7ab7dd4dbb7c204a3e1c884d3cef672ad6e80baed7cc2cf56603ffdad8e`.
+That bridge preserves authored project/tokens/assets/public files; only attested
+runtime graph digests change. The third missing-to-false fixture is queued behind
+the independent final operator on its own port 4196. Neither the false fixture,
+publication nor the final operator is counted as passed at this checkpoint.
+The third fixture must remain excluded from any first publication selection.
+Full seven-case, remaining T6 routes/publication/hierarchy/family work, final-pin
+exact-build/recovery and T7 integration gates remain open. No owner-data cutover,
+new authenticated inference or deployment occurred.

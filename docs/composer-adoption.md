@@ -158,7 +158,19 @@ For an existing `0.2.0` / `native-v1` workspace, follow the
 pack does not make an old workspace compatible by itself. Preserve the original
 store/history and select only a verified separate stage; do not rerun initialization.
 
-After installing the exact Composer revision recorded in the compatibility ledger:
+`PINSEL_AUTHORING_STAGE` selects a directory suffix, not a schema version. The
+current initializer always applies `normalizeNoteRoutes` to committed inputs and
+creates the current pack `0.4.0` / renderer `native-v3` model, including when the
+variable is unset and the default paths below are used. Setting `notes-v1` selects
+`.native-authoring-notes-v1` and `.native-public-notes-v1`; use that same selection
+for initialization, authoring, capture and build. A stage name does not convert
+existing saved state. Older default or named workspaces still require the explicit
+staged migration with a matching source runtime; startup never migrates or reseeds.
+For a fresh named rehearsal, follow the [known-data bootstrap](native-authoring-acceptance.md#fresh-known-data-bootstrap-or-existing-saved-workspace).
+
+After installing the exact Composer revision recorded in the compatibility ledger,
+the following fresh-default example uses unsuffixed paths (all destinations must
+be absent):
 
 ```sh
 pnpm --filter @pinsel/content authoring:init
