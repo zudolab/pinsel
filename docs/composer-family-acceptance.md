@@ -256,7 +256,12 @@ runner implements the initial local activation described in
 published qualified identities in the reviewed public capture. It refuses any
 existing active release or staged project head. It creates no Content, pages or
 families, and it neither deploys nor claims production-rendered release output.
-Installed runtime acceptance of this new runner is **NOT_RUN**.
+The first local baseline run passed in 123s at Pinsel 9497 / Composer 5fe6, followed
+by an independent active-release restart pass in 63s at f54 / the same package.
+These prove local activation and exact public active-identity readback; they do
+not prove the complete Results/FAQ families or production-rendered release output.
+See the [compatibility ledger](composer-compatibility.md) for the exact identities,
+retained failures and remaining runtime acceptance.
 
 With a clean committed frozen-install checkout, explicit known-data stage, stopped
 writers and a fresh public capture, prepare an exclusive intent:

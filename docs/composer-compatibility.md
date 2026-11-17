@@ -1432,3 +1432,103 @@ for no application/artifact/lease before a new corrected-environment invocation.
 This configuration-error cancellation did not stop the active foreign job or replay
 a write. The earlier unguarded initialization deviation also remains recorded.
 Owner-data, authenticated provider and no-deployment holds are unchanged.
+
+
+## Current installed acceptance checkpoint — 2026-11-17
+
+This checkpoint supersedes the earlier pending Assistant, controlled-interruption
+and canonical-absence statuses above; it does not relabel their original failed
+attempts. The independent final consumer remained at Pinsel
+`b434c8fefd4c9659a9306c4e8481ae3262b46385`, Composer package
+`5fe6d8d92f5013943053491794c0502b83228d53`, Composer source
+`4e9c642050bed7f2597245ae4ad4ab3f278c3de5`, contract
+`c0b452da075b66757c60bd0d721a47062d4354d0`, renderer `native-v3`.
+The following are actual completed runs, not source-test results:
+
+| Installed scenario | Observed result | Retained evidence under the cloud acceptance notes |
+| --- | --- | --- |
+| Human authoring | PASS, 969s: Sitemap/tree/preview ownership, nested insertion/save/reload/restart, shared Course price and Contact labels/order, stable course links. Exact snapshot A built 14 routes/143 public files after later B; B stayed unchanged. Explicit inverses restored canonical values, preserving history. | `t7-5fe6-full-1/operator-summary.json`, `exact-A-after-B-proof.json`, `restoration-proof.json` |
+| Negative ownership/validation | PASS, 256s: seven actual semantic refusal bodies, full capture equality and 816 unchanged canonical/receipt files. Seven generic observer-disposal warnings remain qualified by the retained case-specific bodies. | `t7-5fe6-negative-1/operator-summary.json`, `no-write-file-audit.json` |
+| Controlled interruption/recovery | PASS, 270s: deliberate outer exit 86 followed a real forward save and fresh-browser exact receipt recovery; the unmodified committed runner performed guarded UI restoration. This is not an arbitrary mid-write crash test. | `t7-5fe6-controlled-recovery-1/supervisor-result.json`, `operator-summary.json` |
+| Assistant | PASS, 3455s: complete normal, unfiltered seven-case run, `restorationOnly:false`, `errors:[]`. All proposal/apply/undo, stale and guarded-Undo cases completed. | `t7-5fe6-assistant-1/result-1794915802270.json`, `operator-summary.json` |
+
+Assistant cases were shared Course pricing, FAQ, Note, local component fields,
+structural insertion, stale Course proposal, and guarded Course Undo. All five
+ordinary proposal captures proved canonical state unchanged before Apply. A fresh
+browser recovered the same Course operation key and durable receipt, rather than
+reapplying the request. Stale Apply returned 409 `stale-plan` with unchanged
+same-server preview identity; conflicting Undo returned 409 `revision-conflict`
+with full before/after capture equality. Explicit restoration preserved canonical
+values and legitimate history, advancing Content token 7→18 from
+`3b53b5dc441191e979c5d3c633fe89334fe8dc0dd718a55cc8f198064aad7314` to
+`96b956c6b91a6cbc8c2c5cb7644df9905b6d43af202671739b431173e0e3ae28`.
+The final consumer audit records a clean detached checkout, closed port 4173 and
+no matching runtime process or authoring lease; saved artifacts/history remain.
+The separate manager terminal audit is
+`t7-5fe6-final-manager-terminal-audit.json`. Independent saved-artifact review
+(`t7-5fe6-assistant-independent-audit.md`) passed across 44 hashed inputs.
+The Assistant observer used actual server responses through Playwright
+`route.fetch`; it is not the newer original-request-only transport. Stale Apply
+evidence is identity-level; guarded Undo has full-capture equality as stated above.
+
+**Provider qualification:** this Assistant pass used the deterministic fake
+provider. It proves the installed context/proposal/review/apply/recovery/Undo
+integration, not authenticated model inference or the quality of a real model's
+edits. Historical real-provider evidence remains separately recorded. New
+live-provider acceptance and actual owner-data import/cutover remain held under
+[#58](https://github.com/zudolab/pinsel/issues/58) and
+[#57](https://github.com/zudolab/pinsel/issues/57). No owner database was imported,
+no active owner editor was switched, and nothing was deployed.
+
+Canonical read-only absence recovery subsequently passed in 115s at the same b434/5fe
+installation. Both full captures equal
+`a88191c9dd0bdb769bf0de6d28764157acb3201e1882c99c547ac0516d1a6e44`, Content token 15;
+there were no Content mutation attempts. The 53 frozen inputs and eight original
+commit proofs remain retained in `canonical-extra-absence-5fe-1`. The original
+create/reload and delete-toast attempts still have FAIL status. This separate
+restart proves absence after the one acknowledged deletion; it does not replay
+that deletion or invent an operation-key receipt for the generic transaction.
+
+### Source-only harness correction and remaining acceptance
+
+Independent source review found that family root actions selected virtual Document,
+and mutating family/Header children reread external intents after parent admission.
+Commit `17a99d3455ebe9f4599fa3d9a5be2f7ad21d9bd9`, integrated as
+`94cdebf77e4538bb7730264e3a3b42d6ce7c0888`, fixes those harness defects. Root actions
+now verify the exact canonical component ID in the inspector; both runners consume
+captured intent/full-snapshot bundles bound by an independent hash. Structural
+reload acceptance requires the selected owner, Saved state, actual document
+navigation and complete public record readback, with bounded quiescence. Pin rows
+retain exact ID selection and the existing 180-second readiness budget. Existing
+mutation validators, original-response matching and full-state deltas remain.
+
+Independent source review was CLEAR_SOURCE_ONLY. Root standalone checks passed 109
+family, 27 Header and 48 static tests. These are not browser passes of the remaining
+scenarios. Stopped documentation consumers moved from f54 to 94cdebf with 1109/970
+stored files preserved and the same four package pins/lockfile; those raw-storage
+audits do not replace each next run's complete public-capture preflight. Queued old
+family/Header jobs were verified not started and cancelled for these correctness
+fixes; original cancellation evidence is retained. No stage was reinitialized.
+
+At this checkpoint, the static pilot has accepted phases 01–07 (with historical
+recoveries kept distinct); phase 08 has started but has no accepted proof yet.
+Phases 08–15, subsequent retained-state production-build verification and Header
+href acceptance therefore remain incomplete. Header forward/restart and the first
+local baseline/active-release restart have separate completed evidence above;
+Header inverse/restart, Knowledge reference edits, and the complete 45-phase
+Results / 43-phase FAQ sequences remain pending. Preserve every required action and
+per-phase exact capture; do not substitute synthetic snapshots, private-store
+aggregation or live-server capture for the supported exclusive offline boundary.
+
+The independent `family-coverage-review-94cdebf.md` also identifies required
+follow-up evidence beyond all 88 creation/configuration phases: exact FAQ answers
+and Results secondary fields, two-child rendered order, native and actual static
+browser interactions, and a manifest binding created, moved and restored states
+to their capture/proof/build identities. Additive verifiers are being prepared;
+none of these follow-ups is claimed as passed here.
+
+These current-package passes do not close T6/T7 or PR 61/979 by themselves. Remaining
+installed scenarios, current-head repository gates, independent integration review
+and eligible merges are still required. See [T7 progress](https://github.com/zudolab/pinsel/issues/56)
+for subsequent results and exact queue state; source 94cdebf CI is not claimed as
+passed by this documentation checkpoint.
