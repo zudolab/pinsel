@@ -56,6 +56,14 @@ Inspect `sequence.step`, the qualified owners, exact document and action. After
 review and an exclusive writer window, run this command **inside the shared heavy
 guard** used by your environment:
 
+Binding gestures wait for the exact qualified Mapping URL, Saved state/name and
+the exact node/property binding target to become visible and enabled. The same
+180-second bounded readiness also requires zero observed Composition requests and
+derived-output challenges. A Saved Mapping shell can appear before its Composition
+definition resolves; the default button-click timeout is not that readiness proof.
+This check performs no navigation or writes and preserves the subsequent exact
+selector, prewrite barrier and original-request validation.
+
 ```sh
 corepack pnpm exec node tests/native-authoring/families/run-phase.mjs \
   --composer FULL_IMMUTABLE_COMPOSER_SHA --stage EXISTING_STAGE \
