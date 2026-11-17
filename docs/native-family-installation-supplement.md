@@ -1,7 +1,8 @@
 # Second family installation transition: boundary13
 
-This defines a separately sealed second installation transition. The implemented
-commands below remain pending actual manager-approved preparation and runtime.
+This defines a separately sealed second installation transition. The commands below require manager-approved preparation and runtime evidence for
+each installation. The c5 rehearsal and phase13 pass are recorded in the
+[compatibility ledger](composer-compatibility.md#current-c5-installed-checkpoint--2026-11-17).
 The first transition remains the sealed boundary12 descriptor and its original
 package/source identities. A second transition is allowed only after genuine
 `MAPPING_BINDING_RECOVERY_VERIFIED` evidence for saved Results phase12.
@@ -33,8 +34,9 @@ execution still requires actual current-package recovery success.
 
 ## Implemented preparation and continuation commands
 
-The loader/preparer and generator/runtime wiring are implemented. They are still
-**NOT_RUN against an actual second installation** until manager-approved inputs exist.
+The loader/preparer and generator/runtime wiring are implemented. The recorded c5
+rehearsal verifies one actual second installation; new installations still require
+their own approved inputs and frozen evidence.
 
 After genuine current-package recovery, create a JSON recovery manifest with exactly
 `bundle`, `before`, `after`, `events`, `provenance`, `restart`, `proof`, pointing to

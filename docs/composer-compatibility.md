@@ -18,11 +18,52 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
-| Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping scenario pending. |
+| Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping phase13 PASS260s and full human regression PASS1001s, both independently audited. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
-| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. New history has13 entries. Phases13–44 and FAQ remain pending. |
+| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. New history has14 entries after phase13 count-binding PASS260s. Phases14–44 and FAQ remain in progress or pending. |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current-pin reruns remain required. |
 | Holds | Remaining T6/T7 scenarios, current-head checks/review/merges; actual owner-data cutover and new authenticated-provider acceptance. Deployment remains disabled. |
+
+## Current c5 installed checkpoint — 2026-11-17
+
+The Results consumer at `25e49398e94728a7be2c062972b5fecbdc384c87` passed
+phase13 in260s after a separately sealed boundary13 installation transition.
+One acknowledged count-binding write reached Saved and settled31ms after its
+recorded response, then the exact qualified Mapping was read back after reload.
+The label binding from the failed-and-recovered phase12 remains unchanged.
+Full capture changed only by the intended Mapping operation:
+`c91698b3027d620ec3e5103af4947d1f15e51c83a588ecbf023b6b3a1d5c351c`
+→ `0dc53724a2644555c801493354dfa24274a274ead0dcda384e997ca4ac1f6c79`.
+History14 preserves its previous thirteen entries and appends this proof once.
+Independent audit verified211 frozen inputs and all60 recorded family source hashes.
+This is browser reload persistence, not a separate process restart or Content preview
+pass. The journal is not a complete inventory of all unrelated library reads.
+Evidence: `results-phase13-c5-independent-completion-review.json`.
+
+The general consumer at `66865aeb1dab917057b1186c2a584855a662b19c` passed the
+full human scenario in1001s: semantic selection, local insertion and typed field
+save/reload, shared price/label/order changes, stable and legacy course-link behavior,
+exact snapshot build and supported restoration. Six acknowledged Content saves
+advanced token18→24; four linked Composition receipts cover insertion, two field
+changes and removal. Baseline values are restored while history remains retained.
+The final capture is
+`871d327e6e9bb2bab8e234cd66ba4cc82ab9f9adae3f5e83a5be851ffce34a4e`.
+
+Snapshot A (`e88bb89b5a7eb05fc6883325d63900acb9189f9f074a478d592881d3ca494d1b`)
+built14 routes and verified143 asset files after later edits produced B. The complete
+B capture equals the post-build capture; building A does not mutate B. Independent
+review reran output verification against the actual files. Eleven screenshots remain.
+Three legacy non-Content observer-disposed response-body diagnostics are retained;
+those lost bodies are not independently validated. The Content request-drain protocol
+passed. The consumer is clean and stopped, with its port closed and lease absent.
+Evidence: `t7-c5-full-1/terminal-audit.json`, `t7-c5-full-independent-audit.json`.
+
+Current-package negative, controlled recovery and fake-provider Assistant reruns,
+retained authored-static-page build/visitor acceptance and remaining Results/FAQ
+scenarios are still pending. The closed Header-cycle installation bridge itself
+passed independent review (314 frozen entries,316 loaded inputs,2172 preserved raw
+files); it does not establish a new runtime pass. Actual owner-data cutover and new
+live-provider acceptance remain held. No deployment or remote cutover occurred.
 
 ## Mapping save completion candidate — 2026-11-17
 
@@ -51,7 +92,7 @@ Evidence: `mapping-save-main-preservation-audit.json`,
 The Results continuation uses a strict boundary13 installation supplement that
 retains the original12-entry descriptor, the genuine phase12 recovery and all
 failed-attempt evidence. No saved binding is replayed or old proof rewritten.
-Actual preparation and current-package scenario acceptance remain pending.
+Initial adoption left preparation and installed acceptance pending; the current c5 checkpoint above records the completed preparation and phase13 pass.
 Header inverse restored all authored values and retained the new static page;
 normal Content token/generation advancement remains. A future static installation
 bridge must validate this closed cycle explicitly, not treat it as identity-only.
