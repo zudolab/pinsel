@@ -444,7 +444,8 @@ Pinsel CI43982372029 and43982363948 passed at a8b0b68/cafc; those passes are not
 attributed to this new candidate. Installed browser acceptance and current-head CI
 remain pending. Pinsel bb19d6a guards all initialization destinations before writes;
 5 filesystem tests and Content typecheck pass. Corrected bootstrap/manual recipes
-are documented but actual cold-operator saved edit is still NOT_RUN.
+were documented; cold-operator execution was still NOT_RUN at this checkpoint.
+The later evidence below records its actual result and package identity.
 
 ## Live-lease and host navigation candidate
 
@@ -454,8 +455,8 @@ qualified host preview/Sitemap handoff (`1f5d59f2`). Its773-file digest is
 `beb3378905528d1746d4aab7cf6a87659dccabfc89d5e83c60cc018519c32f3c`.
 Independent15 service tests,45 navigation/selection tests, full typechecks and
 scoped lint pass. Combined public/CMS regeneration, no-deploy and headless boundary
-checks passed under guard74s without generated drift. Installed current-pin
-Assistant and navigation acceptance remain pending.
+checks passed under guard74s without generated drift. Installed Assistant and
+navigation acceptance were pending at this checkpoint; later scoped results follow.
 
 At previous960 package, actual fake Course proposal completed with correct shared
 owner and Home/Lessons uses, but Apply was unavailable because currentness read
@@ -475,3 +476,78 @@ counted as passed. Receipt-body recovery, per-asset hash proof, later-B/exact-A 
 new-page/publication scenarios remain separate. Previous source CI43984291031
 (Composer2f982863) and43984498706/43984490522 (Pinselb4b83c3) passed; newer-head
 gates are pending. No deployment, owner-data cutover or authenticated inference.
+
+
+## Independent operator and partial Assistant evidence — 2026-11-17
+
+These are scoped results at recorded pins, not acceptance of a later package or
+completion of T5/T6/T7. Contract remains
+`c0b452da075b66757c60bd0d721a47062d4354d0`; both operator runs use workspace
+`pinsel`, snapshot schema 1 / Composition schema 2, pack `pinsel@0.4.0`,
+renderer `pinsel-zfb@native-v3`, explicit `notes-v1`, Node 24.19.0 / pnpm 11.5.2.
+
+At Pinsel `b4b83c301ae72f56e8e59b31ae5ed68e9e74fb71` / Composer
+`960f2d5661b0d23006fbdfa7d079a7f3683f8362`, the independent operator's frozen
+install, dedupe, Chromium preparation, six proof tests, seed/assets checks and
+fresh initialization passed (179 compositions / 246 records). The previously
+recorded Paragraph save/build/restart/removal proof remains attributed to this
+pin. It used a disclosed Page-selector workaround; the original Sitemap handoff
+failed. Receipt response bodies were unavailable across browser navigation,
+so no complete receipt-body recovery claim is made. Per-asset hash verification
+and later-B/exact-A were not part of this manual run.
+
+At Pinsel `81affe70ccaba458656b827a09b8b530be41ae4a` / Composer
+`1af202393e9d1510aee87f17dbc09ea49d59ea44`, fresh frozen install/dedupe and the
+revised Sitemaps → Main → Lessons → Open page authoring recipe passed without a
+workaround, resolving `files/lessons/frame` in the real rendered Lessons page.
+The rail and Review & release saved-preview links opened the actual saved host
+renderer in new tabs. Legacy `/website-preview` directed to it; `/site` and
+`/site/lessons` explicitly refused activated-release preview instead of substituting
+current saved output. No release was activated. Before/after capture was byte-identical,
+digest `f24c649fd281eeb6f43e165dc5c08630052fc7e7091cc162aef5fc9b2e435068`.
+An initial popup showed Preview not current during concurrent original-tab navigation;
+Refresh saved page recovered it and an isolated popup passed. Root cause remains
+unestablished and needs a focused regression. This navigation-only pass is not a
+new-pin Paragraph mutation pass. Owned browsers/servers stopped; restored native
+history, captures and builds remain preserved in the clean detached consumer.
+
+The fake-provider Assistant run `t5-installed-assistant-1794881706`, package
+`1af202393e9d1510aee87f17dbc09ea49d59ea44`, completed Course and FAQ proposal,
+Apply and Undo phases. Course's retained Apply recovered the identical operation
+and receipt with `recovered: true` after response loss. Actual Content receipts
+identify `course/consultation` and `faq-item/faq-exam-01`; supported Undo receipts
+and public captures remain in the journal. The run then failed before Note proposal:
+`No rendered bound target for note-body`. Its aggregate result remains **FAIL**;
+completed subsets do not pass Note, local field/insertion, stale Apply or guarded
+Undo. The later restore phases passed; history and failed-attempt evidence remain.
+This fixture is not authenticated model inference.
+
+Evidence under the Cloud acceptance root `composer-adoption-notes`:
+`cold-operator-20261117/report.md`, `cold-navigation-81affe7/report.md`, and
+`t5-installed-assistant-1794881706/{run-manifest.json,result-1794877387952.json,assistant-course.json,assistant-faq.json}`,
+with captures, command journals and screenshots alongside. Earlier failures remain
+historical failures. Remaining full-suite, route creation/publication, current-head
+CI/review and integration gates stay open; actual owner-data import/cutover and
+new real-provider acceptance remain held. No deployment occurred.
+
+## Direct Sitemap Mapping ownership candidate
+
+Package `3c30d18a13455b6adb51378c3cf957ecff186b1d`, attested by Composer
+`80ae570706904e46cac75ec5804068077a01db20`, carries the qualified direct-route
+Mapping fix from `5e79f11b` ([upstream982](https://github.com/Takazudo/zudo-composer/issues/982)).
+Its773-file packed digest is
+`b8bfcd5c6966f7796088112977e591587c6f4587b3d7288705efd0c6192483d4`.
+The host target now retains the compiler's selected Content entry only for its
+actual local Composition owner; nested materialization overrides and linked Global
+boundaries remain intact. Worker and independent reviewer each passed29 focused
+tests, including a dynamic Markdown route's staged proposal, Content Apply and Undo.
+Typecheck, scoped lint, public/CMS regeneration/check63s, no-deploy and headless
+boundary checks pass. Installed Note and remaining Assistant acceptance is pending.
+The Note recipe explicitly selects the Prose presentation, since its TOC also uses
+the same body. No owner-data import or authenticated inference is implied.
+
+The first cold Content timing diagnostic was invalid: its test request filter
+blocked the read-only initialize operation. It stopped without canonical writes;
+before/after coherent capture remained exactly
+`afbaa4d849e75c5c7cc89d1bba1f1748ed2bc9313bff1d9e2530687d06b1c47e`.
+A corrected diagnostic remains required; this is not evidence of a product deadlock.

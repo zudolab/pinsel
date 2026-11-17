@@ -5,7 +5,7 @@ import { proposeFromSelection, renderExactCandidate, applyReviewed, undoReviewed
 export const assistantCases = [
   { id: 'course', pathname: '/lessons/', domain: 'content', modelId: 'course', entryId: 'consultation', fieldId: 'course-price', routes: ['/', '/lessons/'] },
   { id: 'faq', pathname: '/faq/', domain: 'content', modelId: 'faq-item', entryId: 'faq-exam-01', fieldId: 'faq-item-answer', routes: ['/faq/'] },
-  { id: 'note', pathname: '/notes/exam-schedule/', domain: 'content', modelId: 'note', entryId: 'exam-schedule', fieldId: 'note-body', routes: ['/notes/exam-schedule/'] },
+  { id: 'note', pathname: '/notes/exam-schedule/', domain: 'content', componentId: 'pinsel.prose', modelId: 'note', entryId: 'exam-schedule', fieldId: 'note-body', routes: ['/notes/exam-schedule/'] },
   { id: 'local', pathname: '/lessons/', domain: 'composition', routes: ['/lessons/'] },
   { id: 'insert', pathname: '/lessons/', domain: 'composition', routes: ['/lessons/'] },
 ];
@@ -60,7 +60,7 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
       assert(entry);
       old = entry.values[spec.fieldId];
       assert.equal(typeof old, 'string');
-      target = targets.find(t => t.entries.some(e => e.modelId === spec.modelId && e.recordId === spec.entryId) && Object.values(t.props).includes(old));
+      target = targets.find(t => (!spec.componentId || t.componentId === spec.componentId) && t.entries.some(e => e.providerId === provider.id && e.modelId === spec.modelId && e.recordId === spec.entryId) && Object.values(t.props).includes(old));
       assert(target, `No rendered bound target for ${spec.fieldId}`);
       prop = Object.keys(target.props).find(key => target.props[key] === old);
     } else if (spec.id === 'insert') {

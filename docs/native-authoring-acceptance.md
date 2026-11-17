@@ -36,8 +36,12 @@ separate disposable checkout with no native state, the current public initialize
 can create `notes-v1` directly. It reads committed `content/entries`, builds the
 known structure, and normalizes Note routes for pack `0.4.0` / renderer `native-v3`.
 It does not require reconstructing an older pack or running the two migrations.
-This bootstrap recipe has been inspected in source; it is **NOT_RUN** until its
-own install, initialization, capture and browser evidence are recorded.
+Fresh bootstrap passed in the independent cold-operator run at Pinsel
+`b4b83c301ae72f56e8e59b31ae5ed68e9e74fb71` / Composer
+`960f2d5661b0d23006fbdfa7d079a7f3683f8362`: frozen install, seed/assets checks,
+initialization, saved Paragraph, capture/build and supported removal. This is
+known-data evidence at those identities, not owner-data migration or a pass of the
+whole portable suite. See the [compatibility ledger](composer-compatibility.md).
 
 Before initialization, verify that all three paths are absent:
 
@@ -74,6 +78,14 @@ for authoring, capture, build and the runner; `course-identity-v1` is the older
 pack `0.3.0` / renderer `native-v2` migration source.
 
 ## Independent manual saved-Paragraph recipe
+
+The Paragraph edit/build/restoration passed at package `960f2d5`, using a disclosed
+Page-selector workaround for the then-broken Sitemap handoff. The revised handoff
+below passed independently at Pinsel `81affe70ccaba458656b827a09b8b530be41ae4a` /
+Composer `1af202393e9d1510aee87f17dbc09ea49d59ea44`, with exact before/after
+public capture equality. That navigation-only retest does not relabel the earlier
+mutation pass or prove the whole revised recipe at the newer pin. Receipt-body
+recovery, per-asset hashes and later-B/exact-A remain separate acceptance.
 
 Use the verified disposable `notes-v1` stage, with other writers stopped and source
 frozen. Record the Pinsel commit and immutable Composer/contract pins. Create an
@@ -254,7 +266,7 @@ lockfile text cryptographically attests every installed byte. The negative mode
 now attempts all seven defined endpoint refusals, with public and receipt-inclusive
 before/after audits; this expanded run is not yet executed.
 
-### Assistant scenario (not yet executed)
+### Assistant scenario (partial evidence; full run failed)
 
 `assistant-ui.mjs` provides actual DOM helpers for selection handoff, fake-provider
 proposal, candidate rendering, Apply observation, deliberately lost response,
@@ -278,7 +290,12 @@ The orchestrator must also exercise stale proposal refusal after a human save,
 response loss after a real successful Apply followed by fresh-browser retained
 request recovery, and Undo refusal after an intervening save to the same owner.
 Use supported inverses and public canonical comparisons for restoration. Capture
-before/after each refusal to prove no write. These scenarios are **NOT_RUN** until the installed browser command completes:
+before/after each refusal to prove no write. The installed `1af2023` run completed fake-provider Course and FAQ proposal,
+Apply and Undo, including Course retained-request recovery, then failed before a
+Note proposal with `No rendered bound target for note-body`. The aggregate result
+remains **FAIL**; local field/insertion, stale Apply and guarded-Undo scenarios
+are not completed by that subset. See the ledger for identities and evidence.
+The complete installed command remains required:
 
 ```sh
 node tests/native-authoring/run.mjs \
