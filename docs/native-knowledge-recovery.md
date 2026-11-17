@@ -9,8 +9,10 @@ capture delta. A `{ok:true,result:null}` response is not a durable receipt ID.
 The supported narrow case is a forward `knowledge-reference` run ending at
 `after-knowledge-preview` with the 180-second `page.waitForLoadState` timeout.
 Other errors, unresolved original Composition exchanges, multiple writes, changed
-saved state or collateral edits refuse. Original failure remains `FAIL`; recovery
-never fabricates a `PUBLIC_CAPTURE_VERIFIED` forward proof or authorizes Undo.
+saved state or collateral edits refuse. Original failure remains `FAIL`; the save audit
+never fabricates a `PUBLIC_CAPTURE_VERIFIED` forward proof or authorizes an inverse.
+Only the separately completed recovery proof can be used for reviewed inverse
+preparation, with the exact current saved capture and bound restart/build evidence.
 
 With the original consumer stopped and exclusive stage ownership, prepare a new
 JSON evidence manifest outside the stage. All six values are absolute paths into
@@ -87,3 +89,38 @@ terminal journals. The earlier timeout's cause remains unattributed; this change
 claims neither a renderer defect nor a particular long-lived request. The helper
 must never be called from a lane it drains. Other consumers may reuse it only with
 the same explicit terminal UI/identity/read-obligation/close contract and review.
+
+## Normal Knowledge edits and the later inverse
+
+`header/run-phase.mjs` now runs Knowledge references in two stages. The first
+browser admits one original Content write, checks whole public readback, reloads
+and verifies the saved field, then closes. Its `ui-result.json` explicitly says
+`SAVE_READBACK_ONLY`; this is not full authoring acceptance. The parent stops the
+server, captures through the public API and audits the complete one-field delta.
+It writes `saved-write.json` with `SAVED_WRITE_CAPTURED_PENDING_PREVIEW` before
+starting the next stage. A later failure leaves this truthful partial outcome.
+
+The parent generates a frozen `knowledge-captured-reference` intent and starts the
+same read-only verifier against that real post-write capture, never a snapshot
+assembled from the before-image. This includes exact preview identity, visitor
+click, target heading, terminal admission fence, close settlement, unchanged
+restart capture and exact static build. Only after that child and the final
+unchanged capture succeed does the parent emit its genuine
+`PUBLIC_CAPTURE_VERIFIED` proof. Header label/href paths retain their existing
+pipeline. Pre-navigation and reload barriers are unchanged.
+
+To prepare the later Knowledge inverse, use the existing `header/prepare.mjs`
+config with `kind: "knowledge-reference"`, the actual qualified `ref`, and
+`forwardProofPath` pointing either to a complete ordinary forward proof or to the
+new complete `recovery-proof.json`. Recovery admission verifies its distinct
+`SAVED_REFERENCE_RECOVERY_VERIFIED` status, original FAIL, exact current record and
+digest, embedded successful read-only restart, original target Note heading,
+compiled route/build evidence and matching source identity. It derives the old
+reference from the recorded original before-image. It does not rewrite recovery
+as an ordinary forward PASS. Run the resulting inverse through the same normal
+two-stage Knowledge pipeline; never replay an already attempted inverse.
+
+Old recovery records lacking embedded restart or target `verifiedH1` are not
+silently upgraded. Keep them as evidence and obtain a new read-only recovery proof
+with the supported source before preparing an inverse. All recipes remain
+runtime NOT_RUN until their actual records succeed.

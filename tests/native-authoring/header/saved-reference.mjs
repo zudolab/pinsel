@@ -4,15 +4,17 @@ import assert from 'node:assert/strict';
 import {validateIntent} from './driver-proof.mjs';
 import {admitHeaderField,auditHeaderField} from './owner.mjs';
 /** Evidence of an acknowledged save, not evidence that the failed scenario passed. */
-export function validateSavedReference(snapshot,evidence){
+export function validateSavedReference(snapshot,evidence){return validate(snapshot,evidence,false);}
+export function validateCapturedReference(snapshot,evidence){return validate(snapshot,evidence,true);}
+function validate(snapshot,evidence,captured){
  const {bundle,bundleHash,before,after,events,provenance,hashes,paths}=evidence;
  for(const key of ['bundle','bundleHash','before','after','events','provenance']){assert(paths[key]?.startsWith('/'));assert.match(hashes[paths[key]],/^[a-f0-9]{64}$/);}
  assert.equal(hashes[paths.bundle],bundleHash.sha256,'Original sealed bundle changed');
  assert.deepEqual(bundle.snapshot,before);assert.deepEqual(after,snapshot,'Saved state changed');
  assert.equal(provenance.beforeDigest,before.digest);assert.match(provenance.source.head,/^[a-f0-9]{40}$/);assert.match(provenance.composer,/^[a-f0-9]{40}$/);
- const intent=bundle.intent;assert.equal(intent.kind,'knowledge-reference');assert.equal(intent.direction,'forward');
+ const intent=bundle.intent;assert.equal(intent.kind,'knowledge-reference');if(!captured)assert.equal(intent.direction,'forward');
  const owner=validateIntent(before,intent);const one=phase=>{const found=events.filter(e=>e.phase===phase);assert.equal(found.length,1,`Exactly one ${phase} required`);return found[0];};
- const begin=one('begin'),dispatch=one('header-before-dispatch'),response=one('header-response'),readback=one('header-readback-verified'),held=one('held');
+ const begin=one('begin'),dispatch=one('header-before-dispatch'),response=one('header-response'),readback=one('header-readback-verified');
  assert.deepEqual(begin.intent,intent);assert.deepEqual(dispatch.ref,owner.ref);assert.equal(dispatch.beforeToken,before.tokens.content);
  admitHeaderField(before,owner,dispatch.input,intent.field,intent.value);
  assert.equal(response.status,200);assert.deepEqual(response.body,{ok:true,result:null});
@@ -20,12 +22,20 @@ export function validateSavedReference(snapshot,evidence){
  assert.deepEqual(readback.ref,owner.ref);assert.equal(readback.token,after.tokens.content);
  const record=after.project.providers.content.find(p=>p.id===owner.ref.providerId).entries.find(e=>e.modelId===owner.ref.modelId&&e.id===owner.ref.recordId);
  assert.deepEqual(readback.record,record);assert.deepEqual(record,{...dispatch.input.record,generation:after.tokens.content});
- assert.equal(events.at(-1),held);assert.equal(events.at(-2)?.phase,'browser-quiescence-start');assert.equal(events.at(-2)?.boundary,'after-knowledge-preview');
- assert.equal(held.error,'page.waitForLoadState: Timeout 180000ms exceeded.');
- assert(!events.some(e=>/held|failed|uncertain/.test(e.phase)&&e!==held),'Other unresolved outcomes cannot be recovered by this recipe');
+ let originalFailure;
+ if(captured){
+  assert(paths.uiResult?.startsWith('/'));assert.match(hashes[paths.uiResult],/^[a-f0-9]{64}$/);
+  assert.equal(evidence.uiResult.stage,'SAVE_READBACK_ONLY');assert.deepEqual(evidence.uiResult.result,{domain:'content-edit',ref:owner.ref,record});
+  const completed=one('knowledge-save-readback-only');assert(events.indexOf(completed)>events.indexOf(readback));assert.deepEqual(completed.result,evidence.uiResult.result);
+  assert(!events.some(e=>/held|failed|uncertain|refused/.test(e.phase)),'Captured save has an unresolved outcome');
+ }else{
+  const held=one('held');assert.equal(events.at(-1),held);assert.equal(events.at(-2)?.phase,'browser-quiescence-start');assert.equal(events.at(-2)?.boundary,'after-knowledge-preview');
+  assert.equal(held.error,'page.waitForLoadState: Timeout 180000ms exceeded.');originalFailure=held.error;
+  assert(!events.some(e=>/held|failed|uncertain/.test(e.phase)&&e!==held),'Other unresolved outcomes cannot be recovered by this recipe');
+ }
  auditOriginalCompositionReads(before,events);
  const delta=auditHeaderField(before,after,owner,intent.field,intent.value);
- return {status:'SAVED_WRITE_EVIDENCE_AUDITED',originalScenario:'FAIL',originalFailure:held.error,intent,result:{domain:'content-edit',ref:owner.ref,record},delta,evidenceHashes:hashes,originalSource:provenance.source.head,composer:provenance.composer,stage:provenance.stage};
+ return {status:captured?'CAPTURED_WRITE_EVIDENCE_AUDITED':'SAVED_WRITE_EVIDENCE_AUDITED',originalScenario:captured?'SAVE_READBACK_ONLY':'FAIL',...(originalFailure?{originalFailure}:{}),intent,result:{domain:'content-edit',ref:owner.ref,record},delta,evidenceHashes:hashes,originalSource:provenance.source.head,composer:provenance.composer,stage:provenance.stage};
 }
 
 function auditOriginalCompositionReads(snapshot,events){

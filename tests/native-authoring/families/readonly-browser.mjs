@@ -1,4 +1,4 @@
-import {validateSavedReference} from '../header/saved-reference.mjs';
+import {validateSavedReference,validateCapturedReference} from '../header/saved-reference.mjs';
 import {settleTerminalReads,observeRequestDiagnostics} from '../header/terminal-settlement.mjs';
 import {settleBrowserReads} from '../static/browser-quiescence.mjs';
 import {readFrozenBundle,assertInputsUnchanged} from './frozen-inputs.mjs';
@@ -29,7 +29,7 @@ const context=await chromium.launchPersistentContext(join(artifacts,'profile'),{
 const page=context.pages()[0], pending=new Set(), active=activeReadback(snapshot.project.id);
 let blocked,error,result,previewCount=0,readEpoch=0,originalPending=0,terminalClosing=false;const previewPaths=new Set();
 const diagnostics=observeRequestDiagnostics(page,persist);
-const recovered=intent.kind==='knowledge-saved-reference'?validateSavedReference(snapshot,inputs.savedReference):null;
+const recovered=intent.kind==='knowledge-saved-reference'?validateSavedReference(snapshot,inputs.savedReference):intent.kind==='knowledge-captured-reference'?validateCapturedReference(snapshot,inputs.savedReference):null;
 const headerProof=intent.kind==='header-restart'?validateHeaderRestart(snapshot,inputs.headerProof):null;
 const composition=compositionDerivedReadGate({page,snapshot,persist});
 const busyReads=busyReadTracker();
