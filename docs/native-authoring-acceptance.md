@@ -376,3 +376,12 @@ The new full-scenario proof has focused test coverage but **has not yet passed a
 installed full browser run**. Keep that acceptance held until the actual command
 completes, including exact snapshot A/build and restoration checks. Older full-run
 journals without successful per-save evidence cannot authorize generation changes.
+
+Assistant response observation journals the successful receipt before waiting for
+UI completion. A normal Apply (or recovered lost Apply) must show `Status: applied`
+and an enabled Undo control before the harness navigates away; Undo must show
+`Status: undone`. These waits are bounded and do not replay operations. The
+intentionally lost initial response is handled by fresh-browser recovery first.
+Run `assistant-ui-settlement.test.mjs` separately under the heavy guard: its small
+browser fixture verifies that an open review or disabled Undo does not count as
+settled. It starts no authoring server and touches no canonical workspace.

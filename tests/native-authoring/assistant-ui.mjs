@@ -105,3 +105,12 @@ export function assertContentOwnership(before, after, { providerId, entryId, fie
     assert.deepEqual(after.assets, before.assets, 'Content Apply changed Assets');
     assert.deepEqual(after.publicFiles, before.publicFiles, 'Content Apply changed public bytes');
 }
+
+/** A receipt may arrive before the card's post-mutation read releases its lease.
+ * Persist the receipt first; await the actual settled UI before navigating away.
+ * Never call this for the deliberately lost initial Apply response. */
+export async function waitForReviewCompletion(card, domain, status, timeout = 180000) {
+    assert(['applied', 'undone'].includes(status));
+    await expect(card.getByText(`Status: ${status}`, { exact: true })).toBeVisible({ timeout });
+    if (status === 'applied') await expect(card.getByRole('button', { name: `Undo ${domain}`, exact: true })).toBeEnabled({ timeout });
+}

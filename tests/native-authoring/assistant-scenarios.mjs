@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFile, writeFile } from 'node:fs/promises';
 import { expect } from '@playwright/test';
-import { proposeFromSelection, renderExactCandidate, applyReviewed, undoReviewed, recoverRetainedApply, observeAssistantOperation } from './assistant-ui.mjs';
+import { proposeFromSelection, renderExactCandidate, applyReviewed, undoReviewed, recoverRetainedApply, observeAssistantOperation, waitForReviewCompletion } from './assistant-ui.mjs';
 export const assistantCases = [
   { id: 'course', pathname: '/lessons/', domain: 'content', modelId: 'course', entryId: 'consultation', fieldId: 'course-price', routes: ['/', '/lessons/'] },
   { id: 'faq', pathname: '/faq/', domain: 'content', modelId: 'faq-item', entryId: 'faq-exam-01', fieldId: 'faq-item-answer', routes: ['/faq/'] },
@@ -157,9 +157,11 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
       const result = await observeAssistantOperation(page, 'applyHostReview', () => recover.click());
       assert(result.body.ok, 'Pending Apply must recover before restoration');
       journal.recoveredDuringRestore = result; await persist();
+      await waitForReviewCompletion(card, spec.domain, 'applied');
     }
     if (await card.getByRole('button', { name: `Undo ${spec.domain}`, exact: true }).count()) {
       journal.undo = await undoReviewed(page, card, spec.domain); await persist();
+      await waitForReviewCompletion(card, spec.domain, 'undone');
     } else {
       await expect(card.getByText(/^Status: (open|undone|stale|discarded)/)).toBeVisible();
     }
@@ -176,12 +178,14 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
       journal.recovery = await recoverRetainedApply(page, card, journal.apply);
       await persist();
     }
+    await waitForReviewCompletion(card, spec.domain, 'applied');
     for (const path of spec.routes) { await open(path); await expect(frame().locator('body')).toContainText(journal.marker); }
     await shot(`assistant-${caseId}-applied`);
     record('assistant-applied', journal.apply);
   } else if (phase === 'undo') {
     journal.undo = await undoReviewed(page, card, spec.domain);
     await persist();
+    await waitForReviewCompletion(card, spec.domain, 'undone');
     await shot(`assistant-${caseId}-undone`);
     record('assistant-undone', journal.undo);
   } else throw Error('Unknown Assistant phase');
