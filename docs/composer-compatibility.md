@@ -1097,3 +1097,9 @@ All four Pinsel manifests and the lockfile use this pin; installation passed in
 changes only snapshot/pack/renderer digests and compiler identity; all other
 fields, including data/tokens/Assets, remain exact. Installed recovery of the
 retained unassigned page is pending; no startup bypass or reseed has occurred.
+
+The #987 CMS currentness failure was resolved by normal regeneration and a
+successful four-host check in 61s. Independent recursive comparison of all 16
+changed JSON files found only top-level mutation tokens changed; authored records
+are exact. Composer source head `d68a35fb79fad6386fcfbf39ed1e849182376200` retains
+the exact attested 26862 payload, verified after committing generated fixtures.
