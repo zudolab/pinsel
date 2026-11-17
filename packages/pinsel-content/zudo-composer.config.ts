@@ -12,6 +12,7 @@ export default defineComposerConfig({
   styles: "styles/authoring.css",
   authoringAuthority: "workspace",
   assistant: pinselAssistantConfig(process.env),
+  contentValidation: { module: "@pinsel/content/content-validation", id: "pinsel-content-values", version: "1" },
   nativeEditing: { source: "workspace", paragraph: { componentId: "pinsel.paragraph", textProp: "text" } },
   hostDocument: {
     module: "@pinsel/ui/host-document", jsxImportSource: "@takazudo/zfb/zudo-react", rendererId: "pinsel-zfb", rendererVersion: "native-v3", publicDir: `.native-public${suffix}`,

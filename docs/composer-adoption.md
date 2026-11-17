@@ -245,3 +245,9 @@ Verify the expected Content token change, unchanged entry values/generations,
 other domains and Assets, and the displayed guidance after reload/restart. Any
 inverse requires the exact saved after-image and current token. This implementation
 alone is not evidence that an existing stage or owner database was updated.
+
+## Native value validation
+
+Read [the native Content value contract](native-content-validation.md) before
+changing human/AI writes, publication or recovery. Trusted host value rules apply
+independently of Assistant permissions; historical data is preserved.

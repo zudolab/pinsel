@@ -14,7 +14,7 @@ Historical entries below retain their original outcomes. Latest complete Assista
 | Identity or gate | Current recorded value |
 | --- | --- |
 | Pinsel complete Assistant tested source | `f07e05b8f9e22379cb321bf80a11d47b26800e24` |
-| Current candidate package / attestation | `4f1191d682995438380fccdb5bb692a299415402` / `75df80f75c0a34f99bcc8cbd02447fd47ddc70a9` |
+| Current candidate package / attestation | `71126775a97feab004145dde63a768684e8e3cd9` / `f36f52ec4010eb2b97d0939e90e0cd631d97a9bd` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | Complete seven-case Assistant PASS at bc20; human provenance/refusal and canonical migration PASS at4f; remaining scenarios tracked below |
@@ -966,3 +966,33 @@ tests include all retained fields of 246 committed records, but its installed
 acceptance requires the forthcoming immutable package. Existing historical data
 and release bytes must remain readable and preserved; new invalid changes and
 publications must refuse. No existing result is relabeled as a pass of that policy.
+
+
+## Trusted native value-policy package candidate
+
+Composer source `b4e5e464c72245e9f1ab37ac7ddc23f4016a9150` plus field-guidance
+source `9df0d84027a2127341780f93e48b88e47da17970` were independently reviewed
+and integrated at `89b14d0ad20adf276cd995c8cc89f72e678229bc`. The integrated
+nine-suite run passed 72 tests. Public/CMS regeneration and consistency checks
+passed under the shared guard in 96s; all 16 regenerated CMS metadata files changed
+only their mutation tokens, with authored records unchanged. Public type checks passed.
+
+Immutable package `71126775a97feab004145dde63a768684e8e3cd9` contains 778 shipped
+files with payload digest `57b1e88911c471d5c59a7cd105a630cb12d9afa4c3c0ed09eeb81de4aed74906`,
+attested by `f36f52ec4010eb2b97d0939e90e0cd631d97a9bd`. Pinsel's four manifests
+and generated lockfile use that exact package; the component contract remains
+`c0b452da075b66757c60bd0d721a47062d4354d0`. Installation passed in 9s, followed
+by frozen installation, dedupe and no-deploy checks. Installed adapter/config tests
+passed 55 cases and the Content package typecheck passed.
+
+Pinsel wires [the shared value contract](native-content-validation.md) independently
+of Assistant enablement and supplies Note rules through actual selected-field
+Assistant guidance. Before/after installation captures preserve the entire project,
+tokens, Assets and public bytes: `6fc68557…` →
+`ee5f1dac5cd190272484a16e1730777cb70906963ab96dcb6091d64db854125a`.
+Only the enclosing digest, attested pack/renderer digests and release-compiler
+identity changed. No source authority was switched or data migrated.
+
+Installed invalid-human/AI/publication refusals, supported Apply/Undo and final
+current-pin scenarios remain pending. Source tests and package installation are
+not completion of those checks. Composer CI run44030617593 is in progress.

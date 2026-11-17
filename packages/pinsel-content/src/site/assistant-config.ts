@@ -1,3 +1,5 @@
+import { NOTE_AI_BODY_CONSTRAINTS } from "../richtext-policy";
+
 /** Trusted server configuration. No credentials or provider settings enter Content. */
 export function pinselAssistantConfig(env: Readonly<Record<string, string | undefined>>) {
   const provider = env.PINSEL_ASSISTANT_PROVIDER;
@@ -9,7 +11,7 @@ export function pinselAssistantConfig(env: Readonly<Record<string, string | unde
       { providerId: "content-filesystem", modelId: "course", fieldIds: ["course-price"] },
       { providerId: "content-filesystem", modelId: "faq-item", fieldIds: ["faq-item-question", "faq-item-answer"] },
       { providerId: "content-filesystem", modelId: "home-faq", fieldIds: ["home-faq-question", "home-faq-answer"] },
-      { providerId: "content-filesystem", modelId: "note", fieldIds: ["note-title", "note-body"] },
+      { providerId: "content-filesystem", modelId: "note", fieldIds: ["note-title", "note-body"], fieldInstructions: { "note-body": NOTE_AI_BODY_CONSTRAINTS } },
     ],
   };
   if (provider === "fake") return { ...common, provider };

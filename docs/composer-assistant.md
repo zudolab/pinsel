@@ -73,3 +73,7 @@ The [canonical-read-only Inspector/Assistant proof](composer-assistant-readonly-
 checks shared affected-use display, actual fake-provider tools and explicit unsupported-request
 reasons without Apply. Its stream-evidence recovery reads an existing run and remains
 separate from canonical receipt recovery.
+
+[Native Content value rules](native-content-validation.md) apply to both human and
+Assistant writes. The actual selected Note body capability carries its supported
+Markdown guidance; this never grants additional fields or operations.
