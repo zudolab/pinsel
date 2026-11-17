@@ -7,6 +7,7 @@ import { readContentEntries } from "../site/entries";
 import { buildPinselSite } from "../site/structure";
 import { projectNativeModelGuidance } from "../site/native-model-guidance";
 import { migrateNoteRoutes, normalizeNoteRoutes } from "../site/migrate-note-routes";
+import { migrateSharedSources } from "../site/canonical-shared-sources";
 import { verifyImportedCourseContent } from "../site/migrate-course-identity";
 
 const pack = contractPack();
@@ -62,4 +63,33 @@ it("records exact metadata changes in staged migration evidence without changing
   const damaged = structuredClone(migrated.project);
   damaged.providers.content[0]!.models[0]!.document.name += " changed";
   expect(() => verifyImportedCourseContent(migrated.project, damaged)).toThrow();
+});
+
+// Exact oldest text observed in canonical-staged-rehearsal-1/source-before.json.
+// Do not load session artifacts or broaden this to substring/normalized matching.
+it.each([
+  "進路相談・2ヶ月・4ヶ月（3件、追加不可。並び順は ?course= の番号に対応）",
+  "進路相談・2ヶ月・4ヶ月（3件）。表示順は識別子・お問い合わせリンクとは独立",
+])("migrates the exact historical Course variant: %s", description => {
+  const project = normalizeNoteRoutes(structuredClone(source));
+  project.providers.content[0]!.models.find(model => model.id === "course")!.document.description = description;
+  const body = { schemaVersion: 1, workspaceId: "pinsel", project, renderer: { id: "pinsel-zfb", version: "native-v3" }, tokens: { content: 5 } };
+  const snapshot = { ...body, digest: hash(body) } as unknown as AuthoringWorkspaceSnapshot;
+  const before = structuredClone(snapshot);
+  const migrated = migrateSharedSources(snapshot, snapshot.digest);
+  expect(snapshot).toEqual(before);
+  expect(migrated.evidence.changes).toHaveLength(56);
+  expect(migrated.evidence.modelDescriptions).toHaveLength(3);
+  expect(migrated.evidence.modelDescriptions.find(change => change.modelId === "course")).toEqual({
+    providerId: "content-filesystem", modelId: "course", before: description,
+    after: "共有するコース情報・料金・お問い合わせ選択肢。表示順は識別子・お問い合わせリンクとは独立しています。",
+  });
+  const expectedContent = structuredClone(project.providers.content);
+  for (const change of migrated.evidence.modelDescriptions) expectedContent.find(provider => provider.id === change.providerId)!.models.find(model => model.id === change.modelId)!.document.description = change.after;
+  expect(migrated.project.providers.content).toEqual(expectedContent);
+  for (const customDescription of [`${description} `, `${description} Custom`, `Custom ${description}`]) {
+    const custom = structuredClone(project);
+    custom.providers.content[0]!.models.find(model => model.id === "course")!.document.description = customDescription;
+    expect(projectNativeModelGuidance(custom).providers.content[0]!.models.find(model => model.id === "course")!.document.description).toBe(customDescription);
+  }
 });
