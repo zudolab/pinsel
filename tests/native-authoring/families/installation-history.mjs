@@ -5,7 +5,7 @@ import {readFile} from 'node:fs/promises';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
 import {inputHash} from './frozen-inputs.mjs';
-import {nextFamilyIntent} from './sequence.mjs';
+import {nextFamilyIntent} from './sequence-core.mjs';
 import {admitContentCreate,admitContentField,admitDuplicate,auditDelta} from './intents.mjs';
 import {outputExchange} from './composition-output.mjs';
 import {auditOriginalCompositionReads} from '../header/saved-reference.mjs';

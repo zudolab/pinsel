@@ -17,11 +17,7 @@ export function familyInstallationProof({chain,before,after,installation,history
  const get=(o,p)=>p.split('.').reduce((v,k)=>v[k],o);const changes=installationIdentityPaths.filter(p=>get(before,p)!==get(after,p)).map(path=>({path,before:get(before,path),after:get(after,path)}));assertInstallationOnly(before,after,changes);
  return {schemaVersion:1,kind:'family-installation-only',boundary:12,historyPath,configPath,beforeCapture:chain.history.at(-1).afterCapture,afterCapture:afterPath,beforeDigest:before.digest,afterDigest:after.digest,changes,originalComposer:chain.originalComposer,composer:installation.composer,stage:installation.stage,source:installation.source.head,identitiesPath:artifacts+'/public-identities.json',provenancePath:artifacts+'/provenance.json',originalEvidence:chain.evidence};
 }
-export function assertFamilyBridgeBoundary(bridge,history,snapshot){
- assert.equal(bridge.status,'FAMILY_INSTALLATION_BRIDGE_VERIFIED');assert.equal(bridge.boundary,12);assert(history.length>=12);assert.equal(history[11].afterDigest,bridge.beforeDigest);assert.equal(history[11].afterCapture,bridge.beforeCapture);
- for(let i=0;i<12;i++)assert.deepEqual(history[i],bridge.originalHistory[i],'Original accepted phase changed');
- if(history.length===12)assert.equal(snapshot.digest,bridge.afterDigest);else assert.equal(history[12].beforeDigest,bridge.afterDigest);
-}
+export {assertFamilyBridgeBoundary} from './installation-boundary.mjs';
 /** Independent validation on every preparation/next-intent/runtime. No canonical writes. */
 export async function loadFamilyInstallationBridge({descriptor,repo,installation,bytes=readFile}){
  assert.deepEqual(Object.keys(descriptor).sort(),['freezeManifestPath','freezeManifestSha256','proofPath']);assert.match(descriptor.freezeManifestSha256,/^[a-f0-9]{64}$/);
