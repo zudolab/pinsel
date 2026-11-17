@@ -445,3 +445,33 @@ attributed to this new candidate. Installed browser acceptance and current-head 
 remain pending. Pinsel bb19d6a guards all initialization destinations before writes;
 5 filesystem tests and Content typecheck pass. Corrected bootstrap/manual recipes
 are documented but actual cold-operator saved edit is still NOT_RUN.
+
+## Live-lease and host navigation candidate
+
+Current package `1af202393e9d1510aee87f17dbc09ea49d59ea44`, Composer attestation
+`784fe903`, includes actual HTTP host-review lease correction (`a29d1d16`) and
+qualified host preview/Sitemap handoff (`1f5d59f2`). Its773-file digest is
+`beb3378905528d1746d4aab7cf6a87659dccabfc89d5e83c60cc018519c32f3c`.
+Independent15 service tests,45 navigation/selection tests, full typechecks and
+scoped lint pass. Combined public/CMS regeneration, no-deploy and headless boundary
+checks passed under guard74s without generated drift. Installed current-pin
+Assistant and navigation acceptance remain pending.
+
+At previous960 package, actual fake Course proposal completed with correct shared
+owner and Home/Lessons uses, but Apply was unavailable because currentness read
+incorrectly lacked the live server lease. No canonical mutation; exact capture
+`15c0af11308e0dfeb836e39ec9d5bf5e8cf2757821abac4dedfb70bbe2571a32` restored.
+Conversation/run/capability/proposal/review metadata are retained, not erased.
+
+Independent cold operator at Pinsel b4b83c3/960 completed frozen install, fresh
+known-data initialization, local Paragraph insertion/no-autosave/Save/reload, exact
+capture/build, restart and real UI removal. Saved digest
+`fab1af556585a8c59b5773521da801e18b952ec63a44efc834ff54a7cae3da75` produced
+all14 baseline routes and exact saved text. Canonical documents/Content/assets
+restored; only expected Lessons timestamp, Composition token and digest differ.
+See [independent evidence](https://github.com/zudolab/pinsel/issues/56#issuecomment-6933719174).
+That operator found the Sitemap handoff gap now addressed upstream; it was not
+counted as passed. Receipt-body recovery, per-asset hash proof, later-B/exact-A and
+new-page/publication scenarios remain separate. Previous source CI43984291031
+(Composer2f982863) and43984498706/43984490522 (Pinselb4b83c3) passed; newer-head
+gates are pending. No deployment, owner-data cutover or authenticated inference.

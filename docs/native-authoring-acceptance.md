@@ -86,8 +86,12 @@ PINSEL_AUTHORING_STAGE="$ACCEPTANCE_STAGE" pnpm --filter @pinsel/content authori
 PINSEL_AUTHORING_STAGE="$ACCEPTANCE_STAGE" pnpm dev
 ```
 
-1. Open the printed loopback URL at `/composer?native=1`. Choose Sitemap `main`
-   and Lessons. Wait for **Saved snapshot rendered**. In the component tree,
+1. Open the printed loopback URL at `/composer?native=1`. In the sidebar choose
+   **Sitemaps**, open **Main**, then select **オンラインクラス - Pinsel** (`/lessons`).
+   In its inspector choose **Open page authoring**. This qualified handoff selects
+   the saved Lessons route; the Source tab's **Open in Composer** opens the source
+   Composition instead.
+   Wait for **Saved snapshot rendered**. In the component tree,
    enable **Show structural wrappers** if needed and select the page frame.
    Expand **Component and owner** and verify `files/lessons/frame`.
 2. Under **Insert local component**, choose slot `main` and component Paragraph
@@ -306,3 +310,15 @@ initial transport before dispatch, then performs a human edit and retries throug
 Recover retained Apply. Immutable candidate rendering itself is allowed; refusal
 is asserted at Apply. The known-refused pending request stays in that case’s
 isolated browser profile as evidence; it is not silently discarded.
+
+### Host preview navigation
+
+**Saved host page preview** opens the production-rendered saved workspace. Sitemap
+page handoffs validate the active provider, Sitemap, page and concrete route; stale
+or mismatched handoffs refuse. A page family with multiple routes requires choosing
+a concrete route in Page authoring rather than guessing a Content entry.
+
+The generic activated-release visitor viewer is explicitly unavailable for this
+host. It must not display the current workspace as if it were that immutable release.
+Use the exact captured Pinsel static build for output verification; local release
+compilation/activation alone is not rendered-output evidence.
