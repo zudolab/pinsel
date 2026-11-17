@@ -1067,3 +1067,10 @@ The receipt-inclusive audit compared 816 store files and found no changes.
 Evidence is retained in `t7-6522-negative-1`, including original responses,
 `no-write-file-audit`, restoration proof and result. Port 4197 was closed and the
 lease absent at the completed boundary. Recovery remains a separate pending run.
+
+The negative-run terminal audit also retains seven generic observer-disposal
+warnings during context replacement. That observer does not identify the URL or
+operation, so those warnings cannot be classified conclusively as read responses.
+The finite case handler separately read and asserted all seven actual refusal
+bodies before replacement; none of those mutation outcomes is missing. Capture
+and receipt-inclusive file equality independently establish the no-write result.
