@@ -15,20 +15,45 @@ These passes do not close the remaining T6/T7 scenarios or imply actual-data cut
 | Identity or gate | Current recorded value |
 | --- | --- |
 | Pinsel complete human / Assistant tested source | `b434c8fefd4c9659a9306c4e8481ae3262b46385` |
-| Current integration source | `ca600a106698e5c3207f4c928c1e054953940d54` on the integration branch; current-head CI pending at this checkpoint |
-| Installed package / attestation | `bd056471996984dd39bba219b19add25eb092982` / `077a1b1a8545e963bcca7f4330a2b4e9fc4e5f95` |
-| New upstream package candidate | `bd056471996984dd39bba219b19add25eb092982`, attestation `077a1b1a8545e963bcca7f4330a2b4e9fc4e5f95`; generated/public checks PASS118s, frozen installation and exact-state preservation passed; browser acceptance pending |
+| Current integration source | This adoption commit on [PR61](https://github.com/zudolab/pinsel/pull/61), based on `caad5d6b3e10cc5349e5440de827a992c2a9935c`; current-head gates remain required |
+| Installed package / attestation | `d49b0a988cd61f34a778c613ef156b7aa95c5a23` / `bcc9b134035b9c9d3ecf6dd4b962a611c0e01fdd` |
+| New upstream package candidate | `d49b0a988cd61f34a778c613ef156b7aa95c5a23`: public/CMS/full typecheck PASS192s; frozen install and state preservation PASS; installed geometry acceptance pending |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | At b434/5fe: full human PASS969s, seven semantic refusals PASS256s, controlled outer interruption/recovery PASS270s, complete Assistant seven-case PASS3455s |
 | Independent operator progress | Header label forward/restart/inverse/restart complete; Knowledge saved-reference recovery PASS110s and two-stage inverse PASS299s; Results phases 00–10 accepted (11/45); phase11 acknowledged Mapping awaits separate read-only recovery; FAQ configuration only |
-| Static pilot | Original09 FAIL retained; separate read-only recovery PASS68s and exact 16-route / 143-asset build + visitor PASS14s. Phases10–15 now PASS; final phase15 production build/visitor still pending |
+| Static pilot | Original09 FAIL retained; separate read-only recovery PASS68s and exact 16-route / 143-asset build + visitor PASS14s. Phases10–15 now PASS; final phase15 production build PASS8s and visitor PASS14s (same16routes/143assets) |
 | Latest checked CI | Pinsel `b8b9af7d14bc4f2aa41f2cbf8c7ba87a3107ea5d` [CI44086510566 PASS](https://github.com/zudolab/pinsel/actions/runs/44086510566); Composer `cffa0bf3a946e566cfdee311272a4ae9f6b8ecdf` [CI44090546656 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44090546656) (26 jobs). These are historical passes, not proof for ca600 or the new package attestation |
 | Separate holds | Remaining T6/T7 acceptance/current-head checks/review/merges, owner-data cutover and new authenticated-provider acceptance; deployment remains disabled |
 
+## Responsive Content preview package — 2026-11-17
+
+The preceding bd056 installed saved-host scenario passed in237s, with independent
+review of both fresh visits' original context/document/iframe acknowledgements,
+four identical full captures and zero canonical writes. Evidence is retained in
+`host-content-final-browser-1` and `host-content-final-independent-review.json`.
+That run used a native heavy-queue path rather than the established workspace queue;
+its deviation remains recorded, and absence of overlap was observed only at one
+point in time. No layout/geometry pass was claimed.
+
+Screenshot review found long controls and qualified values overflowing the narrow
+preview pane. Composer now bounds its grids and controls and wraps those values,
+using existing UI components. The immutable d49 package changes only three shipped
+UI files; no renderer/protocol/authority code changed. Independent actual packing
+matches781 files, payload `8caa86fe8dc1607d18ada534df7215923c62f52c1c2f07610e51cc54230252b0`.
+The full public/CMS/typecheck gate passed192s, with no generated fixture changes.
+
+All four Pinsel consumers now install d49 from the frozen lock. Root before/after
+captures differ only in snapshot digest, pack digest and renderer digest; the
+compiler identity is unchanged. All other full fields and1115 raw files remain
+exact. Evidence: `content-layout-main-preservation-audit.json`; after digest
+`f4678725966b018f0b4fa0394e46e59facad4bd847019928993f2b57575f14c5`.
+Installed narrow-pane geometry/restart acceptance remains pending on this new pin.
+Historical bd056 and5fe results do not substitute for that check.
+
 ## Saved host Content preview adoption — 2026-11-17
 
-All four manifests now pin immutable Composer `bd056471996984dd39bba219b19add25eb092982`.
+At this earlier checkpoint all four manifests pinned Composer `bd056471996984dd39bba219b19add25eb092982`.
 Attestation `077a1b1a8545e963bcca7f4330a2b4e9fc4e5f95` independently matches all
 781 packed files (payload `aa0deee4bb54c6f07fefd46dba58db80d50de3261dc4814bbb35d680280123b7`).
 The separate component contract stays `c0b452da075b66757c60bd0d721a47062d4354d0`.
