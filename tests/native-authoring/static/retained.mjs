@@ -1,7 +1,8 @@
+import {publicationRecoveryStatus,verifyPublicationRecovery} from './publication-recovery.mjs';
 import {metadataRecoveryStatus,verifyMetadataRecovery} from './metadata-recovery.mjs';
 import {assertContentReceipt,assertRecoveryRead,assertHistoricalPageCreate} from './retained-receipts.mjs';
 import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {dirname,join} from 'node:path';import {isDeepStrictEqual} from 'node:util';import {inputHash} from '../families/frozen-inputs.mjs';import {auditPhase} from './audit.mjs';import {phases} from './sequence.mjs';import {record,page} from './intents.mjs';
-const recovered=new Set([metadataRecoveryStatus,'COMMITTED_PHASE_RECONCILED_AND_RELOAD_VERIFIED','ACKNOWLEDGED_PHASE_RECOVERED_AFTER_REVIEWED_INSTALLATION','COMMITTED_TITLE_RECONCILED_AND_RESTART_VERIFIED']);
+const recovered=new Set([publicationRecoveryStatus,metadataRecoveryStatus,'COMMITTED_PHASE_RECONCILED_AND_RELOAD_VERIFIED','ACKNOWLEDGED_PHASE_RECOVERED_AFTER_REVIEWED_INSTALLATION','COMMITTED_TITLE_RECONCILED_AND_RESTART_VERIFIED']);
 const identityPaths=['digest','componentPack.digest','componentPack.compiler','renderer.digest'];
 /** Only explicitly witnessed install identities may differ alongside the reviewed domain delta. */
 export function auditRetainedPhase(before,after,result,identities){
@@ -37,7 +38,9 @@ export async function loadRetained(manifestPath,{complete=true}={}){
   if(proof.kind==='reparent')resources.parentId=intent.toParentId;
   assert.deepEqual(proof.resources,resources,'Retained resources differ from acknowledged owner allocations');
   let identities,originalOutcome;
-  if(proof.status===metadataRecoveryStatus){
+  if(proof.status===publicationRecoveryStatus){
+   originalOutcome=await verifyPublicationRecovery({index:i,proofPath,proof,manifest,before,after,original,journal,bytes,json,events});
+  }else if(proof.status===metadataRecoveryStatus){
    originalOutcome=await verifyMetadataRecovery({index:i,proofPath,proof,manifest,before,after,original,journal,bytes,json,events});
   }else if(recoveredPhase){
    assert(journal.some(e=>e.phase==='held'&&typeof e.error==='string'&&e.error.length),'Original failed journal required');

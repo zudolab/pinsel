@@ -219,6 +219,20 @@ Synthetic test fixtures validate this format; they do not constitute a completed
 installed recovery. Actual recovery and the full retained runner remain separate
 runtime acceptance requirements.
 
+The distinct phase09 publication recovery status
+`COMMITTED_PUBLICATION_RECONCILED_AND_READONLY_PREVIEW_VERIFIED` uses the same
+explicit `recoveryFreezeManifests` mapping. Its adapter is restricted to phase09,
+requires the original successful activation receipt and exact release identity,
+original failed title assertion, complete publication-only capture delta, and
+unchanged recovery captures/installation. The frozen child bundle and actual
+paired native `document-preview` response must bind the exact saved revision,
+route, renderer, pack and Composition owner. The reviewed recovery driver verifies
+the actual iframe `document.title`, description, noindex and Section heading before
+its terminal read fence. A status string or invented preview response is insufficient.
+Original phase09 remains failed; recovered preview acceptance and subsequent exact
+build/production visitor acceptance are separate. Source fixture tests do not claim
+that the pending installed recovery ran or passed.
+
 With stopped writers and a clean committed frozen-install checkout, run inside the
 shared guard/reaper:
 
