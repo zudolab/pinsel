@@ -54,3 +54,6 @@ packages/pinsel-content/.native-authoring-notes-v1/
 packages/pinsel-content/.native-public-notes-v1/
 packages/pinsel-content/.native-note-routes-evidence.json
 packages/pinsel-content/.native-note-routes-snapshot.json
+
+# Local Composer release catalog/history; retain as recovery data, never commit.
+/packages/pinsel-content/.zudo-site-project/
