@@ -654,3 +654,65 @@ reads were pending at deliberate browser close. Before/after capture matched
 all808 native plus143 public files were unchanged. Port4194 closed and the detached
 consumer remained clean. Evidence: `t6-cold-content-62f-1/OUTCOME.md` under the Cloud
 acceptance root. Whole-route creation and final Assistant gates remain pending.
+
+## Current acceptance checkpoint — aa8a096 / package 62f014f4
+
+This checkpoint records Pinsel `aa8a096970ea5efc24354c80a3ceb133660cbce3`,
+Composer package `62f014f4ae5acfa10ca551c116be6e3a909310fe`, unchanged contract
+`c0b452da075b66757c60bd0d721a47062d4354d0`, workspace `pinsel`, snapshot schema 1 /
+Composition schema 2, pack `pinsel@0.4.0`, renderer `pinsel-zfb@native-v3` and
+explicit `notes-v1`. Main and detached cold-consumer stages are separate stores.
+Tracking remains [T5](https://github.com/Takazudo/zudo-composer/issues/973),
+[T6](https://github.com/zudolab/pinsel/issues/55),
+[T7](https://github.com/zudolab/pinsel/issues/56) and
+[the integration epic](https://github.com/zudolab/pinsel/issues/51).
+
+Composer source `09f476ec6d78ecc50c8d526723b25f07dd3a3408` fixes only excluded
+browser-harness restart files: park the same tab before stopping the dev server,
+then reopen its exact URL, avoiding competing Vite HMR and harness reloads.
+Four unit tests, typecheck, scoped lint, syntax and independent review passed.
+The full required Assistant browser lane passed under the shared guard in 440s,
+including both restart journeys and the unchanged recovery/Apply/Undo assertions.
+The shipped 773-file payload remains byte-identical to package `62f014f4`, digest
+`b08a99a3a4bb8c40ef315480891a2748409b12dc9245b61bb47f86326dbcfee9`;
+no runtime repin is implied. Fresh source CI
+[44006129670](https://github.com/Takazudo/zudo-composer/actions/runs/44006129670)
+was **in progress** when checked. Earlier failed CI remains failed; the local lane
+is not Pinsel's complete installed seven-case acceptance. Evidence:
+`composer-adoption-notes/assistant-restart-harness-fix.md` and
+`composer-assistant-restart-fix-full.log`.
+
+Main consumer `t5-62f-stale-1` completed the stale-case proposal with unchanged
+canonical state, but neither attempted segment completed human intervention or
+stale Apply refusal. The first failed before a human Save because the required
+price-label marker was omitted; aa8a096 corrects that locator. The resume failed
+with `Human Save was interrupted before dispatch`; its uncertain-attempt journal
+correctly held all automatic inverses. A separate read-only reconciliation found
+exact before/after public capture equality at
+`0771240d389d016752db0576b647dbad9fd26bc7e468ec0ca48f64b3266707f3`, without rewriting
+the journal or counting the attempt as a successful save. Both aggregate results
+remain **FAIL**. The blocked-request diagnostic was queued behind the cold pilot
+at this checkpoint; its trace is not yet a pass. Evidence:
+`t5-62f-stale-1/{result-1794883157461.json,result-1794883994010.json,uncertain-attempt-readonly-reconciliation.json}`
+and `t5-content-blocked-trace-1.log` under the same acceptance root.
+
+The separate cold `t6-cold-drafts-62f-2` pilot is **ACTIVE/incomplete**, not restored.
+It created Note `content-entry-7ccd88dd-dd45-440f-83d7-c44abfdca113` through the
+original browser transport. Earlier required-label, toggle and external-regex
+failures remain recorded. The uncertain slug save was reconciled through public
+capture `29a79cd2ed0df8c029d56d75355526a5a4fda8d1471ddf3319cb5392037bdf38`:
+only the journaled new draft changed, to generation 3 with slug
+`pilot-1794882566531`; original project/assets/public files were preserved.
+That capture is a prior recovery boundary, not a claim about the active store now.
+The resumed journal subsequently records HTTP 200 field-save responses through
+03:01:51 UTC on 2026-11-17. A final coherent capture, saved-field/reload proof,
+Course creation and complete two-draft acceptance are still required. Preserve
+the existing Note ID, journals and native history; do not recreate it, infer
+restoration, or start another writer. Evidence: `t6-cold-drafts-62f-2/routes-journal.json`
+and its captures; the earlier `OUTCOME.md` describes a prior partial boundary.
+
+The complete installed seven-case Assistant matrix, remaining T6 creation,
+publication/hierarchy/family workflows, exact-build scenarios, T7 final-pin gates,
+review and eligible integration remain open. The upstream scripted-provider pass
+and consumer subsets do not complete those gates. Owner-data import/cutover and
+new authenticated-provider acceptance remain held; no deployment is authorized.
