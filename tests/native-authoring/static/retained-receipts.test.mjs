@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import {mkdtemp,mkdir,writeFile,rm} from 'node:fs/promises';
 import {join} from 'node:path';
 import {tmpdir} from 'node:os';
-import {assertContentReceipt,assertRecoveryRead} from './retained-receipts.mjs';
+import {assertContentReceipt,assertRecoveryRead,assertHistoricalPageCreate} from './retained-receipts.mjs';
 import {loadRetained} from './retained.mjs';
 const ref={providerId:'content-filesystem',modelId:'page-copy',recordId:'copy'};
 const before={tokens:{content:3}};
@@ -34,4 +34,10 @@ test('recovered manifest refuses absent original outcome or original committed c
  await assert.rejects(loadRetained(join(root,'manifest.json'),{complete:false}),/original\/after.json/);
  events.pop();await writeFile(join(original,'events.ndjson'),events.map(JSON.stringify).join('\n'));await assert.rejects(loadRetained(join(root,'manifest.json'),{complete:false}),/Original failed journal/);
  }finally{await rm(root,{recursive:true});}
+});
+
+test('missing original capture exception is exclusively phase04 qualified Sitemap page creation',()=>{
+ const proof={kind:'page-create',result:{domain:'sitemaps',ref:{providerId:'sitemap-filesystem',recordId:'main'},record:{id:'main'}}};assertHistoricalPageCreate(3,proof);
+ for(const index of [0,1,2,4,14])assert.throws(()=>assertHistoricalPageCreate(index,proof));
+ for(const alter of [p=>p.kind='page-title',p=>p.result.domain='compositions',p=>p.result.ref.providerId='foreign',p=>p.result.ref.recordId='other']){const p=structuredClone(proof);alter(p);assert.throws(()=>assertHistoricalPageCreate(3,p));}
 });

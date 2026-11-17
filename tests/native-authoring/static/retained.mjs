@@ -1,4 +1,4 @@
-import {assertContentReceipt,assertRecoveryRead} from './retained-receipts.mjs';
+import {assertContentReceipt,assertRecoveryRead,assertHistoricalPageCreate} from './retained-receipts.mjs';
 import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {dirname,join} from 'node:path';import {isDeepStrictEqual} from 'node:util';import {inputHash} from '../families/frozen-inputs.mjs';import {auditPhase} from './audit.mjs';import {phases} from './sequence.mjs';import {record,page} from './intents.mjs';
 const recovered=new Set(['COMMITTED_PHASE_RECONCILED_AND_RELOAD_VERIFIED','ACKNOWLEDGED_PHASE_RECOVERED_AFTER_REVIEWED_INSTALLATION','COMMITTED_TITLE_RECONCILED_AND_RESTART_VERIFIED']);
 const identityPaths=['digest','componentPack.digest','componentPack.compiler','renderer.digest'];
@@ -40,8 +40,9 @@ export async function loadRetained(manifestPath,{complete=true}={}){
    assert(journal.some(e=>e.phase==='held'&&typeof e.error==='string'&&e.error.length),'Original failed journal required');
    const dir=dirname(proofPath),recoveryAfter=await json(join(dir,'after.json'));assert.deepEqual(recoveryAfter,after);
    if(proof.status==='ACKNOWLEDGED_PHASE_RECOVERED_AFTER_REVIEWED_INSTALLATION'){
+    assertHistoricalPageCreate(i,proof);
     const ack=await json(join(original,'acknowledged-sitemap-write.json'));assert.equal(ack.status,'ACKNOWLEDGED_EXPECTED_WRITE_PUBLIC_READBACK_PENDING');originalOutcome={status:ack.status,capture:'Original after capture unavailable; acknowledged write plus later public capture reconciliation only'};assert.equal(ack.beforeDigest,before.digest);assert.deepEqual(ack.owner,proof.result.ref);assert.deepEqual(ack.validated.record,proof.result.record);assert(journal.some(e=>isDeepStrictEqual(e,ack.request)));assert(journal.some(e=>isDeepStrictEqual(e,ack.response)));
-    const reconciliation=await json(join(dir,'capture-reconciliation.json'));assert.equal(reconciliation.beforeDigest,before.digest);assert.equal(reconciliation.afterDigest,after.digest);assert.deepEqual(reconciliation.owner,proof.result.ref);assert.equal(reconciliation.pageId,proof.resources.pageId);
+    const reconciliation=await json(join(dir,'capture-reconciliation.json'));assert.equal(reconciliation.beforeDigest,before.digest);assert.equal(reconciliation.afterDigest,after.digest);assert.deepEqual(reconciliation.owner,proof.result.ref);assert.equal(reconciliation.pageId,proof.resources.pageId);assert.deepEqual(reconciliation.record,proof.result.record);
    }else{
     const committed=await json(join(original,'committed-reconciliation.json')),originalAfter=await json(join(original,'after.json'));originalOutcome={status:committed.status,afterCapture:join(original,'after.json')};assert(['EXACT_COMMITTED_DELTA_VERIFIED_RELOAD_PENDING','EXACT_COMMITTED_DELTA_VERIFIED_READ_UNCERTAINTY_RELOAD_PENDING','EXACT_TITLE_COMMIT_VERIFIED_RELOAD_PENDING'].includes(committed.status));assert.equal(committed.beforeDigest,before.digest);assert.equal(committed.afterDigest,originalAfter.digest);assert.deepEqual(committed.ref??committed.owner,proof.result.ref);assert.deepEqual(committed.record??committed.validated?.record,proof.result.record);auditPhase(before,originalAfter,proof.result);if(!proof.installationBridge)assert.deepEqual(originalAfter,after);
    }

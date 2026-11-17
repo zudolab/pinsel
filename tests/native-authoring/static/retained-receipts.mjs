@@ -40,3 +40,8 @@ export function assertRecoveryRead(events,result){
   for(const request of requests){if(request.endpoint!==undefined)assert.equal(request.endpoint,endpoint);if(composition)assert(Number.isInteger(request.observedRequestId));}
  }
 }
+
+/** Sole historical missing-original-capture exception: phase04 Sitemap creation. */
+export function assertHistoricalPageCreate(index,proof){
+ assert.equal(index,3);assert.equal(proof.kind,'page-create');assert.equal(proof.result.domain,'sitemaps');assert.equal(proof.result.ref.providerId,'sitemap-filesystem');assert.equal(proof.result.ref.recordId,proof.result.record.id);
+}
