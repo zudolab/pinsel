@@ -67,12 +67,12 @@ export function assertReadScope(path,headers,result,workspaceId) {
 }
 
 export function validateReadIntent(intent, snapshot) {
-  assert(['mapping-binding-diagnostic','family-render','active-identity','header-restart','header-saved-href','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind));
+  assert(['mapping-binding-diagnostic','family-render','active-identity','header-restart','header-saved-href','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create','mapping-saved-binding'].includes(intent.kind));
   if(intent.kind==='mapping-binding-diagnostic')validateBindingDiagnostic(intent,snapshot);
   assert.equal(intent.captureDigest, snapshot.digest);
   assert(/^[a-f0-9]{64}$/.test(snapshot.digest));
   assert(intent.capturePath?.startsWith('/'));
-  if(['header-saved-href','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind))assert(intent.recoveryEvidencePath?.startsWith('/'));
+  if(['header-saved-href','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create','mapping-saved-binding'].includes(intent.kind))assert(intent.recoveryEvidencePath?.startsWith('/'));
   if (intent.kind === 'header-restart') assert(intent.forwardProofPath?.startsWith('/'));
   if (intent.kind === 'family-render') {
     assert(['results','faq'].includes(intent.family));

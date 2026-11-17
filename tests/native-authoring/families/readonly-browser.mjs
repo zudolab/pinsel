@@ -1,3 +1,4 @@
+import {validateSavedBinding} from './binding-recovery.mjs';
 import {validateSavedHref,savedHrefReadback} from '../header/saved-href.mjs';
 import {validateBindingDiagnostic,observeBindingDiagnostic} from './binding-diagnostic.mjs';
 import {validateSavedMapping} from './mapping-recovery.mjs';
@@ -36,7 +37,7 @@ let blocked,error,result,previewCount=0,readEpoch=0,originalPending=0,terminalCl
 const diagnostics=observeRequestDiagnostics(page,persist);
 const recovered=intent.kind==='header-saved-href'?validateSavedHref(snapshot,inputs.savedReference):intent.kind==='knowledge-saved-reference'?validateSavedReference(snapshot,inputs.savedReference):intent.kind==='knowledge-captured-reference'?validateCapturedReference(snapshot,inputs.savedReference):null;
 const hrefReads=intent.kind==='header-saved-href'?savedHrefReadback(recovered):null;
-const savedMapping=intent.kind==='mapping-saved-create'?validateSavedMapping(snapshot,inputs.savedReference):null;
+const savedMapping=intent.kind==='mapping-saved-create'?validateSavedMapping(snapshot,inputs.savedReference):intent.kind==='mapping-saved-binding'?validateSavedBinding(snapshot,inputs.savedReference):null;
 const mappingReadback=savedMapping?familyRecordReadback({page,domain:'mappings',workspaceId:snapshot.workspaceId,providerId:'mapping-filesystem',persist}):null;
 const headerProof=intent.kind==='header-restart'?validateHeaderRestart(snapshot,inputs.headerProof):null;
 const composition=compositionDerivedReadGate({page,snapshot,persist});
