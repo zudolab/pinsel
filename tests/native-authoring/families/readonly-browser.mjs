@@ -1,3 +1,4 @@
+import {settleBrowserReads} from '../static/browser-quiescence.mjs';
 import {readFrozenBundle,assertInputsUnchanged} from './frozen-inputs.mjs';
 import assert from 'node:assert/strict';
 import {readFile,writeFile,open,mkdir} from 'node:fs/promises';
@@ -67,7 +68,7 @@ try {
     result={kind:intent.kind,family:intent.family,present:intent.present};
   } else if(intent.kind==='header-restart') {
     const shot=name=>page.screenshot({path:join(artifacts,name+'.png'),fullPage:true});
-    const options={base,snapshot,intent:headerProof.intent,record:headerProof.result.record,expect,shot};
+    const options={base,snapshot,intent:headerProof.intent,record:headerProof.result.record,expect,shot,navigation:async boundary=>{await settleBrowserReads(page,composition,{persist,boundary,check:()=>{lifecycle.requireOpen();if(blocked)throw blocked;}});await lane.drain();composition.check();composition.assertSettled();}};
     if(headerProof.intent.kind==='knowledge-reference')await verifySavedKnowledge(page,options);else await verifySavedHeader(page,options);
     result={kind:intent.kind,forwardProofPath:intent.forwardProofPath};
   } else {

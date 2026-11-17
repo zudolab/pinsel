@@ -104,3 +104,12 @@ shutdown, the complete public capture must remain identical before it writes
 Run this after forward and again after inverse when claiming full restart coverage;
 it neither reruns a write nor rebuilds the already accepted digest output. The
 standalone restart command remains installed-runtime NOT_RUN until executed.
+
+Header and Knowledge field runners fence navigation with the shared bounded browser
+quiescence and Composition continuation-readiness checks before and after reload,
+before rendered-preview navigation, and before visitor links. Initial editing and
+write dispatch also require Composition readiness; a pending read is awaited, not
+misclassified as a canonical write. Failures and unfinished derived-output
+challenges still hold the run. The restart verifier supplies the same navigation
+boundary and retains its original-response, busy-read and no-mutation guards.
+These source checks are not a new installed runtime acceptance result.
