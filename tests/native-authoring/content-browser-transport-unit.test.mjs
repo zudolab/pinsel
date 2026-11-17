@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { continueContentRequest, readBrowserContent } from './content-browser-transport.mjs';
+import { continueContentRequest, readBrowserContent, contentRequestDiagnostic } from './content-browser-transport.mjs';
 function fixture() {
   const request = { url: () => 'http://local/__zudo_composer_content_provider', method: () => 'POST', headers: () => ({ origin: 'http://local', 'x-zudo-composer-capability': 'test', 'x-zudo-composer-workspace': 'test', 'x-zudo-native-client': 'test', 'x-zudo-native-epoch': '1' }), redirectedFrom: () => null, redirectedTo: () => null };
   const response = { request: () => request, url: request.url, finished: async () => null }; request.response = async () => response;
@@ -29,4 +29,13 @@ test('read reuses only observed auth headers and refuses absent session evidence
   const f = fixture(); await readBrowserContent(f.page, f.request, 20); assert.equal(f.state.reads, 1); assert.equal(f.state.writes, 0);
   const original = f.request.headers(); delete original['x-zudo-native-epoch']; f.request.headers = () => original;
   await assert.rejects(readBrowserContent(f.page, f.request, 20)); assert.equal(f.state.reads, 1);
+});
+
+test('request diagnostics retain only safe qualified metadata, never headers, values or query', () => {
+  const f = fixture(); f.request.url = () => 'http://local/__zudo_composer_content_provider?secret=excluded';
+  f.request.postDataJSON = () => ({ entry: { providerId: 'content-filesystem', modelId: 'course', recordId: 'consultation', secret: 'excluded' }, record: { modelId: 'course', id: 'consultation', values: { secret: 'excluded' } } });
+  const result = contentRequestDiagnostic(f.request);
+  assert.deepEqual(result.entry, { providerId: 'content-filesystem', modelId: 'course', recordId: 'consultation' });
+  assert.equal(result.path, '/__zudo_composer_content_provider');
+  assert(!JSON.stringify(result).includes('excluded')); assert(!JSON.stringify(result).includes('capability'));
 });

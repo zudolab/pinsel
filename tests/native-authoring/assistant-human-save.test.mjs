@@ -100,3 +100,33 @@ test('admitted slow save outlives dispatch timer and completes exactly once', as
   f.options.action = async () => { sent = await f.page.send('put-entry', { fetch: async () => { await new Promise(resolve => setTimeout(resolve, 35)); return f.response; } }); };
   await observeAssistantHumanSave(f.page, f.options); assert.equal(sent.state.fetched, 1); assertAssistantHumanJournalSettled(f.journal);
 });
+test('refused operation during before-read retains exact cause and safe append-only diagnostics', async () => {
+  const f = fixture(); let release, first, extra;
+  const evaluate = f.page.evaluate; const pending = new Promise(resolve => { release = resolve; });
+  f.page.evaluate = async (...args) => { await pending; return evaluate(...args); };
+  f.options.action = async () => {
+    first = await f.page.send(); await new Promise(resolve => setTimeout(resolve, 1));
+    extra = await f.page.send('content-ai-prepare'); await extra.done; release();
+  };
+  await assert.rejects(observeAssistantHumanSave(f.page, f.options), /interrupted before dispatch/);
+  const attempt = f.journal.humanContentAttempts[0];
+  assert.equal(first.state.fetched, 0); assert.equal(extra.state.fetched, 0);
+  assert.match(attempt.error, /operation-not-admitted \(content-ai-prepare\)/);
+  assert.deepEqual(attempt.diagnostics.map(item => item.event), ['admitted', 'refused', 'observer-failed']);
+  assert.equal(attempt.diagnostics[1].operation, 'content-ai-prepare');
+  assert.equal(attempt.diagnostics[1].method, 'POST');
+  assert.equal(attempt.diagnostics[1].path, '/__zudo_composer_content_provider');
+  const metadata = JSON.stringify(attempt.diagnostics);
+  assert(!metadata.includes('x-zudo')); assert(!metadata.includes('Original')); assert(!metadata.includes('values'));
+  assert.throws(() => assertAssistantHumanJournalSettled(f.journal));
+});
+
+test('observed Content-AI scope read does not consume or interrupt the one Save admission', async () => {
+  const f = fixture(); let release, first, scope;
+  const evaluate = f.page.evaluate; const pending = new Promise(resolve => { release = resolve; });
+  f.page.evaluate = async (...args) => { await pending; return evaluate(...args); };
+  f.options.action = async () => { first = await f.page.send(); await new Promise(resolve => setTimeout(resolve, 1)); scope = await f.page.send('content-ai-scope'); await scope.done; release(); };
+  const proof = await observeAssistantHumanSave(f.page, f.options);
+  assert.equal(proof.generation, 8); assert.equal(scope.state.continued, 1); assert.equal(scope.state.aborted, 0); assert.equal(first.state.fetched, 1);
+  assertAssistantHumanJournalSettled(f.journal);
+});

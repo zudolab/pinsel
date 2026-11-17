@@ -1,4 +1,4 @@
-import { continueContentRequest, readBrowserContent, contentReadOperations } from './content-browser-transport.mjs';
+import { continueContentRequest, readBrowserContent, contentReadOperations, contentRequestDiagnostic } from './content-browser-transport.mjs';
 import assert from 'node:assert/strict';
 import { readdir, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
@@ -45,14 +45,17 @@ export async function observeAssistantHumanSave(page, { journal, prior, beforeCa
   const handle = async route => {
     const request = route.request(), operation = request.headers()[operationHeader];
     if (contentReadOperations.has(operation)) { await route.continue(); return; }
-    if (stopped || operation !== 'put-entry' || !admission.admit()) {
-      stopped = true; attempt.status = 'uncertain'; attempt.error = 'Unexpected additional Content mutation was refused';
+    const refusal = stopped ? 'already-held' : operation !== 'put-entry' ? 'operation-not-admitted' : !admission.admit() ? 'additional-write' : null;
+    if (refusal) {
+      attempt.diagnostics ??= []; attempt.diagnostics.push({ event: 'refused', reason: refusal, expectedOwner: courseOwner, ...contentRequestDiagnostic(request) });
+      stopped = true; attempt.status = 'uncertain'; attempt.error ??= `Content request refused: ${refusal} (${operation ?? 'missing operation'})`;
       try { await persist(); } finally { await route.abort(); }
       if (!admission.started) { clearTimeout(timer); settle({ error: Error(attempt.error) }); }
       return;
     }
     clearTimeout(timer);
     try {
+      attempt.diagnostics ??= []; attempt.diagnostics.push({ event: 'admitted', expectedOwner: courseOwner, ...contentRequestDiagnostic(request) });
       attempt.request = request.postDataJSON(); attempt.status = 'admitted'; await persist();
       const read = () => readBrowserContent(page, request, requestTimeoutMs);
       const observedBefore = await read(); attempt.observedBefore = observedBefore; await persist();
@@ -70,7 +73,8 @@ export async function observeAssistantHumanSave(page, { journal, prior, beforeCa
       assert(!stopped && !admission.unexpected, 'Extra mutation interrupted verified Save');
       settle({ proof });
     } catch (error) {
-      stopped = true; attempt.status = 'uncertain'; attempt.error = String(error);
+      attempt.diagnostics ??= []; attempt.diagnostics.push({ event: 'observer-failed', during: attempt.status, errorName: error instanceof Error ? error.name : 'UnknownError' });
+      stopped = true; attempt.status = 'uncertain'; attempt.error ??= String(error);
       try { await persist(); } catch (journalError) { error = new AggregateError([error, journalError], 'Human Save and journal require reconciliation'); }
       await route.abort().catch(() => {}); settle({ error });
     }

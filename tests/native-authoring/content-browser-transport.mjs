@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-export const contentReadOperations = new Set(['initialize', 'read-all', 'list-models', 'get-model', 'get-entry', 'count-entries', 'page-entries', 'scan-entries', 'editorial-read', 'editorial-fields', 'editorial-revisions', 'editorial-revision', 'editorial-compare', 'editorial-publication', 'editorial-operation', 'content-ai-status', 'content-ai-read', 'content-ai-operation']);
+export const contentReadOperations = new Set(['initialize', 'read-all', 'list-models', 'get-model', 'get-entry', 'count-entries', 'page-entries', 'scan-entries', 'editorial-read', 'editorial-fields', 'editorial-revisions', 'editorial-revision', 'editorial-compare', 'editorial-publication', 'editorial-operation', 'content-ai-status', 'content-ai-scope', 'content-ai-read', 'content-ai-operation']);
 const endpoint = '/__zudo_composer_content_provider';
 const authHeaders = ['x-zudo-composer-capability', 'x-zudo-composer-workspace', 'x-zudo-native-client', 'x-zudo-native-epoch'];
 export function assertContentRequestOrigin(page, request) {
@@ -36,4 +36,14 @@ export async function readBrowserContent(page, request, timeout) {
     return { ok: response.ok, body: await response.json() };
   }, { url, headers, timeout });
   assert(result.ok && result.body.ok, 'Public Content read failed'); return result.body.result;
+}
+
+/** Safe observability only: never copy headers, field values or query strings. */
+export function contentRequestDiagnostic(request) {
+  let body; try { body = request.postDataJSON(); } catch {}
+  const record = body?.record, entry = body?.entry;
+  const ref = typeof entry?.providerId === 'string' && typeof entry?.modelId === 'string' && typeof entry?.recordId === 'string' ? { providerId: entry.providerId, modelId: entry.modelId, recordId: entry.recordId } : null;
+  return { operation: request.headers()['x-zudo-composer-operation'] ?? null, method: request.method(), path: new URL(request.url()).pathname,
+    ...(ref ? { entry: ref } : {}),
+    ...(typeof record?.modelId === 'string' && typeof record?.id === 'string' ? { record: { modelId: record.modelId, recordId: record.id } } : {}) };
 }
