@@ -8,7 +8,7 @@ import {currentFamilyInstallation} from './installation-bridge.mjs';
 import {loadSourceRebindHistory} from './source-rebind-history.mjs';
 import {sourceRebindProof} from './source-rebind-core.mjs';
 const exec=promisify(execFile);
-async function assertGitModes(repo,oldHead,newHead,reviewed){
+export async function assertGitModes(repo,oldHead,newHead,reviewed){
  const modes=async head=>{const {stdout}=await exec('git',['ls-tree','-r','-z',head],{cwd:repo,maxBuffer:16*1024*1024});return Object.fromEntries(stdout.split('\0').filter(Boolean).map(row=>{const [meta,path]=row.split('\t');return[path,meta.split(' ')[0]];}));};
  const old=await modes(oldHead),current=await modes(newHead);for(const[path,mode]of Object.entries(current))if(old[path])assert.equal(mode,old[path],'Source file mode changed');
  for(const {path}of reviewed){if(old[path])assert.equal(old[path],'100644');if(current[path])assert.equal(current[path],'100644');}
