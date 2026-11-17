@@ -18,9 +18,13 @@ Composition property. Ambiguous child text or parent mapping fails closed.
 
 For each family collect **created**, **moved**, **restored** states. Use the existing
 `membership.mjs` and `run-phase.mjs` recipes for the one qualified reference edit and
-its guarded inverse, with original request admission, CAS, response/readback, stopped
+its guarded inverse, with exact before-image request admission, original-response
+gating, public readback, stopped
 capture and `assertMembershipDelta`. The inverse advances history/token; its digest
 need not equal created. Full unrelated domains and assets must remain identical.
+Content `put-entry` here does not carry a server CAS precondition. Exclusive writer
+ownership, original-response gating and whole-capture audits must not be described
+as an atomic server compare-and-swap guarantee.
 At each state run the existing read-only restart recipe with that capture and the
 correct `present`/`oldFragment`. Keep `proof.json`, `before.json`, `after.json` and
 screenshots; do not use `ui-result.json` alone as restart proof.
@@ -56,6 +60,9 @@ containing exactly `created`, `moved`, `restored`. Each state's keys are paths:
 node tests/native-authoring/families/acceptance-manifest.mjs "$PATH_MANIFEST" "$NEW_FINAL_MANIFEST"
 ```
 
+The aggregator is capture/render evidence aggregation, not transaction dispatch
+proof. Original successful move and inverse UI proof/journal files remain mandatory
+separate evidence; keep their before/after digests linked in the acceptance record.
 The aggregator checks exact three-state graph, membership and inverse deltas,
 unchanged restart captures and matching runtime/build identities. It does not
 convert supplied JSON into independently authenticated history; retain the original
