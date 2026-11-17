@@ -869,8 +869,40 @@ passed; the follow-up Inspector regression suite passed nine tests. Public/CMS
 regeneration/check and public consistency passed under the shared guard in 90s.
 No demo inventory changes were needed; generated authoring types were committed.
 
-The new package's installed human provenance/unsupported-request checks and relevant
-current-head gates remain pending. The prior complete bc20 matrix remains valid
+The new package's installed human provenance/unsupported-request checks passed in
+165s on Pinsel `dea458747b8445eae4ebf852f495257b941a8997`. Human Course price
+shows Home and Lessons uses separately from local arrangement. The exact saved
+price proposal was recovered through public events; broad-scope and disallowed
+Contact requests explicitly refused. Before/after public captures both equal
+`6fc68557f08920f3ded83c68c904f53e61c365c90cbbf5119e6721dd6ddecf66`.
+This is canonical-read-only acceptance: derived JSX repairs may write files.
+Composer CI [44022755564](https://github.com/Takazudo/zudo-composer/actions/runs/44022755564)
+reported all 26 jobs successful at the attested head. Pinsel pin CI
+[44023187292](https://github.com/zudolab/pinsel/actions/runs/44023187292) passed.
+Later integration heads still require their own gates. The prior complete bc20 matrix remains valid
 historical evidence for its own exact pin, not a claimed full-matrix pass at this
 revision. The separate cold creation/publication workspace remains on bc20 until
 its serialized acceptance boundary; no existing authored state was reseeded.
+
+
+## Canonical shared-source staged rehearsal
+
+The [explicit staged migration](canonical-shared-sources.md) passed in 137s at
+Pinsel `00bb369e5f7a4ce0c7c262ae65bc5bc1fa932e9f` and package `4f1191d682995438380fccdb5bb692a299415402`.
+It pins 56 Mapping queries to five declared owners and recognizes three exact
+historical model descriptions. Extra Content records remain permitted and unused;
+this is not a duplicate-create prohibition.
+
+Source `6fc68557f08920f3ded83c68c904f53e61c365c90cbbf5119e6721dd6ddecf66`
+and staged `6a0f5d54b16f7fdca6cdb37f0d3f9ecdbff83dedc45641d66378f600b4426034`
+produced byte-identical HTML for all 14 routes and identical bytes/hashes for all
+143 public files. Full project preservation allows only the declared pins, exact
+descriptions and new-store generation reset (Course29→1, FAQ22→1, Note24→1).
+Assets were preserved; both captures stayed unchanged through builds. Original
+source authority/history remain retained, and authority was not switched. The
+first failed stage (missing one historical description alias) was retained; the
+corrected second run used a new pristine target.
+
+Browser owner selection, invalid-pin publication refusal and unused-extra-record
+acceptance remain pending. This rehearsal uses known fixtures, not the owner's
+current local database. Evidence is recorded in [T6 #55](https://github.com/zudolab/pinsel/issues/55#issuecomment-6939829800).
