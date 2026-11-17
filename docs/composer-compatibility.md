@@ -105,8 +105,8 @@ original CDP response body was unavailable. The retained durable receipt and ful
 public capture independently prove that only the intended Paragraph was removed;
 all original values are restored with Content token30 unchanged. The resulting
 capture is `743d9533774f6c31c11b28709bbeb183aed156aa6eea41442aab9011c7f3a62e`.
-No Undo or remove was replayed. Fresh complete seven-case execution is prepared
-with an explicit5400-second guard limit but has not started. Insertion, stale Apply
+No Undo or remove was replayed. Fresh complete seven-case execution has started in a new artifact directory
+with an explicit5400-second guard limit; its result remains pending. Insertion, stale Apply
 and guarded Undo acceptance remain open. Preserve both failed runs and their
 separate reconciliation evidence. Receipt revisions do not establish History UI
 verification. Cleanup evidence: `t7-c5-local-cleanup-independent-review.json`.
@@ -133,6 +133,38 @@ This is browser reload persistence, not a separate process restart or placed-fam
 rendering proof. Evidence: `source-rebind-baseline-7b72430-final-audit.json`,
 `results-source-rebind-7b72430-descriptor-independent-review.json`,
 `results-phase16-c5-independent-completion-review.json`.
+
+Phase17 duplication then failed448s while waiting for canonical completion. One
+original Composition request returned a `needs-output` challenge for181 targets;
+no canonical receipt or continuation was recorded. Full before/after captures remain
+`6a7e3bca…`, the proposed duplicate is absent, history17 is unchanged and phase18
+was not started. A pure test reproduces a harness race: a continuation arriving
+before prior-response bookkeeping completes can wait on its own challenge. The
+original waiting payload was not logged, so this does not definitively establish
+the actual failure's cause. Reviewed test-harness source `b18947f919c9cd9f097de8ea7206e99aa84b63bb`
+joins only earlier response bookkeeping, then reclassifies the continuation while
+retaining durable response journaling and exact output/record guards. Integrated270
+family tests pass. Consumer/package source is unchanged; an independently reviewed
+boundary17 source transition and a new actual scenario remain required. Evidence:
+`results-phase17-output-challenge-reconciliation.json`,
+`family-continuation-b18947f-independent-review.md`.
+
+The six-route c5 owner-selection matrix passed: Home101s, About102s, Voices99s,
+Notes99s, Contact99s and404104s. All twelve full captures equal `f9457…`; independent
+review verifies62 artifact hashes and1164 source hashes at66865ae. It checks one
+representative owner per route: Home Hero, four Breadcrumbs and Not found. Selection
+uses rendered DOM click and tree Enter, not trusted pointer hit-testing, every
+component or a standalone frame-ready transcript. The original process continued
+through the connection change; no phase was repeated. Evidence:
+`route-selection-c5-independent-review.json`.
+
+A reconnect audit found a remaining browser helper from the interrupted first AI
+run. This supersedes the earlier no-owned-process observation. Its exact identity
+was verified before a single SIGTERM; it is now a non-running PID1-owned zombie,
+as is the completed route-matrix shell. All sixteen previously hashed AI interruption
+and cleanup inputs remain unchanged; that equality alone does not prove the orphan
+harmless. Fresh AI2 admission verifies no live owned helper before startup. Evidence:
+`t7-c5-old-ai-artifacts-post-orphan-independent-rehash.json`.
 
 Remaining Results/FAQ scenarios, complete current-pin Assistant acceptance and final
 integration gates remain open. Actual owner-data cutover and new live-provider
