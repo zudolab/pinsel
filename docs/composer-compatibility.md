@@ -903,8 +903,8 @@ source authority/history remain retained, and authority was not switched. The
 first failed stage (missing one historical description alias) was retained; the
 corrected second run used a new pristine target.
 
-Browser owner selection, invalid-pin publication refusal and unused-extra-record
-acceptance remain pending. This rehearsal uses known fixtures, not the owner's
+Browser owner selection and invalid-pin release-plan refusal subsequently passed
+(see below); actual unused-extra-record creation/deletion remains pending. This rehearsal uses known fixtures, not the owner's
 current local database. Evidence is recorded in [T6 #55](https://github.com/zudolab/pinsel/issues/55#issuecomment-6939829800).
 
 
@@ -936,3 +936,33 @@ and TOC entry. This result does not prove arbitrary Markdown support or parity
 between native human-write and Assistant Markdown-policy validation. That parity
 is under investigation. New static page creation/hierarchy/navigation and family
 reference scenarios remain pending.
+
+
+## Canonical owner inspection and release refusal
+
+At Pinsel `00bb369e5f7a4ce0c7c262ae65bc5bc1fa932e9f` / Composer
+`4f1191d682995438380fccdb5bb692a299415402`, the installed compiler passed
+20 explicitly synthetic cases: all five missing/unpublished owner variants failed
+with pin diagnostics; extra draft/published variants left complete rendered routes
+unchanged. These are candidate fixtures, not persisted captures.
+
+The browser then passed in 245s: five actual rendered selections resolved their
+qualified canonical Content sources, and five initial release selections omitting
+one owner each produced blocking pin diagnostics with Approve and Apply disabled.
+Actual release requests were list/plan only. Before/after complete captures stayed
+`6a0f5d54b16f7fdca6cdb37f0d3f9ecdbff83dedc45641d66378f600b4426034`.
+The evidence contains 1,110 valid JSONL records and ten screenshots. Earlier
+failed harness evidence remains retained: overlapping log writes and selection-order
+comparison errors were fixed without changing product behavior or canonical data.
+Actual extra-record creation/deletion remains separate pending acceptance.
+
+## Retained value-policy gap
+
+[Composer #986](https://github.com/Takazudo/zudo-composer/issues/986) tracks the
+observed native human and native Assistant bypass of Pinsel's legacy field-value
+validation. The shared host validator, source/review identity binding and actual
+Assistant field guidance are being implemented. The consumer adapter's 47 focused
+tests include all retained fields of 246 committed records, but its installed
+acceptance requires the forthcoming immutable package. Existing historical data
+and release bytes must remain readable and preserved; new invalid changes and
+publications must refuse. No existing result is relabeled as a pass of that policy.

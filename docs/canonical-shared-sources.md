@@ -84,8 +84,10 @@ The staged migration and exact build comparison passed at00bb/4f:14 identical HT
 routes and143 identical public files. The installed compiler also passed20 explicitly
 synthetic missing/draft-owner and extra-record cases with unchanged canonical state.
 See the [compatibility ledger](composer-compatibility.md) for exact identities.
-These are not browser/release acceptance: actual local release refusal before
-stage/activation remains required. Observe disposable
+Installed browser selection and release-plan refusal subsequently passed for all
+five owners at the same source/package. Approve and Apply stayed disabled when
+an owner was omitted; full canonical capture remained unchanged. These checks did
+not stage or activate a release. Observe disposable
 collection duplicate behavior as allowed unused Content, then delete only its
 journaled record through supported UI; never claim New Entry is disabled.
 
