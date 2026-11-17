@@ -1,9 +1,10 @@
+import {installationIdentityPaths,loadFinalInstallationBridge} from './final-installation-bridge.mjs';
 import {publicationRecoveryStatus,verifyPublicationRecovery} from './publication-recovery.mjs';
 import {metadataRecoveryStatus,verifyMetadataRecovery} from './metadata-recovery.mjs';
 import {assertContentReceipt,assertRecoveryRead,assertHistoricalPageCreate} from './retained-receipts.mjs';
 import assert from 'node:assert/strict';import {readFile} from 'node:fs/promises';import {dirname,join} from 'node:path';import {isDeepStrictEqual} from 'node:util';import {inputHash} from '../families/frozen-inputs.mjs';import {auditPhase} from './audit.mjs';import {phases} from './sequence.mjs';import {record,page} from './intents.mjs';
 const recovered=new Set([publicationRecoveryStatus,metadataRecoveryStatus,'COMMITTED_PHASE_RECONCILED_AND_RELOAD_VERIFIED','ACKNOWLEDGED_PHASE_RECOVERED_AFTER_REVIEWED_INSTALLATION','COMMITTED_TITLE_RECONCILED_AND_RESTART_VERIFIED']);
-const identityPaths=['digest','componentPack.digest','componentPack.compiler','renderer.digest'];
+const identityPaths=installationIdentityPaths;
 /** Only explicitly witnessed install identities may differ alongside the reviewed domain delta. */
 export function auditRetainedPhase(before,after,result,identities){
  const normalized=structuredClone(after),changes=[];
@@ -21,7 +22,7 @@ export function assertRetainedReceipt(events,result,before){
  }
 }
 /** Read actual external evidence; never turn recovered failures into native phase PASS. */
-export async function loadRetained(manifestPath,{complete=true}={}){
+export async function loadRetained(manifestPath,{complete=true,installation}={}){
  const hashes={};const bytes=async p=>{assert(p?.startsWith('/'));const b=await readFile(p);hashes[p]=inputHash(b);return b;};const json=async p=>JSON.parse(await bytes(p)),events=async p=>(await bytes(p)).toString().split('\n').filter(Boolean).map(JSON.parse);
  const manifest=await json(manifestPath);assert.equal(manifest.kind,'retained-static-evidence');assert(Array.isArray(manifest.proofPaths));assert(complete?manifest.proofPaths.length===15:manifest.proofPaths.length>0&&manifest.proofPaths.length<=15);const phasesEvidence=[];let previous;
  for(let i=0;i<manifest.proofPaths.length;i++){
@@ -56,5 +57,8 @@ export async function loadRetained(manifestPath,{complete=true}={}){
   if(proof.installationBridge){const originalAfter=await json(join(original,'after.json')),bridge=proof.installationBridge;assert.equal(bridge.beforeCaptureDigest,originalAfter.digest);assert.equal(bridge.afterCaptureDigest,after.digest);const expected=structuredClone(originalAfter),changes=[];for(const path of identityPaths){const keys=path.split('.'),key=keys.pop(),a=keys.reduce((o,k)=>o[k],expected),b=keys.reduce((o,k)=>o[k],after);if(a[key]!==b[key]){changes.push({path,before:a[key],after:b[key]});a[key]=b[key];}}assert.deepEqual(after,expected);assert.deepEqual([...bridge.changes].sort((a,b)=>a.path.localeCompare(b.path)),changes.sort((a,b)=>a.path.localeCompare(b.path)));assert.equal(bridge.composerSha,proof.execution.composerSha);assert.equal(bridge.pinselSha,proof.execution.pinselSha);}
   const identityChanges=auditRetainedPhase(before,after,proof.result,identities);phasesEvidence.push({proofPath,originalStatus:proof.status??'external successful phase proof',originalAttempt:original,recovered:recoveredPhase,...(originalOutcome?{originalOutcome}:{}),identityChanges,beforeDigest:before.digest,afterDigest:after.digest});previous=proof;
  }
- const snapshot=await json(manifest.capturePath);assert.deepEqual(snapshot,await json(previous.afterCapture),'Retained final capture differs from accepted chain');return {manifest,snapshot,resources:previous.resources,phasesEvidence,hashes};
+ const snapshot=await json(manifest.capturePath),chainCapture=await json(previous.afterCapture);let finalInstallationBridge;
+ if(manifest.finalInstallationBridge){assert(complete&&manifest.proofPaths.length===15,'Final installation bridge requires complete original fifteen-phase chain');finalInstallationBridge=await loadFinalInstallationBridge({descriptor:manifest.finalInstallationBridge,chainCapture,chainCapturePath:previous.afterCapture,snapshot,capturePath:manifest.capturePath,installation,bytes,json});}
+ else assert.deepEqual(snapshot,chainCapture,'Retained final capture differs from accepted chain');
+ return {manifest,snapshot,resources:previous.resources,phasesEvidence,hashes,...(finalInstallationBridge?{finalInstallationBridge}:{})};
 }

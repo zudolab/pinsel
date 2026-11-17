@@ -233,6 +233,79 @@ Original phase09 remains failed; recovered preview acceptance and subsequent exa
 build/production visitor acceptance are separate. Source fixture tests do not claim
 that the pending installed recovery ran or passed.
 
+### Final installation bridge without replaying the pilot
+
+The original fifteen proofs and their captures remain immutable history. To verify
+that retained state on a different installed revision, optionally add this descriptor
+to the retained manifest and set `capturePath` to the **new public capture**:
+
+```json
+{"finalInstallationBridge":{"proofPath":"/absolute/final-installation-bridge.json","freezeManifestPath":"/absolute/final-installation-freeze.json","freezeManifestSha256":"REVIEWED_SHA256"}}
+```
+
+This is a final-installation witness, not a sixteenth authoring phase or a rewrite of
+phase15. It requires all15 original phases to validate first. Without the descriptor,
+the old exact-final-capture requirement remains unchanged.
+
+Keep writers stopped. Preserve raw authored/history/release state before changing the
+installation; do not initialize or migrate it. After the manager's frozen install and
+source commit, obtain the new capture with the normal public `authoring:capture`
+command. Review complete old/new captures: only `digest`, `componentPack.digest`,
+`componentPack.compiler`, and `renderer.digest` may differ. Unknown fields, schema,
+workspace, tokens, Content, Composition, Mapping, Sitemap, assets, public files and
+all other identity fields must remain exactly equal. A bridge cannot authorize data
+migration. Preserve the original store and stop if another field changes.
+
+Write a separate bridge JSON with **exactly** these fields:
+
+```json
+{
+  "schemaVersion": 1,
+  "kind": "static-final-installation-only",
+  "beforeCapture": "/absolute/original-phase15/after.json",
+  "afterCapture": "/absolute/current-public-capture.json",
+  "beforeCaptureDigest": "ACTUAL_OLD_DIGEST",
+  "afterCaptureDigest": "ACTUAL_NEW_DIGEST",
+  "changes": [{"path":"digest","before":"ACTUAL_OLD_DIGEST","after":"ACTUAL_NEW_DIGEST"}],
+  "pinselSha": "CURRENT_FULL_COMMITTED_SOURCE_SHA",
+  "composerSha": "CURRENT_FULL_INSTALLED_PACKAGE_SHA",
+  "stage": "notes-v1",
+  "identitiesPath": "/absolute/current-public-identities.json",
+  "provenancePath": "/absolute/current-installation-provenance.json"
+}
+```
+
+The schematic `changes` array must enumerate **every actual difference** among the
+four allowed fields, exactly once, with actual old/new values. `beforeCapture` must
+be the final original proof's `afterCapture` path; `afterCapture` must equal the
+retained manifest's new `capturePath`. Do not substitute reconstructed snapshots.
+
+Generate identities through the exported
+`resolveInstalledPublicIdentities(repoRoot)` in
+`tests/native-authoring/static/final-installation-bridge.mjs`. It uses public
+`loadHostContext`, `resolveAuthoringPackIdentity` and
+`resolveAuthoringRendererIdentity`; save its exact `{packIdentity, renderer}` result.
+Generate provenance as `{source, installed, composer, stage}`, where `source` is the
+actual `sourceIdentity(repoRoot)` result from `header/provenance.mjs`, and `installed`
+is the actual `assertInstalledPin(repoRoot, composer)` result from
+`families/runtime-preflight.mjs`. These must describe the clean committed checkout
+that will run acceptance, including all tracked source bytes, four installed roots
+and installed-lock identity. Do not substitute hashes from a sibling checkout.
+
+Freeze the bridge, both captures, identity JSON and provenance JSON in an absolute
+path-to-SHA256 manifest; every listed file is verified and every required dependency
+must be listed. Independently review that manifest and put its exact SHA256 in the
+retained descriptor above. The runner compares provenance and public identities
+against the actual installation, freezes all input bytes for its child, rechecks
+installation/source/input evidence around runtime and build, and preserves the
+original phase statuses. A supplied identity JSON alone is not an installed attestation.
+
+Use the same command below with the current full `--composer` pin. The output
+`static-route-proof.json` separately includes `finalInstallationBridge`; success
+still requires a fresh read-only restart, exact current-snapshot production build
+and unchanged post-build public capture. Bridge validation alone is not runtime
+acceptance, and does not establish full visitor interactions or deployment.
+
 With stopped writers and a clean committed frozen-install checkout, run inside the
 shared guard/reaper:
 
