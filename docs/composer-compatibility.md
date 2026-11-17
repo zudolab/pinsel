@@ -8,25 +8,55 @@ Tracking: [#51](https://github.com/zudolab/pinsel/issues/51),
 
 ## Current candidate at a glance
 
-Historical entries below retain their original outcomes. The previous 5fe package
-has complete normal human, refusal, recovery and seven-case Assistant acceptance; see [the 5fe checkpoint](#current-5fe-installed-checkpoint--2026-11-17).
-These passes do not close the remaining T6/T7 scenarios or imply actual-data cutover.
+Historical entries retain their original revision and outcomes. A package change
+requires fresh installed acceptance; earlier passes do not automatically transfer.
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel complete human / Assistant tested source | `b434c8fefd4c9659a9306c4e8481ae3262b46385` |
-| Current integration source | This adoption commit on [PR61](https://github.com/zudolab/pinsel/pull/61), based on `4650e64`; current-head gates remain required |
-| Installed package / attestation | `aa8d0df2feec56f6f3f887f9653db9bf7b30d6e0` / `4a0f57f984298cf17829e1f558c1139fe11c9475` |
-| New upstream package candidate | `aa8d0df2feec56f6f3f887f9653db9bf7b30d6e0` / attestation `4a0f57f984298cf17829e1f558c1139fe11c9475`: qualified Mapping navigation; public/CMS/full typecheck PASS146s and independent packed-byte review; root frozen install/dedupe and capture preservation pass; installed scenario pending |
+| Pinsel integration | This adoption commit on [PR61](https://github.com/zudolab/pinsel/pull/61), based on `3aa797db07c4ed8cfe8d60c59968eeb19bea95ed` |
+| Installed package / upstream attestation | `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
-| Workspace / schemas / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
-| Installed acceptance | At b434/5fe: full human PASS969s, seven semantic refusals PASS256s, controlled outer interruption/recovery PASS270s, complete Assistant seven-case PASS3455s |
-| Independent operator progress | Header label forward/restart/inverse/restart complete; Knowledge saved-reference recovery PASS110s and two-stage inverse PASS299s; Results phases 00–10 accepted (11/45); phase11 acknowledged Mapping has separate read-only recovery PASS394s; phase12 remains unwritten after three failed readiness attempts and a readonly diagnostic; FAQ configuration only |
-| Static pilot | Original09 FAIL retained; separate read-only recovery PASS68s and exact 16-route / 143-asset build + visitor PASS14s. Phases10–15 now PASS; final phase15 production build PASS8s and visitor PASS14s (same16routes/143assets) |
-| Latest checked CI | Pinsel `b8b9af7d14bc4f2aa41f2cbf8c7ba87a3107ea5d` [CI44086510566 PASS](https://github.com/zudolab/pinsel/actions/runs/44086510566); Composer `cffa0bf3a946e566cfdee311272a4ae9f6b8ecdf` [CI44090546656 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44090546656) (26 jobs). These are historical passes, not proof for ca600 or the new package attestation |
-| Separate holds | Remaining T6/T7 acceptance/current-head checks/review/merges, owner-data cutover and new authenticated-provider acceptance; deployment remains disabled |
+| Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
+| Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
+| Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping scenario pending. |
+| Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
+| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. New history has13 entries. Phases13–44 and FAQ remain pending. |
+| Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current-pin reruns remain required. |
+| Holds | Remaining T6/T7 scenarios, current-head checks/review/merges; actual owner-data cutover and new authenticated-provider acceptance. Deployment remains disabled. |
 
-## Qualified Mapping navigation candidate — 2026-11-17
+## Mapping save completion candidate — 2026-11-17
+
+The aa8 package fixed qualified Mapping startup (actual editor readiness41.313s),
+but phase12 saved its binding and then waited for unrelated library discovery.
+The original run remains FAIL341s. Recovery reads verified the exact acknowledged
+binding without replay, with unchanged full capture `c4c8f59be368ad984e5711569e1c85d5804ec40ed41146eb68ee3b99756088e0`.
+Two abandoned no-commit challenges in the original run remain recorded. Known
+read aborts in the recovery occurred after its terminal fence; its screenshot
+is not a Content-preview acceptance pass.
+
+Composer source `37cd60fd0ae0a54fb4ea494b78abc603f68813c0` removes unrelated
+library discovery from durable save/create/duplicate completion. Selected resolution,
+concurrent changes, visible errors and complete diagnostics on library return remain
+validated. Author91 Mapping tests and independent17 focused tests pass.
+The package has782 files, payload
+`bc44f1c4e0778929fb69494a523d8148ee68530f3f320064412a18d1ef44bd47`.
+
+Manager installation preserves all1275 native/public/build evidence files byte for
+byte and mode for mode. Complete public captures differ only in digest,
+componentPack.digest and renderer.digest. The resulting capture is
+`359d270bc77313e55b29d4580516cf6930b6a094a06a967f1e7efe8a63f8cb09`.
+Evidence: `mapping-save-main-preservation-audit.json`,
+`mapping-save-main-after.log`, `mapping-save-c5ffd-package-independent-review.json`.
+
+The Results continuation uses a strict boundary13 installation supplement that
+retains the original12-entry descriptor, the genuine phase12 recovery and all
+failed-attempt evidence. No saved binding is replayed or old proof rewritten.
+Actual preparation and current-package scenario acceptance remain pending.
+Header inverse restored all authored values and retained the new static page;
+normal Content token/generation advancement remains. A future static installation
+bridge must validate this closed cycle explicitly, not treat it as identity-only.
+
+## Historical qualified Mapping navigation candidate — 2026-11-17
 
 Results phase11 Mapping creation was acknowledged, followed by a separate readonly
 recovery (PASS394s); creation was not replayed. Phase12 has not written a binding.
