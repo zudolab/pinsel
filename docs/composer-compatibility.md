@@ -58,12 +58,34 @@ those lost bodies are not independently validated. The Content request-drain pro
 passed. The consumer is clean and stopped, with its port closed and lease absent.
 Evidence: `t7-c5-full-1/terminal-audit.json`, `t7-c5-full-independent-audit.json`.
 
-Current-package negative, controlled recovery and fake-provider Assistant reruns,
-retained authored-static-page build/visitor acceptance and remaining Results/FAQ
-scenarios are still pending. The closed Header-cycle installation bridge itself
-passed independent review (314 frozen entries,316 loaded inputs,2172 preserved raw
-files); it does not establish a new runtime pass. Actual owner-data cutover and new
-live-provider acceptance remain held. No deployment or remote cutover occurred.
+Current-package negative acceptance passed277s: seven unique operations received
+the expected semantic HTTP409 refusals, with complete captures unchanged at
+`871d327e…` / Content token24 and892 receipt-inclusive files unchanged. Independent
+review verified all cases and sixteen settled Content drain checks. Seven legacy
+non-Content observer-disposed diagnostics remain qualified. The actual refusal bodies
+were collected through the reviewed Playwright `route.fetch`/`fulfill` interception;
+this is not an original-request-only transport trace. Evidence:
+`t7-c5-negative-1/terminal-audit.json`, `t7-c5-negative-independent-audit.json`.
+
+The cold consumer at the same66865ae source passed retained authored-static-page
+restart/build in173s and production visitor acceptance in57s. Complete before/after/
+after-build captures equal
+`f9457c8cb6446667bdc913caecf82cfe27196eac16254161d28366cadeaf55e8`.
+The actual build verifies16 routes,143 assets and160 total files, with705 GET/HEAD
+visitor requests and zero canonical writes. Original fifteen-phase authoring evidence,
+failed Header forward, readonly recovery, inverse and separate restart remain preserved.
+The current installation bridge independently verifies314 frozen entries,316 loaded
+inputs and2172 preserved raw files. There is no standalone frame-ready transcript;
+fresh inverse Header History UI remains NOT_RUN, and inquiry delivery was NOT_ATTEMPTED.
+Evidence: `static15-c5-independent-review.json`, `static-resume-c5-terminal-audit.json`.
+
+Current-package response-loss recovery and fake-provider Assistant reruns, plus
+remaining Results/FAQ scenarios, are still pending. The prepared current recovery
+runner withholds a response, restarts the browser, recovers the same request's durable
+receipt, stops the server, captures and performs a guarded inverse. It has no
+outer-exit86 hook; the historical controlled outer interruption remains a separate
+result. Actual owner-data cutover and new live-provider acceptance remain held.
+No deployment or remote cutover occurred.
 
 ## Mapping save completion candidate — 2026-11-17
 
