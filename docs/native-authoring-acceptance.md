@@ -255,18 +255,16 @@ beforeimages. It checks the public current capture against the original capture,
 allowing only the exact recorded parent-slot swap and that owner's update time.
 Forward and inverse requests are journaled before dispatch. An inverse is bound
 to the exact public current capture; a newer preview refuses before dispatch. A known successful
-receipt is replayed only with the identical request. Without a successful receipt,
-resume requires its revision to differ from the current public snapshot: the
-request may recover an existing receipt but cannot newly commit. An uncertain
-request still matching the current revision is held for reconciliation. Missing
-receipts, unrelated changes and legacy runs without this journal remain held;
-never recreate the mutation or reset the workspace. Restored order alone does not
-prove recovery: the runner requires both exact forward and inverse receipts.
-The original failed result is retained when a later resume succeeds. Resume results
-carry `restorationOnly: true`; successful cleanup does not turn a failed scenario
-into passing acceptance. For `negative` resume, also pass
-`--audit-data-root "$PWD/packages/pinsel-content/.native-authoring-$ACCEPTANCE_STAGE"`
-as required by the original receipt-inclusive audit.
+receipt is validated against the exact original request and before/after images.
+Cleanup does not replay that request through an API client. A known successful
+forward receipt and exact moved public capture authorize the actual approved
+“Move page placement down” UI action. An existing inverse requires its exact
+successful receipt and an already restored current capture. Missing or uncertain
+receipts hold all cleanup for separate reconciliation; stale requests alone do
+not authorize replay. New UI response status and raw body are durably journaled
+before assertions. Restored order alone does not prove recovery: both exact receipts
+remain required. Original failed results stay retained; successful resume is labeled
+`restorationOnly: true` and never changes a failed scenario into a pass.
 
 For the full scenario, this accepts only the recorded inserted owner/UUID and original/test Content values;
 unexpected intervening state refuses. Browser shutdown sends graceful TERM to the

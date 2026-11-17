@@ -92,3 +92,16 @@ export function assertRestoreBoundary(manifest, scope, before, scenario) {
   assert.equal(manifest.scenario, scenario, 'Restore requires original --scenario');
   assert.equal(manifest.beforeDigest, before.digest, 'Original before capture differs from manifest');
 }
+
+/** Cleanup consumes a durably verified receipt; it never replays an unknown mutation. */
+export function assertRecoveryCleanup(before, current, journal) {
+  assertRecoveryReceipt(before, journal, journal.forward);
+  const state = assertRecoveryState(before, current, journal);
+  if (journal.inverse) {
+    assertRecoveryReceipt(before, journal, journal.inverse, true);
+    assert.equal(state, 'original', 'Recorded inverse does not match current state; hold');
+    return 'already-restored';
+  }
+  assert.equal(state, 'moved', 'No proven moved state to inverse');
+  return 'move-down';
+}

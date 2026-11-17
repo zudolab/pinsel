@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { assertRestoreBoundary, recoveryObservation, assertRecoveryInverse, requestDigest, recoveryImages, assertRecoveryState, assertRecoveryReceipt, assertReceiptOnlyRetry } from './recovery-proof.mjs';
+import { assertRecoveryCleanup, assertRestoreBoundary, recoveryObservation, assertRecoveryInverse, requestDigest, recoveryImages, assertRecoveryState, assertRecoveryReceipt, assertReceiptOnlyRetry } from './recovery-proof.mjs';
 const a = 'a'.repeat(64), b = 'b'.repeat(64);
 function fixture() {
   const node = id => ({ id, props: {}, slots: {} });
@@ -89,4 +89,19 @@ test('restore scope, scenario and original before-image all gate cleanup authori
   assert.throws(() => assertRestoreBoundary(manifest, scope, before, 'assistant'), /original --scenario/);
   assert.throws(() => assertRestoreBoundary(manifest, { ...scope, stage: 'other' }, before, 'recovery'), /scope differs/);
   assert.throws(() => assertRestoreBoundary(manifest, scope, { digest: b }, 'recovery'), /before capture/);
+});
+
+test('cleanup uses exact retained success and current state, never request replay', () => {
+  const f = fixture();
+  assert.equal(assertRecoveryCleanup(f.before, f.before, f.journal), 'already-restored');
+  delete f.journal.inverse;
+  assert.equal(assertRecoveryCleanup(f.before, f.moved, f.journal), 'move-down');
+  assert.throws(() => assertRecoveryCleanup(f.before, f.before, f.journal), /No proven moved/);
+  delete f.journal.forward.response;
+  assert.throws(() => assertRecoveryCleanup(f.before, f.moved, f.journal), /successful exact receipt/);
+});
+test('uncertain inverse blocks all cleanup even when current state resembles original', () => {
+  const f = fixture(); delete f.journal.inverse.response;
+  assert.throws(() => assertRecoveryCleanup(f.before, f.before, f.journal), /successful exact receipt/);
+  assert.throws(() => assertRecoveryCleanup(f.before, f.moved, f.journal), /successful exact receipt/);
 });

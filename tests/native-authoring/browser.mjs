@@ -1,4 +1,5 @@
-import { assertRecoveryRequest, assertRecoveryReceipt, assertReceiptOnlyRetry, assertRecoveryInverse, recoveryObservation } from './recovery-proof.mjs';
+import { randomUUID } from 'node:crypto';
+import { assertRecoveryRequest, assertRecoveryReceipt, assertRecoveryCleanup, assertRecoveryInverse, recoveryObservation } from './recovery-proof.mjs';
 import { continueContentRequest, readBrowserContent, contentReadOperations } from './content-browser-transport.mjs';
 import { courseFields, proveHumanContentSave, assertHumanSaveRequest, assertHumanAttemptsVerified, createHumanSaveAdmission } from "./human-content-proof.mjs";
 import { runAssistantPhase } from './assistant-scenarios.mjs';
@@ -6,7 +7,7 @@ import { chromium } from '@playwright/test';
 import { join, isAbsolute } from 'node:path';
 import { repoRoot, assertInstalledPin, assertFreePort } from './support.mjs';
 import { spawn } from 'node:child_process';
-import { readFile, writeFile, mkdir, realpath } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, realpath, open as openFile, rename } from 'node:fs/promises';
 import assert from 'node:assert/strict';
 import { get } from 'node:http';
 const probe = url => new Promise((resolve, reject) => { const request = get(url, { headers: { Accept: 'text/html' }, timeout: 3000 }, response => { let body = ''; response.on('data', chunk => body += chunk); response.on('end', () => resolve({ status: response.statusCode, body: body.slice(0, 120) })); }); request.on('error', reject); request.on('timeout', () => request.destroy(new Error('HTTP readiness timeout'))); });
@@ -455,7 +456,14 @@ try {
         const before = JSON.parse(await readFile(join(artifacts, 'before.json'), 'utf8'));
         const current = mode === 'recovery-restore' ? JSON.parse(await readFile(join(artifacts, process.env.NATIVE_RECOVERY_CURRENT), 'utf8')) : null;
         let journal;
-        const persist = () => writeFile(file, JSON.stringify(journal, null, 2));
+        const persist = async () => {
+            const temporary = file + '.' + randomUUID() + '.pending';
+            const handle = await openFile(temporary, 'wx');
+            try { await handle.writeFile(JSON.stringify(journal, null, 2)); await handle.sync(); } finally { await handle.close(); }
+            await rename(temporary, file);
+            const directory = await openFile(artifacts, 'r');
+            try { await directory.sync(); } finally { await directory.close(); }
+        };
         await open('/lessons/');
         const section = await selectConsultation();
         const coords = t => Object.fromEntries(['renderedNodeId', 'providerId', 'recordId', 'nodeId'].map(key => [key, t[key]]));
@@ -468,18 +476,6 @@ try {
             assert.deepEqual(coords(section), journal.target);
             assert.deepEqual(section.placement, journal.placement);
         }
-        const recoverReceipt = async (operation, inverse = false) => {
-            // New-run cleanup only retries a durably observed successful response.
-            // Resume also allows a proven stale request, never an executable uncertain mutation.
-            if (mode === 'recovery-restore') {
-                assert.equal(preview.identity.revision, current.digest, 'Preview changed since recovery capture; receipt reconciliation held');
-                assertReceiptOnlyRetry(before, current, journal, operation, inverse);
-            } else assertRecoveryReceipt(before, journal, operation, inverse);
-            const response = await page.request.post(base + '/__zudo-native-edit', { data: operation.request, headers: nativeHeaders });
-            const body = await response.json();
-            assert(response.ok() && body.ok, 'Exact retained receipt recovery refused; keep journal');
-            operation.response = body; assertRecoveryReceipt(before, journal, operation, inverse); await persist();
-        };
         const observedMove = async (direction, loseResponse, recover = false) => {
             const inverse = direction === 'down'; let resolveResult, timer;
             const result = new Promise(resolve => { resolveResult = resolve; });
@@ -497,7 +493,9 @@ try {
                     const operation = { request, status: 'dispatching' };
                     journal[recover ? 'browserRecovery' : inverse ? 'inverse' : 'forward'] = operation; await persist();
                     const response = await route.fetch({ timeout: 180000 });
-                    operation.response = await response.json(); operation.status = 'responded'; await persist();
+                    operation.httpStatus = response.status();
+                    operation.responseText = await response.text(); operation.status = 'responded'; await persist();
+                    operation.response = JSON.parse(operation.responseText); await persist();
                     assert(response.ok()); assertRecoveryReceipt(before, journal, operation, inverse);
                     if (recover) assert.deepEqual(operation.response, journal.forward.response, 'Recovered receipt differs from original committed receipt');
                     if (loseResponse) await route.abort('failed'); else await route.fulfill({ response });
@@ -517,9 +515,10 @@ try {
         };
         const restore = async () => {
             assert(journal.forward?.request, 'No dispatched request; no automatic inverse');
-            await recoverReceipt(journal.forward);
-            if (journal.inverse?.request) await recoverReceipt(journal.inverse, true);
-            else {
+            assert.equal(preview.identity.revision, current.digest, 'Preview changed since recovery capture; cleanup held');
+            const action = assertRecoveryCleanup(before, current, journal);
+            record('verified-recovery-cleanup', { action, operationId: journal.forward.request.input.operationId, current: current.digest });
+            if (action === 'move-down') {
                 await open('/lessons/'); await selectConsultation();
                 const expected = [...journal.originalOrder], index = expected.indexOf(journal.placement.nodeId);
                 assert(index > 0); [expected[index - 1], expected[index]] = [expected[index], expected[index - 1]];
