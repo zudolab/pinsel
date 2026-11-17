@@ -1,7 +1,8 @@
+import {compactBoundaryInputs} from './boundary23-core.mjs';
 import {validatePinsEvidence} from './pins-diagnostic.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {inputHash,readExpectedBytes,mergeExpectedHashes} from './expected-hashes.mjs';
+import {inputHash,readExpectedBytes,mergeExpectedHashes,createExpectedReader} from './expected-hashes.mjs';
 export {inputHash} from './expected-hashes.mjs';
 /** Capture each external JSON once. Runtime consumes only these captured objects. */
 export async function freezeReadInputs(intentPath) {
@@ -30,6 +31,15 @@ export async function freezeReadInputs(intentPath) {
     savedReference.hashes=['mapping-saved-binding','mapping-saved-create'].includes(intent.kind)?{...hashes}:Object.fromEntries(Object.values(paths).map(path=>[path,hashes[path]]));
   }
   let familyInstallationBridge,familyInstallationSupplement,familySourceRebind,familySourceRebindSuccessor,familySourceCreateHandoff,familySavedCreateHandoff;
+  if(intent.familySourceBoundary23){
+    const bytes=createExpectedReader(hashes,readFile,{absolute:true});
+    const loaded=await(await import('./boundary23-loader.mjs')).loadFamilyBoundary23({descriptor:intent.familySourceBoundary23,repo:(await import('./config.mjs')).repoRoot,bytes});
+    for(const[k,name]of [['familyInstallationBridge','originalDescriptor'],['familyInstallationSupplement','supplementDescriptor'],['familySourceRebind','parentDescriptor'],['familySourceRebindSuccessor','successorDescriptor'],['familySourceCreateHandoff','createDescriptor'],['familySavedCreateHandoff','descriptor']])assert.deepEqual(intent[k],loaded.descriptors[name]);
+    if(intent.sequence.index===23)assert.deepEqual(snapshot,loaded.snapshot);
+    await(await import('./boundary23-loader.mjs')).validateBoundary23Runtime({loaded,intent,snapshot,read:bytes,json:async path=>JSON.parse(await bytes(path))});
+    mergeExpectedHashes(hashes,loaded.hashes);
+    return compactBoundaryInputs({intent,snapshot,hashes,transition:loaded.transition});
+  }
   if(intent.familySavedCreateHandoff){
     assert(intent.familySourceCreateHandoff&&intent.familySourceRebindSuccessor&&intent.familySourceRebind&&intent.familyInstallationBridge&&intent.familyInstallationSupplement);
     const chain=await(await import('./source-saved-create-loader.mjs')).loadFamilySavedCreateHandoff({descriptor:intent.familySavedCreateHandoff,createDescriptor:intent.familySourceCreateHandoff,successorDescriptor:intent.familySourceRebindSuccessor,parentDescriptor:intent.familySourceRebind,originalDescriptor:intent.familyInstallationBridge,supplementDescriptor:intent.familyInstallationSupplement,repo:(await import('./config.mjs')).repoRoot});
