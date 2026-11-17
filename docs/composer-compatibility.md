@@ -8,17 +8,16 @@ Tracking: [#51](https://github.com/zudolab/pinsel/issues/51),
 
 ## Current candidate at a glance
 
-Historical entries below retain their original outcomes. The current installed
-package now has complete normal human, refusal, recovery and seven-case Assistant
-acceptance; see [the 5fe checkpoint](#current-5fe-installed-checkpoint--2026-11-17).
+Historical entries below retain their original outcomes. The previous 5fe package
+has complete normal human, refusal, recovery and seven-case Assistant acceptance; see [the 5fe checkpoint](#current-5fe-installed-checkpoint--2026-11-17).
 These passes do not close the remaining T6/T7 scenarios or imply actual-data cutover.
 
 | Identity or gate | Current recorded value |
 | --- | --- |
 | Pinsel complete human / Assistant tested source | `b434c8fefd4c9659a9306c4e8481ae3262b46385` |
 | Current integration source | `ca600a106698e5c3207f4c928c1e054953940d54` on the integration branch; current-head CI pending at this checkpoint |
-| Installed package / attestation | `5fe6d8d92f5013943053491794c0502b83228d53` / `4e9c642050bed7f2597245ae4ad4ab3f278c3de5` |
-| New upstream package candidate | `bd056471996984dd39bba219b19add25eb092982`, attestation `077a1b1a8545e963bcca7f4330a2b4e9fc4e5f95`; generated/public checks PASS118s, not yet adopted or accepted in Pinsel |
+| Installed package / attestation | `bd056471996984dd39bba219b19add25eb092982` / `077a1b1a8545e963bcca7f4330a2b4e9fc4e5f95` |
+| New upstream package candidate | `bd056471996984dd39bba219b19add25eb092982`, attestation `077a1b1a8545e963bcca7f4330a2b4e9fc4e5f95`; generated/public checks PASS118s, frozen installation and exact-state preservation passed; browser acceptance pending |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | At b434/5fe: full human PASS969s, seven semantic refusals PASS256s, controlled outer interruption/recovery PASS270s, complete Assistant seven-case PASS3455s |
@@ -26,6 +25,31 @@ These passes do not close the remaining T6/T7 scenarios or imply actual-data cut
 | Static pilot | Original09 FAIL retained; separate read-only recovery PASS68s and exact 16-route / 143-asset build + visitor PASS14s. Phases10–15 now PASS; final phase15 production build/visitor still pending |
 | Latest checked CI | Pinsel `b8b9af7d14bc4f2aa41f2cbf8c7ba87a3107ea5d` [CI44086510566 PASS](https://github.com/zudolab/pinsel/actions/runs/44086510566); Composer `cffa0bf3a946e566cfdee311272a4ae9f6b8ecdf` [CI44090546656 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44090546656) (26 jobs). These are historical passes, not proof for ca600 or the new package attestation |
 | Separate holds | Remaining T6/T7 acceptance/current-head checks/review/merges, owner-data cutover and new authenticated-provider acceptance; deployment remains disabled |
+
+## Saved host Content preview adoption — 2026-11-17
+
+All four manifests now pin immutable Composer `bd056471996984dd39bba219b19add25eb092982`.
+Attestation `077a1b1a8545e963bcca7f4330a2b4e9fc4e5f95` independently matches all
+781 packed files (payload `aa0deee4bb54c6f07fefd46dba58db80d50de3261dc4814bbb35d680280123b7`).
+The separate component contract stays `c0b452da075b66757c60bd0d721a47062d4354d0`.
+`pnpm install --lockfile-only` and `pnpm install --frozen-lockfile` passed with Node24 /
+pnpm11.5.2; four consumers resolve one installed package. The first nested npm install
+failed before installation because its default cache was read-only; the retained retry
+uses the existing workspace cache. No package publication or deployment occurred.
+
+Supported stopped captures before/after installation differ only in the four explicit
+package identity paths: snapshot digest, component-pack digest/compiler and renderer
+digest. All other fields and 1115 raw native/history/public files are equal. Evidence:
+`host-content-main-preservation-audit.json` under the retained integration notes.
+The resulting capture is `b4637d5096f8bbe89b7326b41f96a21952912cc992946ad7d37906fae10ddea1`.
+This proves preservation, not browser acceptance. A separately frozen installed consumer
+will verify saved affected-page discovery, the real Pinsel document renderer, original
+frame acknowledgements, batching and restart equality before this scenario is complete.
+
+Saved affected-page preview deliberately excludes unsaved Content drafts and standalone
+fragment rendering. Its explicit route selection uses qualified bindings; it is not an
+activated-release preview. The finite acceptance read contract rejects unknown operations
+and stale read-only responses. Existing 5fe scenario passes below remain historical.
 
 ## Current 5fe installed checkpoint — 2026-11-17
 
