@@ -20,7 +20,7 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 | Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
 | Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping phase13 PASS260s and full human regression PASS1001s, both independently audited. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
-| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. History has17 entries after phase13 count-binding PASS260s, phase14 collection PASS250s, phase15 limit PASS291s and the new phase16 pin PASS391s. Original phase16 prewrite failure remains recorded; phases17–44 and FAQ remain pending or in progress. |
+| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. History has18 entries after phase13 count-binding PASS260s, phase14 collection PASS250s, phase15 limit PASS291s, phase16 pin PASS391s and the separate phase17 duplicate PASS400s. Original failures remain recorded; phases18–44 and FAQ remain pending or in progress. |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current c5 human, negative, response-loss recovery and static gates passed; complete current-pin Assistant acceptance remains open. |
 | Holds | Remaining T6/T7 scenarios, current-head checks/review/merges; actual owner-data cutover and new authenticated-provider acceptance. Deployment remains disabled. |
 
@@ -196,6 +196,36 @@ expectations. This qualifies the test-source transition only: original phase17 i
 still FAIL, history17 is unchanged, and a new browser pass remains required.
 Evidence: `source-successor-027-baseline-final-audit.json` and
 `results-source-successor-027-descriptor-independent-review.json`.
+
+The new phase17 then passed400s. One logical duplicate used an initial output
+challenge and a continuation for the same record; the latter acknowledged the
+canonical save. The new Composition is
+`composition-5c412ff8-d1b0-4b66-ae4c-cae9501ca050`, with root
+`pinsel-result-row-56c39585-def6-4a4e-93a4-6236720f66d1`.
+Exact full capture changed from `6a7e3bca…` to
+`5f20c17d59ea6f35c7e5cc2f503264822f41d479922cd4c7c428e48c440f9ce4`.
+Independent review verified the duplicate-only delta, qualified public readback
+after browser reload, three settled-read boundaries,302 input hashes and72 source
+modules. History18 preserves the old17 entries and appends this genuine proof once.
+The original failed17 remains FAIL. This proves browser reload persistence, not
+process restart or placed rendering. Evidence:
+`results-phase17-successor-independent-review.json`.
+
+FAQ restoration subsequently committed through one exact Undo dispatch. Its original
+run remains FAIL121 because the response body was unavailable. Separate receipt and
+history reconciliation confirms Undo revision
+`5e3bad4f-3a48-4a86-ab8a-3968a6538ea2`, whose parent is the original Apply revision.
+Full capture changes only the FAQ answer back to its original value and the normal
+generation, timestamp, Content token33→34 and digest. The restored capture is
+`e300f832e859bcc15cad3a3f09c3095b2a493198ec7d933ae8970578d92be077`.
+A dedicated read-only public reconciliation passed103s: UI Status undone, exact
+applied/undone receipts, complete seven-revision history and full Content readback.
+Its complete before/after captures are identical. This separate success does not
+recover the missing original response body or make the interrupted whole suites pass.
+Evidence: `t7-c5-faq-undo-2-independent-reconciliation.json`,
+`t7-c5-faq-readonly-reconciliation-1/public-evidence-audit.json` and
+`t7-c5-faq-undone-manager-visual-review.json`. The screenshot explicitly identifies
+the deterministic fake provider; it does not establish authenticated inference.
 
 Remaining Results/FAQ scenarios, complete current-pin Assistant acceptance and final
 integration gates remain open. Actual owner-data cutover and new live-provider
