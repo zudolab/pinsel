@@ -1,10 +1,15 @@
 # Installed native authoring acceptance
 
-This is the portable promotion of the independently verified T4 browser recipes.
-It is **not yet a recorded pass of T5/T6/T7**. The new portable runner, including
-its later-B/exact-A extension, still requires an integrated browser run. Earlier
-results remain in the [compatibility ledger](composer-compatibility.md) at their
-actual source/package identities.
+This portable runner has recorded installed acceptance at Pinsel
+`b434c8fefd4c9659a9306c4e8481ae3262b46385` with Composer
+`5fe6d8d92f5013943053491794c0502b83228d53`: full human authoring PASS969s
+(including later-B/exact-A build), seven semantic refusals PASS256s, controlled
+interruption/recovery PASS270s, and the complete seven-case fake-provider Assistant
+run PASS3455s. These are historical, pin-qualified results—not completion of all
+T5/T6/T7 requirements or authenticated inference. Current Composer
+`bd056471996984dd39bba219b19add25eb092982` acceptance remains pending at this
+checkpoint. See the [compatibility ledger](composer-compatibility.md#current-5fe-installed-checkpoint--2026-11-17)
+for exact identities, original failures, recovered outcomes and current progress.
 
 Use Node 24 and pnpm 11.5.2, an immutable Composer Git pin, and a **verified disposable
 stage containing known data**. Use the fresh-checkout bootstrap below, or follow
@@ -16,6 +21,46 @@ verified restored capture as the next predecessor, not the original digest.
 Freeze repository source while the browser runs: source changes legitimately
 invalidate reviewed previews. No deployment, external model inference or inquiry
 submission is performed.
+
+
+## Route and owner evidence coverage
+
+This matrix distinguishes rendered output from actual authoring selection. Evidence
+paths below are relative to `/workspace/composer-adoption-notes/`; they identify
+retained Cloud artifacts, not files shipped with this repository. The four complete
+5fe runs have `operator-summary.json` under `t7-5fe6-full-1`,
+`t7-5fe6-negative-1`, `t7-5fe6-controlled-recovery-1` and
+`t7-5fe6-assistant-1`. The full run builds all 14 baseline routes with 143 public
+files and proves the older snapshot remains exact after a newer edit.
+
+| Route / owner scope | Recorded evidence | Selection or follow-up boundary |
+| --- | --- | --- |
+| Home | Full run renders shared Course changes on Home and Lessons; independent Header label cycle has forward/inverse/restart/build proofs under `docs-operator-0180/header-*`. | This does not establish selection of every Home component. Header href remains its separate recipe. |
+| Lessons / Consultation | Full run's `inspect-*` evidence matches rendered target, semantic tree and Inspector owner; local edits/insertion, shared Course values, reload/restart and restoration pass. | Parent arrangement and Content ownership have distinct proofs; no blanket permission to edit mapped values locally. |
+| About | Baseline build/visitor coverage; static phases13–15 reparent the new page under About and update/publish its metadata. | Existing About component selection is not established by reparenting its child. |
+| Results | `docs-operator-0180/results-family/00-0014ca2` through `10` cover existing family preparation; phase11's separately recovered Mapping proof passed394s at `11-recovery-ca600a1/recovery-sequence-proof.json`. | Original phase11 failures remain failures. Completed placed-family selection/render/order/static proof is still pending the family sequence. |
+| Voices | Baseline exact build and static visitor coverage. | Owner-qualified preview/tree/Inspector selection: **NOT_YET_VERIFIED** in this evidence set. |
+| FAQ | Complete Assistant run selects detailed `faq-item/faq-exam-01` on `/faq/`, reviews the exact candidate, applies and undoes. | New-group/child membership and ordered-family acceptance remain separate. |
+| Notes / detail | Baseline index/detail rendering; complete Assistant run selects `note/exam-schedule` body on its detail route and applies/undoes. | This does not establish every index/detail component's selection. New Note publication evidence retains its separately recorded pin. |
+| Contact | Full run verifies shared option labels, stable Course links and query behavior. | Visitor behavior does not prove selection of every Contact-owned component. |
+| 404 | `/404.html` is included in baseline build/visitor evidence. | Owner-qualified preview/tree/Inspector selection: **NOT_YET_VERIFIED** in this evidence set. |
+| Authored static page | Accepted phase01–15 chain under `t6-static-sequence-1/`, including separately recovered proofs where original attempts failed; actual create/Section/title/source/metadata/navigation/reparent/publication operations. | Phase09's exact build and `static09-production-visitor-1/proof.json` cover16routes/143assets. Final phase15 build/visitor must have its own proof; the earlier snapshot cannot stand in for it. |
+
+The static chain's final accepted phase15 capture is
+`3777470221d254f0dea6134a30c4515e4647c2d1932542674359d85ef8fe22ab`.
+Use `static-resume-checkpoint-20261117.json` and the ledger to locate each actual
+accepted predecessor, including recovery artifacts; do not assume every original
+numbered directory passed. The Results operator's machine-readable
+`docs-operator-0180/operator-checkpoint.json` records Mapping recovery PASS394s;
+older prose describing it as queued does not override that proof.
+
+**Detached copy versus live shared reference remains an explicit Results acceptance
+assertion.** Verify that duplicated local Composition nodes have independent
+identities while preserved Content references still resolve to their original
+qualified owners; do not infer Content detachment from a successful Composition
+duplicate. Reuse the existing family duplication and follow-up evidence rather
+than introduce new Pattern/Global-template scope. These coverage boundaries are
+not claims that unsupported ownership edits should be enabled.
 
 ## Prepare a reproducible checkout
 
@@ -275,11 +320,12 @@ artifacts and inspect process/lease state before resuming.
 
 The suite runs on POSIX hosts with process-group signals; Windows requires a POSIX
 execution environment. Syntax/unit checks alone do not count as a browser pass.
-The [bc20 seven-case owner-aware AI run](composer-compatibility.md#bc20-complete-seven-case-assistant-acceptance)
-and Note/Course publication passed at their recorded pins. Current-pin validation,
-remaining T6 workflows and a reviewer following the complete recipe independently
-still need their integrated scenarios. Scripted model tests
-remain distinct from authenticated-provider acceptance and actual owner cutover.
+The [5fe installed checkpoint](composer-compatibility.md#current-5fe-installed-checkpoint--2026-11-17)
+records complete human, negative, controlled recovery and fake-provider Assistant
+runs, plus independent representative operator evidence. Earlier bc20 and
+Note/Course publication results retain their own pins. Current bd056 validation,
+remaining T6 workflows and final integrated review remain open. Scripted model
+results are distinct from authenticated-provider acceptance and actual owner cutover.
 
 Restore safety: each new run writes an exclusive `run-manifest.json` before browser
 mutation. It binds canonical repository path, explicit stage, full package pin,
@@ -292,8 +338,12 @@ runs without a manifest require manual review; this runner does not infer scope.
 Resolved installed package roots, manifest hashes and installed-lock digest are
 recorded. These complement required frozen installation; they are not a claim that
 lockfile text cryptographically attests every installed byte. The negative mode
-now attempts all seven defined endpoint refusals, with public and receipt-inclusive
-before/after audits; this expanded run is not yet executed.
+attempts all seven defined endpoint refusals, with public and receipt-inclusive
+before/after audits. `t7-5fe6-negative-1` passed this complete mode in 256s: all
+seven original responses were semantic HTTP409 refusals, the full capture and
+816 canonical/receipt files stayed equal. Observer-disposed warnings remain in
+that evidence; they were not substituted for the original responses. This is
+5fe evidence, not a bd056 pass.
 
 ### Assistant scenario (historical failures and later pin-qualified passes)
 
