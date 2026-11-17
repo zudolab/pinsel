@@ -12,7 +12,7 @@ export const assistantCases = [
   { id: 'local', pathname: '/lessons/', domain: 'composition', routes: ['/lessons/'] },
   { id: 'insert', pathname: '/lessons/', domain: 'composition', routes: ['/lessons/'] },
 ];
-export async function runAssistantPhase({ phase, caseId, page, open, getPreview, frame, record, shot, journalPath, before, restart, humanPrior }) {
+export async function runAssistantPhase({ phase, caseId, page, open, navigate, getPreview, frame, record, shot, journalPath, before, restart, humanPrior }) {
   const spec = assistantCases.find(value => value.id === caseId) ?? (['course-stale', 'course-guard'].includes(caseId) ? { ...assistantCases[0], id: caseId } : null);
   assert(spec, 'Unknown Assistant case');
   if (['setup', 'cleanup', 'apply', 'undo', 'restore', 'intervene', 'human-inverse', 'stale-refuse', 'guard-refuse', 'stale-cycle'].includes(phase)) await assertAssistantRunHumanSettled(dirname(journalPath));
@@ -23,7 +23,7 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
     const baselineName = process.env.NATIVE_ACCEPTANCE_BEFORE_CAPTURE;
     assert(baselineName, 'Same-server stale cycle requires fresh offline baseline');
     const baseline = JSON.parse(await readFile(artifactPath(dirname(journalPath), baselineName), 'utf8'));
-    const context = { caseId, page, open, getPreview, frame, record, shot, journalPath, before: baseline, restart };
+    const context = { caseId, page, open, navigate, getPreview, frame, record, shot, journalPath, before: baseline, restart };
     await runAssistantPhase({ ...context, phase: 'propose' });
     await open(spec.pathname);
     assert.equal(getPreview().identity.revision, baseline.digest, 'Proposal changed canonical workspace');
@@ -141,7 +141,7 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
   }
   journal = JSON.parse(await readFile(journalPath, 'utf8'));
   if (phase === 'intervene' || phase === 'human-inverse') {
-    await page.goto(new URL('/content?provider=content-filesystem&model=course&entry=consultation', page.url()).href);
+    await navigate(new URL('/content?provider=content-filesystem&model=course&entry=consultation', page.url()).href);
     const field = page.getByRole('textbox', { name: /^価格（表示）\s*\*?$/ });
     await expect(field).toHaveCount(1, { timeout: 120000 });
     await field.waitFor({ timeout: 120000 });
@@ -161,7 +161,7 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
   }
   const origin = new URL(page.url()).origin;
   const resume = async () => {
-    await page.goto(new URL('/composer?assistant=1', origin).href);
+    await navigate(new URL('/composer?assistant=1', origin).href);
     await page.getByRole('combobox', { name: /^Conversation/ }).selectOption(journal.conversationId);
     const card = page.getByRole('region', { name: `${spec.domain} review`, exact: true });
     await expect(card).toHaveCount(1, { timeout: 180000 });

@@ -1,4 +1,5 @@
-import {contentPreviewResponseTracker,contentPreviewOperations,assertContentPreviewRequest,assertContentPreviewHeaders} from './native-preview-reads.mjs';
+import {contentPreviewOperations} from './native-preview-reads.mjs';
+import {observeContentPreviewRequests} from './content-preview-drain.mjs';
 import { randomUUID } from 'node:crypto';
 import { assertRecoveryRequest, assertRecoveryReceipt, assertRecoveryCleanup, assertRecoveryInverse, recoveryObservation } from './recovery-proof.mjs';
 import { continueContentRequest, readBrowserContent, contentReadOperations } from './content-browser-transport.mjs';
@@ -31,7 +32,7 @@ await assertFreePort(port);
 const base = 'http://127.0.0.1:' + port;
 const notes = [];
 let serverLog = '', context, page, preview, nativeHeaders;
-let cleanupError,contentPreviewFailure;const contentPreviewPending=new Set();const nativeReadSnapshot=JSON.parse(await readFile(join(artifacts,'before.json'),'utf8'));const contentReads=contentPreviewResponseTracker(nativeReadSnapshot);
+let cleanupError,contentPreviewFailure,contentReads;const contentPreviewPending=new Set();const nativeReadSnapshot=JSON.parse(await readFile(join(artifacts,'before.json'),'utf8'));
 const recoveryObservations = [];
 const record = (key, value) => { notes.push({ key, value, time: new Date().toISOString() }); console.log(key, JSON.stringify(value)); };
 const server = spawn('pnpm', ['dev', '--port', String(port), '--strict-port'], { cwd: repoRoot, env: process.env, stdio: ['ignore', 'pipe', 'pipe'], detached: true });
@@ -41,15 +42,18 @@ const executablePath = process.env.NATIVE_ACCEPTANCE_CHROMIUM || chromium.execut
 const frame = () => page.frameLocator('iframe[title="Host rendered page"]');
 let profileCounter = 0;
 async function launch() {
+    contentReads=undefined;
     context = await chromium.launchPersistentContext((mode.startsWith('assistant:') ? join(artifacts, 'assistant-profile-' + mode.split(':')[1]) : run + '/browser-profile-' + (mode === 'negative' ? profileCounter++ : 0)), { executablePath, headless: true, viewport: { width: 1600, height: 1050 } });
     page = context.pages()[0] ?? await context.newPage();
+    contentReads=observeContentPreviewRequests(page,nativeReadSnapshot,{record});
     page.on('request', request => { if (request.url().endsWith('/__zudo-native-edit')) nativeHeaders = request.headers(); });
     page.on('pageerror', e => record('pageerror', e.message));
     page.on('response', (response) => {const observed=(async()=>{
         try {
             if (response.url().endsWith('/__zudo-native-edit')) {
-                const body = await response.json();const input=response.request().postDataJSON();
-                if(contentPreviewOperations.has(input?.operation)){assertContentPreviewRequest(input,nativeReadSnapshot.workspaceId);assertContentPreviewHeaders(response.request().headers());const observed=contentReads.observe(input,{status:response.status(),body},response.request().headers());record('content-preview-observed',{input,status:response.status(),evidence:observed});}
+                const input=response.request().postDataJSON();
+                if(contentPreviewOperations.has(input?.operation))return; // Dedicated original-request drain owns these reads.
+                const body = await response.json();
                 if (!contentPreviewOperations.has(input?.operation)&&body.result?.targets)
                     preview = body.result;
                 record('native-response', { operation: response.request().postDataJSON()?.operation, status: response.status(), error: body.error });
@@ -63,8 +67,10 @@ async function launch() {
         }
     })();contentPreviewPending.add(observed);observed.finally(()=>contentPreviewPending.delete(observed)).catch(()=>{});});
 }
-async function ready() { if(contentPreviewFailure)throw contentPreviewFailure;await page.getByText('Saved snapshot rendered', { exact: true }).waitFor({ timeout: 180000 }); assert(preview?.targets?.length, 'No captured targets'); }
-async function open(visitor = '/') { await page.goto(base + '/composer?native=1&visitor=' + encodeURIComponent(visitor)); await ready(); }
+async function ready() { contentReads?.check();if(contentPreviewFailure)throw contentPreviewFailure;await page.getByText('Saved snapshot rendered', { exact: true }).waitFor({ timeout: 180000 }); assert(preview?.targets?.length, 'No captured targets'); }
+async function navigate(url){return contentReads.navigate(()=>page.goto(url));}
+async function closeBrowser(){const current=context;if(!current)return;try{if(contentReads)await contentReads.close(()=>current.close());else await current.close();}finally{context=null;}}
+async function open(visitor = '/') { await navigate(base + '/composer?native=1&visitor=' + encodeURIComponent(visitor)); await ready(); }
 async function browse() {
     const button = page.getByRole('button', { name: 'Select components', exact: true });
     if (await button.count())
@@ -88,7 +94,7 @@ async function selectConsultation() {
     record('qualified-selection', { target, level: await selected.getAttribute('aria-level'), label: await selected.getAttribute('aria-label') });
     return target;
 }
-async function contentEntry() { await page.goto(base + '/content?provider=content-filesystem&model=course&entry=consultation'); await page.getByLabel('価格（表示）').waitFor({ timeout: 120000 }); }
+async function contentEntry() { await navigate(base + '/content?provider=content-filesystem&model=course&entry=consultation'); await page.getByLabel('価格（表示）').waitFor({ timeout: 120000 }); }
 async function saveField(label, value) {
     const field = courseFields[label]; assert(field, 'Unapproved full-scenario Content field');
     const control = page.getByLabel(label);
@@ -536,7 +542,7 @@ try {
         else {
             await observedMove('up', true);
             record('committed-response-withheld', { operation: journal.forward.request.input.operationId });
-            await context.close(); context = null; await launch(); await open('/lessons/');
+            await closeBrowser(); await launch(); await open('/lessons/');
             const recover = page.getByRole('button', { name: /Recover pending save.*previous session/ });
             await recover.waitFor({ timeout: 30000 }); await shot('fresh-browser-pending');
             await observedMove('up', false, true);
@@ -550,8 +556,7 @@ try {
     if (mode === 'negative') {
         const names = ['shared-field-shadow', 'invalid-local-slot', 'forged-owner', 'shared-reorder', 'child-without-placement', 'forged-slot', 'forged-placement'];
         for (const name of names) {
-            await context.close();
-            context = null;
+            await closeBrowser();
             await launch();
             await open('/lessons/');
             const section = await selectConsultation();
@@ -605,10 +610,10 @@ try {
     }
     if (mode.startsWith('assistant:')) {
       const [, caseId, phase] = mode.split(':');
-      await runAssistantPhase({ phase, caseId, page, open, getPreview: () => preview, frame, record, shot,
+      await runAssistantPhase({ phase, caseId, page, open, navigate, getPreview: () => preview, frame, record, shot,
         journalPath: join(artifacts, `assistant-${caseId}.json`),
         before: JSON.parse(await readFile(join(artifacts, 'before.json'), 'utf8')),
-        restart: async () => { await context.close(); await launch(); return page; } });
+        restart: async () => { await closeBrowser(); await launch(); return page; } });
     }
     for (const observation of recoveryObservations) await observation.drain();
     record('PASS', mode);
@@ -624,8 +629,8 @@ catch (error) {
     process.exitCode = 1;
 }
 finally {
-    await context?.close().catch(error => { cleanupError = error.message; });
-    while(contentPreviewPending.size)await Promise.allSettled([...contentPreviewPending]);try{contentReads.finish();}catch(error){contentPreviewFailure??=error;}if(contentPreviewFailure){cleanupError=contentPreviewFailure.message;process.exitCode=1;record('FAIL',contentPreviewFailure.stack);}
+    await closeBrowser().catch(error => { cleanupError = error.message; contentPreviewFailure??=error; });
+    while(contentPreviewPending.size)await Promise.allSettled([...contentPreviewPending]);try{contentReads?.check();}catch(error){contentPreviewFailure??=error;}if(contentPreviewFailure){cleanupError=contentPreviewFailure.message;process.exitCode=1;record('FAIL',contentPreviewFailure.stack);}
     for (const observation of recoveryObservations) {
         try { await observation.drain(); } catch (error) { cleanupError = error.message; process.exitCode = 1; record('FAIL', error.stack); }
     }

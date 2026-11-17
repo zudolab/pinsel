@@ -495,3 +495,22 @@ The [canonical-read-only Assistant recipe](composer-assistant-readonly-acceptanc
 provides repository-relative Inspector/Assistant checks and exact existing-run event
 recovery. It preserves full capture equality and explicitly allows derived JSX repair
 as a normal read effect. It supplements the mutation/Undo matrix; it does not replace it.
+
+### Saved Content reads at browser boundaries
+
+The full/negative/recovery/fake-Assistant harness observes the two finite saved
+Content preview operations from the original `request` event, before a response
+exists. Navigation and profile close join those admitted requests through response
+completion, body validation and any exact installed-client busy retry. The bound
+is the existing 180-second native-read budget; timeout, transport failure, wrong
+owner/renderer, forbidden response, or unresolved retry remains a failure. The
+harness never retries a read, flushes drafts, or dispatches an extra mutation.
+
+These mutating scenarios retain the nullable revision validation mode: an explicit
+`stale-plan` refusal without a result may settle a background saved-state read,
+while successful documents bind their requested revision and pack/renderer. This
+is not the fixed-revision read-only geometry proof. Cleanup still closes its owned
+browser after a failed drain and reports the failure; it cannot turn cancellation
+into success. Controlled response loss continues to target only its separately
+journaled write, not a saved Content read. Pure lifecycle coverage is
+`node --test tests/native-authoring/content-preview-drain.test.mjs`.
