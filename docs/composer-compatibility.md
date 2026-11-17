@@ -22,7 +22,7 @@ These passes do not close the remaining T6/T7 scenarios or imply actual-data cut
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | At b434/5fe: full human PASS969s, seven semantic refusals PASS256s, controlled outer interruption/recovery PASS270s, complete Assistant seven-case PASS3455s |
-| Independent operator progress | Header label forward/restart/inverse/restart complete; Knowledge saved-reference recovery PASS110s, inverse in progress; Results phases 00–09 accepted (10/45), FAQ configuration only |
+| Independent operator progress | Header label forward/restart/inverse/restart complete; Knowledge saved-reference recovery PASS110s and two-stage inverse PASS299s; Results phases 00–09 accepted (10/45), FAQ configuration only |
 | Static pilot | Phase09 publication committed and reconciled, original preview attempt FAIL; separate read-only preview recovery pending, no publication replay |
 | Latest checked CI | Pinsel `b8b9af7d14bc4f2aa41f2cbf8c7ba87a3107ea5d` [CI44086510566 PASS](https://github.com/zudolab/pinsel/actions/runs/44086510566); Composer `4e9c642` CI44050158945 PASS (26 jobs). Neither proves newer heads passed |
 | Separate holds | Remaining T6/T7 acceptance/current-head checks/review/merges, owner-data cutover and new authenticated-provider acceptance; deployment remains disabled |
@@ -73,7 +73,12 @@ separate `knowledge-recovery-b8b9af7/recovery-proof.json` is an actual
 exact online-exam Note heading and 14-route / 143-asset build all succeed without
 replaying the save. Full capture stays
 `88860bcc15a36223f355ace89ca9f3522b92e7d6bdac6b9aab0cbebd9afa66c4`.
-The new two-stage inverse is in progress, not passed at this checkpoint.
+The separate `knowledge-inverse-b8b9af7/proof.json` now records an actual
+`PUBLIC_CAPTURE_VERIFIED` PASS299s, restoring the qualified reference from
+`online-exam` to `exam-schedule`. Its embedded read-only restart and exact
+14-route / 143-asset build passed; all five full post-write captures equal
+`65e99639902bf5f34299fc1f4a545a6ef60e094d126581c5d3e6a0d769a4d500`.
+The original forward FAIL remains distinct from the recovery and inverse passes.
 
 Results `results-family/00-0014ca2` through `09` retain ten accepted phase proofs;
 phase09 local pair publication preserves the baseline and advances the capture to
