@@ -1,37 +1,14 @@
 import assert from 'node:assert/strict';
 import { expect } from '@playwright/test';
-import { assertNewRecord, refKey } from './routes-proof.mjs';
+import { refKey } from './routes-proof.mjs';
+import { observeContentCreation } from './creation-observer.mjs';
 
 /** persist must durably write the journal; the create request waits for it. */
 export async function createContentEntry(page, { base, before, modelId, persist }) {
   await page.goto(`${base}/content?provider=content-filesystem&model=${encodeURIComponent(modelId)}`);
-  let resolveRequest;
-  const pending = new Promise(resolve => { resolveRequest = resolve; });
-  let intercepted = false;
-  const handler = async route => {
-    const request = route.request();
-    if (intercepted || request.headers()['x-zudo-composer-operation'] !== 'put-entry') return route.continue();
-    intercepted = true;
-    try {
-      const input = request.postDataJSON();
-      const ref = assertNewRecord(before, modelId, input.record);
-      await persist({ phase: 'create-request', ref, input });
-      const response = await route.fetch({ timeout: 180000 });
-      const body = await response.json();
-      await persist({ phase: 'create-response', ref, status: response.status(), body });
-      await route.fulfill({ response });
-      resolveRequest({ ref, status: response.status(), body });
-    } catch (error) { await route.abort().catch(() => {}); resolveRequest({ error }); }
-  };
-  await page.route('**/__zudo_composer_content_provider', handler);
-  let timer;
-  try {
-    await page.getByRole('button', { name: 'New Entry', exact: true }).click();
-    const result = await Promise.race([pending, new Promise((_, reject) => { timer = setTimeout(() => reject(new Error('Creation outcome uncertain; inspect journal before retrying')), 180000); })]);
-    if (result.error) throw result.error;
-    assert(result.status === 200 && result.body.ok, JSON.stringify(result));
-    return result.ref;
-  } finally { clearTimeout(timer); await page.unroute('**/__zudo_composer_content_provider', handler); }
+  return observeContentCreation(page, { before, modelId, persist,
+    action: () => page.getByRole('button', { name: 'New Entry', exact: true }).click(),
+  });
 }
 
 export async function fillContentFields(page, fields) {
