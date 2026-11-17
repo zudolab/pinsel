@@ -116,7 +116,8 @@ export async function runAssistantPhase({ phase, caseId, page, open, getPreview,
   journal = JSON.parse(await readFile(journalPath, 'utf8'));
   if (phase === 'intervene' || phase === 'human-inverse') {
     await page.goto(new URL('/content?provider=content-filesystem&model=course&entry=consultation', page.url()).href);
-    const field = page.getByLabel('価格（表示）', { exact: true });
+    const field = page.getByRole('textbox', { name: /^価格（表示）\s*\*?$/ });
+    await expect(field).toHaveCount(1, { timeout: 120000 });
     await field.waitFor({ timeout: 120000 });
     const current = await field.inputValue();
     const changed = `${journal.marker} human intervening`;
