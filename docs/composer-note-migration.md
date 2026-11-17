@@ -1,7 +1,7 @@
 # Native Note routes and explicit page ownership
 
 The native pack0.4.0/native-v3 contract adds dynamic Note detail routes. It retains
-all old Content fields, IDs, lifecycle, metadata and independent Knowledge-card
+all old Content fields, IDs, lifecycle and independent Knowledge-card
 excerpts. Existing internal Note Compositions and Mappings remain recovery material;
 only Sitemap routes identify user-facing pages. `buildPinselSite` remains the
 historical seed-structure builder used by the immutable migration gates. Explicit
@@ -45,8 +45,10 @@ waive these checks. All new node/record IDs are checked for collisions.
 The candidate adds two Compositions, two Mappings and five attachments, changes the
 Knowledge link binding and replaces five fixed Sitemap detail children with one
 entry-field child. The exact JSON-pointer changes are recorded in
-`.native-note-routes-evidence.json`. Actual imported Content is compared to source;
-only the initializer's positive entry-generation reset to1 is allowed and recorded.
+`.native-note-routes-evidence.json`, including the three exact recognized legacy
+model-description replacements described in the [native guidance contract](composer-adoption.md#native-model-guidance-description-metadata-only). Custom descriptions stay unchanged.
+Actual imported Content is compared to this reviewed candidate; only the
+initializer's positive entry-generation reset to1 is additionally allowed and recorded.
 `.native-note-routes-snapshot.json` is the coherent reviewed build input.
 
 After reviewing successful evidence, explicitly select the new known-data stage:
@@ -85,8 +87,9 @@ remains authoritative. Single-slot validation rejects extra label children.
 The original scalar-label Toc contract remains unchanged for historical content.
 
 Model descriptions mentioning five Notes, three Courses or eighteen FAQs describe
-the seed baseline, not a native collection limit. This migration deliberately does
-not rewrite those model metadata records. New published Notes expand the route set;
+the seed baseline, not a native collection limit. The native guidance projection
+updates only the recognized Course, navigation and page-copy descriptions; all
+other model descriptions remain unchanged. New published Notes expand the route set;
 new published Courses appear on Home and Contact by their collection queries.
 Lessons membership stays explicitly pinned. A Note slug rename changes its route;
 there is no automatic redirect promise. Existing URLs must be reviewed and preserved

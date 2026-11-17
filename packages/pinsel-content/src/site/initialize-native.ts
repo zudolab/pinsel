@@ -4,6 +4,7 @@ import { fileURLToPath } from "node:url";
 import { createFilesystemAssetStore, initializeAuthoringWorkspace } from "zudo-composer/authoring";
 import { loadHostContext } from "zudo-composer/vite";
 import { readContentEntries } from "./entries";
+import { projectNativeModelGuidance } from "./native-model-guidance";
 import { normalizeNoteRoutes } from "./migrate-note-routes";
 import { buildPinselSite } from "./structure";
 import { prepareNativePublic } from "./prepare-native-public";
@@ -15,7 +16,7 @@ const { composerConfig, pack } = await loadHostContext({ workspaceRoot });
 const publicRoot = dirname(composerConfig.paths.publicAssets);
 const evidencePath = fileURLToPath(new URL("../../.native-import-evidence.json", import.meta.url));
 await withAbsentNativeDestinations([composerConfig.paths.data, publicRoot, evidencePath], async () => {
-  const project = normalizeNoteRoutes(buildPinselSite(await readContentEntries(), pack).project);
+  const project = projectNativeModelGuidance(normalizeNoteRoutes(buildPinselSite(await readContentEntries(), pack).project));
   console.log(`Staging ${project.providers.compositions.flatMap(provider => provider.records).length} compositions and ${project.providers.content.flatMap(provider => provider.entries).length} Content records; legacy D1 is untouched.`);
   await prepareNativePublic(publicRoot);
   const ready = await initializeAuthoringWorkspace({ composerConfig, pack, project, workspaceId: "pinsel" });

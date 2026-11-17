@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { canonicalStringifyJson, type AuthoringWorkspaceSnapshot } from "zudo-composer/authoring";
 import type { JsonValue } from "@zudo-composer/component-contract";
 import type { SiteProject } from "zudo-composer/site-project";
+import { projectNativeModelGuidance } from "./native-model-guidance";
 
 const hash = (value: unknown) => createHash("sha256").update(canonicalStringifyJson(value as JsonValue)).digest("hex");
 const SLUGS = ["exam-schedule", "free-tuition", "german-language", "online-exam", "what-is-mappe"];
@@ -96,7 +97,7 @@ export function normalizeNoteRoutes(input: SiteProject): SiteProject {
 export function migrateNoteRoutes(snapshot: AuthoringWorkspaceSnapshot, expectedDigest: string) {
   const { digest, ...body } = snapshot;
   if (!/^[a-f0-9]{64}$/.test(expectedDigest) || digest !== expectedDigest || hash(body) !== digest || snapshot.schemaVersion !== 1 || snapshot.workspaceId !== "pinsel" || snapshot.project.id !== "pinsel" || snapshot.project.componentPack.packId !== "pinsel" || snapshot.renderer.id !== "pinsel-zfb" || snapshot.project.componentPack.packVersion !== "0.3.0" || snapshot.renderer.version !== "native-v2") throw new Error("Unsupported or changed Note migration source");
-  const project = normalizeNoteRoutes(snapshot.project);
+  const project = projectNativeModelGuidance(normalizeNoteRoutes(snapshot.project));
   return { project, evidence: { sourceDigest: digest, sourceTokens: snapshot.tokens, projectDigest: hash(project), contentDigest: hash(project.providers.content), originalRecordsRetained: true, changes: projectChanges(snapshot.project, project) } };
 }
 

@@ -218,3 +218,30 @@ using captured public asset/CSS/script bytes. Existing output is refused rather 
 overwritten. Reopen the server and confirm saved edits remain unchanged by capture
 and build. These commands are a recipe, not a recorded end-to-end pass; use the ledger
 for actual installed-acceptance results.
+
+## Native model guidance (description metadata only)
+
+Fresh explicit `authoring:init` imports and the staged `authoring:migrate-notes`
+output project the three recognized legacy descriptions for `nav-link`, `page-copy`
+and `course` into native guidance. The projection matches the exact old text and
+qualified `content-filesystem` model identity; custom descriptions are preserved.
+It changes no fields, IDs, permissions, values, timestamps, Assets or historical
+Hosted definitions/fixtures. Header membership/order is owned by Composition and
+Mapping; Footer order uses Content `order`. Descriptions grant no new capability.
+The Note migration evidence includes the exact description differences and hashes;
+post-import Content verification compares against that reviewed candidate.
+
+Existing native stages are **not updated on startup**. Do not reinitialize them or
+edit private storage paths to update descriptions. An existing-stage change needs
+a separately reviewed per-model save in the supported Model Editor, or the public
+Content provider protocol (`read-all`, `get-model`, `transact`) with
+`expectedMutationToken` and one `put-model` operation. Capture the whole workspace
+before and after, preserve the complete model before-image, match its exact legacy
+description and qualified identity, and change only `document.description` (plus
+the normal save timestamp). Refuse stale tokens or custom text; preserve all other
+model fields and all entries. Record the request before dispatch and reconcile a
+lost response through public readback rather than blindly replaying a write.
+Verify the expected Content token change, unchanged entry values/generations,
+other domains and Assets, and the displayed guidance after reload/restart. Any
+inverse requires the exact saved after-image and current token. This implementation
+alone is not evidence that an existing stage or owner database was updated.

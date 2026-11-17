@@ -71,7 +71,9 @@ await initializeAuthoringWorkspace({ ...target, project: candidate.project, work
 await createFilesystemAssetStore({ assetsStoreRoot: target.composerConfig.paths.assets });
 const captureOptions = { ...target, packIdentity, renderer, publicFiles: await nativePublicFiles(workspaceRoot, publicRoot) };
 const migrated = await captureAuthoringWorkspace(captureOptions);
-const importedContent = verifyImportedCourseContent(source.project, migrated.project);
+// Candidate evidence includes the exact native-only description projection;
+// import may additionally reset entry generations, but no other Content bytes.
+const importedContent = verifyImportedCourseContent(candidate.project, migrated.project);
 const compiled = await compileAuthoringWorkspaceSnapshot({ snapshot: migrated, pack: target.pack, packIdentity, renderer });
 const sourceStillCurrent = await checkNativeMigrationSource(original, source);
 const hashesBefore = new Map(source.publicFiles.map(file => [file.fileName, file.checksum]));
