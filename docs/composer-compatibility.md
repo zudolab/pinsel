@@ -14,7 +14,7 @@ Historical entries below retain their original outcomes. Latest complete Assista
 | Identity or gate | Current recorded value |
 | --- | --- |
 | Pinsel complete Assistant tested source | `f07e05b8f9e22379cb321bf80a11d47b26800e24` |
-| Current candidate package / attestation | `d5ac410b3c9e4b1781289ae47cc48be47efaa099` / `bc61dc483df4b342120ffd579b66d4aacd79e503` |
+| Current candidate package / attestation | `5fe6d8d92f5013943053491794c0502b83228d53` / `4e9c642050bed7f2597245ae4ad4ab3f278c3de5` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | Complete seven-case Assistant PASS at bc20; human provenance/refusal and canonical migration PASS at4f; remaining scenarios tracked below |
@@ -1229,3 +1229,37 @@ portability assertions passed. This test-only change leaves shipped bytes intact
 Current candidate CI and installed extra-record/title-recovery scenarios are pending.
 The title edit itself is already saved; its previous reload verification timed out
 on background catalog reads. It will be read back, never replayed.
+
+## Mapping summary follow-up — 2026-11-17
+
+The first #988 package removed startup busy refusals in C3, which created and
+saved six fields on one extra draft. That run remains FAIL482s: unrelated Mapping
+summary reads exceeded the existing180s idle bound before restart inspection.
+The original draft and all seven verified commits remain retained at snapshot
+`4172d62fa492c53d33844d9052c626559957f54ba5309bcf785cf686570e784e`.
+No delete or absence phase is claimed. Separately, saved-title restart recovery
+passed70s at446153e/d5ac with fullc383 capture equality.
+
+Package `5fe6d8d92f5013943053491794c0502b83228d53` (attestation
+`4e9c642050bed7f2597245ae4ad4ab3f278c3de5`) batches summary Mapping snapshots
+and memoizes qualified Content-model reads within each evaluation. It preserves
+native recency/ID order, configured provider order, fallback behavior and diagnostic
+semantics. Content entry scans and editor APIs are unchanged. Independent49 tests,
+app types and lint pass; integrated49 tests passed3.68s. Public/CMS/types checks
+passed99s with no generated changes. Shipped778-file payload:
+`5f433a53a0ffb17cf036f6ea7627bb05a61f9d39c59fa0684990692bf9ba0089`; only
+summary source and structural documentation differ fromd5ac.
+
+All four Pinsel pins use this package. Install11.9s, frozen install, dedupe and
+no-deployment checks pass. Main capture is
+`44d5894dd38207fdeb1ad76d6461f18e4207d418a37eb9bdc295d513db630d5e`; only
+snapshot/pack/renderer digests changed from1099aaa3. Compiler and every other
+captured field remain exact. The previous446153e/bc61 candidate CI passed in both
+repositories; new-head gates and new-package installed acceptance remain pending.
+
+The separate frozen6522 policy lane has now recovered both durable Apply and Undo
+receipts after its original response-observation failures. Exact four-revision
+history, restored human body and full unchanged readback capture are proven. Those
+original attempts remain FAIL/lost-response; the recovered chain is distinct.
+Restoration of the original seed body, corrected-draft publication and build checks
+continue. No authenticated inference or owner-data cutover is claimed.
