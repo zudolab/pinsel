@@ -200,6 +200,25 @@ pack/renderer identities, and validate an explicit bridge when supplied. Every
 input is hashed and frozen for the child; original failure/recovery statuses remain
 in the output. An incomplete sequence or caller-invented resource ID refuses.
 
+The phase08 Content recovery format additionally requires an explicit
+`recoveryFreezeManifests` map in this retained manifest, keyed by the absolute
+recovered proof path and pointing to its independently reviewed freeze manifest:
+
+```json
+{"recoveryFreezeManifests":{"/absolute/recovery08/recovered-phase-proof.json":"/absolute/reviewed-preparation/freeze.json"}}
+```
+
+Merge that field into the complete manifest above. The adapter verifies its bytes
+against both the recovered proof and execution manifest hash, every frozen input,
+the hash-bound browser bundle, original five acknowledged commits, original full
+captures and failed journal, and unchanged installed source/package identities.
+It requires the exact paired public Content `get-entry` response and all four UI
+fields in actual recovery artifacts. The original failed phase remains failed.
+Missing artifacts, caller-invented resource IDs, or a success status alone refuse.
+Synthetic test fixtures validate this format; they do not constitute a completed
+installed recovery. Actual recovery and the full retained runner remain separate
+runtime acceptance requirements.
+
 With stopped writers and a clean committed frozen-install checkout, run inside the
 shared guard/reaper:
 
