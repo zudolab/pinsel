@@ -76,6 +76,102 @@ to the site's explicitly authored navigation; edit the supported navigation reco
 when inclusion is intended. Check canonical/title/description, nested owner-qualified
 selection, a local semantic edit/save/reload, and a new exact static capture/build.
 
+## Portable static-page sequence (source tooling; runtime NOT_RUN)
+
+`tests/native-authoring/static/` implements the explicit static scenario above.
+It uses the installed public Composer compiler and the actual Pinsel component pack;
+no sibling source, private-store reads, initialization or owner drafts are inputs.
+Use Node24/pnpm11.5.2, a clean committed frozen-install checkout and an explicit
+existing disposable stage. Stop other writers and serialize runtime/build commands
+through the environment's shared heavy guard and child-reaper.
+
+First establish a local baseline with the [first-baseline recipe](composer-family-acceptance.md#fresh-stage-first-local-baseline-prerequisite),
+then its standalone **active-identity** read-only restart. Keep its successful
+`proof.json` and exact after capture. The initial static phase must begin at that
+accepted capture; later phases use the exact immediately preceding proof. A fresh
+stage, a guessed active identity or a generic screenshot does not meet this gate.
+
+Write a config with a unique lowercase marker and the actual accepted active proof:
+
+```json
+{"marker":"static-acceptance-unique","activeProofPath":"/absolute/active-readback/proof.json"}
+```
+
+Create a JSON array of successful static `proof.json` paths, initially `[]`. The
+preparer selects the next phase, derives qualified owners from the public capture
+and prior proofs, and writes an exclusive intent:
+
+```sh
+corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json \
+  tests/native-authoring/static/prepare.mjs \
+  /absolute/config.json /absolute/accepted-capture.json \
+  /absolute/proof-paths.json /absolute/new-intent.json
+```
+
+Review that intent, then run inside the shared guard/reaper:
+
+```sh
+corepack pnpm exec node tests/native-authoring/static/run-phase.mjs \
+  --composer FULL_IMMUTABLE_COMPOSER_SHA --stage EXISTING_STAGE --port 4194 \
+  --intent /absolute/new-intent.json --artifacts /absolute/new-attempt
+```
+
+All flags are required. Artifacts must be outside the checkout and absent. Runtime
+checks installed roots/lock, complete tracked source hashes, a new exact public
+capture and frozen input hashes. The child consumes a parent-captured hash-checked
+bundle rather than rereading a mutable intent. Original browser requests and exact
+responses are durably journaled. Same-document navigation cannot satisfy the full
+record readback after reload. Unknown operations or uncertain responses hold the
+attempt; no automatic replay or inverse follows.
+
+| Phase | Operation |
+| --- | --- |
+| 1–3 | Create independent Composition; insert semantic Section root; edit its title |
+| 4–7 | Create child Sitemap page; set title; set slug; assign exact Composition |
+| 8–9 | Create draft page-copy metadata; review and activate only that metadata |
+| 10–12 | Add explicit Sitemap navigation item; set label; target stable new page |
+| 13–15 | Reparent under About; update only metadata route; review and activate metadata |
+
+Each successful phase writes `STATIC_PHASE_CAPTURE_VERIFIED` only after server
+shutdown, complete public capture and exact allowed-domain delta. Append that
+`proof.json` to the ordered array, use its `afterCapture`, and prepare the next phase.
+The second publication derives its expected active identity from phase9's accepted
+release receipt; live catalog/get must agree. Existing content and unrelated drafts
+remain preserved. Sitemap navigation is distinct from Pinsel Header Content.
+
+After the complete sequence, build its final accepted capture using Pinsel's
+production renderer, then capture again into a new file. The latter must remain
+byte-for-byte equal as a parsed snapshot. Do not rebuild an already-existing digest
+output; retain its evidence and inspect it instead.
+
+```sh
+PINSEL_AUTHORING_STAGE=EXISTING_STAGE corepack pnpm --filter @pinsel/content authoring:build -- /absolute/final-after.json
+PINSEL_AUTHORING_STAGE=EXISTING_STAGE corepack pnpm --filter @pinsel/content authoring:capture -- /absolute/fresh-after-build.json
+corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json \
+  tests/native-authoring/static/verify-static.mjs FULL_IMMUTABLE_COMPOSER_SHA \
+  /absolute/all-15-proof-paths.json /absolute/fresh-after-build.json /absolute/new-static-route-proof.json
+```
+
+The verifier checks all15 ordered accepted phase artifacts, full capture deltas,
+frozen input/event hashes, actual qualified page/Composition/metadata identities,
+public compiled route, exact build-evidence identity, every captured public asset,
+and production HTML title/Section heading. It produces the `staticRouteProof` used
+by [Header href acceptance](native-header-acceptance.md). That proof does not claim
+Header inclusion, a new browser restart, or production deployment. Retain authored
+records and release history; deletion/recovery requires its own explicit reviewed
+operation. Failed external pilot artifacts remain separate and must not be renamed
+as successful portable phases.
+
+Pure checks, without a server or native writes:
+
+```sh
+corepack pnpm exec vitest run --config tests/native-authoring/static/vitest.config.ts
+```
+
+The reduced `fixture.json` has an invalid capture digest and no usable Assets; it
+is test data, never an import or build input. Source tests are not installed runtime
+acceptance. Use the compatibility ledger for exact tested revision and result.
+
 ## Results, FAQ, and singleton-shaped records
 
 A new Results year or FAQ group does not imply a new placement. Inspect the actual

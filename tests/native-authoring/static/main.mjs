@@ -1,0 +1,23 @@
+import {readFrozenBundle,assertInputsUnchanged} from '../families/frozen-inputs.mjs';
+import {repoRoot} from '../families/config.mjs';
+import {releaseProof} from './release-proof.mjs';
+import assert from'node:assert/strict';import{readFile,writeFile,open,mkdir}from'node:fs/promises';import{join}from'node:path';import{createRequire}from'node:module';import{staticUi}from'./browser-driver.mjs';import{staticCopyUi}from'./copy-driver.mjs';import{publishReviewed}from'../families/publication-ui.mjs';import{metadataRouteUi}from'./metadata-route-ui.mjs';
+const[bundlePath,bundleHash,artifacts,base]=process.argv.slice(2);const bundle=await readFrozenBundle(bundlePath,bundleHash);await assertInputsUnchanged(bundle.hashes);const {intent,snapshot}=bundle;assert.equal(snapshot.digest,intent.captureDigest);
+const events=await open(join(artifacts,'events.ndjson'),'wx');let queue=Promise.resolve();const persist=e=>{queue=queue.then(async()=>{await events.writeFile(JSON.stringify({time:new Date().toISOString(),...e})+'\n');await events.sync();});return queue;};
+await persist({phase:'begin',intent});const{chromium,expect}=createRequire(join(repoRoot,'package.json'))('@playwright/test');await mkdir(join(artifacts,'browser'));const context=await chromium.launchPersistentContext(join(artifacts,'browser','profile'),{headless:true,executablePath:process.env.NATIVE_ACCEPTANCE_CHROMIUM||chromium.executablePath(),viewport:{width:1600,height:1050}});
+let closeContext=ctx=>ctx.close();
+const observedPage=context.pages()[0];observedPage.on('requestfailed',request=>{if(new URL(request.url()).pathname.startsWith('/__zudo'))void persist({phase:'browser-requestfailed',url:request.url(),failure:request.failure()}).catch(()=>{});});observedPage.on('framenavigated',frame=>{if(frame===observedPage.mainFrame())void persist({phase:'browser-mainframe-navigated',url:frame.url()}).catch(()=>{});});
+try{let result;
+ if(intent.kind==='copy-route'){result=await metadataRouteUi(context.pages()[0],{base,snapshot,intent,persist,expect,setClose:close=>{closeContext=close;}});}
+ else if(intent.kind==='copy-publish'){
+  const refs=[intent.resources.copy];const excluded=snapshot.project.providers.content.flatMap(p=>p.entries.filter(e=>e.lifecycle==='draft'&&!refs.some(r=>r.providerId===p.id&&r.modelId===e.modelId&&r.recordId===e.id)).map(e=>({providerId:p.id,modelId:e.modelId,recordId:e.id})));
+  const release=await publishReviewed(context.pages()[0],{base,snapshot,refs,excluded,expectedActive:intent.expectedActive,persist,expect,proofFactory:releaseProof,setClose:close=>{closeContext=close;}});
+  const page=context.pages()[0];await page.goto(`${base}/composer?native=1&visitor=${encodeURIComponent(intent.route)}`);await page.getByText('Saved snapshot rendered',{exact:true}).waitFor({timeout:180000});const frame=page.frameLocator('iframe[title="Host rendered page"]');await expect(frame.locator('title')).toHaveText(intent.title);await expect(frame.locator('meta[name="robots"]')).toHaveAttribute('content',/noindex/);if(intent.resources.sectionTitle)await expect(frame.locator('h2')).toHaveText(intent.resources.sectionTitle);await page.screenshot({path:join(artifacts,'native-static-page.png'),fullPage:true});result={domain:'publication',refs,release};
+ }else result=await(intent.kind==='copy-create'?staticCopyUi:staticUi)(context.pages()[0],{base,snapshot,intent,persist,expect,setClose:close=>{closeContext=close;}});const resources=structuredClone(intent.resources);
+ if(intent.kind==='copy-create')resources.copy=result.ref;
+ if(intent.kind==='composition-create')resources.composition=result.ref;
+ if(intent.kind==='page-create'){const before=snapshot.project.providers.sitemaps.find(p=>p.id===intent.owner.providerId).records.find(r=>r.id===intent.owner.recordId);const ids=new Set();const walk=nodes=>nodes.forEach(n=>{ids.add(n.id);walk(n.children)});walk(before.document.root);const found=[];const next=nodes=>nodes.forEach(n=>{if(!ids.has(n.id))found.push(n.id);next(n.children)});next(result.record.document.root);assert.equal(found.length,1);resources.pageId=found[0];}
+ if(intent.kind==='reparent')resources.parentId=intent.toParentId;
+ if(intent.kind==='navigation-add')resources.navigationId=result.record.document.navigation.primary.at(-1).id;
+ await persist({phase:'ui-complete-offline-audit-required',result,resources});await writeFile(join(artifacts,'ui-result.json'),JSON.stringify({result,resources},null,2),{flag:'wx'});
+}catch(error){await context.pages()[0]?.screenshot({path:join(artifacts,'failure.png'),fullPage:true,timeout:5000}).catch(()=>{});await persist({phase:'held',error:error.message});throw error;}finally{try{await closeContext(context);}finally{try{await queue;}finally{await events.close();}}}
