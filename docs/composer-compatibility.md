@@ -1055,3 +1055,15 @@ scenarios remain NOT_RUN. Separately, ordinary new Sitemap child creation expose
 normal restart reject a saved unassigned page. The acknowledged child and failed
 proofs are preserved; no blind replay/inverse or next write was performed. That
 scenario remains held for a narrow generic capture fix and installed recovery.
+
+## 6522 negative authoring acceptance
+
+The committed negative runner at Pinsel `e63fd237d6026eeb319702dc65aba4b2e48da389`
+and Composer `6522f2c78fd59744b56d1717bb93f68d2bddc255` passed all seven cases in
+296 seconds. Every case observed its intended semantic refusal, not merely a
+busy response. Full public captures before/after are exactly
+`4dc6fe0bc4f1bf12f2e56ddd8a02793006609b451aabd11d21eaa2f71cba6215`.
+The receipt-inclusive audit compared 816 store files and found no changes.
+Evidence is retained in `t7-6522-negative-1`, including original responses,
+`no-write-file-audit`, restoration proof and result. Port 4197 was closed and the
+lease absent at the completed boundary. Recovery remains a separate pending run.
