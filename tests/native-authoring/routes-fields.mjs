@@ -7,7 +7,7 @@ export function contentFieldPlan(model, values) {
     const matches = model.fields.filter(field => field.label === label);
     assert.equal(matches.length, 1, `Ambiguous or missing field: ${label}`);
     const field = matches[0];
-    assert(['text', 'long-text', 'slug', 'markdown', 'number', 'boolean'].includes(field.kind), `Unsupported field kind: ${field.kind}`);
+    assert(['text', 'long-text', 'slug', 'url', 'markdown', 'number', 'boolean'].includes(field.kind), `Unsupported field kind: ${field.kind}`);
     assert.equal(typeof value, field.kind === 'number' ? 'number' : field.kind === 'boolean' ? 'boolean' : 'string');
     return { field, value, ...(field.kind === 'markdown'
       ? { name: new RegExp('^' + RegExp.escape(label) + ' *[*]?$') }

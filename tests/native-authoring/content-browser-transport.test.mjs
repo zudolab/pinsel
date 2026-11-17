@@ -35,7 +35,7 @@ test('original browser transport preserves security metadata without fabricating
     assert.equal((await request('get-model')).status, 200); const readResult = await observed; if (readResult.error) throw readResult.error;
     assert.equal(readResult.status, 200); assert.deepEqual(supplemental, { mutationToken: 0 }); assert.equal(reads, 2); await page.unroute(pattern);
     const events = [];
-    const ref = await observeContentCreation(page, { before: { project: { providers: { content: [{ id: 'content-filesystem', entries: [] }] } } }, modelId: 'note', persist: async event => { events.push(event); },
+    const ref = await observeContentCreation(page, { before: { workspaceId: 'fixture', project: { providers: { content: [{ id: 'content-filesystem', entries: [] }] } } }, modelId: 'note', persist: async event => { events.push(event); },
       action: () => request('put-entry', JSON.stringify({ record: { id: 'fixture', modelId: 'note', lifecycle: 'draft' } })), dispatchTimeoutMs: 2000, requestTimeoutMs: 2000 });
     assert.equal(ref.recordId, 'fixture'); assert.equal(writes, 1); assert.equal(events.at(-1).phase, 'create-response'); assert.equal(events.at(-1).body.ok, true);
   } finally { await browser.close(); await new Promise(resolve => server.close(resolve)); }

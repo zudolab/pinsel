@@ -117,3 +117,12 @@ test('unset true uses the normal switch; ambiguous or disabled unset No refuses'
   await assert.rejects(editContentBoolean(control, { count: async () => 1, isVisible: async () => true, isEnabled: async () => false }, false), /unavailable/);
   assert.deepEqual(actions, ['Space']);
 });
+
+test('URL fields retain exact captured IDs and strings, including site-relative routes', () => {
+  const model = { fields: [{ id: 'page-copy-route', label: 'URL', kind: 'url', required: true }] };
+  for (const value of ['/new-page/', 'https://example.test/path?x=1#section']) {
+    assert.deepEqual(contentFieldPlan(model, { URL: value }), [{ field: model.fields[0], value, id: 'content-entry-page-copy-route' }]);
+  }
+  assert.throws(() => contentFieldPlan(model, { URL: 12 }));
+  assert.throws(() => contentFieldPlan({ fields: [{ ...model.fields[0], kind: 'reference' }] }, { URL: '/new-page/' }));
+});

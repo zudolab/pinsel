@@ -4,13 +4,14 @@ import { assertNewRecord } from './routes-proof.mjs';
 const endpoint = '**/__zudo_composer_content_provider';
 /** Admit one actual UI create; retain a refusing interceptor on every uncertain outcome. */
 export async function observeContentCreation(page, { before, modelId, persist, action, dispatchTimeoutMs = 180000, requestTimeoutMs = 180000 }) {
+  assert(typeof before.workspaceId === 'string' && before.workspaceId.trim().length > 0, 'Creation requires the captured workspace identity');
   let admitted = false, stopped = false, unexpected = false, completed = false, timer, settle;
   const outcome = new Promise(resolve => { settle = resolve; });
   const active = new Set();
   const handle = async route => {
     const request = route.request(), operation = request.headers()['x-zudo-composer-operation'];
     if (contentReadOperations.has(operation)) { await route.continue(); return; }
-    if (stopped || admitted || operation !== 'put-entry') {
+    if (stopped || admitted || operation !== 'put-entry' || request.headers()['x-zudo-composer-workspace'] !== before.workspaceId) {
       unexpected = true;
       try { await persist({ phase: 'create-unexpected-write', operation, admitted, stopped }); }
       finally { await route.abort(); }

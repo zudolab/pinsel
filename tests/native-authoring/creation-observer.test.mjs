@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { observeContentCreation } from './creation-observer.mjs';
-const before = { project: { providers: { content: [{ id: 'content-filesystem', entries: [{ id: 'old', modelId: 'note', lifecycle: 'published' }] }] } } };
+const before = { workspaceId: 'fixture-workspace', project: { providers: { content: [{ id: 'content-filesystem', entries: [{ id: 'old', modelId: 'note', lifecycle: 'published' }] }] } } };
 const input = { record: { id: 'fresh', modelId: 'note', lifecycle: 'draft' } };
 const response = { status: () => 200, json: async () => ({ ok: true }) };
 function fixture() {
@@ -9,7 +9,7 @@ function fixture() {
   const page = { url: () => 'http://local/content', unroutes: 0, async route(_, callback) { handler = callback; }, async unroute() { this.unroutes++; handler = undefined; }, async send(operation = 'put-entry', options = {}) {
     const record = { fetched: 0, aborted: 0, continued: 0, fulfilled: 0 };
     let actualResponse;
-    const request = { headers: () => ({ 'x-zudo-composer-operation': operation, origin: 'http://local' }), method: () => 'POST', url: () => 'http://local/__zudo_composer_content_provider', postDataJSON: () => options.input ?? input,
+    const request = { headers: () => ({ 'x-zudo-composer-operation': operation, 'x-zudo-composer-workspace': Object.hasOwn(options, 'workspace') ? options.workspace : before.workspaceId, origin: 'http://local' }), method: () => 'POST', url: () => 'http://local/__zudo_composer_content_provider', postDataJSON: () => options.input ?? input,
       response: async () => actualResponse, redirectedFrom: () => null, redirectedTo: () => null };
     const route = { request: () => request,
       async abort() { record.aborted++; }, async continue() { record.continued++; if (operation !== 'put-entry') return; record.fetched++; const value = options.fetch ? await options.fetch() : response; actualResponse = { ...value, request: () => request, url: request.url, finished: async () => null }; } };
@@ -72,4 +72,19 @@ test('action rejection after admission waits for and preserves the actual outcom
   const f = fixture(); let sent;
   await assert.rejects(f.run(async () => { sent = await f.page.send('put-entry', { fetch: async () => { await new Promise(resolve => setTimeout(resolve, 25)); return response; } }); throw Error('click observation lost'); }), /click observation lost/);
   assert.equal(sent.record.fetched, 1); assert(f.events.some(e => e.phase === 'create-response')); assert.equal(f.page.unroutes, 0);
+});
+
+test('missing or foreign creation workspace refuses before dispatch and retains the guard', async () => {
+  for (const workspace of [undefined, '', 'foreign-workspace']) {
+    const f = fixture(); let sent;
+    await assert.rejects(f.run(async () => { sent = await f.page.send('put-entry', { workspace }); await sent.done; }), /Unexpected Content mutation/);
+    assert.equal(sent.record.continued, 0); assert.equal(sent.record.fetched, 0); assert.equal(sent.record.aborted, 1);
+    assert.equal(f.page.unroutes, 0); assert(!f.events.some(event => event.phase === 'create-request'));
+    const later = await f.page.send(); await later.done; assert.equal(later.record.continued, 0);
+  }
+});
+test('missing captured workspace refuses before installing routes or invoking creation', async () => {
+  let invoked = false;
+  await assert.rejects(observeContentCreation({}, { before: { project: before.project }, modelId: 'note', persist: async () => {}, action: async () => { invoked = true; } }), /captured workspace identity/);
+  assert.equal(invoked, false);
 });

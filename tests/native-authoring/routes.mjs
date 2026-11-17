@@ -66,6 +66,7 @@ export async function fillContentFields(page, fields, { model, settlement }) {
   for (const plan of plans) {
     await expect(fieldControl(page, plan)).toHaveCount(1, { timeout: 180000 });
     await expect(fieldControl(page, plan)).toBeVisible({ timeout: 180000 });
+    if (plan.field.kind === 'url') await expect(fieldControl(page, plan)).toHaveAttribute('type', 'url');
   }
   for (const plan of plans) {
     await settlement.beforeAdvance();
@@ -95,6 +96,7 @@ export async function verifyContentFields(page, fields, { model, settlement }) {
   for (const plan of contentFieldPlan(model, fields)) {
     const control = fieldControl(page, plan);
     await expect(control).toHaveCount(1, { timeout: 180000 });
+    if (plan.field.kind === 'url') await expect(control).toHaveAttribute('type', 'url');
     if (typeof plan.value === 'boolean') await expect(control).toBeChecked({ checked: plan.value });
     else if (plan.field.kind === 'markdown') {
       await expect.poll(async () => markdownLinesText(await control.locator('.cm-line').allTextContents()), { timeout: 180000 }).toBe(plan.value);
