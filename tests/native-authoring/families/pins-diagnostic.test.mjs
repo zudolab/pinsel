@@ -1,7 +1,7 @@
 import {test} from 'vitest';
 import assert from 'node:assert/strict';
 import {pinsDiagnosticSample,observePinsDiagnostic,validatePinsEvidence} from './pins-diagnostic.mjs';
-import {classifyRead} from './readonly-proof.mjs';
+import {classifyRead,requiresCapturedHostPreview} from './readonly-proof.mjs';
 const ref={providerId:'mapping-filesystem',recordId:'m'};
 const record={id:'m',document:{name:'Parent',mode:{kind:'collection'},contentModel:{providerId:'content-filesystem',recordId:'result-year'},composition:{providerId:'files',recordId:'c'}}};
 function fixture(){
@@ -28,3 +28,5 @@ test('original fail must be prewrite with full identical state',()=>{
  assert.throws(()=>validatePinsEvidence(intent,snapshot,{...evidence,after:{...snapshot,digest:'b'.repeat(64)}}));
 });
 test('canonical Mapping writes remain refused by original readonly transport',()=>{assert.throws(()=>classifyRead('/__zudo_composer_mapping_provider',{'x-zudo-composer-capability':'c','x-zudo-composer-workspace':'w','x-zudo-composer-operation':'put'},{},'w'),/mutation/);});
+
+test('control diagnostics exempt only the unrelated host-preview requirement',()=>{assert.equal(requiresCapturedHostPreview('mapping-pins-diagnostic'),false);for(const kind of ['family-render','header-restart','header-saved-href','knowledge-captured-reference'])assert.equal(requiresCapturedHostPreview(kind),true);});

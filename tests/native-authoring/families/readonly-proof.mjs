@@ -157,3 +157,8 @@ export function busyReadTracker(){
   assertSettled(){assert.equal(pending.size,0,'Retryable read never produced matching successful original response');},
  };
 }
+
+/** Diagnostics observe editor controls; they do not claim rendered host previews. */
+export function requiresCapturedHostPreview(kind){
+ return !['active-identity','mapping-binding-diagnostic','mapping-pins-diagnostic','mapping-saved-create','mapping-saved-binding'].includes(kind);
+}

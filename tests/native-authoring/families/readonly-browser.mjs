@@ -17,7 +17,7 @@ import {repoRoot} from './config.mjs';
 import {originalResponse} from './original-request.mjs';
 import {compositionDerivedReadGate} from './composition-output.mjs';
 import {releaseLifecycle} from './release-lifecycle.mjs';
-import {classifyRead,closingReadAction,busyReadTracker,assertReadScope,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from './readonly-proof.mjs';
+import {requiresCapturedHostPreview,classifyRead,closingReadAction,busyReadTracker,assertReadScope,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from './readonly-proof.mjs';
 import {verifySavedHeader,verifySavedKnowledge} from '../header/driver.mjs';
 import {verifyFamilyRendering} from './verify-render.mjs';
 const [bundlePath,bundleHash,artifacts,base] = process.argv.slice(2);
@@ -134,5 +134,5 @@ finally {try{await lifecycle.close(context);}catch(cause){error??=cause;}mapping
 if(error)throw error;
 await assertInputsUnchanged(inputs.hashes);
 await readFrozenBundle(bundlePath,bundleHash);
-if(!['active-identity','mapping-binding-diagnostic'].includes(intent.kind)&&!savedMapping)assert(previewCount>0,'Exact captured host preview response required');
+if(requiresCapturedHostPreview(intent.kind))assert(previewCount>0,'Exact captured host preview response required');
 await writeFile(join(artifacts,'ui-result.json'),JSON.stringify({result},null,2),{flag:'wx'});
