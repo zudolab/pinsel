@@ -641,3 +641,16 @@ The final complete seven-case run uses the guard's documented bounded
 single-run/memory gates and every browser/operation assertion timeout. This does not
 turn earlier interrupted runs into passes. Actual owner-data and provider holds,
 required current-head checks and integration remain open.
+
+Installed62f cold verification passed at Pinsel269e0cc under guard137s, using the
+same read-only diagnostic as the preceding3c30 run. Total requests decreased
+213→161 and count-entries25→0; one read-all took20.3s. get-model decreased70→49
+and scan-entries44→26. New Entry readiness remained greater than30s and at most60s
+under the same samples, so **no load-time improvement is established**. This is
+verified read reduction with no observed functional regression; remaining startup
+work still matters. Zero errors or blocked canonical writes occurred; two background
+reads were pending at deliberate browser close. Before/after capture matched
+`14506cec69367421b10068b48f977525203a5977a2d478d2f522a4e8e5e56059`, and
+all808 native plus143 public files were unchanged. Port4194 closed and the detached
+consumer remained clean. Evidence: `t6-cold-content-62f-1/OUTCOME.md` under the Cloud
+acceptance root. Whole-route creation and final Assistant gates remain pending.
