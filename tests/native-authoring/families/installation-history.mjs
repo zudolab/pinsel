@@ -1,4 +1,4 @@
-import {readExpectedBytes} from './expected-hashes.mjs';
+import {createExpectedReader} from './expected-hashes.mjs';
 import assert from 'node:assert/strict';
 import {dirname,join} from 'node:path';
 import {readFile} from 'node:fs/promises';
@@ -63,7 +63,7 @@ export function auditHistoricalWrite(before,after,proof,events){
 }
 /** Read original evidence; never reinterpret original source hashes as current source. */
 export async function loadOriginalFamilyHistory({historyPath,configPath,repo,bytes=readFile}){
- const hashes={};const read=async p=>{assert(p.startsWith('/'));return readExpectedBytes(p,hashes,bytes);};const json=async p=>JSON.parse(await read(p));const events=async p=>(await read(p)).toString().trim().split('\n').map(JSON.parse);
+ const hashes={};const read=createExpectedReader(hashes,bytes,{absolute:true});const json=async p=>JSON.parse(await read(p));const events=async p=>(await read(p)).toString().trim().split('\n').map(JSON.parse);
  const paths=await json(historyPath),config=await json(configPath);assert.equal(config.kind,'results');assert.equal(paths.length,12,'Bridge supports the reviewed retained Results00–11 boundary only');assert.equal(new Set(paths).size,paths.length);
  const history=[],evidence=[];let previous,originalComposer,stage;
  for(let i=0;i<paths.length;i++){

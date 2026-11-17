@@ -1,4 +1,4 @@
-import {readExpectedBytes} from './expected-hashes.mjs';
+import {createExpectedReader} from './expected-hashes.mjs';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {inputHash} from './frozen-inputs.mjs';
@@ -21,7 +21,7 @@ export {assertFamilyBridgeBoundary} from './installation-boundary.mjs';
 /** Independent validation on every preparation/next-intent/runtime. No canonical writes. */
 export async function loadFamilyInstallationBridge({descriptor,repo,installation,bytes=readFile}){
  assert.deepEqual(Object.keys(descriptor).sort(),['freezeManifestPath','freezeManifestSha256','proofPath']);assert.match(descriptor.freezeManifestSha256,/^[a-f0-9]{64}$/);
- const hashes={};const read=async p=>{assert(p.startsWith('/'));return readExpectedBytes(p,hashes,bytes);};const json=async p=>JSON.parse(await read(p));const frozenBytes=await read(descriptor.freezeManifestPath);assert.equal(inputHash(frozenBytes),descriptor.freezeManifestSha256);const frozen=JSON.parse(frozenBytes);
+ const hashes={};const read=createExpectedReader(hashes,bytes,{absolute:true});const json=async p=>JSON.parse(await read(p));const frozenBytes=await read(descriptor.freezeManifestPath);assert.equal(inputHash(frozenBytes),descriptor.freezeManifestSha256);const frozen=JSON.parse(frozenBytes);
  for(const[p,h]of Object.entries(frozen)){assert.match(h,/^[a-f0-9]{64}$/);assert.equal(inputHash(await read(p)),h,'Frozen family installation evidence changed');}
  const proof=await json(descriptor.proofPath);assert.equal(proof.schemaVersion,1);assert.equal(proof.kind,'family-installation-only');assert.equal(proof.boundary,12);
  const chain=await loadOriginalFamilyHistory({historyPath:proof.historyPath,configPath:proof.configPath,repo,bytes:read});

@@ -16,5 +16,5 @@ test('bridge and frozen-input merge reject a conflicting duplicate before insert
  const old=inputHash('old'),next=inputHash('next'),target={'/capture':old};assert.throws(()=>mergeExpectedHashes(target,{'/new':next,'/capture':next}),/across input merge/);assert.deepEqual(target,{'/capture':old});mergeExpectedHashes(target,{'/capture':old,'/new':next});assert.deepEqual(target,{'/capture':old,'/new':next});
 });
 test('all installation evidence readers use retain-on-reread and frozen bundle uses collision-safe merge',async()=>{
- for(const name of ['prepare-installation','installation-history','installation-bridge','frozen-inputs']){const source=await readFile(new URL('./'+name+'.mjs',import.meta.url),'utf8');assert(source.includes('readExpectedBytes('));assert(!/hashes\[\w+\]\s*=(?!=)/.test(source));assert(!source.includes('Object.assign(hashes'));}
+ for(const name of ['prepare-installation','installation-history','installation-bridge','frozen-inputs']){const source=await readFile(new URL('./'+name+'.mjs',import.meta.url),'utf8');assert(source.includes('readExpectedBytes(')||source.includes('createExpectedReader('));assert(!/hashes\[\w+\]\s*=(?!=)/.test(source));assert(!source.includes('Object.assign(hashes'));}
 });

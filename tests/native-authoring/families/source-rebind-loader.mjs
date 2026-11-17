@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {execFile} from 'node:child_process';
 import {promisify} from 'node:util';
-import {inputHash,readExpectedBytes,mergeExpectedHashes} from './expected-hashes.mjs';
+import {inputHash,createExpectedReader,mergeExpectedHashes} from './expected-hashes.mjs';
 import {assertHistoricalFamilySource,loadFamilyInstallationSupplement} from './installation-supplement-loader.mjs';
 import {currentFamilyInstallation} from './installation-bridge.mjs';
 import {loadSourceRebindHistory} from './source-rebind-history.mjs';
@@ -29,7 +29,7 @@ export async function assertFailureEvidence({manifest,snapshot,read,json,oldInst
  for(const path of manifest.extra)await read(path);
 }
 export async function readSourceRebindInputs({inputsPath,repo,installation,bytes=readFile}){
- const hashes={},read=path=>{assert(path.startsWith('/'));return readExpectedBytes(path,hashes,bytes);},json=async path=>JSON.parse(await read(path));
+ const hashes={},read=createExpectedReader(hashes,bytes,{absolute:true}),json=async path=>JSON.parse(await read(path));
  const paths=await json(inputsPath);assert.deepEqual(Object.keys(paths).sort(),['afterPath','beforePath','configPath','expectedSourceHead','failuresPath','historyPath','originalDescriptorPath','reviewedChangesPath','supplementDescriptorPath']);
  const originalDescriptor=await json(paths.originalDescriptorPath),supplementDescriptor=await json(paths.supplementDescriptorPath),supplementProof=await json(supplementDescriptor.proofPath),oldInstallation=await json(supplementProof.provenancePath);
  await assertHistoricalFamilySource(repo,oldInstallation);
@@ -45,7 +45,7 @@ export async function readSourceRebindInputs({inputsPath,repo,installation,bytes
 }
 export async function loadFamilySourceRebind({descriptor,originalDescriptor,supplementDescriptor,repo,installation,bytes=readFile}){
  assert.deepEqual(Object.keys(descriptor).sort(),['freezeManifestPath','freezeManifestSha256','proofPath']);assert.match(descriptor.freezeManifestSha256,/^[a-f0-9]{64}$/);
- const hashes={},read=path=>readExpectedBytes(path,hashes,bytes),json=async path=>JSON.parse(await read(path));const freezeBytes=await read(descriptor.freezeManifestPath);assert.equal(inputHash(freezeBytes),descriptor.freezeManifestSha256);const frozen=JSON.parse(freezeBytes);
+ const hashes={},read=createExpectedReader(hashes,bytes),json=async path=>JSON.parse(await read(path));const freezeBytes=await read(descriptor.freezeManifestPath);assert.equal(inputHash(freezeBytes),descriptor.freezeManifestSha256);const frozen=JSON.parse(freezeBytes);
  for(const[p,h]of Object.entries(frozen))assert.equal(inputHash(await read(p)),h);
  const proof=await json(descriptor.proofPath);assert.equal(proof.kind,'family-source-rebind');assert(Object.hasOwn(frozen,descriptor.proofPath));
  const loaded=await readSourceRebindInputs({inputsPath:proof.inputsPath,repo,installation,bytes:read});assert.deepEqual(proof,loaded.proof);assert.deepEqual(originalDescriptor,loaded.originalDescriptor);assert.deepEqual(supplementDescriptor,loaded.supplementDescriptor);

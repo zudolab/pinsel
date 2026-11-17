@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {join,dirname} from 'node:path';
-import {readExpectedBytes,inputHash,mergeExpectedHashes} from './expected-hashes.mjs';
+import {createExpectedReader,inputHash,mergeExpectedHashes} from './expected-hashes.mjs';
 import {assertGitModes} from './source-rebind-loader.mjs';
 import {loadFamilySourceSuccessor} from './source-successor-loader.mjs';
 import {assertHistoricalFamilySource} from './installation-supplement-loader.mjs';
@@ -22,7 +22,7 @@ export async function loadHistoricalSuccessor({successorDescriptor,parentDescrip
  const parent=await loadFamilySourceSuccessor({descriptor:successorDescriptor,parentDescriptor,originalDescriptor,supplementDescriptor,repo,installation:oldInstallation,bytes:read});return{parent,oldInstallation};
 }
 export async function readSourceCreateInputs({inputsPath,repo,installation,bytes=readFile}){
- const hashes={},read=p=>{assert(p.startsWith('/'));return readExpectedBytes(p,hashes,bytes);},json=async p=>JSON.parse(await read(p));
+ const hashes={},read=createExpectedReader(hashes,bytes,{absolute:true}),json=async p=>JSON.parse(await read(p));
  const paths=await json(inputsPath);assert.deepEqual(Object.keys(paths).sort(),['afterPath','beforePath','expectedSourceHead','failurePath','historyPath','originalDescriptorPath','parentDescriptorPath','reviewedChangesPath','successorDescriptorPath','supplementDescriptorPath']);
  const originalDescriptor=await json(paths.originalDescriptorPath),supplementDescriptor=await json(paths.supplementDescriptorPath),parentDescriptor=await json(paths.parentDescriptorPath),successorDescriptor=await json(paths.successorDescriptorPath);
  const {parent,oldInstallation}=await loadHistoricalSuccessor({successorDescriptor,parentDescriptor,originalDescriptor,supplementDescriptor,repo,read,json});mergeExpectedHashes(hashes,parent.successor.hashes);
@@ -35,7 +35,7 @@ export async function readSourceCreateInputs({inputsPath,repo,installation,bytes
 }
 export async function loadFamilySourceCreateHandoff({descriptor,successorDescriptor,parentDescriptor,originalDescriptor,supplementDescriptor,repo,installation,bytes=readFile}){
  assert.deepEqual(Object.keys(descriptor).sort(),['freezeManifestPath','freezeManifestSha256','proofPath']);assert.match(descriptor.freezeManifestSha256,/^[a-f0-9]{64}$/);
- const hashes={},read=p=>{assert(p.startsWith('/'));return readExpectedBytes(p,hashes,bytes);},json=async p=>JSON.parse(await read(p));const freezeBytes=await read(descriptor.freezeManifestPath);assert.equal(inputHash(freezeBytes),descriptor.freezeManifestSha256);const frozen=JSON.parse(freezeBytes);for(const[p,h]of Object.entries(frozen))assert.equal(inputHash(await read(p)),h);
+ const hashes={},read=createExpectedReader(hashes,bytes,{absolute:true}),json=async p=>JSON.parse(await read(p));const freezeBytes=await read(descriptor.freezeManifestPath);assert.equal(inputHash(freezeBytes),descriptor.freezeManifestSha256);const frozen=JSON.parse(freezeBytes);for(const[p,h]of Object.entries(frozen))assert.equal(inputHash(await read(p)),h);
  const proof=await json(descriptor.proofPath);assert.equal(proof.kind,'family-source-create-handoff');assert.equal(proof.boundary,18);assert.equal(proof.parentBoundary,17);assert(Object.hasOwn(frozen,descriptor.proofPath));
  const loaded=await readSourceCreateInputs({inputsPath:proof.inputsPath,repo,installation,bytes:read});assert.deepEqual(proof,loaded.proof);assert.deepEqual(successorDescriptor,loaded.successorDescriptor);assert.deepEqual(parentDescriptor,loaded.parentDescriptor);assert.deepEqual(originalDescriptor,loaded.originalDescriptor);assert.deepEqual(supplementDescriptor,loaded.supplementDescriptor);
  for(const[p,h]of Object.entries(loaded.hashes))assert.equal(frozen[p],h,'Unfrozen successor dependency');const provenancePath=join(dirname(descriptor.proofPath),'provenance.json');assert(Object.hasOwn(frozen,provenancePath));assert.deepEqual(await json(provenancePath),loaded.installation);
