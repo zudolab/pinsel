@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
+import {contentReadOperations} from '../content-browser-transport.mjs';
 import {compositionRead} from './composition-read.mjs';
 // Installed native transport: domain records are workspace-scoped; the workspace
 // registry and host Assets root are capability-scoped and send no workspace header.
 const providerReads = {
-  content: new Set(['initialize','read-all','list-models','get-model','get-entry','count-entries','page-entries','scan-entries','editorial-read','editorial-fields','editorial-revisions','editorial-publication']),
+  content: contentReadOperations,
   mapping: new Set(['initialize','read-all','list','get','snapshot']),
   sitemapper: new Set(['initialize','read-all','list','get','snapshot']),
   workspace: new Set(['list','selection','generation','open','find-seeding','missing-directories']),

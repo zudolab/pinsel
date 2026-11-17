@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-export const contentReadOperations = new Set(['initialize', 'read-all', 'list-models', 'get-model', 'get-entry', 'count-entries', 'page-entries', 'scan-entries', 'editorial-read', 'editorial-fields', 'editorial-revisions', 'editorial-revision', 'editorial-compare', 'editorial-publication', 'editorial-operation', 'content-ai-status', 'content-ai-scope', 'content-ai-read', 'content-ai-operation']);
+// Exact installed read-only wire operations; content-ai-operation is not a supported operation.
+export const contentReadOperations = new Set(['initialize', 'read-all', 'list-models', 'get-model', 'get-entry', 'count-entries', 'page-entries', 'scan-entries', 'editorial-read', 'editorial-fields', 'editorial-revisions', 'editorial-revision', 'editorial-compare', 'editorial-publication', 'editorial-operation', 'content-ai-status', 'content-ai-scope', 'content-ai-read']);
 const endpoint = '/__zudo_composer_content_provider';
 const authHeaders = ['x-zudo-composer-capability', 'x-zudo-composer-workspace', 'x-zudo-native-client', 'x-zudo-native-epoch'];
 export function assertContentRequestOrigin(page, request) {

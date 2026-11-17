@@ -18,3 +18,9 @@ test('read admission stays endpoint-specific and cannot admit writes',()=>{
  assert.equal(isFamilyProviderRead('/__zudo_composer_content_provider','pin-manifest'),false);
  assert.equal(isFamilyProviderRead('/__zudo_composer_unknown_provider','read-all'),false);
 });
+
+test('Content catalogue uses the shared exact read contract rather than other provider operations',async()=>{
+ const {contentReadOperations}=await import('../content-browser-transport.mjs');assert.equal(contentReadOperations.size,18);
+ for(const operation of contentReadOperations)assert.equal(isFamilyProviderRead('/__zudo_composer_content_provider',operation),true);
+ for(const operation of ['list','get','open','snapshot','find-seeding','content-ai-operation','editorial-save','content-ai-prepare','content-ai-apply','content-ai-undo'])assert.equal(isFamilyProviderRead('/__zudo_composer_content_provider',operation),false);
+});

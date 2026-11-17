@@ -130,3 +130,17 @@ describe('installed read retry observation',()=>{
   for(const response of [{status:500,body:busy.body},{status:409,body:{ok:false,error:{code:'stale-browser'}}},{status:200,body:{ok:false}}])expect(()=>busyReadTracker().observe(path,marked,input,response,'pinsel')).toThrow();
  });
 });
+
+// This list is the inspected installed Content wire contract, not a prefix rule.
+describe('complete passive Content read contract',()=>{
+ const reads=['initialize','read-all','list-models','get-model','get-entry','count-entries','page-entries','scan-entries','editorial-read','editorial-fields','editorial-revisions','editorial-revision','editorial-compare','editorial-publication','editorial-operation','content-ai-status','content-ai-scope','content-ai-read'];
+ it.each(reads)('admits qualified %s and aborts it at close',operation=>{
+  const h={...headers,'x-zudo-composer-operation':operation};
+  expect(classifyRead('/__zudo_composer_content_provider',h,{},'pinsel')).toBe('provider');
+  expect(closingReadAction('/__zudo_composer_content_provider',h,{},'pinsel')).toBe('abort-read');
+  expect(()=>classifyRead('/__zudo_composer_content_provider',{...h,'x-zudo-composer-workspace':'foreign'},{},'pinsel')).toThrow();
+ });
+ it.each(['put-entry','delete-entry','put-model','delete-model','remove-field','transact','reconcile-publication','seed','clear','start-fresh','editorial-validate','editorial-save','editorial-restore','content-ai-prepare','content-ai-apply','content-ai-undo','content-ai-operation','content-ai-unknown','editorial-unknown'])('refuses mutation, unsupported or non-read operation %s',operation=>{
+  const h={...headers,'x-zudo-composer-operation':operation};expect(()=>classifyRead('/__zudo_composer_content_provider',h,{},'pinsel')).toThrow();expect(()=>closingReadAction('/__zudo_composer_content_provider',h,{},'pinsel')).toThrow();
+ });
+});
