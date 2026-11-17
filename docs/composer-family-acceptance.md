@@ -195,6 +195,15 @@ repair through the existing Composition observer. Every admitted POST is observe
 through its original response and durably journaled; unsupported operations latch a
 hold. It drains observations before/after browser closure and never retries writes.
 
+Read admission follows the installed provider wire contract: Content, Mapping and
+Sitemapper send the selected workspace header; the host Assets root and workspace
+registry send capability headers without that workspace header. The observer does
+not manufacture headers. It checks registry open/selection responses against the
+accepted workspace, uses endpoint-specific read allowlists (including the actual
+`__zudo_composer_sitemapper_provider` endpoint), and still refuses all canonical
+mutation operations. Same-origin original-response checks and exact public captures
+remain required. This fixes the observer contract, not an installed runtime pass.
+
 First save a fresh public capture with the editor stopped. For release identity,
 write this intent, substituting the actual capture path and its digest:
 

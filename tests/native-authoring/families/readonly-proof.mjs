@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
-const providerReads = new Set(['initialize','read-all','list','get','snapshot','selection','generation','find-seeding','missing-directories','list-records','get-record','list-models','get-model','get-entry','count-entries','page-entries','scan-entries','describe','status','editorial-read','editorial-fields','editorial-revisions','editorial-publication']);
-const providers = new Set(['content','mapping','sitemap','workspace','asset_file']);
+// Installed native transport: domain records are workspace-scoped; the workspace
+// registry and host Assets root are capability-scoped and send no workspace header.
+const providerReads = {
+  content: new Set(['initialize','read-all','list-models','get-model','get-entry','count-entries','page-entries','scan-entries','editorial-read','editorial-fields','editorial-revisions','editorial-publication']),
+  mapping: new Set(['initialize','read-all','list','get','snapshot']),
+  sitemapper: new Set(['initialize','read-all','list','get','snapshot']),
+  workspace: new Set(['list','selection','generation','open','find-seeding','missing-directories']),
+  asset_file: new Set(['initialize','list','get','snapshot','resolve-version','pin-manifest']),
+};
 export function classifyRead(path, headers, body, workspaceId) {
   if (path === '/__zudo-native-edit') {
     assert(['inspect','review','receipt','document-preview'].includes(body?.operation), 'Native mutation refused');
@@ -14,14 +21,36 @@ export function classifyRead(path, headers, body, workspaceId) {
     assert(['describe','list','get','active','stage','completed'].includes(body.request.operation), 'Release mutation refused');
     return 'release';
   }
-  assert.equal(headers['x-zudo-composer-workspace'], workspaceId);
-  if (path === '/__zudo_composer_file_provider') return 'composition';
+  assert(typeof headers['x-zudo-composer-capability'] === 'string' && headers['x-zudo-composer-capability'].length > 0, 'Provider capability missing');
+  if (path === '/__zudo_composer_file_provider') {
+    assert.equal(headers['x-zudo-composer-workspace'], workspaceId);
+    return 'composition'; // Existing gate validates the body operation/challenge.
+  }
   const provider = /^\/__zudo_composer_(.+)_provider$/.exec(path)?.[1];
-  assert(providers.has(provider), 'Unknown provider refused');
+  assert(Object.hasOwn(providerReads,provider), 'Unknown provider refused');
   const operation = headers[provider === 'asset_file' ? 'x-zudo-composer-asset-operation' : 'x-zudo-composer-operation'];
-  assert(providerReads.has(operation) || (provider === 'workspace' && operation === 'open'), 'Provider mutation refused');
+  assert(providerReads[provider].has(operation), 'Provider mutation or unsupported read refused');
+  if (provider === 'workspace' || provider === 'asset_file') {
+    // Do not invent a header the installed store does not send. If present, it
+    // must still agree; same-origin original transport and server capability bind
+    // these global endpoints to the owned host, not to a client-supplied workspace.
+    if (Object.hasOwn(headers,'x-zudo-composer-workspace')) assert.equal(headers['x-zudo-composer-workspace'],workspaceId);
+    if (provider === 'workspace') {
+      if (operation === 'open' && body?.id !== undefined) assert.equal(body.id,workspaceId);
+      if (operation === 'missing-directories') assert.equal(body?.id,workspaceId);
+      if (operation === 'find-seeding') assert.equal(body?.project?.id,workspaceId);
+    }
+  } else assert.equal(headers['x-zudo-composer-workspace'],workspaceId);
   return 'provider';
 }
+/** Registry reads have no workspace header; bind selected/opened results instead. */
+export function assertReadScope(path,headers,result,workspaceId) {
+  if (path !== '/__zudo_composer_workspace_provider') return;
+  const operation=headers['x-zudo-composer-operation'];
+  if (operation === 'open') assert.equal(result?.id,workspaceId,'Opened another workspace');
+  if (operation === 'selection') assert.equal(result,workspaceId,'Selected another workspace');
+}
+
 export function validateReadIntent(intent, snapshot) {
   assert(['family-render','active-identity','header-restart'].includes(intent.kind));
   assert.equal(intent.captureDigest, snapshot.digest);

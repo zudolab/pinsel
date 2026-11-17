@@ -7,7 +7,7 @@ import {repoRoot} from './config.mjs';
 import {originalResponse} from './original-request.mjs';
 import {compositionDerivedReadGate} from './composition-output.mjs';
 import {releaseLifecycle} from './release-lifecycle.mjs';
-import {classifyRead,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from './readonly-proof.mjs';
+import {classifyRead,assertReadScope,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from './readonly-proof.mjs';
 import {verifySavedHeader,verifySavedKnowledge} from '../header/driver.mjs';
 import {verifyFamilyRendering} from './verify-render.mjs';
 const [bundlePath,bundleHash,artifacts,base] = process.argv.slice(2);
@@ -43,6 +43,7 @@ await context.route('**/*',route=>{
       const response=await originalResponse(page,route);
       await persist({phase:'read-response',endpoint:url.pathname,input:body,...response});
       assert.equal(response.status,200);assert.equal(response.body.ok,true);
+      assertReadScope(url.pathname,request.headers(),response.body.result,snapshot.workspaceId);
       if(kind==='native' && body.operation==='document-preview'){assertPreviewIdentity(snapshot,response.body.result);previewCount++;}
       if(kind==='release' && intent.kind==='active-identity')active.observe(body.request,response.body.result);
     } catch(cause) {blocked??=cause;await route.abort().catch(()=>{});await persist({phase:'read-held',endpoint:url.pathname,error:cause.message}).catch(()=>{});}
