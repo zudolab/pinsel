@@ -1,9 +1,10 @@
+import {readFrozenBundle,assertInputsUnchanged} from '../families/frozen-inputs.mjs';
 import {repoRoot} from '../families/config.mjs';
 
 import assert from 'node:assert/strict';import{readFile,writeFile,open,mkdir}from'node:fs/promises';import{join}from'node:path';import{createRequire}from'node:module';import{headerFieldUi,verifySavedHeader,verifySavedKnowledge}from'./driver.mjs';
-const[intentPath,artifacts,base]=process.argv.slice(2);const intent=JSON.parse(await readFile(intentPath,'utf8')),snapshot=JSON.parse(await readFile(join(artifacts,'before.json'),'utf8'));assert.equal(snapshot.digest,intent.captureDigest);
+const[bundlePath,bundleHash,artifacts,base]=process.argv.slice(2);const inputs=await readFrozenBundle(bundlePath,bundleHash);await assertInputsUnchanged(inputs.hashes);const {intent,snapshot}=inputs;assert.equal(snapshot.digest,intent.captureDigest);
 const file=await open(join(artifacts,'events.ndjson'),'wx');let queue=Promise.resolve();const persist=e=>{queue=queue.then(async()=>{await file.writeFile(JSON.stringify({time:new Date().toISOString(),...e})+'\n');await file.sync();});return queue;};
 const{chromium,expect}=createRequire(join(repoRoot,'package.json'))('@playwright/test');await mkdir(join(artifacts,'profile'));const context=await chromium.launchPersistentContext(join(artifacts,'profile'),{headless:true,executablePath:process.env.NATIVE_ACCEPTANCE_CHROMIUM||chromium.executablePath(),viewport:{width:1600,height:1050}});let close=ctx=>ctx.close(),result,error;
 try{await persist({phase:'begin',intent});result=await headerFieldUi(context.pages()[0],{base,snapshot,intent,persist,expect,setClose:fn=>{close=fn;}});const shot=name=>context.pages()[0].screenshot({path:join(artifacts,name+'.png'),fullPage:true});if(intent.kind==='knowledge-reference')await verifySavedKnowledge(context.pages()[0],{base,snapshot,intent,record:result.record,expect,shot});else await verifySavedHeader(context.pages()[0],{base,intent,record:result.record,expect,shot});}catch(e){error=e;await persist({phase:'held',error:e.message});}
 finally{try{await close(context);}catch(e){error??=e;await persist({phase:'close-held',error:e.message});}await queue;await file.close();}
-if(error)throw error;assert(result);await writeFile(join(artifacts,'ui-result.json'),JSON.stringify({result},null,2),{flag:'wx'});
+if(error)throw error;await assertInputsUnchanged(inputs.hashes);await readFrozenBundle(bundlePath,bundleHash);assert(result);await writeFile(join(artifacts,'ui-result.json'),JSON.stringify({result},null,2),{flag:'wx'});

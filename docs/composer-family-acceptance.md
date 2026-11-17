@@ -313,3 +313,26 @@ The runner retains that refusal and lets the installed client perform its bounde
 retry; it never sends a replacement request or fabricates success. The same
 operation, input, client and epoch must later yield an original successful response
 before completion. Unmarked, unsupported, unresolved or other errors still fail.
+
+### Mutating phase inputs and structural reloads
+
+The family and Header mutating runners capture external intent and complete public
+snapshot once, then pass an exclusive accepted-input bundle plus its independent
+SHA256 to the browser child. Original files, bundle and committed source are checked
+before browser work and before accepting the result. Child execution never rereads
+an external intent as authority. Same-digest edits to values or snapshot fields
+therefore refuse; they cannot change the action after parent admission.
+
+Component-root actions target the first canonical component child of the virtual
+Document row and verify its exact saved node ID in the inspector before changing a
+field. Virtual Document is never treated as the component. Pin selection waits up
+to the existing180-second UI budget for one exact record-ID row.
+
+Structural completion requires the selected owner URL, Saved state and record name,
+then an actual document reload followed by the browser's own qualified public get
+of the complete acknowledged Composition/Mapping record. Attachment phases require
+the selected Mapping plus the complete updated workspace metadata and token from
+public open. Challenged Composition output alone is not a loaded-record proof.
+Bounded browser quiescence and derived-read settlement bracket reload; an empty
+request queue alone does not establish readiness. These checks do not replace the
+outer stopped-server full capture, domain delta or later independent restart run.

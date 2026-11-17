@@ -1,5 +1,5 @@
 import {it,expect} from 'vitest';
-import {mkdtemp,writeFile,rm} from 'node:fs/promises';
+import {mkdtemp,writeFile,rm,chmod} from 'node:fs/promises';
 import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {freezeReadInputs,assertInputsUnchanged,readFrozenBundle,inputHash} from './frozen-inputs.mjs';
@@ -19,4 +19,13 @@ it('freezes actual parent inputs and rejects a changed mode or accepted Header p
   await writeFile(bundlePath,JSON.stringify({...inputs,intent:{...intent,kind:'active-identity'}}));
   await expect(readFrozenBundle(bundlePath,hash)).rejects.toThrow('bundle changed');
  } finally {await rm(dir,{recursive:true});}
+});
+
+it.each(['record-edit','header'])('seals mutating %s intent and whole snapshot even when digest is unchanged',async kind=>{
+ const dir=await mkdtemp(join(tmpdir(),'mutation-inputs-'));
+ try{const capturePath=join(dir,'capture.json'),intentPath=join(dir,'intent.json'),bundlePath=join(dir,'accepted.json');const intent={kind,capturePath,captureDigest:'same',value:'reviewed'},snapshot={digest:'same',project:{name:'accepted'}};await writeFile(intentPath,JSON.stringify(intent));await writeFile(capturePath,JSON.stringify(snapshot));const inputs=await freezeReadInputs(intentPath),bytes=JSON.stringify(inputs),hash=inputHash(bytes);await writeFile(bundlePath,bytes,{flag:'wx',mode:0o444});
+ await writeFile(intentPath,JSON.stringify({...intent,value:'other'}));await expect(assertInputsUnchanged(inputs.hashes)).rejects.toThrow();expect((await readFrozenBundle(bundlePath,hash)).intent.value).toBe('reviewed');
+ await chmod(bundlePath,0o600); // Simulate replacement by its owner; the independent hash must still refuse.
+ for(const changed of [{...inputs,intent:{...intent,value:'other'}},{...inputs,snapshot:{...snapshot,project:{name:'other'}}}]){await writeFile(bundlePath,JSON.stringify(changed));await expect(readFrozenBundle(bundlePath,hash)).rejects.toThrow();}
+ }finally{await rm(dir,{recursive:true});}
 });
