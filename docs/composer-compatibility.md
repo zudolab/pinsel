@@ -14,7 +14,7 @@ Historical entries below retain their original outcomes. Latest complete Assista
 | Identity or gate | Current recorded value |
 | --- | --- |
 | Pinsel complete Assistant tested source | `f07e05b8f9e22379cb321bf80a11d47b26800e24` |
-| Composer package / attestation | `bc20ea554d5d8de92934c9bf4ec989229d23047e` / `ed909729c8abb3ddce02071f09e3762785fbe1a4` |
+| Current candidate package / attestation | `4f1191d682995438380fccdb5bb692a299415402` / `75df80f75c0a34f99bcc8cbd02447fd47ddc70a9` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed bounded cases | Exact stale Apply and guarded Undo PASS; full seven-case run remains incomplete |
@@ -849,3 +849,28 @@ separately corrects human shared-field source/affected-use presentation; its lat
 immutable package needs its own installed checks. This bc20 result is not relabeled
 as a future-package pass. T6 publication/new-route/hierarchy/family/visitor scenarios,
 T7 exact A-after-B/negative/recovery and current-head integration remain open.
+
+
+## Shared-field inspector package candidate
+
+Immutable package `4f1191d682995438380fccdb5bb692a299415402`, attested by Composer
+`75df80f75c0a34f99bcc8cbd02447fd47ddc70a9`, contains 775 shipped files with digest
+`1e560f9a452504010483e8b5fa79d332e6b2b1ab9678d9020ca28d1e70e36e44`.
+Contract and Pinsel pack/schema/renderer versions remain unchanged. All four
+consumer manifests and the generated lockfile use this exact package.
+
+[Composer #985](https://github.com/Takazudo/zudo-composer/issues/985) adds captured
+per-field Content source and affected-page information to the human Inspector,
+separately labeling arrangement-owner uses. It extracts the existing Mapping
+provenance lookup without changing Assistant policy, Apply/Undo or write behavior.
+A pending local draft hides the new source navigation until Save/Discard.
+Twenty focused source tests, Node/app type checks, lint and independent review
+passed; the follow-up Inspector regression suite passed nine tests. Public/CMS
+regeneration/check and public consistency passed under the shared guard in 90s.
+No demo inventory changes were needed; generated authoring types were committed.
+
+The new package's installed human provenance/unsupported-request checks and relevant
+current-head gates remain pending. The prior complete bc20 matrix remains valid
+historical evidence for its own exact pin, not a claimed full-matrix pass at this
+revision. The separate cold creation/publication workspace remains on bc20 until
+its serialized acceptance boundary; no existing authored state was reseeded.
