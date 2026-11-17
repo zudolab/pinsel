@@ -1,3 +1,4 @@
+import {assertHeaderDestinationPreview,routePath} from './destination-preview.mjs';
 import {createHeaderReadiness} from './readiness.mjs';
 import {waitForCompositionReadiness} from '../static/composition-readiness.mjs';
 import {closeObserved} from './lifecycle.mjs';
@@ -27,7 +28,20 @@ export async function headerFieldUi(page,{base,snapshot,intent,persist,expect,se
 /** Called after save/reload or on exact static output; no mutation authority. */
 export async function verifyHeaderDocument(root,{record,expect}){const v=record.values,header=root.locator('.site-nav__item').filter({hasText:v['nav-link-header-label']});await expect(header).toHaveCount(1);await expect(header).toHaveText(v['nav-link-header-label']);await expect(header).toHaveAttribute('href',v['nav-link-href']);const footer=root.locator('.footer-nav a').filter({hasText:v['nav-link-footer-title']});await expect(footer).toHaveCount(1);await expect(footer).toHaveAttribute('href',v['nav-link-href']);await expect(footer.locator('.eyebrow')).toHaveText(v['nav-link-label']);await expect(footer.locator('.footer-nav__title')).toHaveText(v['nav-link-footer-title']);await expect(footer.locator('.footer-nav__description')).toHaveText(v['nav-link-footer-description']);return header;}
 
-export async function verifySavedHeader(page,{base,intent,record,expect,shot,navigation}){await navigation('before-header-preview');await page.goto(`${base}/composer?native=1&visitor=%2F`);await page.getByText('Saved snapshot rendered',{exact:true}).waitFor({timeout:180000});const frame=()=>page.frameLocator('iframe[title="Host rendered page"]');const link=await verifyHeaderDocument(frame(),{record,expect});if(intent.field==='nav-link-href'&&intent.direction==='forward'){await enterBrowseMode(page,expect);await navigation('before-header-visitor-link');await link.click();await expect.poll(()=>(new URL(page.url()).searchParams.get('visitor')??'').replace(/\/$/,'')||'/',{timeout:180000}).toBe(intent.value.replace(/\/$/,'')||'/');await page.getByText('Saved snapshot rendered',{exact:true}).waitFor({timeout:180000});const current=await verifyHeaderDocument(frame(),{record,expect});await expect(current).toHaveAttribute('aria-current','page');await expect(frame().locator('title')).toHaveJSProperty('textContent',intent.staticRouteProof.title,{timeout:180000});await expect(frame().locator('h2')).toHaveText(intent.staticRouteProof.sectionTitle);}await navigation('after-header-preview');await shot('saved-header');}
+export async function verifySavedHeader(page,{base,snapshot,intent,record,expect,shot,navigation,revision=snapshot?.digest}){
+ await navigation('before-header-preview');await page.goto(`${base}/composer?native=1&visitor=%2F`);await page.getByText('Saved snapshot rendered',{exact:true}).waitFor({timeout:180000});const frame=()=>page.frameLocator('iframe[title="Host rendered page"]');
+ // Shared Header/Footer copy and href belong to this source document.
+ const link=await verifyHeaderDocument(frame(),{record,expect});let targetPreview;
+ if(intent.field==='nav-link-href'&&intent.direction==='forward'){
+  await enterBrowseMode(page,expect);await navigation('before-header-visitor-link');
+  const received=page.waitForResponse(response=>{const request=response.request();if(new URL(response.url()).origin!==base||new URL(response.url()).pathname!=='/__zudo-native-edit'||request.method()!=='POST')return false;try{const input=request.postDataJSON();return input.operation==='document-preview'&&input.input.workspaceId===snapshot.workspaceId&&routePath(input.input.pathname)===routePath(intent.value);}catch{return false;}},{timeout:180000});received.catch(()=>{});
+  await link.click();const response=await received;assert.equal(response.status(),200);const body=await response.json();assert.equal(body.ok,true);targetPreview=assertHeaderDestinationPreview(body.result,snapshot,intent,revision);
+  await expect.poll(()=>routePath(new URL(page.url()).searchParams.get('visitor')??''),{timeout:180000}).toBe(routePath(intent.value));await page.getByText('Saved snapshot rendered',{exact:true}).waitFor({timeout:180000});
+  await expect(page.locator('iframe[title="Host rendered page"]')).toHaveAttribute('src',targetPreview.documentUrl);
+  await expect(frame().locator('title')).toHaveJSProperty('textContent',intent.staticRouteProof.title,{timeout:180000});await expect(frame().locator('h2')).toHaveText(intent.staticRouteProof.sectionTitle);
+ }
+ await navigation('after-header-preview');await shot('saved-header');return targetPreview;
+}
 
 export async function enterBrowseMode(page,expect){const selecting=page.getByRole('button',{name:'Select components',exact:true});if(await selecting.count()){await expect(selecting).toHaveAttribute('aria-pressed','true');await selecting.click();}const browse=page.getByRole('button',{name:'Browse page',exact:true});await expect(browse).toHaveCount(1);await expect(browse).toHaveAttribute('aria-pressed','false');}
 
