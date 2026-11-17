@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
-import {createHash} from 'node:crypto';
-export const inputHash=bytes=>createHash('sha256').update(bytes).digest('hex');
+import {inputHash,readExpectedBytes,mergeExpectedHashes} from './expected-hashes.mjs';
+export {inputHash} from './expected-hashes.mjs';
 /** Capture each external JSON once. Runtime consumes only these captured objects. */
 export async function freezeReadInputs(intentPath) {
   const hashes={};
-  const read=async (path,lines=false)=>{const bytes=await readFile(path);hashes[path]=inputHash(bytes);return lines?bytes.toString('utf8').trim().split('\n').map(line=>JSON.parse(line)):JSON.parse(bytes.toString('utf8'));};
+  const read=async (path,lines=false)=>{const bytes=await readExpectedBytes(path,hashes);return lines?bytes.toString('utf8').trim().split('\n').map(line=>JSON.parse(line)):JSON.parse(bytes.toString('utf8'));};
   const intent=await read(intentPath),snapshot=await read(intent.capturePath);
   const headerProof=intent.kind==='header-restart'?await read(intent.forwardProofPath):null;
   let savedReference=null;
@@ -19,7 +19,7 @@ export async function freezeReadInputs(intentPath) {
     familyInstallationBridge=await(await import('./installation-bridge.mjs')).loadFamilyInstallationBridge({descriptor:intent.familyInstallationBridge,repo:(await import('./config.mjs')).repoRoot});
     assert(intent.sequence?.index>=familyInstallationBridge.boundary);
     if(intent.sequence.index===familyInstallationBridge.boundary)assert.equal(snapshot.digest,familyInstallationBridge.afterDigest);
-    Object.assign(hashes,familyInstallationBridge.hashes);
+    mergeExpectedHashes(hashes,familyInstallationBridge.hashes);
   }
   return {intent,snapshot,headerProof,...(familyInstallationBridge?{familyInstallationBridge}:{}),...(savedReference?{savedReference}:{}),hashes};
 }
