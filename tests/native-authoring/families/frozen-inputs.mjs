@@ -9,7 +9,7 @@ export async function freezeReadInputs(intentPath) {
   const intent=await read(intentPath),snapshot=await read(intent.capturePath);
   const headerProof=intent.kind==='header-restart'?await read(intent.forwardProofPath):null;
   let savedReference=null;
-  if(['knowledge-saved-reference','knowledge-captured-reference'].includes(intent.kind)){
+  if(['knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind)){
     const paths=await read(intent.recoveryEvidencePath);assert.deepEqual(Object.keys(paths).sort(),['after','before','bundle','bundleHash','events','provenance',...(intent.kind==='knowledge-captured-reference'?['uiResult']:[])]);
     savedReference={paths};for(const [key,path] of Object.entries(paths)){assert(path.startsWith('/'));savedReference[key]=await read(path,key==='events');}
     savedReference.hashes=Object.fromEntries(Object.values(paths).map(path=>[path,hashes[path]]));

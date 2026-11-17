@@ -1,3 +1,5 @@
+import {validateSavedMapping} from './mapping-recovery.mjs';
+import {familyRecordReadback,assertSelectedEditorSaved} from './structural-readback.mjs';
 import {validateSavedReference,validateCapturedReference} from '../header/saved-reference.mjs';
 import {settleTerminalReads,observeRequestDiagnostics} from '../header/terminal-settlement.mjs';
 import {settleBrowserReads} from '../static/browser-quiescence.mjs';
@@ -30,11 +32,13 @@ const page=context.pages()[0], pending=new Set(), active=activeReadback(snapshot
 let blocked,error,result,previewCount=0,readEpoch=0,originalPending=0,terminalClosing=false;const previewPaths=new Set();
 const diagnostics=observeRequestDiagnostics(page,persist);
 const recovered=intent.kind==='knowledge-saved-reference'?validateSavedReference(snapshot,inputs.savedReference):intent.kind==='knowledge-captured-reference'?validateCapturedReference(snapshot,inputs.savedReference):null;
+const savedMapping=intent.kind==='mapping-saved-create'?validateSavedMapping(snapshot,inputs.savedReference):null;
+const mappingReadback=savedMapping?familyRecordReadback({page,domain:'mappings',workspaceId:snapshot.workspaceId,providerId:'mapping-filesystem',persist}):null;
 const headerProof=intent.kind==='header-restart'?validateHeaderRestart(snapshot,inputs.headerProof):null;
 const composition=compositionDerivedReadGate({page,snapshot,persist});
 const busyReads=busyReadTracker();
 const lane={async drain(){while(pending.size)await Promise.allSettled([...pending]);if(blocked)throw blocked;busyReads.assertSettled();}};
-const lifecycle=releaseLifecycle({lanes:[lane,composition],composition,blocked:()=>blocked});
+const lifecycle=releaseLifecycle({lanes:[lane,composition,...(mappingReadback?[mappingReadback]:[])],composition,blocked:()=>blocked});
 await context.route('**/*',route=>{
   const work=(async()=>{
     const request=route.request(),url=new URL(request.url());let admitted=false;
@@ -71,7 +75,17 @@ await context.route('**/*',route=>{
 });
 try {
   await persist({phase:'begin',intent});
-  if(intent.kind==='family-render') {
+  if(savedMapping){
+    const record=savedMapping.result.record,ref={providerId:'mapping-filesystem',recordId:record.id};
+    await page.goto(`${base}/mapping?provider=${encodeURIComponent(ref.providerId)}&mapping=${encodeURIComponent(ref.recordId)}`);
+    await assertSelectedEditorSaved({page,expect,domain:'mappings',ref,record});
+    await settleBrowserReads(page,composition,{persist,boundary:'before-recovered-mapping-reload',check:()=>{lifecycle.requireOpen();if(blocked)throw blocked;mappingReadback.check();}});await lane.drain();
+    mappingReadback.beginReload({ref,record});const response=await page.reload({waitUntil:'commit'});mappingReadback.documentCommitted(response);
+    await expect.poll(()=>mappingReadback.verified,{timeout:180000}).toBe(true);
+    await assertSelectedEditorSaved({page,expect,domain:'mappings',ref,record});
+    await settleTerminalReads({fence:async()=>{terminalClosing=true;await persist({phase:'terminal-read-admission-fenced'});},status:()=>({pending:originalPending+composition.readiness.pending,challenges:composition.readiness.outstanding,busy:busyReads.outstanding,epoch:readEpoch}),check:()=>{lifecycle.requireOpen();composition.check();mappingReadback.check();if(blocked)throw blocked;},drain:async()=>{await lane.drain();await composition.drain();await mappingReadback.drain();composition.assertSettled();},persist,diagnostics:diagnostics.snapshot});
+    result={kind:intent.kind,savedMapping,publicRecordVerified:true};
+  } else if(intent.kind==='family-render') {
     await verifyFamilyRendering(page,{base,kind:intent.family,marker:intent.marker,childText:intent.childText,present:intent.present,oldFragment:intent.oldFragment,snapshot,family:intent.orderFamily,secondChild:intent.secondChild,expect});
     result={kind:intent.kind,family:intent.family,present:intent.present};
   } else if(intent.kind==='header-restart'||recovered) {
@@ -94,9 +108,9 @@ try {
   }
   await page.screenshot({path:join(artifacts,'verified.png'),fullPage:true});
 } catch(cause) {error=cause;await persist({phase:'held',error:cause.message,pendingRequests:diagnostics.snapshot(),composition:composition.readiness});}
-finally {try{await lifecycle.close(context);}catch(cause){error??=cause;}diagnostics.dispose();await queue;await file.close();}
+finally {try{await lifecycle.close(context);}catch(cause){error??=cause;}mappingReadback?.dispose();diagnostics.dispose();await queue;await file.close();}
 if(error)throw error;
 await assertInputsUnchanged(inputs.hashes);
 await readFrozenBundle(bundlePath,bundleHash);
-if(intent.kind!=='active-identity')assert(previewCount>0,'Exact captured host preview response required');
+if(intent.kind!=='active-identity'&&!savedMapping)assert(previewCount>0,'Exact captured host preview response required');
 await writeFile(join(artifacts,'ui-result.json'),JSON.stringify({result},null,2),{flag:'wx'});

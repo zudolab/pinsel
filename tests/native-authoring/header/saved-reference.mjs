@@ -38,7 +38,7 @@ function validate(snapshot,evidence,captured){
  return {status:captured?'CAPTURED_WRITE_EVIDENCE_AUDITED':'SAVED_WRITE_EVIDENCE_AUDITED',originalScenario:captured?'SAVE_READBACK_ONLY':'FAIL',...(originalFailure?{originalFailure}:{}),intent,result:{domain:'content-edit',ref:owner.ref,record},delta,evidenceHashes:hashes,originalSource:provenance.source.head,composer:provenance.composer,stage:provenance.stage};
 }
 
-function auditOriginalCompositionReads(snapshot,events){
+export function auditOriginalCompositionReads(snapshot,events){
  const records=snapshot.project.providers.compositions.find(p=>p.id==='files').records,exchanges=new Map();let pending;
  for(const event of events){
   if(event.phase==='composition-request-before-dispatch'){

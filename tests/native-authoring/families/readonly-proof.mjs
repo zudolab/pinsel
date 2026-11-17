@@ -64,11 +64,11 @@ export function assertReadScope(path,headers,result,workspaceId) {
 }
 
 export function validateReadIntent(intent, snapshot) {
-  assert(['family-render','active-identity','header-restart','knowledge-saved-reference','knowledge-captured-reference'].includes(intent.kind));
+  assert(['family-render','active-identity','header-restart','knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind));
   assert.equal(intent.captureDigest, snapshot.digest);
   assert(/^[a-f0-9]{64}$/.test(snapshot.digest));
   assert(intent.capturePath?.startsWith('/'));
-  if(['knowledge-saved-reference','knowledge-captured-reference'].includes(intent.kind))assert(intent.recoveryEvidencePath?.startsWith('/'));
+  if(['knowledge-saved-reference','knowledge-captured-reference','mapping-saved-create'].includes(intent.kind))assert(intent.recoveryEvidencePath?.startsWith('/'));
   if (intent.kind === 'header-restart') assert(intent.forwardProofPath?.startsWith('/'));
   if (intent.kind === 'family-render') {
     assert(['results','faq'].includes(intent.family));
