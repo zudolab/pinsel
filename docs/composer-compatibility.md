@@ -15,9 +15,9 @@ These passes do not close the remaining T6/T7 scenarios or imply actual-data cut
 | Identity or gate | Current recorded value |
 | --- | --- |
 | Pinsel complete human / Assistant tested source | `b434c8fefd4c9659a9306c4e8481ae3262b46385` |
-| Current integration source | This adoption commit on [PR61](https://github.com/zudolab/pinsel/pull/61), based on `caad5d6b3e10cc5349e5440de827a992c2a9935c`; current-head gates remain required |
-| Installed package / attestation | `d49b0a988cd61f34a778c613ef156b7aa95c5a23` / `bcc9b134035b9c9d3ecf6dd4b962a611c0e01fdd` |
-| New upstream package candidate | `aa8d0df2feec56f6f3f887f9653db9bf7b30d6e0` / attestation `4a0f57f984298cf17829e1f558c1139fe11c9475`: qualified Mapping navigation; public/CMS/full typecheck PASS146s and independent packed-byte review; adoption pending |
+| Current integration source | This adoption commit on [PR61](https://github.com/zudolab/pinsel/pull/61), based on `4650e64`; current-head gates remain required |
+| Installed package / attestation | `aa8d0df2feec56f6f3f887f9653db9bf7b30d6e0` / `4a0f57f984298cf17829e1f558c1139fe11c9475` |
+| New upstream package candidate | `aa8d0df2feec56f6f3f887f9653db9bf7b30d6e0` / attestation `4a0f57f984298cf17829e1f558c1139fe11c9475`: qualified Mapping navigation; public/CMS/full typecheck PASS146s and independent packed-byte review; root frozen install/dedupe and capture preservation pass; installed scenario pending |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / schemas / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Installed acceptance | At b434/5fe: full human PASS969s, seven semantic refusals PASS256s, controlled outer interruption/recovery PASS270s, complete Assistant seven-case PASS3455s |
@@ -43,13 +43,20 @@ read sharing. Source review and81 focused tests passed independently; integrated
 public entries, CMS fixtures and full typecheck passed146s. The reviewed candidate
 `aa8d0df2feec56f6f3f887f9653db9bf7b30d6e0` has782 packed files, payload
 `6dc60a8942f1872df263b4c44224f2a7b68536b7f2c9de6d5a3d26080a07ffe7`.
+Root frozen install and dedupe checks passed. Fresh public captures before/after
+installation differ only in digest, pack digest and renderer digest; all other
+fields and1275 raw native files match. After digest:
+`e5d189c6068f48eb90f54e8dfedba2797a9882cc4f7d8cd4bc3e59d0d5511135`.
+Evidence: `mapping-library-main-preservation-audit.json`.
 Installed Pinsel acceptance remains pending. A frozen installation bridge must
 preserve the complete existing history and saved state before continuing phase12.
 
 The initial d49 geometry attempt failed in a test selector, with equal complete
 before/after captures. A corrected selector has a real isolated Playwright proof
-and independently reviewed source and binding; installed two-visit acceptance is
-running separately. Static retained-preview validation reached its UI assertions
+and independently reviewed source and binding; installed two-visit acceptance passed249s with independent audit. All four full
+captures equal, and both visits passed1600/1280/1600 geometry with the same
+iframe document. Evidence: `content-layout-relative-browser-1` and
+`content-layout-relative-browser-independent-audit.json`. Static retained-preview validation reached its UI assertions
 but failed during port release before the final capture/build. A stopped capture
 matched the original exactly. Its reviewed shutdown correction waits for the owned
 wrapper, port, lease and live process group;82 tests pass. It does not kill foreign
