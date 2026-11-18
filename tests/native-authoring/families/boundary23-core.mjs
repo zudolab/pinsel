@@ -1,3 +1,4 @@
+import{assertContinuationAuthority}from'./continuation-core.mjs';
 import assert from 'node:assert/strict';
 import {admitBinding,admitRecordEdit,auditDelta} from './intents.mjs';
 import {auditOriginalCompositionReads} from '../header/saved-reference.mjs';
@@ -29,5 +30,6 @@ export function compactBoundaryInputs({intent,snapshot,hashes,transition}){
  return{schemaVersion:2,kind:'family-runtime-view',intent,snapshot,hashes,authority:{composer:transition.composer,stage:transition.stage,sourceHead:transition.source,boundary:23,descriptor:transition.descriptor}};
 }
 export function assertCompactAuthority(inputs,{composer,stage,sourceHead}){
+ if(inputs.schemaVersion===3)return assertContinuationAuthority(inputs,{composer,stage,sourceHead});
  assert.deepEqual(Object.keys(inputs).sort(),['schemaVersion','kind','intent','snapshot','hashes','authority'].sort());assert.equal(inputs.schemaVersion,2);assert.equal(inputs.kind,'family-runtime-view');assert.deepEqual(inputs.authority,{composer,stage,sourceHead,boundary:23,descriptor:inputs.intent.familySourceBoundary23});assert.equal(inputs.intent.family,'results');assert(inputs.intent.sequence.index>=23&&inputs.intent.sequence.index<45);assert.equal(inputs.intent.captureDigest,inputs.snapshot.digest);
 }

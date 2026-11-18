@@ -1,3 +1,4 @@
+import{compactContinuationInputs}from'./continuation-core.mjs';
 import {compactBoundaryInputs} from './boundary23-core.mjs';
 import {validatePinsEvidence} from './pins-diagnostic.mjs';
 import assert from 'node:assert/strict';
@@ -31,6 +32,12 @@ export async function freezeReadInputs(intentPath) {
     savedReference.hashes=['mapping-saved-binding','mapping-saved-create'].includes(intent.kind)?{...hashes}:Object.fromEntries(Object.values(paths).map(path=>[path,hashes[path]]));
   }
   let familyInstallationBridge,familyInstallationSupplement,familySourceRebind,familySourceRebindSuccessor,familySourceCreateHandoff,familySavedCreateHandoff;
+  if(intent.familyContinuation){
+    const bytes=createExpectedReader(hashes,readFile,{absolute:true}),api=await import('./continuation-loader.mjs');
+    const loaded=await api.loadFamilyContinuation({descriptor:intent.familyContinuation,repo:(await import('./config.mjs')).repoRoot,bytes});
+    await api.validateContinuationRuntime({loaded,intent,snapshot,read:bytes,json:async p=>JSON.parse(await bytes(p))});
+    mergeExpectedHashes(hashes,loaded.hashes);return compactContinuationInputs({intent,snapshot,hashes,continuation:loaded.continuation});
+  }
   if(intent.familySourceBoundary23){
     const bytes=createExpectedReader(hashes,readFile,{absolute:true});
     const loaded=await(await import('./boundary23-loader.mjs')).loadFamilyBoundary23({descriptor:intent.familySourceBoundary23,repo:(await import('./config.mjs')).repoRoot,bytes});
