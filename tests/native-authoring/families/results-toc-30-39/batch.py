@@ -194,7 +194,7 @@ def validate_compact(bundle,intent,snapshot,b):
  require(bundle['authority']=={'composer':PIN,'stage':'notes-v1','sourceHead':b['source'],'boundary':24,'descriptor':intent['familyContinuation'],'baseDescriptor':intent['familySourceBoundary23']},'Wrong compact authority')
  require(bundle['hashes'].get(b['historyIn'])==intent['familyBoundaryHistory']['sha256'],'Unsealed history')
 
-TEMPLATE_GO=Path('/workspace/composer-adoption-notes/results-toc-30-39-template-03/manager-go.json')
+TEMPLATE_GO=Path('/workspace/composer-adoption-notes/results-toc-30-39-template-04/manager-go.json')
 def assert_template_go(phase_go):
  require(phase_go.is_file(),'Phase manager-go missing')
  phase=json.loads(phase_go.read_text());template=json.loads(TEMPLATE_GO.read_text())
