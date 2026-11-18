@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 /** Same original-browser transport as committed Content observer; no route.fetch/replay. */
-export async function originalResponse(page, route, timeout = 180000) {
+export async function originalResponse(page, route, timeout = 180000, options = {}) {
   const request = route.request(), url = new URL(request.url()), origin = new URL(page.url()).origin;
   assert.equal(url.origin, origin); assert.equal(request.headers().origin,origin);
   assert.equal(request.method(),'POST'); assert(!url.search && !url.hash && !url.username && !url.password);
   let timer;
   try {
     return await Promise.race([(async () => {
-      await route.continue();
+      if (options.continued) await options.continuePromise;
+      else await route.continue();
       const response = await request.response();
       assert(response && response.request() === request && response.url() === url.href && !request.redirectedFrom() && !request.redirectedTo());
       assert.equal(await response.finished(),null);
