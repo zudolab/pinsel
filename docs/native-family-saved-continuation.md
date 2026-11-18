@@ -120,7 +120,9 @@ Upgrade item contains timestamps and execution receipt path/hash. The receipt ha
 kind=source-upgrade-execution, intervalId, cwd, beforeSource/afterSource, timestamps,
 command, exitCode, beforeClean/afterClean and reviewedChangesSha256. The supported
 source switch is exactly git switch --detach NEW_HEAD, with recorded exit0 and
-clean endpoints. Both before collections must finish before upgrade starts; both
+clean endpoints. The overall interval must start at or after the sealed phase23 recovery terminal
+completion time; an internally ordered but wholly earlier interval is refused.
+Both before collections must finish before upgrade starts; both
 after collections must start after upgrade completes, inside the overall audit
 interval. If a different actual command was used, preserve it and request source
 policy review; never rewrite historical receipts to fit this schema.
