@@ -194,7 +194,7 @@ def validate_compact(bundle,intent,snapshot,b):
  require(bundle['authority']=={'composer':PIN,'stage':'notes-v1','sourceHead':b['source'],'boundary':24,'descriptor':intent['familyContinuation'],'baseDescriptor':intent['familySourceBoundary23']},'Wrong compact authority')
  require(bundle['hashes'].get(b['historyIn'])==intent['familyBoundaryHistory']['sha256'],'Unsealed history')
 
-TEMPLATE_GO=Path('/workspace/composer-adoption-notes/results-toc-30-39-template-02/manager-go.json')
+TEMPLATE_GO=Path('/workspace/composer-adoption-notes/results-toc-30-39-template-03/manager-go.json')
 def assert_template_go(phase_go):
  require(phase_go.is_file(),'Phase manager-go missing')
  phase=json.loads(phase_go.read_text());template=json.loads(TEMPLATE_GO.read_text())
@@ -203,10 +203,24 @@ def assert_template_go(phase_go):
  require(phase.get('granted') is True and phase.get('templateGo')==str(TEMPLATE_GO),'Phase GO does not reference the template GO')
  require(phase.get('templateGoSha256')==digest(TEMPLATE_GO.read_bytes()),'Template GO hash mismatch')
  require(TEMPLATE_GO.stat().st_mtime < phase_go.stat().st_mtime,'Template GO is not earlier than the phase GO')
+def assert_phase_review(review_path,index,history_in):
+ require(review_path.is_file(),'Phase review missing')
+ review=json.loads(review_path.read_text())
+ require(review.get('verdict')=='PASS' and not review.get('mismatches'),'Phase review is not a pass')
+ require(isinstance(review.get('reviewer'),str) and review['reviewer'].strip(),'Bare review: reviewer missing')
+ subject=review.get('subject')
+ require(isinstance(subject,dict),'Bare review: subject missing')
+ require(Path(subject.get('path','')).resolve()==Path(__file__).resolve(),'Review subject is not this sibling')
+ require(subject.get('sha256')==digest(Path(__file__).read_bytes()),'Review subject hash mismatch')
+ require(subject.get('phase')==index,'Review subject phase mismatch')
+ require(subject.get('historyIn')==history_in,'Review subject history mismatch')
+ require(subject.get('historyInSha256')==digest(Path(history_in).read_bytes()),'Review subject history hash mismatch')
 def run_phase(b,index):
  b=validate_bindings(b) # MUST precede every read, output and subprocess.
  sealed=dict(b['frozen']);out=b['outputs'];env={**os.environ,**ENV,'PATH':'/workspace/.cache/toolchain:'+os.environ['PATH']}
- assert_template_go(Path(out['result']).parent/'manager-go.json')
+ phase_dir=Path(out['result']).parent
+ assert_template_go(phase_dir/'manager-go.json')
+ assert_phase_review(phase_dir/'independent-review.json',index,b['historyIn'])
  def raw(p):
   data=Path(p).read_bytes();require(p in sealed and digest(data)==sealed[p],'Changed/unsealed input '+p);return data
  def read(p):return json.loads(raw(p))

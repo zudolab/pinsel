@@ -121,6 +121,19 @@ class Tests(unittest.TestCase):
     with self.assertRaises(ValueError):m.assert_template_go(phase)
    finally:
     m.TEMPLATE_GO=previous
+ def test_bare_review_is_refused(self):
+  with tempfile.TemporaryDirectory() as d:
+   history=Path(d)/'history.json';history.write_text('[]')
+   review=Path(d)/'independent-review.json'
+   review.write_text(json.dumps({'verdict':'PASS','mismatches':[]}))
+   with self.assertRaises(ValueError):m.assert_phase_review(review,33,str(history))
+   sibling=Path(m.__file__).resolve()
+   full={'verdict':'PASS','mismatches':[],'reviewer':'bc-test','subject':{'path':str(sibling),'sha256':m.digest(sibling.read_bytes()),'phase':33,'historyIn':str(history),'historyInSha256':m.digest(history.read_bytes())}}
+   review.write_text(json.dumps(full))
+   m.assert_phase_review(review,33,str(history))
+   full['reviewer']=''
+   review.write_text(json.dumps(full))
+   with self.assertRaises(ValueError):m.assert_phase_review(review,33,str(history))
  def test_frozen_drivers_remain_separate(self):
   frozen=Path('/workspace/composer-adoption-notes/results-continuation24-batch24-27-template-03/batch.py').read_text()
   sort=Path('/workspace/pinsel-baseline-publication/tests/native-authoring/families/results-sort-28-29/batch.py').read_text()
