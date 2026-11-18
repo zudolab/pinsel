@@ -1,3 +1,4 @@
+import { installNativeOwnerIpc } from "./native-owner-ipc.mjs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { startComposerDevServer } from "zudo-composer";
@@ -43,9 +44,17 @@ try {
     { cause },
   );
 }
+const ipcNonce = process.env.PINSEL_NATIVE_OWNER_IPC_NONCE;
+if (ipcNonce !== undefined && (!/^[a-f0-9-]{36}$/.test(ipcNonce) || !process.send || !process.connected)) {
+  throw new Error("Native owner IPC requires a valid nonce and inherited connected channel");
+}
 const { server } = await startComposerDevServer({ workspaceRoot, host: "127.0.0.1", port, strictPort });
 server.printUrls();
 console.log("Open /composer?native=1. Save and stop this server before offline capture/build.");
+const ownerIpc = ipcNonce === undefined ? undefined : installNativeOwnerIpc({
+  server, nonce: ipcNonce, port, hostRoot: workspaceRoot,
+});
+await ownerIpc?.ready();
 let stopping = false;
 for (const signal of ["SIGINT", "SIGTERM"] as const) {
   process.on(signal, () => {
@@ -56,7 +65,7 @@ for (const signal of ["SIGINT", "SIGTERM"] as const) {
     const keepAlive = setInterval(() => {
       console.log("Waiting for safe authoring shutdown; active writes must finish.");
     }, 30_000);
-    void server.close().then(() => {
+    void (ownerIpc ? ownerIpc.close() : server.close()).then(() => {
       clearInterval(keepAlive);
       process.exit(0);
     }, error => {

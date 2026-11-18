@@ -1,36 +1,40 @@
-# Family server ownership
+# Family server ownership and shutdown
 
-The family runner launches the unchanged `start-native.ts` with Node24 and the
-installed public `tsx` import. It uses the content package cwd and the same explicit
-`tsconfig.scripts.json`, stage and Composer identity. It does not invoke the tsx
-CLI/pnpm signal relay or change the ordinary product scripts.
+The family runner launches unchanged authority/preflight logic in `start-native.ts`
+with Node24, installed public `tsx`, package cwd and exact tsconfig. An explicit
+nonce plus inherited Node IPC channel opts into the parent-only control protocol;
+ordinary `pnpm dev` without that opt-in retains its existing signal behavior.
+No HTTP endpoint, private Composer API or removal of Vite signal handlers is used.
 
-Stop sends SIGTERM once to the exact owned Node child. The existing entry awaits
-public `server.close()`, including Composer middleware/coordination drain and lease
-release. The runner awaits child `close` (including stdio), requires exit0 without a
-signal, then requires host-root lease absence and free port before offline capture.
-A 120-second observation timeout fails closed: no SIGKILL, process-group kill,
-automatic lease removal, capture or replay. A still-live owner must be reconciled
-separately; a timeout is not permission to stop persistence. Repeated stop calls
-share the same promise and never resend the signal.
+Ready/stop/closed messages bind protocol version, launch nonce, actual Node PID,
+port and host root. Before browser work the runner requires matching ready,
+a regular lease owned by that Node and a responding loopback endpoint. One stop
+message calls the shared memoized public `server.close()` with a keep-alive.
+The child sends closed only after fulfilled close and awaits the send callback
+before exit0. Rejection/channel/protocol failures never report success.
 
-Original phase22 FAIL549 and its separate authorized lease recovery stay recorded.
-The original terminating signal/close stage is unknown; the wrapper interaction is
-a source-supported risk, not a proven cause. Direct-owner fixtures do not establish
-that an actual native authoring run passed. Auxiliary processes and process cwd
-visibility require separate terminal audit; child close is not a universal process
-inventory.
+The parent requires matching closed, child `close` exit0/signalnull (stdio drained),
+lease absence and free port before offline capture. Duplicate stops share a promise.
+The120-second observation timeout is failure, never permission to send a signal,
+SIGKILL, unlink a lease, retry a write or start capture. Startup has a separate
+180-second ready bound. Preserve failed logs and the full IPC trace, including
+primary and secondary errors. Reconcile any remaining live owner separately.
 
-Run focused disposable tests (no native workspace/store/browser):
+Original22 FAIL549 and23 FAIL427 remain preserved. Installed Vite's SIGTERM handler
+awaits close but calls exit in finally;143 does not distinguish successful close
+from rejection. The IPC path invokes public close without delivering that signal.
+No actual native family scenario is established by the disposable fixtures.
+
+Focused tests (existing installed dependencies; no install/native store/browser):
 
 ```sh
 FAMILY_TEST_DEPENDENCIES=/absolute/path/to/existing/node_modules \
   node --test tests/native-authoring/families/owner-process.node-test.mjs
 ```
 
-The dependency path is only a fixture symlink under a new temporary directory.
-The test imports the installed public `tsx`, proves TypeScript alias/argument/env
-parity and delayed graceful shutdown beyond both30ms relay windows and the old15-second cutoff (using the default120-second observation bound). Other tests
-exercise late stdio, duplicate stop, timeout, signal/nonzero exits, retained dangling
-lease symlink, spawn failure and occupied port. Fixtures remove only their own
-new temporary state; the production helper never removes a lease.
+The real installed Vite/tsx fixture uses new temporary files, aliases and a local
+HTTP listener with no authoring workspace. It retains Vite's SIGTERM handler and
+closes via IPC after more than15seconds using the default timeout. Other fixtures
+cover mismatched identity, missing acknowledgement/early143 or0, close rejection,
+channel loss, duplicate stops, late logs, timeout and retained/symlink leases.
+Only fixture-owned temporary files are removed; the helper never removes leases.
