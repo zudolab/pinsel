@@ -6,6 +6,8 @@ import { assertSuccessorProvenance } from './source-successor-history.mjs';
 import { auditBoundaryContinuation } from './boundary23-continuation.mjs';
 import { nextFamilyIntent, continuationIntentPlain } from './sequence-core.mjs';
 import { RECOVERY26, validateOperatorRecovery26 } from './operator-recovery26.mjs';
+import { assertRecordedOperatorBoundary } from './continuation-source-boundary.mjs';
+import { repoRoot } from './config.mjs';
 
 async function absent(path, read) {
   try { await read(path); } catch (error) { assert.equal(error.code, 'ENOENT'); return; }
@@ -13,13 +15,21 @@ async function absent(path, read) {
 }
 
 export async function assertIndex26PhaseGuards({ proof, before, after, bundle, bundlePath, provenance, loaded, read, json, dir, historyPaths, index }) {
-  const sourceHead = loaded.sourceBoundary ? loaded.sourceBoundary.oldSource : loaded.installation.source.head;
+  const recordedBoundary = proof.intent.familyOperatorSourceBoundary ?? null;
+  let installation = loaded.installation;
+  let sourceHead = installation.source.head;
+  if (recordedBoundary) {
+    const recorded = await assertRecordedOperatorBoundary({ descriptor: recordedBoundary, repo: repoRoot, historical: installation, provenanceSourceHead: provenance.sourceHead });
+    sourceHead = recorded.head;
+    installation = { ...installation, source: recorded };
+  } else if (loaded.sourceBoundary) assert.equal(loaded.sourceBoundary.oldSource, sourceHead);
   assert.equal(provenance.sourceHead, sourceHead, 'Provenance source head is not the accepted phase source');
-  assert.equal(sourceHead, loaded.installation.source.head);
+  assert.equal(bundle.authority.sourceHead, sourceHead);
+  if (!recordedBoundary) assert.equal(sourceHead, loaded.installation.source.head);
   assertContinuationAuthority(bundle, { composer: loaded.installation.composer, stage: loaded.installation.stage, sourceHead });
   assert.equal((await json(join(dir, 'accepted-input-sha256.json'))).sha256, inputHash(await read(bundlePath)));
   for (const [path, hash] of Object.entries(bundle.hashes)) assert.equal(inputHash(await read(path)), hash);
-  assertSuccessorProvenance(provenance, bundle, before, loaded.installation);
+  assertSuccessorProvenance(provenance, bundle, before, installation);
   const ref = proof.intent.familyBoundaryHistory;
   assert.equal(inputHash(await read(ref.path)), ref.sha256);
   assert.deepEqual(await json(ref.path), historyPaths.slice(0, index));
