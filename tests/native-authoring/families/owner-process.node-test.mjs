@@ -51,3 +51,9 @@ test('spawn failure and occupied port both fail closed',async()=>{
  const c=fake(),o=ownProcess(c);c.emit('error',Error('spawn refused'));const p=o.stop(checks());c.emit('close',-2,null);await assert.rejects(p,/spawn refused/);assert.deepEqual(c.signals,[]);
  const d=fake(),q=ownProcess(d);const stopped=q.stop({leaseAbsent:async()=>{},portFree:async()=>{throw Error('occupied');}});d.emit('close',0,null);await assert.rejects(stopped,/occupied/);
 });
+test('startup rejects foreign lease PID, exited owner and symlink',async()=>{
+ const {assertOwnedLease}=await import('./owner-process.mjs');const dir=await mkdtemp(join(tmpdir(),'family-owner-identity-'));try{
+ const c=fake();await writeFile(join(dir,'.zudo-authoring.lock'),JSON.stringify({pid:999,owner:'dev-server'}));await assert.rejects(assertOwnedLease(dir,c),/ownership/);
+ await writeFile(join(dir,'.zudo-authoring.lock'),JSON.stringify({pid:c.pid,owner:'dev-server'}));await assertOwnedLease(dir,c);c.exitCode=1;await assert.rejects(assertOwnedLease(dir,c),/exited/);
+ }finally{await rm(dir,{recursive:true});}
+});

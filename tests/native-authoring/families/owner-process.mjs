@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
-import { lstat } from 'node:fs/promises';
+import { lstat, readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { assertFreePort } from './runtime-preflight.mjs';
 
@@ -16,6 +16,17 @@ export async function assertLeaseAbsent(hostRoot) {
   try { await lstat(join(hostRoot, '.zudo-authoring.lock')); }
   catch (error) { if (error.code === 'ENOENT') return; throw error; }
   throw Error('Authoring lease remains; preserve it and reconcile ownership. No capture permitted.');
+}
+
+export async function assertOwnedLease(hostRoot, child) {
+  assert.equal(child.exitCode, null, 'Owner already exited');
+  assert.equal(child.signalCode, null, 'Owner terminated');
+  const path = join(hostRoot, '.zudo-authoring.lock');
+  const metadata = await lstat(path);
+  assert(metadata.isFile() && !metadata.isSymbolicLink(), 'Expected regular owned lease');
+  const lease = JSON.parse(await readFile(path, 'utf8'));
+  assert.equal(lease.pid, child.pid, 'Ready endpoint lacks exact Node lease ownership');
+  assert.equal(lease.owner, 'dev-server');
 }
 
 // The child is the Node lease owner, not a package-manager launcher. Never kill
