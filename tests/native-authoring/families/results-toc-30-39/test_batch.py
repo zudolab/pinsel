@@ -75,6 +75,13 @@ class Tests(unittest.TestCase):
     snap=copy.deepcopy(s)
     if name=='child':snap['project']['providers']['mappings'][0]['records'][0]['document']['mode']['query']['sort']=[]
     with self.subTest(index=index,name=name),self.assertRaises(ValueError):m.validate_intent(x,snap,p,d,b,'b'*64,index,b['sourceBoundary'])
+ def test_negative_wrong_owner(self):
+  for index in range(30,40):
+   b,s,p,d,i=self.fixture(index);x=copy.deepcopy(i)
+   if 'owner' in x:x['owner']={'providerId':x['owner']['providerId'],'recordId':'foreign'}
+   elif index==30:x['owner']={'providerId':'files','recordId':'foreign'}
+   else:x['composition']['recordId']='foreign'
+   with self.subTest(index=index),self.assertRaises(ValueError):m.validate_intent(x,s,p,d,b,'b'*64,index,b['sourceBoundary'])
  def test_negative_step_deltas(self):
   cases={30:lambda x:x['source'].__setitem__('recordId','results-year-year-2015'),31:lambda x:x['document']['root'][0]['props'].__setitem__('number',11),32:lambda x:x.__setitem__('name','other-toc'),33:lambda x:x['target'].__setitem__('prop','href'),34:lambda x:x.__setitem__('fieldId','result-year-order'),35:lambda x:x['document']['bindings'][1]['transform'].__setitem__('prefix','#year-'),36:lambda x:x['action'].__setitem__('value','#other'),37:lambda x:x['document']['mode']['query'].__setitem__('limit',1),38:lambda x:x['document']['mode']['query'].__setitem__('limit',1000),39:lambda x:x['document']['mode']['query'].__setitem__('pins',[])}
   for index,edit in cases.items():
