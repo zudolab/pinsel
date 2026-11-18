@@ -13,16 +13,80 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `d03e953d7f5e40fb09d69d1f427186f7dcf77eb6`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
+| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `3c6e4b70676640a60ce313bc4b5d823438beb1ff`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
 | Installed package / upstream attestation | `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
 | Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping phase13 PASS260s and full human regression PASS1001s, both independently audited. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
-| Results progress | Phase12 binding saved once; original run failed after acknowledgement. Separate readonly recovery PASS176s proves exact saved binding, reload, settled reads and unchanged capture. History has18 entries after phase13 count-binding PASS260s, phase14 collection PASS250s, phase15 limit PASS291s, phase16 pin PASS391s and the separate phase17 duplicate PASS400s. Phase18 saved its Mapping once, then failed before reload; separate read-only recovery PASS178s preserves the full saved capture. Its fixed19 continuation record is being prepared; accepted history still has18 entries. Original failures remain recorded; phases19–44 and FAQ remain pending. |
+| Results progress | Phases00–21 have accepted history, including separately qualified recoveries. Phase22 saved once and reloaded, then original FAIL549 at offline capture; separate public capture/delta reconciliation verifies only that saved Mapping change. History22 is retained; fixed23 recovery handoff and phases23–44 remain unexecuted. FAQ remains pending. |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current c5 human, negative, response-loss recovery and static gates passed; seven current-pin Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
 | Holds | Remaining T6/T7 scenarios, current-head checks/review/merges; actual owner-data cutover and new authenticated-provider acceptance. Deployment remains disabled. |
+
+## Local continuation checkpoint — 2026-11-18
+
+The same Cloud workspace resumed without replaying uncertain saves or Undo. This
+wave remains local: PR61 and Composer PR979 are still held drafts at their last
+remote inspection; no push, merge, deployment or package publication occurred.
+The package and contract identities above are unchanged.
+
+Knowledge reference authoring completed at Pinsel
+`66865aeb1dab917057b1186c2a584855a662b19c` with the current c5 package. One
+forward save changed the existing Knowledge card to an already-published authored
+Note, followed by native restart/exact build PASS438 and static visitor PASS13.
+One separately admitted inverse restored the original `exam-schedule` reference,
+followed by native restart/exact build PASS478 and static visitor PASS15. Content
+tokens advanced37→38→39; the final capture is
+`38cd628b5e62386e6f9aff2dc0fce28a4501523a379a6279b097f02e75f17e01`.
+All original values, structure, Assets and Notes are restored except normal owner
+metadata and revision identity. Both builds verified16 routes/143 assets/160 files.
+The actual static card clicks reached the expected Note headings, with52 forward
+and69 inverse successful same-origin responses. Source card title and excerpt
+remained independent. Independent qualified reviews are retained as
+`knowledge-authored-note-c5-{forward,inverse}-independent-review.json` and
+`knowledge-static-visitor-{forward,inverse}-c5-independent-actual-review.json`.
+Native navigation retains aborted image-request diagnostics; no universal native
+asset-request pass or standalone frame-acknowledgement journal is inferred.
+
+Results phases19–21 passed and appended history once each. Phase22's original
+Mapping save/reload succeeded, but the final capture failed because its server
+lease remained. The original FAIL549, missing original after/proof and all logs
+remain preserved. A separately authorized, narrowly verified abandoned-lease
+recovery retained the exact lease bytes before removal; public capture PASS11 and
+full-delta review establish the intended collection-mode change only. Snapshot:
+`b75900365a1f4b0d7a7dfc1f1d6b0fcbd2db4d6d3ba985b45377fcd86c3592e6`.
+This is separate saved-state reconciliation, not a normal phase22 pass. Evidence:
+`results-phase22-independent-failure-review.json`,
+`results-phase22-lease-recovery-independent-review.json` and its addendum.
+
+The Results consumer source advanced from d03 to3c6 through a reviewed25-file
+harness/docs change. Public captures before and after are fully equal;1007 native
+files,790 runtime files,8 manifests,4 installations and439 unique evidence hashes
+were preserved. The fixed23 recovery/continuation implementation passed independent
+468-test review, but its actual preparer/loader/history23 and phase23 are **NOT_RUN**.
+The currently prepared inputs remain unexecuted pending a final source review of
+family server shutdown. The observed launcher-exit/free-port predicate does not
+prove awaited owner close or lease release; the exact phase22 interruption cause
+remains unknown. No automatic lease deletion or phase22 replay is permitted.
+
+Local repository gates at `3f145696f94a77d0d627cd8a5dbab32f1615b862` passed:
+997 unit tests (15 skipped), typechecks, site/editor/styleguide/Worker builds,
+local authentication and temporary-D1 snapshot rehearsal, strict14-route migration,
+83 approved seed files,133 public plus4 art assets, and no-deployment checks.
+Browser tests passed124, with15 reference-only skips because no reference output
+was supplied. Missing generated outputs and a missing default Wrangler config path
+caused earlier failures; those logs remain, and supported generation/workspace
+configuration resolved the affected checks. All972 pre-existing root native files
+remained byte-exact. Later harness-only digest and boundary23 changes received
+focused422/468-test checks; the earlier complete gate run is not relabelled as a
+new-head run. Evidence: `pinsel-3f14569-local-gates-checkpoint.json`.
+
+Results23–44, FAQ00–42 and their placed rendering, membership/order, live-reference
+versus detached-copy follow-ups remain incomplete. Actual owner-data cutover and
+new authenticated-provider acceptance remain separately held. Process cwd access
+can be unavailable after reconnect; retained PID/lease/port observations do not
+justify an exhaustive process-absence claim.
 
 ## Current c5 installed checkpoint — 2026-11-17
 
