@@ -14,6 +14,7 @@ import assert from 'node:assert/strict';
 import {requestGate,drainAll} from './original-request.mjs';
 import {getRecord,admitRecordEdit,admitDuplicate,admitContentCreate,admitContentField,admitMappingCreate,admitBinding,admitGroup,admitAttachment} from './intents.mjs';
 import {explicitSaveControl} from './explicit-save.mjs';
+import {clickRevealedTreeAction} from './tree-action.mjs';
 const endpoints={content:'/__zudo_composer_content_provider',compositions:'/__zudo_composer_file_provider',mappings:'/__zudo_composer_mapping_provider',workspace:'/__zudo_composer_workspace_provider'};
 /** Exactly one reviewed original browser mutation per phase; completion waits for the outer close. */
 export async function familyUi(page,{base,snapshot,intent,persist,expect,setClose}){
@@ -62,7 +63,7 @@ export async function familyUi(page,{base,snapshot,intent,persist,expect,setClos
  else{
   await page.goto(domain==='compositions'?compositionUrl(intent.owner):mappingUrl(intent.owner));const a=intent.action;
   if(intent.kind==='binding'){const target=page.getByRole('button',{name:`Bind ${intent.title}.${intent.target.prop} on ${intent.target.nodeId}`,exact:true});await mappingBindingReadiness({page,expect,ref:intent.owner,record:getRecord(snapshot,'mappings',intent.owner),target,composition,check:prewriteCheck,persist});await target.click();const m=page.getByRole('menu',{name:`Bind ${intent.title}.${intent.target.prop} to…`,exact:true});await beforeWrite('before-family-binding');await m.getByRole('menuitem').filter({has:page.locator('.cms-mapping-bind-menu__label').filter({hasText:new RegExp('^'+RegExp.escape(intent.fieldLabel)+'$')})}).click();}
-  else if(intent.kind==='group'){await page.getByRole('button',{name:`Add component to ${intent.slotId}`,exact:true}).click();await beforeWrite('before-family-group');await page.getByRole('button',{name:'Group',exact:true}).click();}
+  else if(intent.kind==='group'){await clickRevealedTreeAction(page,expect,`Add component to ${intent.slotId}`);await beforeWrite('before-family-group');await page.getByRole('button',{name:'Group',exact:true}).click();}
   else if(a.kind==='query-reference'){
    const record=getRecord(snapshot,'mappings',intent.owner),operator=page.getByLabel('Filter 1 operator',{exact:true}),target=page.getByLabel('Filter 1 value',{exact:true}),value=JSON.stringify([a.ref.providerId,a.ref.modelId,a.ref.recordId]);
    const ready=(controls,boundary,draft=false)=>mappingControlReadiness({page,expect,ref:intent.owner,record,controls,composition,check:prewriteCheck,persist,collection:true,boundary,draft});
