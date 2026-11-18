@@ -13,6 +13,7 @@ import {compositionDerivedReadGate} from './composition-output.mjs';
 import assert from 'node:assert/strict';
 import {requestGate,drainAll} from './original-request.mjs';
 import {getRecord,admitRecordEdit,admitDuplicate,admitContentCreate,admitContentField,admitMappingCreate,admitBinding,admitGroup,admitAttachment} from './intents.mjs';
+import {explicitSaveControl} from './explicit-save.mjs';
 const endpoints={content:'/__zudo_composer_content_provider',compositions:'/__zudo_composer_file_provider',mappings:'/__zudo_composer_mapping_provider',workspace:'/__zudo_composer_workspace_provider'};
 /** Exactly one reviewed original browser mutation per phase; completion waits for the outer close. */
 export async function familyUi(page,{base,snapshot,intent,persist,expect,setClose}){
@@ -41,7 +42,7 @@ export async function familyUi(page,{base,snapshot,intent,persist,expect,setClos
   if(path===endpoint&&writeOps.includes(op))return readiness.admit(route,()=>gate.handle(route));
   held??=Error(`Unexpected operation ${path} ${op}`);try{await persist({phase:'unexpected-refused',path,operation:op});}finally{await route.abort();}
  });
- const save=async()=>{const b=page.getByRole('button',{name:'Save',exact:true});if(await b.isEnabled()){await beforeWrite('before-family-save');await b.click();}};
+ const save=async()=>{if(!explicitSaveControl(domain))return;const b=page.getByRole('button',{name:'Save',exact:true});if(await b.isEnabled()){await beforeWrite('before-family-save');await b.click();}};
  const compositionUrl=ref=>`${base}/composer?provider=${encodeURIComponent(ref.providerId)}&composition=${encodeURIComponent(ref.recordId)}`;
  const mappingUrl=ref=>`${base}/mapping?provider=${encodeURIComponent(ref.providerId)}&mapping=${encodeURIComponent(ref.recordId)}`;
  if(domain==='content'){

@@ -1,4 +1,4 @@
-import copy,importlib.util,subprocess,sys,tempfile,unittest
+import copy,importlib.util,json,subprocess,sys,tempfile,unittest
 from pathlib import Path
 spec=importlib.util.spec_from_file_location('batch',Path(__file__).with_name('batch.py'));m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m)
 PARENT={'providerId':'content-filesystem','modelId':'result-year','recordId':'actual-parent'}
@@ -101,6 +101,22 @@ class Tests(unittest.TestCase):
   with self.assertRaises(ValueError):m.validate_history(paths,paths[:23],p,s,30,'/c/descriptor.json')
   p[28]['beforeDigest']=p[27]['afterDigest'];p[29]['intent']['sequence']['step']='child-sort-add'
   with self.assertRaises(ValueError):m.validate_history(paths,paths[:23],p,s,30,'/c/descriptor.json')
+ def test_template_go_must_predate_phase_go(self):
+  import os, time
+  template=m.TEMPLATE_GO
+  self.assertTrue(template.is_file())
+  with tempfile.TemporaryDirectory() as d:
+   phase=Path(d)/'manager-go.json'
+   body={'granted':True,'templateGo':str(template),'templateGoSha256':'0'*64}
+   phase.write_text(json.dumps(body))
+   os.utime(phase,(time.time()+5, time.time()+5))
+   with self.assertRaises(ValueError):m.assert_template_go(phase)
+   body['templateGoSha256']=m.digest(template.read_bytes())
+   phase.write_text(json.dumps(body))
+   os.utime(phase,(time.time()+5, time.time()+5))
+   m.assert_template_go(phase)
+   os.utime(phase,(template.stat().st_mtime-10, template.stat().st_mtime-10))
+   with self.assertRaises(ValueError):m.assert_template_go(phase)
  def test_frozen_drivers_remain_separate(self):
   frozen=Path('/workspace/composer-adoption-notes/results-continuation24-batch24-27-template-03/batch.py').read_text()
   sort=Path('/workspace/pinsel-baseline-publication/tests/native-authoring/families/results-sort-28-29/batch.py').read_text()
