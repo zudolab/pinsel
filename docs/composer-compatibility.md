@@ -13,16 +13,66 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `3c6e4b70676640a60ce313bc4b5d823438beb1ff`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
+| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `b81e4edd9a0f135db0d6ea470c24db89bd63b7e1`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
 | Installed package / upstream attestation | `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660` |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
 | Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping phase13 PASS260s and full human regression PASS1001s, both independently audited. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
-| Results progress | Phases00–21 have accepted history, including separately qualified recoveries. Phase22 saved once and reloaded, then original FAIL549 at offline capture; separate public capture/delta reconciliation verifies only that saved Mapping change. History22 is retained; fixed23 recovery handoff and phases23–44 remain unexecuted. FAQ remains pending. |
+| Results progress | History23 preserves phases00–21 plus the explicit phase22 failed-run/public-capture recovery. Phase23 saved its intended limit100→1000 and reloaded it, then original FAIL427 at the shutdown exit-code check. A separate public capture verifies that full saved state. No history24 or later operation is accepted; FAQ remains pending. |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current c5 human, negative, response-loss recovery and static gates passed; seven current-pin Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
 | Holds | Remaining T6/T7 scenarios, current-head checks/review/merges; actual owner-data cutover and new authenticated-provider acceptance. Deployment remains disabled. |
+
+## Results phase23 saved-state reconciliation — 2026-11-18
+
+The reviewed fixed23 preparer completed PASS532 with442 frozen evidence paths.
+History23 appended the genuine phase22 recovery once, preserving the exact prior
+22-entry prefix. Its descriptor SHA is
+`4092a878ddde64755dd9026a3e014bb050c8bf6d6c1c40d7701fd853857ea863`;
+history23 SHA is `659ef21f4e597014118eb29c8bb0d4d817f8d91242742a81a885ad3885e5a1b9`.
+
+At consumer b81/c5, phase23 generated its exact intent in224s, then dispatched one
+Mapping save and received original HTTP200. Qualified reload returned the identical
+saved record and settled all tracked reads. The intended query limit changed100→1000,
+with the three existing bindings preserved. The runtime nevertheless ended **FAIL427**:
+the directly owned Node process exited143 instead of the required0. No original
+after-capture/proof or history24 was produced. The failed shutdown artifact does not
+retain an owner PID; signal-null is inferred only from the preceding passed assertion.
+
+Installed Vite has an earlier SIGTERM callback that exits in a `finally` block after
+awaiting close. It can exit143 before the host's exit0 callback and also exits when
+close rejects. This explains a concrete competing exit path, but does not establish
+which outcome occurred in the actual run. Do not accept143 as successful shutdown
+or retrospectively attribute the separate phase22 failure to this mechanism.
+
+Read-only reconciliation found the exact host lease absent and port4208 closed.
+One separately admitted public recovery capture then passed11s. Independent full
+comparison proves only the exact originally saved Mapping record, its domain token
+and snapshot digest changed from b759 to
+`0fea371008a27a799c8402a69fb166fea87ed5ef88be34a8cf350905c7d10afa`.
+All other records/domains, Assets and public files remain exact. Eight original
+artifact hashes and history23 are unchanged. No save, inverse or lease deletion was
+repeated. This is separate full saved-state reconciliation, **not a normal phase23
+pass or a restored graceful-shutdown verdict**. Evidence:
+`results-phase23-failure-and-ipc-design-independent-review.json` and
+`results-phase23-public-recovery-independent-review.json`.
+
+A reviewed opt-in parent/child IPC close design is being implemented locally to
+obtain an explicit awaited-close acknowledgement without dispatching competing
+SIGTERM handlers. It must retain startup authority checks and require matching
+protocol/owner acknowledgements, successful exit, drained logs, lease absence and
+free port. Real installed-Vite disposable tests are required; the earlier Node/tsx
+fixture alone did not exercise Vite's signal handler. Neither this proposed fix nor
+future source-transition/continuation tooling is an installed acceptance pass.
+
+The compact phase23 input was11,168,400 bytes versus68,361,297 bytes for the earlier
+recursive bundle; the complete failed attempt retained52,169,164 bytes. These are
+observed artifact sizes, not a guarantee for future phases. The unfilled24–27 batch
+has independent source-test evidence, including cross-phase preservation of original
+receipt/event/bundle/provenance hashes, but actual bindings and execution remain held.
+No remote write, merge, deployment, owner-data switch or authenticated-provider run
+occurred in this local continuation.
 
 ## Local continuation checkpoint — 2026-11-18
 
