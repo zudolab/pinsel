@@ -104,7 +104,7 @@ def validate_history(paths,prefix,proofs,snapshot,index,continuation_path):
  for i in range(1,index):require(proofs[i].get('beforeDigest')==proofs[i-1]['afterDigest'] and proofs[i]['intent']['sequence']['index']==i,'Digest chain break')
 
 STEPS={28:'child-sort-add',29:'child-sort-field'}
-def validate_intent(intent,snapshot,proofs,descriptors,b,history_hash,index):
+def validate_intent(intent,snapshot,proofs,descriptors,b,history_hash,index,boundary_document):
  require(index in STEPS,'Only28-29 allowed')
  require(intent['sequence']=={'configHash':CONFIG_HASH,'index':index,'step':STEPS[index],'total':45},'Wrong next phase')
  require(intent['kind']=='record-edit' and intent['domain']=='mappings' and intent['family']=='results','Wrong operation')
@@ -124,7 +124,7 @@ def validate_intent(intent,snapshot,proofs,descriptors,b,history_hash,index):
  require(intent['document']==doc and intent['action']==action,'Only reviewed sort delta allowed')
  require(intent['captureDigest']==snapshot['digest'] and intent['capturePath']==proofs[index-1]['afterCapture'],'Wrong actual prior capture')
  require(intent['familyBoundaryHistory']=={'path':b['historyIn'],'sha256':history_hash},'Current history seal mismatch')
- require(intent['familyOperatorSourceBoundary']==b['sourceBoundary'],'Source boundary missing')
+ require(intent['familyOperatorSourceBoundary']==boundary_document,'Source boundary missing')
  for key,descriptor in zip(KEYS,descriptors):require(intent[key]==descriptor,'Descriptor changed '+key)
 
 def validate_compact(bundle,intent,snapshot,b):
@@ -186,7 +186,7 @@ def run_phase(b,index):
  try:
   run(guarded(['node','tests/native-authoring/families/sequence.mjs',b['config'],proofs[index-1]['afterCapture'],b['historyIn'],b['active'],out['intent'],*b['descriptors'],b['sourceBoundary']]),out['generateLog'])
   retain(sealed,out['intent'],digest(Path(out['intent']).read_bytes()));intent=read(out['intent'])
-  validate_intent(intent,snapshot,proofs,descriptors,b,sealed[b['historyIn']],index);stopped()
+  validate_intent(intent,snapshot,proofs,descriptors,b,sealed[b['historyIn']],index,read(b['sourceBoundary']));stopped()
   require(shutil.disk_usage(REPO).free>=RESERVE+PHASE_BUDGET,'Capacity HOLD before dispatch')
   run(plan['argv'],out['runtimeLog']);stopped()
   artifact=Path(out['artifact']);load=lambda n:json.loads(seal_read(sealed,artifact/n))
@@ -206,7 +206,7 @@ def run_phase(b,index):
   require(read(b['historyIn'])==history,'History prefix changed')
   history_bytes=json.dumps(history+[str(artifact/'proof.json')],indent=2).encode();retain(sealed,out['historyOut'],digest(history_bytes))
   with Path(out['historyOut']).open('xb')as f:f.write(history_bytes)
-  with Path(out['result']).open('x')as f:json.dump({'status':'PHASE_VERIFIED','proof':str(artifact/'proof.json'),'afterDigest':proof['afterDigest'],'historyOut':out['historyOut'],'index':index,'next':'Only next admitted24-27 step; stop after27'},f,indent=2)
+  with Path(out['result']).open('x')as f:json.dump({'status':'PHASE_VERIFIED','proof':str(artifact/'proof.json'),'afterDigest':proof['afterDigest'],'historyOut':out['historyOut'],'index':index,'next':'Only next admitted28-29 step; stop after29'},f,indent=2)
   journal({'event':'accepted','index':index,'historyOut':out['historyOut'],'afterDigest':proof['afterDigest']})
   for path in [out['verifyLog'],out['result'],out['journal']]:seal_read(sealed,path)
   recheck()

@@ -41,17 +41,17 @@ class Tests(unittest.TestCase):
  def test_exact_sort_deltas(self):
   for index in (28,29):
    with self.subTest(index=index):
-    b,s,p,d,i=self.fixture(index);m.validate_intent(i,s,p,d,b,'b'*64,index)
+    b,s,p,d,i=self.fixture(index);m.validate_intent(i,s,p,d,b,'b'*64,index,b['sourceBoundary'])
  def test_negative_sort_owner_history_schema(self):
   for index in (28,29):
    b,s,p,d,i=self.fixture(index)
    for name,edit in [('owner',lambda x:x['owner'].__setitem__('recordId','foreign')),('sort',lambda x:x['document']['mode']['query']['sort'].append({'fieldId':'other'})),('conditions',lambda x:x['document']['mode']['query']['conditions'][0].__setitem__('operator','not-equals')),('history',lambda x:x['familyBoundaryHistory'].__setitem__('path','/stale')),('step',lambda x:x['sequence'].__setitem__('index',30)),('boundary',lambda x:x.__setitem__('familyOperatorSourceBoundary',{})),('descriptor',lambda x:x.__setitem__('familyContinuation',{}))]:
     x=copy.deepcopy(i);edit(x)
-    with self.subTest(index=index,name=name),self.assertRaises(ValueError):m.validate_intent(x,s,p,d,b,'b'*64,index)
+    with self.subTest(index=index,name=name),self.assertRaises(ValueError):m.validate_intent(x,s,p,d,b,'b'*64,index,b['sourceBoundary'])
  def test_schema_drift_and_outside_batch(self):
   b,s,p,d,i=self.fixture(28);s['project']['providers']['content'][0]['models'][0]['document']['fields'][1]['id']='result-entry-department'
-  with self.assertRaises(ValueError):m.validate_intent(i,s,p,d,b,'b'*64,28)
-  with self.assertRaises(ValueError):m.validate_intent(i,s,p,d,b,'b'*64,27)
+  with self.assertRaises(ValueError):m.validate_intent(i,s,p,d,b,'b'*64,28,b['sourceBoundary'])
+  with self.assertRaises(ValueError):m.validate_intent(i,s,p,d,b,'b'*64,27,b['sourceBoundary'])
  def test_digest_chain_and_phase27_predecessor_refuse(self):
   b,s,p,d,i=self.fixture(28)
   paths=['/h']*28;paths[23]='/c/recovery-sequence-proof.json'
