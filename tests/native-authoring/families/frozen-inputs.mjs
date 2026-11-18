@@ -34,9 +34,9 @@ export async function freezeReadInputs(intentPath) {
   let familyInstallationBridge,familyInstallationSupplement,familySourceRebind,familySourceRebindSuccessor,familySourceCreateHandoff,familySavedCreateHandoff;
   if(intent.familyContinuation){
     const bytes=createExpectedReader(hashes,readFile,{absolute:true}),api=await import('./continuation-loader.mjs');
-    const loaded=await api.loadFamilyContinuation({descriptor:intent.familyContinuation,repo:(await import('./config.mjs')).repoRoot,bytes});
+    const loaded=await api.loadFamilyContinuation({descriptor:intent.familyContinuation,sourceBoundary:intent.familyOperatorSourceBoundary,repo:(await import('./config.mjs')).repoRoot,bytes});
     await api.validateContinuationRuntime({loaded,intent,snapshot,read:bytes,json:async p=>JSON.parse(await bytes(p))});
-    mergeExpectedHashes(hashes,loaded.hashes);return compactContinuationInputs({intent,snapshot,hashes,continuation:loaded.continuation});
+    mergeExpectedHashes(hashes,loaded.hashes);return compactContinuationInputs({intent,snapshot,hashes,continuation:loaded.continuation,sourceHead:loaded.liveSourceHead});
   }
   if(intent.familySourceBoundary23){
     const bytes=createExpectedReader(hashes,readFile,{absolute:true});

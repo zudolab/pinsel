@@ -1,0 +1,80 @@
+import { test } from 'vitest';
+import assert from 'node:assert/strict';
+import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { createHash } from 'node:crypto';
+import { RECOVERY26 } from './operator-recovery26.mjs';
+import { assertIndex26PhaseGuards } from './continuation-phase.mjs';
+
+const sha = value => createHash('sha256').update(value).digest('hex');
+const head = 'b1eec63bfdb54d545d7f006e63df23fa46541d07';
+const composer = 'c5ffd410f74ba4b3aa003da068efeeae6e663c37';
+const descriptor = { proofPath: '/descriptor', freezeManifestPath: '/freeze', freezeManifestSha256: 'a'.repeat(64) };
+const base = { proofPath: '/base', freezeManifestPath: '/base-freeze', freezeManifestSha256: 'b'.repeat(64) };
+
+async function fixture() {
+  const dir = await mkdtemp(join(tmpdir(), 'phase26-guards-'));
+  const capture = join(dir, 'before.json');
+  const history = join(dir, 'history.json');
+  const paths = Array.from({ length: 26 }, (_, index) => `/proof-${index}.json`);
+  const before = { digest: 'b'.repeat(64), workspaceId: 'pinsel', schemaVersion: 1, componentPack: {}, renderer: {}, assets: [], publicFiles: [], tokens: { mappings: 'old', content: 1 }, project: { providers: { mappings: [{ id: 'mapping-filesystem', records: [{ id: 'child', document: { mode: { query: { conditions: [{ operator: 'equals' }] } } } }] }] } } };
+  const after = structuredClone(before);
+  after.digest = 'd'.repeat(64);
+  after.tokens.mappings = 'new';
+  after.project.providers.mappings[0].records[0].document.mode.query.conditions[0].operator = 'not-equals';
+  const intent = { family: 'results', domain: 'mappings', kind: 'record-edit', sequence: { index: 26, step: 'child-reference-not-equals', total: 45 }, captureDigest: before.digest, capturePath: capture, familyContinuation: descriptor, familySourceBoundary23: base, familyBoundaryHistory: { path: history, sha256: '' }, owner: { providerId: 'mapping-filesystem', recordId: 'child' }, action: { kind: 'select', label: 'Filter 1 operator', value: 'not-equals' } };
+  const beforeBytes = JSON.stringify(before);
+  const intentBytes = JSON.stringify(intent);
+  const bundle = { schemaVersion: 3, kind: 'family-runtime-view', intent, snapshot: before, hashes: { [capture]: sha(beforeBytes) }, authority: { composer, stage: 'notes-v1', sourceHead: head, boundary: 24, descriptor, baseDescriptor: base } };
+  bundle.hashes[join(dir, 'intent.json')] = sha(intentBytes);
+  const provenance = { sourceStatus: '', sourceHead: head, composer, stage: 'notes-v1', installed: { four: 'same' }, baselineDigest: before.digest, baselineFileSha256: sha(beforeBytes), intentSha256: sha(intentBytes), sourceHashes: { 'demo.mjs': '1'.repeat(64) }, port: 4208 };
+  const nonce = '9558ee11-ed8b-4ddb-8fae-a06ccc830c2a';
+  const hostRoot = '/workspace/pinsel-baseline-publication/packages/pinsel-content';
+  const message = type => ({ protocol: 'pinsel-native-owner-v1', nonce, pid: 10, hostRoot, port: 4208, type });
+  const trace = [{ event: 'message', at: '2026-01-02T00:00:00.000Z', message: message('ready') }, { event: 'stop', at: '2026-01-02T00:00:01.000Z', message: message('stop') }, { event: 'message', at: '2026-01-02T00:00:02.000Z', message: message('closed') }, { event: 'close', code: 0, signal: null }];
+  const files = new Map();
+  const put = (path, value) => files.set(path, typeof value === 'string' ? value : JSON.stringify(value));
+  put(capture, beforeBytes);
+  put(join(dir, 'intent.json'), intentBytes);
+  put(join(dir, 'accepted-inputs.json'), bundle);
+  put(join(dir, 'accepted-input-sha256.json'), { sha256: sha(files.get(join(dir, 'accepted-inputs.json'))) });
+  put(history, JSON.stringify(paths));
+  intent.familyBoundaryHistory.sha256 = sha(files.get(history));
+  put(join(dir, 'intent.json'), JSON.stringify(intent));
+  bundle.intent = intent;
+  bundle.hashes[join(dir, 'intent.json')] = sha(files.get(join(dir, 'intent.json')));
+  bundle.hashes[capture] = sha(beforeBytes);
+  provenance.intentSha256 = bundle.hashes[join(dir, 'intent.json')];
+  put(join(dir, 'accepted-inputs.json'), bundle);
+  put(join(dir, 'accepted-input-sha256.json'), { sha256: sha(files.get(join(dir, 'accepted-inputs.json'))) });
+  put(join(dir, 'runtime-provenance.json'), provenance);
+  put(join(dir, 'server-shutdown.json'), { code: 0, signal: null, lease: 'absent', port: 'free', protocol: 'pinsel-native-owner-v1', pid: 10, trace });
+  put(join(dir, 'server-ipc-trace.json'), trace);
+  put(join(dir, 'server.log'), 'ready\n');
+  put(join(dir, 'after.json'), after);
+  const proof = { status: RECOVERY26, intent, beforeDigest: before.digest, afterDigest: after.digest, afterCapture: join(dir, 'after.json'), evidence: { originalBundle: join(dir, 'accepted-inputs.json'), originalBefore: capture, originalAfter: join(dir, 'after.json'), originalShutdown: join(dir, 'server-shutdown.json'), originalTrace: join(dir, 'server-ipc-trace.json'), readbackCapture: join(dir, 'after.json') } };
+  const loaded = { installation: { source: { head, hashes: { 'tests/native-authoring/families/demo.mjs': '1'.repeat(64), 'pnpm-lock.yaml': '2'.repeat(64) } }, composer, stage: 'notes-v1', installed: { four: 'same' } }, sourceBoundary: null };
+  const read = async path => { if (!files.has(path)) { const error = new Error('missing ' + path); error.code = 'ENOENT'; throw error; } return Buffer.from(files.get(path)); };
+  const json = async path => JSON.parse(files.get(path));
+  const args = { proof, before, after, bundle, bundlePath: proof.evidence.originalBundle, provenance, loaded, read, json, dir, historyPaths: paths, index: 26 };
+  return { args, files, proof, bundle, provenance, before, after, dir, history };
+}
+
+test('index-26 guards accept intact evidence and reject each restored check', async () => {
+  const base = await fixture();
+  await assertIndex26PhaseGuards(base.args);
+  const tamper = async (edit, label) => {
+    const next = await fixture();
+    edit(next);
+    await assert.rejects(assertIndex26PhaseGuards(next.args), undefined, label);
+  };
+  await tamper(next => { next.args.bundle.authority.sourceHead = 'a'.repeat(40); }, 'authority');
+  await tamper(next => { next.args.provenance.sourceHead = 'a'.repeat(40); }, 'provenance-head');
+  await tamper(next => { next.files.set(next.args.proof.intent.capturePath, '{"tampered":true}'); }, 'bundle-bytes');
+  await tamper(next => { next.args.historyPaths = [...next.args.historyPaths.slice(0, 25), '/other.json']; }, 'history-prefix');
+  await tamper(next => { next.args.after.tokens.content = 9; }, 'whole-delta');
+  await tamper(next => { next.args.provenance.port = 1; }, 'port');
+  await tamper(next => { next.files.delete(join(next.dir, 'server.log')); }, 'server-log');
+  await tamper(next => { next.files.set(join(next.dir, 'server-shutdown-errors.json'), '[]'); }, 'shutdown-error');
+});

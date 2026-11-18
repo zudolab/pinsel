@@ -13,6 +13,7 @@ import {createHash} from 'node:crypto';
 import {FAMILY,inspectFamilySource} from './family-graph.mjs';
 import {getRecord} from './intents.mjs';
 import {assertOperatorRecoveryIdentity,RECOVERY26} from './operator-recovery26.mjs';
+export function continuationIntentPlain(intent){const {familyBoundaryHistory,familyOperatorSourceBoundary,...plain}=intent;return plain;}
 const hash=x=>createHash('sha256').update(JSON.stringify(x)).digest('hex');
 const ref=(domain,id)=>({providerId:domain==='mappings'?'mapping-filesystem':'files',recordId:id});
 /** Pure next-step generator. Receipts are caller supplied; no stores/network/private imports. */
