@@ -20,7 +20,7 @@ requires exactly these fields (absolute paths except expectedSourceHead):
 
 - baseDescriptorPath, history23Path, failureDirectory, originalLogPath
 - recoveryManifestPath, executionJournalPath, driverExitPath, runtimePlanPath
-- reviewedChangesPath, expectedSourceHead
+- reviewedChangesPath, expectedSourceHead, upgradeAuditPath
 - beforePath, afterPath, rawBeforePath, rawAfterPath
 
 The recovery manifest contains afterPath, preflightPath, terminalPath, deltaPath,
@@ -34,7 +34,8 @@ The before/after source-upgrade captures must both equal the entire recovered
 snapshot. Public identities must be unchanged: drift STOPs for a separate reviewed
 identity bridge; this implementation has no identity normalization escape hatch.
 Raw upgrade inventories are separate flat path→{sha256,size,mode} maps and must be
-nonempty and identical. These are supplied operator evidence, not a reason to read
+nonempty and identical. Equality alone is insufficient: upgradeAuditPath must seal
+the actual source-upgrade collection/execution interval as described below. These are supplied operator evidence, not a reason to read
 or assemble private store files inside a loader.
 
 The source delta must exactly match the reviewed path/hash list and Git modes.
@@ -82,3 +83,50 @@ these source files. Review the candidate and exact actual input/freeze evidence
 before any preparer, upgrade or phase24 execution. Existing frozen driver commands
 must not be edited in place; a new reviewed command must bind current source,
 schema3 and all13 sequence arguments.
+
+## Source-upgrade interval audit (required, never backdated)
+
+The audit is recorded by the separately authorized source-upgrade operator. This
+validator performs no upgrade or collection. Its status is
+STOPPED_SOURCE_UPGRADE_INTERVAL_VERIFIED and its scope is exactly
+source-upgrade-only-not-original-phase23-recovery. It contains intervalId (32 hex),
+repo, stage, oldSource, newSource, startedAt/completedAt and before/upgrade/after.
+All collection receipts use that same intervalId and actual source at collection.
+No root/head/hash/timestamp is inferred from equality of the inventories.
+
+Use a new external directory containing audit.json, before.json, after.json,
+raw-before.json, raw-after.json, before-capture-receipt.json,
+after-capture-receipt.json, before-inventory-receipt.json,
+after-inventory-receipt.json and upgrade-execution.json. Original recovery paths
+are not interval outputs. Each before/after capture/inventory item contains
+path, sha256, startedAt, completedAt, receiptPath and receiptSha256.
+
+Capture receipts contain kind=public-capture-execution, intervalId, source, cwd,
+stage, timestamps, path/hash, full command, logPath/logSha256, exitPath/exitSha256
+and digest. Capture logs/exits are the actual before-capture.log/.exit and
+after-capture.log/.exit; require exit0, guarded PASS and exact output/digest.
+The reviewed full command uses heavy-guard --max-run5400, run-with-child-reaper.py
+and pnpm --filter @pinsel/content authoring:capture -- OUTPUT. Prefix substitution
+is refused for original recovery/runtime records as well as upgrade captures.
+
+Inventory receipts contain kind=native-file-inventory-collected, intervalId, source,
+cwd, stage, timestamps, path/hash, count, complete declared roots, leaseAbsent,
+port4208, helpers and sourceClean. Require clean stopped source, absent lease, free
+port, no helpers, matching count/roots and all map paths within those roots. These
+are explicit recorded operator observations; they do not retroactively establish
+phase23 recovery-time raw preservation.
+
+Upgrade item contains timestamps and execution receipt path/hash. The receipt has
+kind=source-upgrade-execution, intervalId, cwd, beforeSource/afterSource, timestamps,
+command, exitCode, beforeClean/afterClean and reviewedChangesSha256. The supported
+source switch is exactly git switch --detach NEW_HEAD, with recorded exit0 and
+clean endpoints. Both before collections must finish before upgrade starts; both
+after collections must start after upgrade completes, inside the overall audit
+interval. If a different actual command was used, preserve it and request source
+policy review; never rewrite historical receipts to fit this schema.
+
+Every audit/receipt/log/exit/map is read through the conflict-checking frozen input
+reader and included in the final descriptor seal. Missing audit, copied historical
+paths/interval IDs, swapped heads/hashes/times, failed commands or unreviewed
+wrapper prefixes refuse before any preparer output. No timestamps may be invented
+or added retrospectively as if measured during an earlier operation.
