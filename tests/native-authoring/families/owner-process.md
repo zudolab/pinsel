@@ -38,3 +38,9 @@ closes via IPC after more than15seconds using the default timeout. Other fixture
 cover mismatched identity, missing acknowledgement/early143 or0, close rejection,
 channel loss, duplicate stops, late logs, timeout and retained/symlink leases.
 Only fixture-owned temporary files are removed; the helper never removes leases.
+
+Two additional disposable real-Vite modes reproduce the competing signal path
+(exit143/signalnull with no closed acknowledgement) and reject close after actual
+Vite closure over IPC (exit1/no closed acknowledgement). The deliberate SIGTERM
+in the first test targets only its newly spawned disposable fixture PID. Neither
+outcome attributes the original phase22 cause or turns phase23 into a pass.

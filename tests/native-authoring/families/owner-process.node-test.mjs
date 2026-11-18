@@ -52,3 +52,30 @@ const ctl=installNativeOwnerIpc({server,nonce:process.env.PINSEL_NATIVE_OWNER_IP
  const start=Date.now();const result=await o.stop({hostRoot:cwd,port:observed.actualPort});assert(Date.now()-start>=16000);assert.equal(result.code,0);assert(o.logs().includes('drained'));assert.deepEqual(o.trace().filter(x=>x.event==='message').map(x=>x.message.type),['ready','closed']);
  }finally{await rm(root,{recursive:true});}
 });
+for (const mode of ['signal-race', 'ipc-close-reject']) test(`real installed Vite ${mode} preserves failure tuple and no closed acknowledgement`, async () => {
+ const modules=process.env.FAMILY_TEST_DEPENDENCIES;assert(modules);const require=createRequire(join(modules,'../package.json'));
+ const composer=require.resolve('zudo-composer/package.json',{paths:[join(modules,'../packages/pinsel-content')]});
+ const vite=createRequire(composer).resolve('vite');const root=await mkdtemp(join(tmpdir(),'family-vite-negative-'));
+ try {
+  const cwd=join(root,'packages/pinsel-content');await mkdir(join(cwd,'src/site'),{recursive:true});await symlink(modules,join(cwd,'node_modules'));
+  await writeFile(join(cwd,'package.json'),'{"type":"module"}');await writeFile(join(cwd,'tsconfig.scripts.json'),'{}');
+  const lifecycle=new URL('../../../packages/pinsel-content/src/site/native-owner-ipc.mjs',import.meta.url).href;
+  await writeFile(join(cwd,'src/site/start-native.ts'),`import{createServer}from ${JSON.stringify(pathToFileURL(vite).href)};import{installNativeOwnerIpc}from ${JSON.stringify(lifecycle)};
+const server=await createServer({root:process.cwd(),configFile:false,server:{host:'127.0.0.1',port:0},optimizeDeps:{noDiscovery:true,include:[]}});await server.listen();const original=server.close.bind(server);let closing;
+server.close=()=>closing??=(async()=>{await new Promise(r=>setTimeout(r,80));await original();${mode==='ipc-close-reject'?"throw Error('fixture close rejection after real Vite close');":""}})();
+// Register the same late host exit0 path as start-native, after Vite's handler.
+process.on('SIGTERM',()=>{void server.close().then(()=>process.exit(0),()=>process.exit(1));});
+const ctl=installNativeOwnerIpc({server,nonce:process.env.PINSEL_NATIVE_OWNER_IPC_NONCE,port:0,hostRoot:process.cwd()});await ctl.ready();`);
+  const x=nativeOwnerOptions(root,{...process.env},0,identity.nonce);const child=spawn(x.command,x.args,x.options);const owner=ownProcess(child,{...identity,port:0,hostRoot:cwd});
+  const exited=new Promise(resolve=>child.once('close',(code,signal)=>resolve({code,signal})));await owner.waitReady(10000);
+  if(mode==='signal-race') {
+   // Deliberate signal only to this new disposable fixture PID, never a native owner.
+   assert(child.kill('SIGTERM'));assert.deepEqual(await exited,{code:143,signal:null});
+  } else {
+   await assert.rejects(owner.stop({hostRoot:cwd,port:0,timeoutMs:10000}),/acknowledgement/);
+   assert.deepEqual(await exited,{code:1,signal:null});assert(owner.logs().includes('fixture close rejection'));
+  }
+  assert(!owner.trace().some(e=>e.event==='message'&&e.message.type==='closed'));
+  assert(owner.trace().some(e=>e.event==='close'&&e.code===(mode==='signal-race'?143:1)&&e.signal===null));
+ } finally {await rm(root,{recursive:true});}
+});
