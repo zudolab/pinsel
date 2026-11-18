@@ -102,21 +102,25 @@ class Tests(unittest.TestCase):
   p[28]['beforeDigest']=p[27]['afterDigest'];p[29]['intent']['sequence']['step']='child-sort-add'
   with self.assertRaises(ValueError):m.validate_history(paths,paths[:23],p,s,30,'/c/descriptor.json')
  def test_template_go_must_predate_phase_go(self):
-  import os, time
-  template=m.TEMPLATE_GO
-  self.assertTrue(template.is_file())
+  import os, subprocess, time
   with tempfile.TemporaryDirectory() as d:
+   template=Path(d)/'template-go.json'
+   head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=m.REPO,text=True).strip()
+   template.write_text(json.dumps({'granted':True,'template':'results-toc-30-39','source':head}))
    phase=Path(d)/'manager-go.json'
-   body={'granted':True,'templateGo':str(template),'templateGoSha256':'0'*64}
-   phase.write_text(json.dumps(body))
-   os.utime(phase,(time.time()+5, time.time()+5))
-   with self.assertRaises(ValueError):m.assert_template_go(phase)
-   body['templateGoSha256']=m.digest(template.read_bytes())
-   phase.write_text(json.dumps(body))
-   os.utime(phase,(time.time()+5, time.time()+5))
-   m.assert_template_go(phase)
-   os.utime(phase,(template.stat().st_mtime-10, template.stat().st_mtime-10))
-   with self.assertRaises(ValueError):m.assert_template_go(phase)
+   previous=m.TEMPLATE_GO
+   m.TEMPLATE_GO=template
+   try:
+    phase.write_text(json.dumps({'granted':True,'templateGo':str(template),'templateGoSha256':'0'*64}))
+    os.utime(phase,(time.time()+5,time.time()+5))
+    with self.assertRaises(ValueError):m.assert_template_go(phase)
+    phase.write_text(json.dumps({'granted':True,'templateGo':str(template),'templateGoSha256':m.digest(template.read_bytes())}))
+    os.utime(phase,(time.time()+5,time.time()+5))
+    m.assert_template_go(phase)
+    os.utime(phase,(template.stat().st_mtime-10,template.stat().st_mtime-10))
+    with self.assertRaises(ValueError):m.assert_template_go(phase)
+   finally:
+    m.TEMPLATE_GO=previous
  def test_frozen_drivers_remain_separate(self):
   frozen=Path('/workspace/composer-adoption-notes/results-continuation24-batch24-27-template-03/batch.py').read_text()
   sort=Path('/workspace/pinsel-baseline-publication/tests/native-authoring/families/results-sort-28-29/batch.py').read_text()

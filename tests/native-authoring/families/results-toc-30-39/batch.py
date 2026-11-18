@@ -194,11 +194,12 @@ def validate_compact(bundle,intent,snapshot,b):
  require(bundle['authority']=={'composer':PIN,'stage':'notes-v1','sourceHead':b['source'],'boundary':24,'descriptor':intent['familyContinuation'],'baseDescriptor':intent['familySourceBoundary23']},'Wrong compact authority')
  require(bundle['hashes'].get(b['historyIn'])==intent['familyBoundaryHistory']['sha256'],'Unsealed history')
 
-TEMPLATE_GO=Path('/workspace/composer-adoption-notes/results-toc-30-39-template-01/manager-go.json')
+TEMPLATE_GO=Path('/workspace/composer-adoption-notes/results-toc-30-39-template-02/manager-go.json')
 def assert_template_go(phase_go):
  require(phase_go.is_file(),'Phase manager-go missing')
  phase=json.loads(phase_go.read_text());template=json.loads(TEMPLATE_GO.read_text())
- require(template.get('granted') is True and template.get('template')=='results-toc-30-39','Template manager-go missing')
+ head=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip()
+ require(template.get('granted') is True and template.get('template')=='results-toc-30-39' and template.get('source')==head,'Template manager-go missing')
  require(phase.get('granted') is True and phase.get('templateGo')==str(TEMPLATE_GO),'Phase GO does not reference the template GO')
  require(phase.get('templateGoSha256')==digest(TEMPLATE_GO.read_bytes()),'Template GO hash mismatch')
  require(TEMPLATE_GO.stat().st_mtime < phase_go.stat().st_mtime,'Template GO is not earlier than the phase GO')
