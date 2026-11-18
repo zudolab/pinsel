@@ -30,7 +30,7 @@ FAMILY_TEST_DEPENDENCIES=/absolute/path/to/existing/node_modules \
 
 The dependency path is only a fixture symlink under a new temporary directory.
 The test imports the installed public `tsx`, proves TypeScript alias/argument/env
-parity and delayed graceful shutdown beyond both30ms relay windows. Other tests
+parity and delayed graceful shutdown beyond both30ms relay windows and the old15-second cutoff (using the default120-second observation bound). Other tests
 exercise late stdio, duplicate stop, timeout, signal/nonzero exits, retained dangling
 lease symlink, spawn failure and occupied port. Fixtures remove only their own
 new temporary state; the production helper never removes a lease.
