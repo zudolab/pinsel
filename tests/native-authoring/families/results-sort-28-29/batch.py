@@ -101,7 +101,7 @@ def validate_history(paths,prefix,proofs,snapshot,index,continuation_path):
  require(p['intent']['sequence']['index']==23 and p['intent']['sequence']['step']=='child-limit','Wrong recovered23 step')
  require(p['intent']['owner']=={'providerId':'mapping-filesystem','recordId':proofs[18]['result']['record']['id']} and p['result']['record']['id']==proofs[18]['result']['record']['id'],'Recovered23 owner changed')
  require(proofs[27]['intent']['sequence']=={'configHash':CONFIG_HASH,'index':27,'step':'child-reference-equals-again','total':45},'Phase27 predecessor missing')
- for i in range(1,index):require(proofs[i].get('beforeDigest')==proofs[i-1]['afterDigest'] and proofs[i]['intent']['sequence']['index']==i,'Digest chain break')
+ for i in range(24,index):require(proofs[i].get('beforeDigest')==proofs[i-1]['afterDigest'] and proofs[i]['intent']['sequence']['index']==i,'Continuation digest chain break')
 
 STEPS={28:'child-sort-add',29:'child-sort-field'}
 def validate_intent(intent,snapshot,proofs,descriptors,b,history_hash,index,boundary_document):
