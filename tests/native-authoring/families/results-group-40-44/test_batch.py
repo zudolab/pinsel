@@ -66,6 +66,17 @@ class Tests(unittest.TestCase):
    history=Path(d)/'history.json';history.write_text('[]')
    review=Path(d)/'independent-review.json';review.write_text(json.dumps({'verdict':'PASS','mismatches':[]}))
    with self.assertRaises(ValueError):m.assert_phase_review(review,40,str(history))
+ def test_resume_from_history41_keeps_phase40(self):
+  paths=['/p/%02d.json'%i for i in range(41)]
+  self.assertEqual(m.admit_history41_resume(paths,41),paths)
+  out=m.history42_from(paths,'/p/phase41-proof.json')
+  self.assertEqual(out[:-1],paths);self.assertEqual(len(out),42)
+  with self.assertRaises(ValueError):m.admit_history41_resume(paths,40)
+  with self.assertRaises(ValueError):m.admit_history41_resume(paths[:40],41)
+  with self.assertRaises(ValueError):m.admit_history41_resume(['relative.json']+paths[1:],41)
+  with self.assertRaises(ValueError):m.sequential([41],lambda i:None)
+  argv=m.package_transition_argv('/boundary/descriptor.json')
+  self.assertEqual(argv[-1],'/boundary/descriptor.json');self.assertNotIn('--force',argv)
  def test_frozen_drivers_remain_separate(self):
   frozen=Path('/workspace/composer-adoption-notes/results-continuation24-batch24-27-template-03/batch.py').read_text()
   toc=Path('/workspace/pinsel-baseline-publication/tests/native-authoring/families/results-toc-30-39/batch.py').read_text()

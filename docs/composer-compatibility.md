@@ -2184,3 +2184,7 @@ passed by this documentation checkpoint.
 ## Repository handoff checkpoint — 2026-11-18
 
 The bounded Results source handoff completed at runtime `b1eec63bfdb54d545d7f006e63df23fa46541d07`, with identical recovered `0fea…` public captures and independently verified file/evidence preservation. No continuation inputs, preparer, history24 or phase24 ran. Knowledge's completed inverse must not be repeated. See the [paused handoff guide](handoff/2026-11-18.md) for exact source/package identities, private checkpoint retrieval and hashes, omissions, and the next operation. This documentation checkpoint is not a substitute for the sealed runtime source HEAD or full T6/T7/current-head acceptance.
+
+## History41 package-transition validator — 2026-11-19
+
+Option B keeps the installed Composer pin `c5ffd410f74ba4b3aa003da068efeeae6e663c37` and lock `6eb4d870674fde1c169eb8e00c8e1662499676aa7c9d2a2d4ec64fa49f3203c0` until T1 receives distributed source S. `package-transition-boundary.mjs` validates a history41 package transition without repurposing the boundary12 installation bridge or the source-only successor boundary. The group resume helper admits index 41 only and keeps the history42 prefix equal to the sealed 41 entries. Phase40 is not rerun. No pin, lock, or saved workspace change is claimed here.

@@ -303,6 +303,21 @@ def validate_batch(batch):
 def sequential(indices,step):
  require(list(indices)==list(range(40,45)),'Bounded five-phase group contract')
  for index in indices:step(index)
+def admit_history41_resume(paths,index):
+ require(index!=40,'phase40 rerun prevented')
+ require(index==41,'Resume runs only phase41-02')
+ require(isinstance(paths,list) and len(paths)==41 and len(set(paths))==41,'history41 length or references')
+ require(all(isinstance(p,str) and p.startswith('/') for p in paths),'Unpinned history reference')
+ return list(paths)
+def history42_from(paths,proof_path):
+ prior=admit_history41_resume(paths,41)
+ require(isinstance(proof_path,str) and proof_path.startswith('/') and proof_path not in prior,'phase41 proof reference')
+ out=prior+[proof_path]
+ require(out[:-1]==prior and len(out)==42,'history42 prefix')
+ return out
+def package_transition_argv(descriptor):
+ require(isinstance(descriptor,str) and descriptor.startswith('/'),'Unpinned package transition')
+ return ['node','tests/native-authoring/families/package-transition-boundary.mjs',descriptor]
 
 def main():
  batch=validate_batch(BATCH_BINDINGS) # Refuse before any command/output when unfilled.
