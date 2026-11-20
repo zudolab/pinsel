@@ -29,14 +29,15 @@ export async function originalResponse(page, route, timeout = 180000, { readNavi
   } finally { clearTimeout(timer); if (onFailed) page.off?.('requestfailed', onFailed); }
 }
 /** All errors latch the phase. An uncertain original request is never retried. */
-export function requestGate({page,persist,validate,accept,timeout,decode=value=>value}) {
+/** concurrentReads: pure reads may overlap; each is still validated and accepted on its own. */
+export function requestGate({page,persist,validate,accept,timeout,decode=value=>value,concurrentReads=false}) {
   let failure, busy=false; const pending=new Set();
   const handle = route => {
     const work = (async () => {
       let input, owns=false;
       try {
-        assert(!failure,'Phase already held'); assert(!busy,'Unexpected concurrent request');
-        const wire=route.request().postDataJSON(); input=decode(wire,route.request()); validate(input,route.request()); busy=true; owns=true;
+        assert(!failure,'Phase already held'); if(!concurrentReads) assert(!busy,'Unexpected concurrent request');
+        const wire=route.request().postDataJSON(); input=decode(wire,route.request()); validate(input,route.request()); if(!concurrentReads){ busy=true; owns=true; }
         await persist({phase:'request-before-dispatch',input,wire,endpoint:new URL(route.request().url()).pathname});
         const result=await originalResponse(page,route,timeout);
         await persist({phase:'request-response',input,...result});
