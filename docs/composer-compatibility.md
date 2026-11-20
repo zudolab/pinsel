@@ -14,7 +14,7 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 | Identity or gate | Current recorded value |
 | --- | --- |
 | Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `b81e4edd9a0f135db0d6ea470c24db89bd63b7e1`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
-| Installed package / upstream attestation | `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660` |
+| Installed package / upstream attestation | Distributed source S `e802741aaf51bae69b4db67ddc3d80494be61043` / attestation E `9d43eb32fa7399c3618443a1aeffd3db64115cfd` (repinned 2026-11-20 from `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660`; see [Option B T1 package repin](#option-b-t1-package-repin)) |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
@@ -2188,3 +2188,34 @@ The bounded Results source handoff completed at runtime `b1eec63bfdb54d545d7f006
 ## History41 package-transition validator — 2026-11-19
 
 Option B keeps the installed Composer pin `c5ffd410f74ba4b3aa003da068efeeae6e663c37` and lock `6eb4d870674fde1c169eb8e00c8e1662499676aa7c9d2a2d4ec64fa49f3203c0` until T1 receives distributed source S. `package-transition-boundary.mjs` validates a history41 package transition without repurposing the boundary12 installation bridge or the source-only successor boundary. The group resume helper admits index 41 only and keeps the history42 prefix equal to the sealed 41 entries. Phase40 is not rerun. No pin, lock, or saved workspace change is claimed here.
+
+## Option B T1 package repin
+
+2026-11-20, Cloud manager. All four consumers (`apps/editor`,
+`apps/authoring-worker`, `packages/pinsel-content`, `packages/pinsel-ui`) now pin
+distributed source S `e802741aaf51bae69b4db67ddc3d80494be61043`, attested upstream by
+E `9d43eb32fa7399c3618443a1aeffd3db64115cfd`. The component contract stays
+`c0b452da075b66757c60bd0d721a47062d4354d0`. Toolchain: Node 24, pnpm 11.5.2.
+
+- The lock changes only the four `zudo-composer` importer specifiers and the
+  package entry. Old lock SHA256 `6eb4d870674fde1c169eb8e00c8e1662499676aa7c9d2a2d4ec64fa49f3203c0`;
+  new integrity `sha512-sfp/3qZDqW7xKKsKHLjIaZGM3cwpMdEEvWaaioFWo0Z30IDNwl/tR7QXKkaqbesdPBAt0qY7+jgmCrxGhBWUfw==`.
+- A frozen install into an empty store and `pnpm dedupe --check` passed. All four
+  importers resolve one real install root for S.
+- Payload audit: the installed package has the same 782 paths as the attested pack
+  (payload `187a1622eabde887bfe386b8ce623862fb1dbd01654862b02d9282f953961119`); 781
+  files match in bytes, size and mode. The one difference is `package.json`: the
+  installed file is byte-identical to S's committed manifest (SHA256
+  `5767b73af95e929c4fe2f3a7a510fbad8aed62f5a89acd65a94c9904a6f10222`), while the
+  attested pack is produced by `pnpm pack`, which rewrites the `workspace:*`
+  development specifiers. Exports, dependencies and every other file are equal.
+- Upstream, Composer #979 at `44c99d2` merges current main; its complete packed
+  payload still equals S, so S stays the distributed identity.
+
+This repin is a source and installation change only. It is **not** the history41
+transition: the sealed history41 originals, the phase40-02/phase41-01 artifacts and
+the stopped native workspace are not available in this Cloud environment (the
+private 2026-11-18 archive ends at the phase23 era). The transition evidence,
+saved-state preservation proof and phases 41 toc-group through 44 toc-attach
+remain held until those originals are supplied; no history is reconstructed and
+no earlier acceptance is relabelled as an S run.
