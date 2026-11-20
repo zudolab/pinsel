@@ -9,7 +9,7 @@ import {join} from 'node:path';
 export async function verifyRecoveredProofs({proofPaths,proofs,recoveryFreezeManifests={},bytes}){
  const json=async p=>JSON.parse(await bytes(p)),events=async p=>(await bytes(p)).toString().split('\n').filter(Boolean).map(JSON.parse),recovered=new Set();
  for(let i=0;i<proofs.length;i++){const proof=proofs[i];if(proof.status!==metadataRecoveryStatus){assert(!Object.hasOwn(recoveryFreezeManifests,proofPaths[i]),'Freeze mapping for a non-recovered proof');continue;}
-  const original=proof.originalFailure;assert(original?.startsWith('/'));await verifyMetadataRecovery({index:i,proofPath:proofPaths[i],proof,manifest:{recoveryFreezeManifests},before:await json(join(original,'before.json')),after:await json(proof.afterCapture),original,journal:await events(join(original,'events.ndjson')),bytes,json,events});recovered.add(i);}
+  const original=proof.originalFailure;assert(original?.startsWith('/'));const before=await json(join(original,'before.json')),after=await json(proof.afterCapture);assert.equal(proof.beforeDigest,before.digest,'Recovered proof beforeDigest differs from the held attempt before-capture');assert.equal(proof.afterDigest,after.digest,'Recovered proof afterDigest differs from its after-capture');await verifyMetadataRecovery({index:i,proofPath:proofPaths[i],proof,manifest:{recoveryFreezeManifests},before,after,original,journal:await events(join(original,'events.ndjson')),bytes,json,events});recovered.add(i);}
  assert.deepEqual(Object.keys(recoveryFreezeManifests).filter(p=>!proofPaths.includes(p)),[],'Freeze mapping outside the proof chain');return recovered;
 }
 export async function readInputs(intentPath){

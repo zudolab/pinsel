@@ -620,6 +620,7 @@ try {
                 }
                 try {
                     const input = { ...original.input, ...patch };
+                    record('negative-request-before-dispatch', { name, operationId: input.operationId, input });
                     const response = await route.fetch({ postData: JSON.stringify({ operation: 'document-edit', input }), timeout: 180000 });
                     const body = await response.json();
                     record('negative-result', { name, operationId: input.operationId, status: response.status(), body });

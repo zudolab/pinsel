@@ -243,7 +243,8 @@ finally {
     if (scopeVerified && before && scenario === 'full' && !errors.length && await exists(journalPath)) {
         try {
             const journal = await readJson(journalPath);
-            if (journal.removal) {
+            assert(journal.removal, 'Full scenario finished without a recorded human removal');
+            {
                 assertRemovalJournal(journal);
                 const priorName = `removal-before-restart-${Date.now()}.json`; await capture(priorName);
                 const prior = await readJson(join(run, priorName)); assertRemovedFromSnapshot(prior, journal);

@@ -54,3 +54,11 @@ test('portable sequence continues past a recovered phase08 only after full verif
  await assert.rejects(verifyRecoveredProofs({proofPaths:paths,proofs,recoveryFreezeManifests:{},bytes:f.bytes}),/freeze manifest/);await assert.rejects(verifyRecoveredProofs({proofPaths:paths,proofs,recoveryFreezeManifests:{[f.proofPath]:f.freezePath,'/p0.json':f.freezePath},bytes:f.bytes}),/non-recovered/);
  assert.throws(()=>sequenceState([...prior.slice(0,6),{...prior[6],status:metadataRecoveryStatus}],{digest:prior[6].afterDigest},'static-w4b-987',{recovered:new Set([6])}));
 });
+test('a recovered proof whose chain digests differ from its captures is refused',async()=>{
+ for(const forge of [{beforeDigest:'9'.repeat(64)},{afterDigest:'8'.repeat(64)}]){
+  const f=fixture(),r=await recovered(f);const forged={...r.proof,...forge};f.put(f.proofPath,forged);
+  const prior=Array.from({length:7},(_,i)=>({status:'STATIC_PHASE_CAPTURE_VERIFIED',sequence:i+1,kind:phases[i],beforeDigest:String(i),afterDigest:String(i+1),resources:{marker:'static-w4b-987'}}));
+  const proofs=[...prior,forged],paths=[...prior.map((_,i)=>`/p${i}.json`),f.proofPath];
+  await assert.rejects(verifyRecoveredProofs({proofPaths:paths,proofs,recoveryFreezeManifests:{[f.proofPath]:f.freezePath},bytes:f.bytes}),/Recovered proof (before|after)Digest/);
+ }
+});
