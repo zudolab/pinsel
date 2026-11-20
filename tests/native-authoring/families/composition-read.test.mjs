@@ -1,0 +1,3 @@
+import { test } from 'vitest';import assert from'node:assert/strict';import{compositionRead}from'./composition-read.mjs';
+test('actual Composition read envelopes are recognized without domain operation header',()=>{for(const value of [{operation:'snapshot'},{operation:'list'},{operation:'list',outputsById:{}},{operation:'get',id:'home',outputsById:{}}])assert(compositionRead(value));});
+test('write operations and generated-output writes cannot masquerade as reads',()=>{for(const value of [{operation:'put',record:{}},{operation:'save-lifecycle-record',record:{}},{operation:'snapshot',record:{}},{operation:'list',outputsById:{home:{html:'generated'}}},{operation:'get'},{operation:'get',id:'home',outputsById:null},null])assert.equal(compositionRead(value),false);});

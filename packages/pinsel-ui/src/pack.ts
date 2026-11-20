@@ -41,7 +41,7 @@ import { VoicePreview, VoicePreviews } from "./voice-previews/voice-previews";
 // parent slot). Positional ids and numbering (`#student-3`, `01`) use it.
 
 export const PINSEL_PACK_ID = "pinsel";
-export const PINSEL_PACK_VERSION = "0.3.0";
+export const PINSEL_PACK_VERSION = "0.4.0";
 
 type Kind = "text" | "multiline" | "number" | "boolean" | readonly string[];
 type PropSpec = readonly [prop: string, kind: Kind, fallback: JsonValue, label: string];
@@ -81,6 +81,7 @@ function define(spec: Spec) {
     slots: (spec.slots ?? []).map(([id, cardinality, accepts]) => ({ id, prop: id, label: id, cardinality, ...(accepts ? { accepts: [...accepts] } : {}) })),
     staticProps: [
       { prop: "route", reason: "Injected by the renderer from the compiled route." },
+      { prop: "presentation", reason: "Read-only rendered node identity for accessible relationships." },
       { prop: "position", reason: "Injected by the renderer: the node's place in its parent slot." },
     ],
   });
@@ -153,6 +154,8 @@ const SPECS: readonly Spec[] = [
 
   // Lessons
   { id: "toc", title: "Table of contents", category: "Layout", description: "Numbered in-page navigation.", component: Toc, exportName: "Toc", props: [t("label", "ラベル"), b("wide", "横幅いっぱい")], slots: [items("toc-item", "note-toc-items", "group")] },
+  { id: "note-toc", title: "Note contents", category: "Layout", description: "Note-owned items and a shared Content label.", component: C.NoteToc, exportName: "NoteToc", props: [b("wide", "横幅いっぱい")], slots: [one("label", ["pinsel.toc-label"]), items("note-toc-items")] },
+  { id: "toc-label", title: "Contents label", category: "Typography", description: "Shared accessible contents label.", component: C.TocLabel, exportName: "TocLabel", props: [t("text", "ラベル")] },
   { id: "toc-item", title: "TOC item", category: "Layout", description: "href, or #<fragmentPrefix><position>; number, or the position.", component: C.TocItemBlock, exportName: "TocItemBlock", props: [t("label", "表示名"), t("href", "リンク先"), t("fragmentPrefix", "Fragment 接頭辞"), n("number", "番号")] },
   { id: "note-toc-items", title: "Note TOC items", category: "Layout", description: "One entry per ## heading of a note.", component: C.NoteTocItems, exportName: "NoteTocItems", props: [ml("markdown", "本文（Markdown）")] },
   { id: "course-steps", title: "Course steps", category: "Sections", description: "The lessons 授業内容 cards.", component: CourseSteps, exportName: "CourseSteps", slots: [items("course-step")] },

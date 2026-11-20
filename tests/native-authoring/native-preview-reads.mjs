@@ -1,0 +1,35 @@
+import assert from 'node:assert/strict';
+import {originalResponse} from './families/original-request.mjs';
+export const contentPreviewOperations=new Set(['content-preview-context','content-document-preview']);
+const legacy=new Set(['inspect','review','receipt','document-preview']);
+const text=v=>typeof v==='string'&&v.length>0;
+const exactKeys=(value,keys)=>{assert(value&&typeof value==='object'&&!Array.isArray(value));assert.deepEqual(Object.keys(value).sort(),[...keys].sort());};
+export function assertContentPreviewRequest(body,workspaceId){
+ assert(contentPreviewOperations.has(body?.operation));exactKeys(body,['operation','input']);const input=body.input;
+ exactKeys(input,body.operation==='content-preview-context'?['workspaceId','entry']:['workspaceId','entry','revision','sitemapProviderId','sitemapId','pageId','pathname']);assert.equal(input.workspaceId,workspaceId);exactKeys(input.entry,['providerId','modelId','recordId']);assert(Object.values(input.entry).every(text));
+ if(body.operation==='content-document-preview'){assert.match(input.revision,/^[a-f0-9]{64}$/);assert([input.sitemapProviderId,input.sitemapId,input.pageId].every(text));assert(input.pathname.startsWith('/')&&!input.pathname.startsWith('//'));}return input;
+}
+export function assertContentPreviewHeaders(headers){assert.equal(headers['x-zudo-authoring-read'],'1');assert.equal(headers['content-type'],'application/json');assert(text(headers['x-zudo-native-client']));assert(text(headers['x-zudo-native-capability']));assert(/^\d+$/.test(headers['x-zudo-native-epoch']??''));}
+export function isNativeRead(path,body,workspaceId){if(path!=='/__zudo-native-edit')return false;if(legacy.has(body?.operation))return true;if(!contentPreviewOperations.has(body?.operation))return false;try{assertContentPreviewRequest(body,workspaceId);return true;}catch{return false;}}
+export function assertContentPreviewResponse(body,response,snapshot,{revision=null}={}){
+ const input=assertContentPreviewRequest(body,snapshot.workspaceId);
+ if(revision===null&&response.status===409&&response.body?.ok===false&&response.body.error?.code==='stale-plan'){assert(!response.body.result);return {refused:'stale-plan'};}
+ assert.equal(response.status,200);assert.equal(response.body?.ok,true);const result=response.body.result,context=body.operation==='content-preview-context'?result:result.content;
+ assert.equal(context.mode,'saved-page');assert.equal(context.workspaceId,snapshot.workspaceId);assert.deepEqual(context.entry,input.entry);assert.equal(context.record.id,input.entry.recordId);assert.equal(context.record.modelId,input.entry.modelId);assert.match(context.revision,/^[a-f0-9]{64}$/);if(revision!==null){assert.equal(context.revision,revision);const records=snapshot.project.providers.content.filter(p=>p.id===input.entry.providerId).flatMap(p=>p.entries).filter(e=>e.id===input.entry.recordId&&e.modelId===input.entry.modelId);assert.equal(records.length,1);assert.deepEqual(context.record,records[0]);}
+ assert.deepEqual(context.pack,{packId:snapshot.project.componentPack.packId,packVersion:snapshot.project.componentPack.packVersion});assert.deepEqual(context.renderer,{id:snapshot.renderer.id,version:snapshot.renderer.version,digest:snapshot.renderer.digest});assert(Array.isArray(context.uses));
+ for(const use of context.uses){assert([use.sitemapProviderId,use.sitemapId,use.pageId,use.pathname].every(text));assert(use.pathname.startsWith('/')&&!use.pathname.startsWith('//'));assert(Array.isArray(use.targets));for(const target of use.targets)assert([target.target?.renderedNodeId,target.target?.providerId,target.target?.recordId,target.target?.nodeId,target.prop,target.fieldLabel].every(text));}
+ if(body.operation==='content-document-preview'){
+  assert.equal(context.revision,input.revision);assert.equal(context.uses.filter(use=>['sitemapProviderId','sitemapId','pageId','pathname'].every(k=>use[k]===input[k])).length,1);
+  assert.deepEqual(result.identity,{workspaceId:input.workspaceId,revision:input.revision,pathname:input.pathname,packId:context.pack.packId,packVersion:context.pack.packVersion,rendererId:context.renderer.id,rendererVersion:context.renderer.version,rendererDigest:context.renderer.digest});assert(text(result.documentUrl)&&result.documentUrl.startsWith('/')&&!result.documentUrl.startsWith('//'));
+ }return {entry:context.entry,revision:context.revision};
+}
+/** Observe only original browser requests. The owner must join drain/check before navigation/close. */
+export function contentPreviewReadGate({page,snapshot,persist,revision=null,transport=originalResponse}){
+ let held;const pending=new Set(),busy=new Set();const check=()=>{if(held)throw held;};
+ return {check,async drain(){while(pending.size)await Promise.allSettled([...pending]);check();assert.equal(busy.size,0,'Original marked read retry remains outstanding');},handle(route){const work=(async()=>{let input;try{check();const request=route.request();assert.equal(new URL(request.url()).pathname,'/__zudo-native-edit');input=request.postDataJSON();assertContentPreviewRequest(input,snapshot.workspaceId);assertContentPreviewHeaders(request.headers());const key=JSON.stringify([request.headers()['x-zudo-native-client'],request.headers()['x-zudo-native-epoch'],input]);const scope={clientId:request.headers()['x-zudo-native-client'],epoch:request.headers()['x-zudo-native-epoch']};await persist({phase:'content-preview-before-dispatch',input,...scope});const response=await transport(page,route);if(response.status===409&&response.body?.ok===false&&response.body.error?.code==='authoring-busy'){assert(!response.body.result);busy.add(key);await persist({phase:'content-preview-busy-awaiting-client-retry',input,...scope,...response});return;}busy.delete(key);const evidence=assertContentPreviewResponse(input,response,snapshot,{revision});await persist({phase:'content-preview-response',input,...scope,...response,evidence});}catch(error){held??=error;await route.abort().catch(()=>{});await persist({phase:'content-preview-held',input,error:error.message}).catch(()=>{});}})();pending.add(work);work.finally(()=>pending.delete(work)).catch(()=>{});return work;}};
+}
+
+/** Passive full/Assistant observer: only the installed client can satisfy a busy retry. */
+export function contentPreviewResponseTracker(snapshot,options={}){
+ const busy=new Set();return {pendingCount:()=>busy.size,observe(body,response,headers){assertContentPreviewRequest(body,snapshot.workspaceId);assertContentPreviewHeaders(headers);const key=JSON.stringify([headers['x-zudo-native-client'],headers['x-zudo-native-epoch'],body]);if(response.status===409&&response.body?.ok===false&&response.body.error?.code==='authoring-busy'){assert(!response.body.result);busy.add(key);return {pending:true};}const result=assertContentPreviewResponse(body,response,snapshot,options);busy.delete(key);return result;},finish(){assert.equal(busy.size,0,'Exact original marked-read retry remains outstanding');}};
+}

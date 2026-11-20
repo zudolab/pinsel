@@ -1,0 +1,1118 @@
+{
+  "schemaVersion": 1,
+  "workspaceId": "pinsel",
+  "tokens": {
+    "workspace": 3,
+    "compositions": "a8eec757ccb30af9e3c9a196d289d66db5b9b7e492742a08cb944b69174a74cf",
+    "mappings": "fe4f2753ca64131644dccbfd17ed7f82df64d8749f454d0eecb3dbc303e73d7e",
+    "sitemaps": "0b5c3ded91a5b6da14cdc8aea72aedcffe50cbf201c97ec3e6c8935475e94932",
+    "content": 8,
+    "assets": "0000000000000000000000000000000000000000000000000000000000000000"
+  },
+  "project": {
+    "schemaVersion": 2,
+    "id": "pinsel",
+    "name": "Pinsel",
+    "componentPack": {
+      "contractVersion": 2,
+      "packId": "pinsel",
+      "packVersion": "0.4.0"
+    },
+    "providers": {
+      "compositions": [
+        {
+          "id": "files",
+          "records": [
+            {
+              "id": "faq-category-faq-exam",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "faq-category-faq-exam",
+                "name": "faq-category-faq-exam",
+                "root": [
+                  {
+                    "id": "category",
+                    "componentId": "pinsel.faq-category",
+                    "componentVersion": 1,
+                    "props": {
+                      "fragmentId": "faq-1"
+                    },
+                    "slots": {}
+                  }
+                ]
+              }
+            },
+            {
+              "id": "faq-items-faq-exam",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "faq-items-faq-exam",
+                "name": "faq-items-faq-exam",
+                "root": [
+                  {
+                    "id": "item",
+                    "componentId": "pinsel.faq-item",
+                    "componentVersion": 1,
+                    "props": {
+                      "idPrefix": "category-1",
+                      "openFirst": true
+                    },
+                    "slots": {}
+                  }
+                ]
+              }
+            },
+            {
+              "id": "faq-toc-faq-exam",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "faq-toc-faq-exam",
+                "name": "faq-toc-faq-exam",
+                "root": [
+                  {
+                    "id": "item",
+                    "componentId": "pinsel.toc-item",
+                    "componentVersion": 1,
+                    "props": {
+                      "href": "#faq-1",
+                      "number": 1
+                    },
+                    "slots": {}
+                  }
+                ]
+              }
+            },
+            {
+              "id": "results-rows-year-2015",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "results-rows-year-2015",
+                "name": "results-rows-year-2015",
+                "root": [
+                  {
+                    "id": "row",
+                    "componentId": "pinsel.result-row",
+                    "componentVersion": 1,
+                    "props": {},
+                    "slots": {}
+                  }
+                ]
+              }
+            },
+            {
+              "id": "results-toc-year-2015",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "results-toc-year-2015",
+                "name": "results-toc-year-2015",
+                "root": [
+                  {
+                    "id": "item",
+                    "componentId": "pinsel.toc-item",
+                    "componentVersion": 1,
+                    "props": {
+                      "number": 11
+                    },
+                    "slots": {}
+                  }
+                ]
+              }
+            },
+            {
+              "id": "results-year-year-2015",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "results-year-year-2015",
+                "name": "results-year-year-2015",
+                "root": [
+                  {
+                    "id": "section",
+                    "componentId": "pinsel.year-section",
+                    "componentVersion": 1,
+                    "props": {},
+                    "slots": {}
+                  }
+                ]
+              }
+            },
+            {
+              "id": "results",
+              "createdAt": "2026-01-01T00:00:00.000Z",
+              "updatedAt": "2026-01-01T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "results",
+                "name": "results",
+                "root": [
+                  {
+                    "id": "results",
+                    "componentId": "pinsel.page-frame",
+                    "componentVersion": 1,
+                    "props": {},
+                    "slots": {
+                      "main": [
+                        {
+                          "id": "archive",
+                          "componentId": "pinsel.archive-layout",
+                          "componentVersion": 1,
+                          "props": {},
+                          "slots": {
+                            "aside": [],
+                            "body": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "results-toc",
+              "createdAt": "2026-01-01T00:00:00.000Z",
+              "updatedAt": "2026-01-01T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "results-toc",
+                "name": "results-toc",
+                "root": [
+                  {
+                    "id": "results-toc",
+                    "componentId": "pinsel.toc",
+                    "componentVersion": 1,
+                    "props": {},
+                    "slots": {
+                      "items": []
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "faq",
+              "createdAt": "2026-01-01T00:00:00.000Z",
+              "updatedAt": "2026-01-01T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "faq",
+                "name": "faq",
+                "root": [
+                  {
+                    "id": "faq",
+                    "componentId": "pinsel.page-frame",
+                    "componentVersion": 1,
+                    "props": {},
+                    "slots": {
+                      "main": [
+                        {
+                          "id": "archive",
+                          "componentId": "pinsel.archive-layout",
+                          "componentVersion": 1,
+                          "props": {},
+                          "slots": {
+                            "aside": [],
+                            "body": []
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "faq-toc",
+              "createdAt": "2026-01-01T00:00:00.000Z",
+              "updatedAt": "2026-01-01T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "faq-toc",
+                "name": "faq-toc",
+                "root": [
+                  {
+                    "id": "faq-toc",
+                    "componentId": "pinsel.toc",
+                    "componentVersion": 1,
+                    "props": {},
+                    "slots": {
+                      "items": []
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "content": [
+        {
+          "id": "content-filesystem",
+          "models": [
+            {
+              "id": "faq-group",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 1,
+                "id": "faq-group",
+                "name": "FAQ カテゴリー",
+                "description": "/faq/ のカテゴリー（4件）",
+                "kind": "collection",
+                "fields": [
+                  {
+                    "id": "faq-group-title",
+                    "key": "title",
+                    "label": "カテゴリー名",
+                    "required": true,
+                    "kind": "text"
+                  },
+                  {
+                    "id": "faq-group-order",
+                    "key": "order",
+                    "label": "表示順",
+                    "required": true,
+                    "kind": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "faq-item",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 1,
+                "id": "faq-item",
+                "name": "FAQ",
+                "description": "/faq/ の質問と回答（18件）",
+                "kind": "collection",
+                "fields": [
+                  {
+                    "id": "faq-item-group",
+                    "key": "group",
+                    "label": "カテゴリー",
+                    "required": true,
+                    "kind": "reference",
+                    "target": {
+                      "providerId": "content-filesystem",
+                      "recordId": "faq-group"
+                    }
+                  },
+                  {
+                    "id": "faq-item-question",
+                    "key": "question",
+                    "label": "質問",
+                    "required": true,
+                    "kind": "text"
+                  },
+                  {
+                    "id": "faq-item-answer",
+                    "key": "answer",
+                    "label": "回答",
+                    "required": true,
+                    "kind": "long-text"
+                  },
+                  {
+                    "id": "faq-item-order",
+                    "key": "order",
+                    "label": "表示順",
+                    "required": true,
+                    "kind": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "result-entry",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 1,
+                "id": "result-entry",
+                "name": "合格実績 明細",
+                "description": "大学・学科の行（105件）。URL は許可リストの大学のみ",
+                "kind": "collection",
+                "fields": [
+                  {
+                    "id": "result-entry-year",
+                    "key": "year",
+                    "label": "年度",
+                    "required": true,
+                    "kind": "reference",
+                    "target": {
+                      "providerId": "content-filesystem",
+                      "recordId": "result-year"
+                    }
+                  },
+                  {
+                    "id": "result-entry-school",
+                    "key": "school",
+                    "label": "大学名",
+                    "required": true,
+                    "kind": "text"
+                  },
+                  {
+                    "id": "result-entry-department",
+                    "key": "department",
+                    "label": "学科",
+                    "required": true,
+                    "kind": "text"
+                  },
+                  {
+                    "id": "result-entry-url",
+                    "key": "url",
+                    "label": "大学サイト",
+                    "required": false,
+                    "kind": "url"
+                  },
+                  {
+                    "id": "result-entry-order",
+                    "key": "order",
+                    "label": "表示順",
+                    "required": true,
+                    "kind": "number"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 1,
+                "id": "result-year",
+                "name": "合格実績 年度",
+                "description": "年度見出しと件数（11件）。件数は手入力の数値で、明細の行数とは独立",
+                "kind": "collection",
+                "fields": [
+                  {
+                    "id": "result-year-label",
+                    "key": "label",
+                    "label": "年度",
+                    "required": true,
+                    "kind": "text"
+                  },
+                  {
+                    "id": "result-year-declared-count",
+                    "key": "declaredCount",
+                    "label": "件数",
+                    "required": true,
+                    "kind": "number"
+                  },
+                  {
+                    "id": "result-year-order",
+                    "key": "order",
+                    "label": "表示順",
+                    "required": true,
+                    "kind": "number"
+                  }
+                ]
+              }
+            }
+          ],
+          "entries": [
+            {
+              "schemaVersion": 1,
+              "id": "year-2015",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2015年度",
+                "result-year-declared-count": 4,
+                "result-year-order": 11
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2016",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2016年度",
+                "result-year-declared-count": 13,
+                "result-year-order": 10
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2017",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2017年度",
+                "result-year-declared-count": 17,
+                "result-year-order": 9
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2018",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2018年度",
+                "result-year-declared-count": 16,
+                "result-year-order": 8
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2019",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2019年度",
+                "result-year-declared-count": 14,
+                "result-year-order": 7
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2020",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2020年度",
+                "result-year-declared-count": 9,
+                "result-year-order": 6
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2021",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2021年度",
+                "result-year-declared-count": 8,
+                "result-year-order": 5
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2022",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2022年度",
+                "result-year-declared-count": 10,
+                "result-year-order": 4
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2023",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2023年度",
+                "result-year-declared-count": 10,
+                "result-year-order": 3
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2024",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2024年度",
+                "result-year-declared-count": 13,
+                "result-year-order": 2
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2025",
+              "modelId": "result-year",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-year-label": "2025年度",
+                "result-year-declared-count": 9,
+                "result-year-order": 1
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "year-2015-01",
+              "modelId": "result-entry",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "result-entry-year": {
+                  "providerId": "content-filesystem",
+                  "modelId": "result-year",
+                  "recordId": "year-2015"
+                },
+                "result-entry-school": "ミュンヘン美術大学",
+                "result-entry-department": "Freie Kunst 自由芸術・絵画科",
+                "result-entry-url": "https://www.adbk.de/",
+                "result-entry-order": 1
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "faq-exam",
+              "modelId": "faq-group",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "faq-group-title": "受験について",
+                "faq-group-order": 1
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "faq-fees",
+              "modelId": "faq-group",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "faq-group-title": "費用・申し込みについて",
+                "faq-group-order": 4
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "faq-german",
+              "modelId": "faq-group",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "faq-group-title": "ドイツ語について",
+                "faq-group-order": 3
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "faq-lessons",
+              "modelId": "faq-group",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "faq-group-title": "レッスンについて",
+                "faq-group-order": 2
+              },
+              "lifecycle": "published",
+              "generation": 1
+            },
+            {
+              "schemaVersion": 1,
+              "id": "faq-exam-01",
+              "modelId": "faq-item",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "faq-item-group": {
+                  "providerId": "content-filesystem",
+                  "modelId": "faq-group",
+                  "recordId": "faq-exam"
+                },
+                "faq-item-question": "ドイツの美術大学の受験時期はいつ頃ですか？",
+                "faq-item-answer": "大学により異なりますが、多くの大学は冬学期（10月開始）への入学を受け付けており、出願締切は2月〜5月頃に集中しています。一部の大学では夏学期（4月開始）の募集もあります。志望大学の公式サイトで最新の日程を確認することが大切です。",
+                "faq-item-order": 1
+              },
+              "lifecycle": "published",
+              "generation": 1
+            }
+          ]
+        }
+      ],
+      "mappings": [
+        {
+          "id": "mapping-filesystem",
+          "records": [
+            {
+              "id": "faq-category-faq-exam",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "faq-category-faq-exam",
+                "name": "faq-category-faq-exam",
+                "contentModel": {
+                  "providerId": "content-filesystem",
+                  "recordId": "faq-group"
+                },
+                "composition": {
+                  "providerId": "files",
+                  "recordId": "faq-category-faq-exam"
+                },
+                "mode": {
+                  "kind": "collection",
+                  "query": {
+                    "publication": "published-only",
+                    "conditions": [],
+                    "sort": [],
+                    "pins": [
+                      {
+                        "providerId": "content-filesystem",
+                        "modelId": "faq-group",
+                        "recordId": "faq-exam"
+                      }
+                    ],
+                    "limit": 1
+                  }
+                },
+                "bindings": [
+                  {
+                    "id": "faq-category-faq-exam-title-title",
+                    "sourceFieldId": "faq-group-title",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "category",
+                      "prop": "title"
+                    },
+                    "transform": {
+                      "kind": "identity"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "faq-items-faq-exam",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "faq-items-faq-exam",
+                "name": "faq-items-faq-exam",
+                "contentModel": {
+                  "providerId": "content-filesystem",
+                  "recordId": "faq-item"
+                },
+                "composition": {
+                  "providerId": "files",
+                  "recordId": "faq-items-faq-exam"
+                },
+                "mode": {
+                  "kind": "collection",
+                  "query": {
+                    "publication": "published-only",
+                    "conditions": [
+                      {
+                        "fieldId": "faq-item-group",
+                        "operator": "equals",
+                        "value": {
+                          "providerId": "content-filesystem",
+                          "modelId": "faq-group",
+                          "recordId": "faq-exam"
+                        }
+                      }
+                    ],
+                    "sort": [
+                      {
+                        "fieldId": "faq-item-order",
+                        "direction": "asc"
+                      }
+                    ],
+                    "pins": [],
+                    "limit": 1000
+                  }
+                },
+                "bindings": [
+                  {
+                    "id": "faq-items-faq-exam-question-question",
+                    "sourceFieldId": "faq-item-question",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "item",
+                      "prop": "question"
+                    },
+                    "transform": {
+                      "kind": "identity"
+                    }
+                  },
+                  {
+                    "id": "faq-items-faq-exam-answer-answer",
+                    "sourceFieldId": "faq-item-answer",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "item",
+                      "prop": "answer"
+                    },
+                    "transform": {
+                      "kind": "identity"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "faq-toc-faq-exam",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "faq-toc-faq-exam",
+                "name": "faq-toc-faq-exam",
+                "contentModel": {
+                  "providerId": "content-filesystem",
+                  "recordId": "faq-group"
+                },
+                "composition": {
+                  "providerId": "files",
+                  "recordId": "faq-toc-faq-exam"
+                },
+                "mode": {
+                  "kind": "collection",
+                  "query": {
+                    "publication": "published-only",
+                    "conditions": [],
+                    "sort": [],
+                    "pins": [
+                      {
+                        "providerId": "content-filesystem",
+                        "modelId": "faq-group",
+                        "recordId": "faq-exam"
+                      }
+                    ],
+                    "limit": 1
+                  }
+                },
+                "bindings": [
+                  {
+                    "id": "faq-toc-faq-exam-title-label",
+                    "sourceFieldId": "faq-group-title",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "item",
+                      "prop": "label"
+                    },
+                    "transform": {
+                      "kind": "identity"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "results-rows-year-2015",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "results-rows-year-2015",
+                "name": "results-rows-year-2015",
+                "contentModel": {
+                  "providerId": "content-filesystem",
+                  "recordId": "result-entry"
+                },
+                "composition": {
+                  "providerId": "files",
+                  "recordId": "results-rows-year-2015"
+                },
+                "mode": {
+                  "kind": "collection",
+                  "query": {
+                    "publication": "published-only",
+                    "conditions": [
+                      {
+                        "fieldId": "result-entry-year",
+                        "operator": "equals",
+                        "value": {
+                          "providerId": "content-filesystem",
+                          "modelId": "result-year",
+                          "recordId": "year-2015"
+                        }
+                      }
+                    ],
+                    "sort": [
+                      {
+                        "fieldId": "result-entry-order",
+                        "direction": "asc"
+                      }
+                    ],
+                    "pins": [],
+                    "limit": 1000
+                  }
+                },
+                "bindings": [
+                  {
+                    "id": "results-rows-year-2015-school-school",
+                    "sourceFieldId": "result-entry-school",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "row",
+                      "prop": "school"
+                    },
+                    "transform": {
+                      "kind": "identity"
+                    }
+                  },
+                  {
+                    "id": "results-rows-year-2015-department-department",
+                    "sourceFieldId": "result-entry-department",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "row",
+                      "prop": "department"
+                    },
+                    "transform": {
+                      "kind": "identity"
+                    }
+                  },
+                  {
+                    "id": "results-rows-year-2015-url-url",
+                    "sourceFieldId": "result-entry-url",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "row",
+                      "prop": "url"
+                    },
+                    "transform": {
+                      "kind": "identity"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "results-toc-year-2015",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "results-toc-year-2015",
+                "name": "results-toc-year-2015",
+                "contentModel": {
+                  "providerId": "content-filesystem",
+                  "recordId": "result-year"
+                },
+                "composition": {
+                  "providerId": "files",
+                  "recordId": "results-toc-year-2015"
+                },
+                "mode": {
+                  "kind": "collection",
+                  "query": {
+                    "publication": "published-only",
+                    "conditions": [],
+                    "sort": [],
+                    "pins": [
+                      {
+                        "providerId": "content-filesystem",
+                        "modelId": "result-year",
+                        "recordId": "year-2015"
+                      }
+                    ],
+                    "limit": 1
+                  }
+                },
+                "bindings": [
+                  {
+                    "id": "results-toc-year-2015-label-label",
+                    "sourceFieldId": "result-year-label",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "item",
+                      "prop": "label"
+                    },
+                    "transform": {
+                      "kind": "identity"
+                    }
+                  },
+                  {
+                    "id": "results-toc-year-2015-label-href",
+                    "sourceFieldId": "result-year-label",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "item",
+                      "prop": "href"
+                    },
+                    "transform": {
+                      "kind": "prefix",
+                      "prefix": "#year-"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "id": "results-year-year-2015",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 2,
+                "id": "results-year-year-2015",
+                "name": "results-year-year-2015",
+                "contentModel": {
+                  "providerId": "content-filesystem",
+                  "recordId": "result-year"
+                },
+                "composition": {
+                  "providerId": "files",
+                  "recordId": "results-year-year-2015"
+                },
+                "mode": {
+                  "kind": "collection",
+                  "query": {
+                    "publication": "published-only",
+                    "conditions": [],
+                    "sort": [],
+                    "pins": [
+                      {
+                        "providerId": "content-filesystem",
+                        "modelId": "result-year",
+                        "recordId": "year-2015"
+                      }
+                    ],
+                    "limit": 1
+                  }
+                },
+                "bindings": [
+                  {
+                    "id": "results-year-year-2015-label-label",
+                    "sourceFieldId": "result-year-label",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "section",
+                      "prop": "label"
+                    },
+                    "transform": {
+                      "kind": "identity"
+                    }
+                  },
+                  {
+                    "id": "results-year-year-2015-declaredcount-count",
+                    "sourceFieldId": "result-year-declared-count",
+                    "projection": {
+                      "kind": "value"
+                    },
+                    "target": {
+                      "nodeId": "section",
+                      "prop": "count"
+                    },
+                    "transform": {
+                      "kind": "identity"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "sitemaps": [
+        {
+          "id": "sitemap-filesystem",
+          "records": []
+        }
+      ]
+    },
+    "activeSitemap": {
+      "providerId": "sitemap-filesystem",
+      "recordId": "main"
+    },
+    "collectionAttachments": [
+      {
+        "id": "synthetic-existing",
+        "order": 0,
+        "composition": {
+          "providerId": "files",
+          "recordId": "results"
+        },
+        "mapping": {
+          "providerId": "mapping-filesystem",
+          "recordId": "results-year-year-2015"
+        },
+        "target": {
+          "nodeId": "archive",
+          "slotId": "aside"
+        }
+      }
+    ]
+  },
+  "componentPack": {
+    "specifier": "@pinsel/ui/composer-pack",
+    "source": "workspace:*",
+    "digest": "91585ee42a1430252150133c5a0ce60a10229b4a9db843fb25437f78887fb8e6",
+    "compiler": "site-project-release/2:f4db784ae4a1ab73028fde5452b536d88859233bf0c9b572357bee4dcea56d0b",
+    "contractDigest": "61a9f355aff7c3b0b4771902ee7e81820b1c8af668a5ba0e5e989c745f94f284",
+    "manifestDigest": "e2c8fe7b7aa32ccc4ac90e49962b7026e435683e067474c89620dfad755c71cc"
+  },
+  "renderer": {
+    "id": "pinsel-zfb",
+    "version": "native-v3",
+    "module": "@pinsel/ui/host-document",
+    "digest": "34d0957af316f72f5b811761089c73f6c0aae91bfece83e280e28eb5f8f4627c"
+  },
+  "publicFiles": [],
+  "assets": [],
+  "digest": "synthetic-test-only-not-a-capture"
+}

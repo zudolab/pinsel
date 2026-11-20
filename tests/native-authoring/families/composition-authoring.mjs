@@ -1,0 +1,23 @@
+import assert from'node:assert/strict';
+import{compositionDerivedReadGate,outputExchange}from'./composition-output.mjs';
+import{originalResponse}from'./original-request.mjs';
+/** One exact reviewed put; any generated-output continuation is challenge-bound. */
+export function compositionAuthoringGate({page,snapshot,persist,admit,accept,navigationGraceMs}){
+ const current=structuredClone(snapshot),records=current.project.providers.compositions.find(p=>p.id==='files').records;
+ const reads=compositionDerivedReadGate({page,snapshot:current,persist,navigationGraceMs});let tail=Promise.resolve(),failure,exchange,logicalInput,proposed,committed=false;const pending=new Set();
+ const handle=route=>{const arrivedAt=reads.navigations,arrivedCommitted=reads.committedNavigations;const work=tail.then(async()=>{let input;try{assert(!failure,'Composition authoring phase held');const request=route.request();assert.equal(new URL(request.url()).pathname,'/__zudo_composer_file_provider');assert.equal(request.headers()['x-zudo-composer-workspace'],snapshot.workspaceId);input=request.postDataJSON();
+  if(['snapshot','list','get'].includes(input.operation)){await reads.handle(route,arrivedAt,arrivedCommitted);reads.check();return;}
+  assert.equal(input.operation,'put','Only the reviewed ordinary Composition put is permitted');assert(!committed,'Second canonical put refused');assert.deepEqual(Object.keys(input).sort(),['operation','outputsById','record']);reads.assertSettled();
+  if(!exchange){assert.deepEqual(input.outputsById,{});proposed=structuredClone(admit(input,request));logicalInput=structuredClone(input);const expected=records.filter(r=>r.id!==proposed.id).concat(proposed);exchange=outputExchange({records:expected,targetIds:expected.map(r=>r.id),input});}
+  else{assert.deepEqual(input.record,logicalInput.record);exchange.continuation(input);}
+  await persist({phase:'composition-put-before-dispatch',input,continuation:exchange.phase==='continuing'});const response=await originalResponse(page,route);await persist({phase:'composition-put-response',input,...response});assert.equal(response.status,200);exchange.response(response.body);
+  if(exchange.phase==='complete'){assert.equal(response.body.result?.canonical?.status,'saved');committed=true;const index=records.findIndex(r=>r.id===proposed.id);if(index<0)records.push(proposed);else records[index]=proposed;accept(proposed,response.body);}
+ }catch(error){failure??=error;await route.abort().catch(()=>{});await persist({phase:'composition-put-held',input,error:error.message}).catch(()=>{});}});tail=work.catch(()=>{});pending.add(work);work.finally(()=>pending.delete(work)).catch(()=>{});return work;};
+ // Capture only the tail already enqueued by this call. A future continuation
+ // must never join itself or wait for its own outstanding output challenge.
+ const joinPriorResponse=()=>{const prior=tail,joined=prior.then(()=>{if(failure)throw failure;reads.check();});
+  // Observe immediately while admission journals its arrival; awaiting joined
+  // still propagates the original failure, never converting it to readiness.
+  void joined.catch(()=>{});return joined;};
+ return{handle,joinPriorResponse,beginNavigation(){reads.beginNavigation();},navigationCommitted(){reads.navigationCommitted();},get awaitingWriteOutput(){return exchange?.phase==='challenged';},get readiness(){return{pending:pending.size+reads.readiness.pending,outstanding:reads.readiness.outstanding+(exchange?.phase==='challenged'?1:0)};},assertSettled(){if(failure)throw failure;assert.equal(pending.size,0);assert(!exchange||exchange.phase==='complete');reads.assertSettled();},check(){if(failure)throw failure;reads.check();},async drain(){while(pending.size)await Promise.allSettled([...pending]);await reads.drain();if(failure)throw failure;},get committed(){return committed;}};
+}

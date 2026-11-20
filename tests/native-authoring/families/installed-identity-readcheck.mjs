@@ -1,0 +1,13 @@
+import { createRequire } from 'node:module';
+import { pathToFileURL } from 'node:url';
+import { join } from 'node:path';
+import { repoRoot } from './config.mjs';
+import { assertInstalledIdentities } from './installed-identity.mjs';
+const require = createRequire(join(repoRoot, 'packages/pinsel-content/package.json'));
+const { loadHostContext } = await import(pathToFileURL(require.resolve('zudo-composer/vite')));
+const { resolveAuthoringPackIdentity, resolveAuthoringRendererIdentity } = await import(pathToFileURL(require.resolve('zudo-composer/authoring')));
+const host = await loadHostContext({ workspaceRoot: join(repoRoot, 'packages/pinsel-content') });
+const packIdentity = await resolveAuthoringPackIdentity(host);
+const renderer = await resolveAuthoringRendererIdentity({ composerConfig: host.composerConfig });
+assertInstalledIdentities({ componentPack: { ...packIdentity, manifestDigest: 'shape-only-not-a-compile-proof' }, renderer }, { packIdentity, renderer });
+console.log(JSON.stringify({ packIdentityKeys: Object.keys(packIdentity), rendererKeys: Object.keys(renderer), qualification: 'Actual installed public identity shape only; no capture/build/native-store operation' }));

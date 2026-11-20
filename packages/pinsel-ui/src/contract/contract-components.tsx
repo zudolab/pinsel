@@ -296,7 +296,7 @@ export function GraduateContent({ paragraphs }: { paragraphs: string }): Child {
 
 export function NoteCardBlock(props: { href: string; slug: string; title: string; description: string } & Injected): Child {
   return (
-    <a class="note-card" href={props.slug ? `/notes/${props.slug}/` : props.href}>
+    <a class="note-card" href={props.slug ? `/notes/${props.slug}/` : props.href.startsWith("/") && !props.href.includes("?") && !props.href.includes("#") && !props.href.endsWith("/") && !props.href.endsWith(".html") ? `${props.href}/` : props.href}>
       <span class="note-card__index" aria-hidden="true">
         {twoDigits(index(props.position))}
       </span>
@@ -503,4 +503,18 @@ export function NotFoundBlock(props: { title: string; body: string; linkLabel: s
       <ButtonLink href="/" label={props.linkLabel} />
     </section>
   );
+}
+
+/** Parent owns arrangement and accessible identity; the label stays Content-owned. */
+export function NoteToc(props: { wide: boolean; label?: readonly unknown[]; items?: readonly unknown[]; presentation?: { nodeId: string } }): Child {
+  if (!props.presentation?.nodeId) throw new Error("Note TOC requires its renderer identity");
+  const hasLabel = (props.label?.length ?? 0) > 0;
+  const labelId = `toc-label-${encodeURIComponent(props.presentation.nodeId)}`;
+  return <nav class={props.wide ? "page-toc page-toc--wide container" : "page-toc"} aria-labelledby={hasLabel ? labelId : undefined} aria-label={hasLabel ? undefined : "Contents"}>
+    <p class="eyebrow" id={hasLabel ? labelId : undefined}><Icon name="contents" />{hasLabel ? props.label as Child : <span>Contents</span>}</p>
+    <ol>{(props.items ?? []) as Child}</ol>
+  </nav>;
+}
+export function TocLabel(props: { text: string }): Child {
+  return <span>{props.text || "Contents"}</span>;
 }

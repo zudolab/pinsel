@@ -158,14 +158,31 @@ For an existing `0.2.0` / `native-v1` workspace, follow the
 pack does not make an old workspace compatible by itself. Preserve the original
 store/history and select only a verified separate stage; do not rerun initialization.
 
-After installing the exact Composer revision recorded in the compatibility ledger:
+`PINSEL_AUTHORING_STAGE` selects a directory suffix, not a schema version. The
+current initializer always applies `normalizeNoteRoutes` to committed inputs and
+creates the current pack `0.4.0` / renderer `native-v3` model, including when the
+variable is unset and the default paths below are used. Setting `notes-v1` selects
+`.native-authoring-notes-v1` and `.native-public-notes-v1`; use that same selection
+for initialization, authoring, capture and build. A stage name does not convert
+existing saved state. Older default or named workspaces still require the explicit
+staged migration with a matching source runtime; startup never migrates or reseeds.
+For a fresh named rehearsal, follow the [known-data bootstrap](native-authoring-acceptance.md#fresh-known-data-bootstrap-or-existing-saved-workspace).
+
+After installing the exact Composer revision recorded in the compatibility ledger,
+the following fresh-default example uses unsuffixed paths (all destinations must
+be absent):
 
 ```sh
 pnpm --filter @pinsel/content authoring:init
 pnpm dev
 ```
 
-Initialization is explicit and refuses an existing workspace. It stages committed
+Initialization is explicit and checks that the selected native data directory,
+prepared public root and `.native-import-evidence.json` are all absent before
+preparing files or importing stores. Existing files, directories and dangling
+symlinks refuse without initialization writes. Keep other writers stopped: this
+preflight is not an atomic reservation, and later initialization failures can leave
+partial staged output that must be preserved for review. It stages committed
 Content and `buildPinselSite` structure under
 `packages/pinsel-content/.native-authoring`, prepares approved public assets and the
 same production visitor script sources under `.native-public`, and records
@@ -201,3 +218,36 @@ using captured public asset/CSS/script bytes. Existing output is refused rather 
 overwritten. Reopen the server and confirm saved edits remain unchanged by capture
 and build. These commands are a recipe, not a recorded end-to-end pass; use the ledger
 for actual installed-acceptance results.
+
+## Native model guidance (description metadata only)
+
+Fresh explicit `authoring:init` imports and the staged `authoring:migrate-notes`
+output project the three recognized legacy descriptions for `nav-link`, `page-copy`
+and `course` into native guidance. The projection matches the exact old text and
+qualified `content-filesystem` model identity; custom descriptions are preserved.
+It changes no fields, IDs, permissions, values, timestamps, Assets or historical
+Hosted definitions/fixtures. Header membership/order is owned by Composition and
+Mapping; Footer order uses Content `order`. Descriptions grant no new capability.
+The Note migration evidence includes the exact description differences and hashes;
+post-import Content verification compares against that reviewed candidate.
+
+Existing native stages are **not updated on startup**. Do not reinitialize them or
+edit private storage paths to update descriptions. An existing-stage change needs
+a separately reviewed per-model save in the supported Model Editor, or the public
+Content provider protocol (`read-all`, `get-model`, `transact`) with
+`expectedMutationToken` and one `put-model` operation. Capture the whole workspace
+before and after, preserve the complete model before-image, match its exact legacy
+description and qualified identity, and change only `document.description` (plus
+the normal save timestamp). Refuse stale tokens or custom text; preserve all other
+model fields and all entries. Record the request before dispatch and reconcile a
+lost response through public readback rather than blindly replaying a write.
+Verify the expected Content token change, unchanged entry values/generations,
+other domains and Assets, and the displayed guidance after reload/restart. Any
+inverse requires the exact saved after-image and current token. This implementation
+alone is not evidence that an existing stage or owner database was updated.
+
+## Native value validation
+
+Read [the native Content value contract](native-content-validation.md) before
+changing human/AI writes, publication or recovery. Trusted host value rules apply
+independently of Assistant permissions; historical data is preserved.

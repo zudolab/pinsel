@@ -1,0 +1,2 @@
+import {test} from 'vitest';import assert from 'node:assert/strict';import{assertRequestWorkspace}from './workspace-guard.mjs';
+test('foreign or absent workspace refuses before dispatch',()=>{for(const workspace of [undefined,'other']){let dispatched=false;assert.throws(()=>{assertRequestWorkspace({workspaceId:'pinsel'},{headers:()=>({'x-zudo-composer-workspace':workspace})});dispatched=true;},/workspace/);assert.equal(dispatched,false);}assertRequestWorkspace({workspaceId:'pinsel'},{headers:()=>({'x-zudo-composer-workspace':'pinsel'})});});

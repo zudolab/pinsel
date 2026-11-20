@@ -51,8 +51,8 @@ importers:
         specifier: ^4.3.6
         version: 4.6.5
       zudo-composer:
-        specifier: git+https://github.com/Takazudo/zudo-composer.git#87b399f0d35e016ad4193238fd2d9f606d7dd59a
-        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/87b399f0d35e016ad4193238fd2d9f606d7dd59a(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1)
+        specifier: git+https://github.com/Takazudo/zudo-composer.git#e802741aaf51bae69b4db67ddc3d80494be61043
+        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/e802741aaf51bae69b4db67ddc3d80494be61043(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1)
     devDependencies:
       '@cloudflare/vitest-plugin':
         specifier: 1.4.0
@@ -79,8 +79,8 @@ importers:
         specifier: ^10.29.8
         version: 10.29.8
       zudo-composer:
-        specifier: git+https://github.com/Takazudo/zudo-composer.git#87b399f0d35e016ad4193238fd2d9f606d7dd59a
-        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/87b399f0d35e016ad4193238fd2d9f606d7dd59a(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1)
+        specifier: git+https://github.com/Takazudo/zudo-composer.git#e802741aaf51bae69b4db67ddc3d80494be61043
+        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/e802741aaf51bae69b4db67ddc3d80494be61043(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1)
     devDependencies:
       vite:
         specifier: ^8.2.2
@@ -161,8 +161,8 @@ importers:
         specifier: ^4.3.6
         version: 4.6.5
       zudo-composer:
-        specifier: git+https://github.com/Takazudo/zudo-composer.git#87b399f0d35e016ad4193238fd2d9f606d7dd59a
-        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/87b399f0d35e016ad4193238fd2d9f606d7dd59a(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1)
+        specifier: git+https://github.com/Takazudo/zudo-composer.git#e802741aaf51bae69b4db67ddc3d80494be61043
+        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/e802741aaf51bae69b4db67ddc3d80494be61043(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1)
 
   packages/pinsel-ui:
     dependencies:
@@ -176,8 +176,8 @@ importers:
         specifier: ^10.29.8
         version: 10.29.8
       zudo-composer:
-        specifier: git+https://github.com/Takazudo/zudo-composer.git#87b399f0d35e016ad4193238fd2d9f606d7dd59a
-        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/87b399f0d35e016ad4193238fd2d9f606d7dd59a(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1)
+        specifier: git+https://github.com/Takazudo/zudo-composer.git#e802741aaf51bae69b4db67ddc3d80494be61043
+        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/e802741aaf51bae69b4db67ddc3d80494be61043(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1)
 
 packages:
 
@@ -2212,8 +2212,8 @@ packages:
   zod@4.6.5:
     resolution: {integrity: sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==}
 
-  zudo-composer@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/87b399f0d35e016ad4193238fd2d9f606d7dd59a:
-    resolution: {gitHosted: true, integrity: sha512-CE9UMPj4u0XfVeCHWxIwp33NKJNKwFZzdV0qEf/lBr/ISeO+rUdrG1CPd4DpgQlxnb2pM9yGFnD3TKY7Q72shA==, tarball: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/87b399f0d35e016ad4193238fd2d9f606d7dd59a}
+  zudo-composer@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/e802741aaf51bae69b4db67ddc3d80494be61043:
+    resolution: {gitHosted: true, integrity: sha512-sfp/3qZDqW7xKKsKHLjIaZGM3cwpMdEEvWaaioFWo0Z30IDNwl/tR7QXKkaqbesdPBAt0qY7+jgmCrxGhBWUfw==, tarball: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/e802741aaf51bae69b4db67ddc3d80494be61043}
     version: 0.0.0
     engines: {node: '>=24 <25', pnpm: 11.5.2}
     hasBin: true
@@ -4179,7 +4179,7 @@ snapshots:
 
   zod@4.6.5: {}
 
-  zudo-composer@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/87b399f0d35e016ad4193238fd2d9f606d7dd59a(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1):
+  zudo-composer@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/e802741aaf51bae69b4db67ddc3d80494be61043(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1):
     dependencies:
       '@anthropic-ai/sdk': 0.131.0(zod@4.6.5)
       '@codemirror/commands': 6.11.1

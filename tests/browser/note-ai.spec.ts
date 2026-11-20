@@ -51,9 +51,9 @@ test("a delayed proposal list from another Note cannot replace the current Note 
  const noteValues=await page.locator("#entry option").evaluateAll((nodes,ids)=>nodes.filter(node=>ids.some((id:string)=>node.textContent?.endsWith(` · ${id}`))).map(node=>(node as HTMLOptionElement).value),ids);
  expect(noteValues.length).toBeGreaterThanOrEqual(2);const first=page.locator("#entry");const firstValue=await first.inputValue(),secondValue=noteValues.find(value=>value!==firstValue)!;
  await first.selectOption(secondValue);await expect(page.locator("#ai-proposals option")).toHaveCount(1);
- let release!:()=>void;const blocked=new Promise<void>(resolve=>{release=resolve;});let reached=false,held=false;
- await page.route("**/api/hosted/ai",async route=>{const request=route.request().postDataJSON();if(request.operation==="pinsel-ai-list"&&!held){held=true;reached=true;const response=await route.fetch();await blocked;await route.fulfill({response});}else await route.continue();});
- await first.selectOption(firstValue);await expect.poll(()=>reached).toBe(true);await first.selectOption(secondValue);await expect(page.locator("#ai-proposals option")).toHaveCount(1);release();await page.waitForTimeout(100);await expect(page.locator("#ai-proposals option")).toHaveCount(1);await expect(page.locator("#ai-apply")).toBeDisabled();
+ let release!:()=>void;const blocked=new Promise<void>(resolve=>{release=resolve;});let reached=false,held=false,delivered=false;
+ await page.route("**/api/hosted/ai",async route=>{const request=route.request().postDataJSON();if(request.operation==="pinsel-ai-list"&&!held){held=true;reached=true;const response=await route.fetch();await blocked;await route.fulfill({response});delivered=true;}else await route.continue();});
+ await first.selectOption(firstValue);await expect.poll(()=>reached).toBe(true);await first.selectOption(secondValue);await expect(page.locator("#ai-proposals option")).toHaveCount(1);release();await expect.poll(()=>delivered).toBe(true);await page.waitForTimeout(100);await expect(page.locator("#ai-proposals option")).toHaveCount(1);await expect(page.locator("#ai-apply")).toBeDisabled();
 });
 
 test("provider status failure blocks only new Prepare and can be rechecked",async({page})=>{

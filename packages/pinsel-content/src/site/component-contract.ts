@@ -18,7 +18,7 @@ import type { JsonValue } from "@zudo-composer/component-contract";
 // - list fields cannot be bound, so multi-line props are one item per line.
 
 export const CONTRACT_PACK_ID = "pinsel";
-export const CONTRACT_PACK_VERSION = "0.3.0";
+export const CONTRACT_PACK_VERSION = "0.4.0";
 
 export type ContractPropKind = "text" | "multiline" | "number" | "boolean" | { select: readonly string[] };
 
@@ -109,6 +109,8 @@ export const PINSEL_COMPONENT_CONTRACT: readonly ContractComponent[] = [
 
   // Lessons
   component("toc", "nav.page-toc[.page-toc--wide.container when wide][aria-label=label] > p.eyebrow(contents icon, label) + ol(items slot).", { label: text(), wide: flag() }, [many("items", ["pinsel.toc-item", "pinsel.note-toc-items", "pinsel.group"])]),
+  component("note-toc", "nav aria-labelledby shared label; parent owns ordered Note items.", { wide: flag() }, [one("label", ["pinsel.toc-label"]), many("items", ["pinsel.note-toc-items"])]),
+  component("toc-label", "span containing shared contents label.", { text: text() }),
   component("toc-item", "li > a[href] (span aria-hidden zero-padded number + label). href = `href` when set, else #{fragmentPrefix}{slotIndex}; the number is `number` when > 0, else slotIndex.", { label: text(), href: text(), fragmentPrefix: text(), number: count(0) }),
   component("note-toc-items", "One toc li per `## ` heading of the markdown: #section-N, number N.", { markdown: lines() }),
   component("course-steps", "div.course-steps around the items slot.", {}, [many("items", ["pinsel.course-step"])]),

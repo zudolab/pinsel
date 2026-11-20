@@ -1,0 +1,12 @@
+import {recoveredKnowledgeForward,recoveredHeaderHrefForward} from './recovery-forward.mjs';
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';
+import {resolve} from 'node:path';
+import {headerOwner,knowledgeOwner} from './owner.mjs';
+import {validateIntent} from './driver-proof.mjs';
+const [configFile,captureFile,output]=process.argv.slice(2);assert(configFile&&captureFile&&output,'Usage: prepare.mjs config.json accepted-capture.json NEW-intent.json');
+const config=JSON.parse(await readFile(configFile,'utf8')),snapshot=JSON.parse(await readFile(captureFile,'utf8'));assert.match(snapshot.digest,/^[a-f0-9]{64}$/,'Accepted public capture required');
+assert(['header','knowledge-reference'].includes(config.kind));const intent={...config,capturePath:resolve(captureFile),captureDigest:snapshot.digest};
+if(config.forwardProofPath){intent.forwardProof=JSON.parse(await readFile(config.forwardProofPath,'utf8'));intent.direction='inverse';const prior=config.kind==='knowledge-reference'&&intent.forwardProof.status==='SAVED_REFERENCE_RECOVERY_VERIFIED'?recoveredKnowledgeForward(snapshot,intent.forwardProof):intent.forwardProof?.status==='SAVED_HEADER_HREF_RECOVERY_VERIFIED'?recoveredHeaderHrefForward(snapshot,intent.forwardProof):intent.forwardProof;intent.value=prior.beforeValue;intent.field=prior.field;}else intent.direction='forward';
+intent.owner=config.kind==='knowledge-reference'?knowledgeOwner(snapshot,config.ref):headerOwner(snapshot,config.currentHref);validateIntent(snapshot,intent);await writeFile(output,JSON.stringify(intent,null,2),{flag:'wx'});
+console.log('Prepared exact intent only; no server or canonical write.');

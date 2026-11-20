@@ -1,0 +1,281 @@
+{
+  "workspaceId": "synthetic-static-tests",
+  "digest": "NOT_A_REAL_CAPTURE",
+  "tokens": {
+    "content": 1
+  },
+  "project": {
+    "providers": {
+      "compositions": [
+        {
+          "id": "files",
+          "records": [
+            {
+              "id": "about"
+            }
+          ]
+        }
+      ],
+      "sitemaps": [
+        {
+          "id": "sitemap-filesystem",
+          "records": [
+            {
+              "id": "main",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 3,
+                "id": "main",
+                "name": "Main",
+                "navigation": {
+                  "primary": [],
+                  "footer": []
+                },
+                "root": [
+                  {
+                    "id": "home",
+                    "title": "Pinsel - ドイツ美大受験オンラインクラス",
+                    "source": {
+                      "kind": "composition",
+                      "ref": {
+                        "providerId": "files",
+                        "recordId": "home"
+                      }
+                    },
+                    "children": [
+                      {
+                        "id": "lessons",
+                        "title": "オンラインクラス - Pinsel",
+                        "slug": "lessons",
+                        "source": {
+                          "kind": "composition",
+                          "ref": {
+                            "providerId": "files",
+                            "recordId": "lessons"
+                          }
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "about",
+                        "title": "講師紹介 - Pinsel",
+                        "slug": "about",
+                        "source": {
+                          "kind": "composition",
+                          "ref": {
+                            "providerId": "files",
+                            "recordId": "about"
+                          }
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "results",
+                        "title": "合格実績 - Pinsel",
+                        "slug": "results",
+                        "source": {
+                          "kind": "composition",
+                          "ref": {
+                            "providerId": "files",
+                            "recordId": "results"
+                          }
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "voices",
+                        "title": "生徒の声 - Pinsel",
+                        "slug": "voices",
+                        "source": {
+                          "kind": "composition",
+                          "ref": {
+                            "providerId": "files",
+                            "recordId": "voices"
+                          }
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "faq",
+                        "title": "よくある質問 - Pinsel",
+                        "slug": "faq",
+                        "source": {
+                          "kind": "composition",
+                          "ref": {
+                            "providerId": "files",
+                            "recordId": "faq"
+                          }
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "notes",
+                        "title": "Notes - Pinsel",
+                        "slug": "notes",
+                        "source": {
+                          "kind": "composition",
+                          "ref": {
+                            "providerId": "files",
+                            "recordId": "notes"
+                          }
+                        },
+                        "children": [
+                          {
+                            "id": "note-detail",
+                            "title": "Note detail",
+                            "source": {
+                              "kind": "mapping",
+                              "ref": {
+                                "providerId": "mapping-filesystem",
+                                "recordId": "note-detail"
+                              },
+                              "route": {
+                                "kind": "entry-field",
+                                "fieldId": "note-slug",
+                                "titleFieldId": "note-title"
+                              }
+                            },
+                            "children": []
+                          }
+                        ]
+                      },
+                      {
+                        "id": "contact",
+                        "title": "お問い合わせ - Pinsel",
+                        "slug": "contact",
+                        "source": {
+                          "kind": "composition",
+                          "ref": {
+                            "providerId": "files",
+                            "recordId": "contact"
+                          }
+                        },
+                        "children": []
+                      },
+                      {
+                        "id": "not-found",
+                        "title": "ページが見つかりません - Pinsel",
+                        "slug": "404.html",
+                        "source": {
+                          "kind": "composition",
+                          "ref": {
+                            "providerId": "files",
+                            "recordId": "not-found"
+                          }
+                        },
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ],
+      "content": [
+        {
+          "id": "content-filesystem",
+          "models": [
+            {
+              "id": "page-copy",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "document": {
+                "schemaVersion": 1,
+                "id": "page-copy",
+                "name": "ページ見出しとメタ情報",
+                "description": "ルートごとの <title>・meta description・ページ見出し・CTA 文言（9件、追加不可）",
+                "kind": "collection",
+                "fields": [
+                  {
+                    "id": "page-copy-route",
+                    "key": "route",
+                    "label": "ルート",
+                    "required": true,
+                    "kind": "url"
+                  },
+                  {
+                    "id": "page-copy-meta-title",
+                    "key": "metaTitle",
+                    "label": "ページタイトル",
+                    "required": true,
+                    "kind": "text"
+                  },
+                  {
+                    "id": "page-copy-meta-description",
+                    "key": "metaDescription",
+                    "label": "meta description",
+                    "required": false,
+                    "kind": "long-text"
+                  },
+                  {
+                    "id": "page-copy-header-title",
+                    "key": "headerTitle",
+                    "label": "ページ見出し",
+                    "required": false,
+                    "kind": "text"
+                  },
+                  {
+                    "id": "page-copy-header-description",
+                    "key": "headerDescription",
+                    "label": "ページ説明",
+                    "required": false,
+                    "kind": "long-text"
+                  },
+                  {
+                    "id": "page-copy-aside-label",
+                    "key": "asideLabel",
+                    "label": "サイド目次 ラベル",
+                    "required": false,
+                    "kind": "text"
+                  },
+                  {
+                    "id": "page-copy-cta-sub-copy",
+                    "key": "ctaSubCopy",
+                    "label": "CTA 補足文",
+                    "required": false,
+                    "kind": "text"
+                  },
+                  {
+                    "id": "page-copy-order",
+                    "key": "order",
+                    "label": "表示順",
+                    "required": true,
+                    "kind": "number"
+                  }
+                ]
+              }
+            }
+          ],
+          "entries": [
+            {
+              "schemaVersion": 1,
+              "id": "page-about",
+              "modelId": "page-copy",
+              "createdAt": "2026-09-12T00:00:00.000Z",
+              "updatedAt": "2026-09-12T00:00:00.000Z",
+              "values": {
+                "page-copy-route": "/about/",
+                "page-copy-meta-title": "講師紹介 - Pinsel",
+                "page-copy-meta-description": "東京芸大卒・ミュンヘン芸術アカデミー修了の講師が指導。",
+                "page-copy-header-title": "講師紹介",
+                "page-copy-header-description": "東京芸大卒・ミュンヘン芸術アカデミー修了の講師が指導。",
+                "page-copy-cta-sub-copy": "ドイツ・オーストリアの美大受験について",
+                "page-copy-order": 3
+              },
+              "lifecycle": "published",
+              "generation": 1
+            }
+          ]
+        }
+      ]
+    },
+    "id": "synthetic-static-tests",
+    "activeSitemap": {
+      "providerId": "sitemap-filesystem",
+      "recordId": "main"
+    }
+  }
+}

@@ -1,0 +1,21 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile} from 'node:fs/promises';import {pathToFileURL} from 'node:url';import {createHash} from 'node:crypto';
+import {FAMILY,verifyFamily} from './family-graph.mjs';import {getRecord} from './intents.mjs';
+export function validateAdditionalChild(snapshot,requested,{family,kind,second}){
+ verifyFamily(snapshot,family,kind);const spec=FAMILY[kind];assert.deepEqual(requested,[{ref:second,action:'publish'}]);assert.equal(second.providerId,'content-filesystem');assert.equal(second.modelId,spec.childModel);assert.notEqual(second.recordId,family.content.child.recordId);
+ const child=getRecord(snapshot,'content',second);assert.equal(child.lifecycle,'draft');assert.deepEqual(child.values[spec.referenceField],family.content.parent);
+ const original=getRecord(snapshot,'content',family.content.child),field=kind==='faq'?'faq-item-question':'result-entry-school';assert(child.values[field]&&child.values[field]!==original.values[field]);assert(child.values[kind==='faq'?'faq-item-answer':'result-entry-department']);assert(Number.isFinite(child.values[spec.orderField]));assert.notEqual(child.values[spec.orderField],original.values[spec.orderField]);return child;
+}
+export function nextSecondChild({snapshot,family,kind,config,history,capturePath,expectedActive}){
+ verifyFamily(snapshot,family,kind);const spec=FAMILY[kind],configHash=createHash('sha256').update(JSON.stringify({family,kind,config})).digest('hex');assert(config.text&&config.secondary&&Number.isFinite(config.order));
+ const first=getRecord(snapshot,'content',family.content.child);assert.notEqual(config.text,first.values[kind==='faq'?'faq-item-question':'result-entry-school']);assert.notEqual(config.order,first.values[spec.orderField]);
+ const second=history.length?{providerId:'content-filesystem',modelId:spec.childModel,recordId:history[0].result.record.id}:null;
+ const values=kind==='faq'?{'faq-item-group':family.content.parent,'faq-item-question':config.text,'faq-item-answer':config.secondary,'faq-item-order':config.order}:{'result-entry-year':family.content.parent,'result-entry-school':config.text,'result-entry-department':config.secondary,'result-entry-order':config.order};
+ const steps=[{kind:'content-create',domain:'content',modelId:spec.childModel},...Object.entries(values).map(([fieldId,value])=>({kind:'content-field',domain:'content',owner:second,fieldId,value})),{kind:'publish',domain:'publication',refs:[second],expectedActive,additionalChild:{family,kind,second}}];
+ assert(history.length<=steps.length);for(let i=0;i<history.length;i++){const proof=history[i];assert.equal(proof.intent.followup.configHash,configHash);assert.equal(proof.intent.followup.index,i);assert.equal(proof.beforeDigest,proof.intent.captureDigest);if(i)assert.equal(proof.beforeDigest,history[i-1].afterDigest);assert(proof.result&&proof.afterCapture&&proof.afterDigest);const {capturePath:_path,captureDigest:_digest,followup:_follow,...actual}=proof.intent;const wanted={...steps[i],family:kind};if(i===steps.length-1)wanted.expectedActive=proof.intent.expectedActive;assert.deepEqual(actual,wanted);}
+ if(history.length)assert.equal(snapshot.digest,history.at(-1).afterDigest);
+ if(history.length===steps.length){assert.equal(getRecord(snapshot,'content',second).lifecycle,'published');return{complete:true,scope:'second-child-created-published-only',orderAcceptance:'NOT_RUN',second,configHash};}
+ const intent=steps[history.length];if(intent.kind==='publish'){assert(expectedActive);validateAdditionalChild(snapshot,[{ref:second,action:'publish'}],intent.additionalChild);}
+ return {...intent,family:kind,capturePath,captureDigest:snapshot.digest,followup:{configHash,index:history.length,total:steps.length}};
+}
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){const[configPath,capturePath,familyPath,kind,historyPath,activePath,out]=process.argv.slice(2),read=async p=>JSON.parse(await readFile(p,'utf8'));const history=await Promise.all((await read(historyPath)).map(read));await writeFile(out,JSON.stringify(nextSecondChild({config:await read(configPath),snapshot:await read(capturePath),family:await read(familyPath),kind,history,capturePath,expectedActive:await read(activePath)}),null,2),{flag:'wx'});}
