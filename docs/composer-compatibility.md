@@ -13,16 +13,16 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel integration | Local continuation of draft [PR61](https://github.com/zudolab/pinsel/pull/61); Results consumer `b81e4edd9a0f135db0d6ea470c24db89bd63b7e1`, general/static consumers `66865aeb1dab917057b1186c2a584855a662b19c`. This reconnect wave has not been pushed or merged. |
+| Pinsel integration | [PR61](https://github.com/zudolab/pinsel/pull/61) head carries the S repin and the S-acceptance harness fixes; see [Package S installed acceptance](#package-s-installed-acceptance--2026-11-20). |
 | Installed package / upstream attestation | Distributed source S `e802741aaf51bae69b4db67ddc3d80494be61043` / attestation E `9d43eb32fa7399c3618443a1aeffd3db64115cfd` (repinned 2026-11-20 from `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660`; see [Option B T1 package repin](#option-b-t1-package-repin)) |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
 | Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping phase13 PASS260s and full human regression PASS1001s, both independently audited. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
-| Results progress | History23 preserves phases00–21 plus the explicit phase22 failed-run/public-capture recovery. Phase23 saved its intended limit100→1000 and reloaded it, then original FAIL427 at the shutdown exit-code check. A separate public capture verifies that full saved state. No history24 or later operation is accepted; FAQ remains pending. |
+| Results / FAQ families | At S on a fresh `notes-v1` stage: FAQ family `fresh-s-faq5-1148` (43 phases) and Results family `fresh-s-res1-1320` (45 phases) complete, with created/moved/restored builds, visitor checks, acceptance manifests and two-child order. The historical history23/41 Results chain remains held without its originals. |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current c5 human, negative, response-loss recovery and static gates passed; seven current-pin Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
-| Holds | Remaining T6/T7 scenarios, current-head checks/review/merges; actual owner-data cutover and new authenticated-provider acceptance. Deployment remains disabled. |
+| Holds | History41 continuation (originals unavailable); actual owner-data cutover (#57) and new authenticated-provider acceptance (#58, NOT_RUN). Deployment remains disabled. |
 
 ## Results phase23 saved-state reconciliation — 2026-11-18
 
@@ -2219,3 +2219,29 @@ private 2026-11-18 archive ends at the phase23 era). The transition evidence,
 saved-state preservation proof and phases 41 toc-group through 44 toc-attach
 remain held until those originals are supplied; no history is reconstructed and
 no earlier acceptance is relabelled as an S run.
+
+## Package S installed acceptance — 2026-11-20
+
+Composer S `e802741aaf51bae69b4db67ddc3d80494be61043`, installed by its git pin, on a
+fresh disposable `notes-v1` stage. Evidence stays local to the acceptance machine
+under `evidence/`; no deploy, remote D1 or inquiry delivery occurred.
+
+| Scenario | Result |
+| --- | --- |
+| Runner `full` / `negative` / `recovery` / `assistant` | PASS (A `34e1f851`, B `eb2e49f1`, exact A-after-B, 14 routes; seven-case fake-provider Assistant) |
+| FAQ family `fresh-s-faq5-1148` | 43 phases; created/moved/restored read-only restart, build, `verify-build` (14 routes, 143 assets), static visitor; manifest PASS; two-child order PASS |
+| Results family `fresh-s-res1-1320` | 45 phases; same three states (moved fragment `year-2015年度`); manifest PASS; two-child order PASS |
+| Static Sitemap sequence (zudo-composer#987) | Saved "Untitled page" child captured coherently (`9875017d…`) and its build refused; phases 01–15 verified, phase 08 through the read-only recovery proof; retained check `COMPILED_AND_EXACT_BUILD_VERIFIED` at `56d8a446…`, route `/about/static-w4b-987/`, 15 routes |
+| Extra Content record lifecycle (zudo-composer#988) | create, inspect-present, UI delete (one `transact` at token 115, original 200), inspect-absent: all `CONTENT_LIFECYCLE_STEP_CAPTURE_VERIFIED` |
+| Human Remove (zudo-composer#978) | full: real **Remove component**, receipt ok, fresh-restart absence and `REMOVED_NODE_ABSENT_FROM_EXACT_BUILD`; negative: Remove disabled with reasons for a shared Mapping section and the root, forged removals `unsupported-scope`, 1074 canonical/receipt files unchanged |
+| Qualified reference queries (zudo-composer#980) | Authored through the Mapping UI in both families |
+
+Original failures stay recorded and are not relabeled. Four earlier FAQ attempts held
+on a harness reload race after exact writes; each was reconciled read-only and is kept
+on the stage. Static phase 08 held when a copy reload interrupted a derived read; its
+acknowledged Content writes were reconciled and continued only through the
+recovered-proof path. Harness fixes from this wave: navigation-window read excusal,
+overlapping workspace `open` reads, non-ASCII Results fragments, the copy reload fence,
+the phase08 recovery runner, the lifecycle runner and the Remove proofs. No Composer
+change was needed. Final stage capture `df26af687d11fff963f6bd2327cf4c0c71dbe4bb49da46ef7fe4bf67a33a332c`.
+
