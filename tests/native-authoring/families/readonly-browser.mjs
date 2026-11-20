@@ -113,7 +113,8 @@ try {
     let publicHistory,targetPreview;
     if(hrefReads){const ref=accepted.result.ref;await page.goto(`${base}/content?provider=${encodeURIComponent(ref.providerId)}&model=${encodeURIComponent(ref.modelId)}&entry=${encodeURIComponent(ref.recordId)}`);await expect.poll(()=>{try{hrefReads.finish();return true;}catch{return false;}},{timeout:180000}).toBe(true);publicHistory=hrefReads.finish();await expect(page.locator(`[data-history-entry="${ref.recordId}"] [data-revision-id="${publicHistory.history.revisions[0].id}"]`)).toHaveCount(1);await persist({phase:'saved-href-public-history-verified',publicHistory});}
     const options={base,snapshot,intent:accepted.intent,record:accepted.result.record,expect,shot,navigation:async boundary=>{
-      if(recovered&&(boundary==='after-knowledge-preview'||(hrefReads&&boundary==='after-header-preview'))){
+      // The Note destination preview never reaches network idle, so every Knowledge restart settles its terminal reads explicitly.
+      if((boundary==='after-knowledge-preview'&&(recovered||accepted.intent.kind==='knowledge-reference'))||(recovered&&hrefReads&&boundary==='after-header-preview')){
         if(hrefReads){assert([...previewPaths].some(path=>path.replace(/\/$/,'')===accepted.intent.value.replace(/\/$/,'')),'Exact Header target preview required');}else{
         const note=snapshot.project.providers.content.find(p=>p.id===accepted.intent.value.providerId).entries.find(e=>e.id===accepted.intent.value.recordId&&e.modelId==='note');
         const target='/notes/'+note.values['note-slug'];assert([...previewPaths].some(path=>path.replace(/\/$/,'')===target),'Exact target preview response required');}
