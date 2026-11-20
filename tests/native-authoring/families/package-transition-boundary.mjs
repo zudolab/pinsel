@@ -21,6 +21,9 @@ export const HISTORY41_SHA256 = 'c6983a93c26e8dd7fec1ad384021e70a16f824a9cf67d29
 export const HISTORY41_CAPTURE_DIGEST = '40a76427d5e40955abe4917c10009999b68e2952765051d6a3bf9052cb46378e';
 export const OLD_COMPOSER = OPERATOR_BOUNDARY_COMPOSER;
 export const OLD_LOCK = OPERATOR_BOUNDARY_LOCK;
+/** The history41 originals. Only tests pass other anchors, to exercise the checks on synthetic git/evidence. */
+export const HISTORY41_ANCHORS = Object.freeze({ historySha256: HISTORY41_SHA256, captureDigest: HISTORY41_CAPTURE_DIGEST, composer: OLD_COMPOSER, lock: OLD_LOCK });
+const ANCHOR_KEYS = Object.keys(HISTORY41_ANCHORS).sort();
 const CONSUMERS = ['apps/authoring-worker', 'apps/editor', 'packages/pinsel-content', 'packages/pinsel-ui'];
 const IDENTITY_PATHS = new Set(['digest', 'componentPack.digest', 'componentPack.compiler', 'renderer.digest']);
 const RECOVERY_STATUS = {
@@ -76,7 +79,8 @@ async function lockHashAt(repo, head) {
   return sha256(stdout);
 }
 
-export async function assertHistory41Proofs(paths, { read = readFile, nextComposer } = {}) {
+export async function assertHistory41Proofs(paths, { read = readFile, nextComposer, anchors = HISTORY41_ANCHORS } = {}) {
+  assert.deepEqual(Object.keys(anchors).sort(), ANCHOR_KEYS);
   assert.equal(paths.length, HISTORY41_LENGTH, 'history41 length');
   assert.equal(new Set(paths).size, HISTORY41_LENGTH, 'history41 references');
   const proofs = [];
@@ -88,12 +92,12 @@ export async function assertHistory41Proofs(paths, { read = readFile, nextCompos
     assert.equal(proof.intent.sequence.total, 45);
     if (index >= 24) assert.equal(proof.beforeDigest, proofs[index - 1].afterDigest, 'history digest chain mismatch');
     if (RECOVERY_STATUS[index]) assert.equal(proof.status, RECOVERY_STATUS[index], 'Recovery qualification changed');
-    if (proof.composer !== undefined) assert.equal(proof.composer, OLD_COMPOSER);
+    if (proof.composer !== undefined) assert.equal(proof.composer, anchors.composer);
     assert.equal(JSON.stringify(proof).includes(nextComposer), false, 'Old proof re-attributed to the new package');
     proofs.push(proof);
   }
   assert.equal(proofs[40].intent.sequence.step, 'body-group');
-  assert.equal(proofs[40].afterDigest, HISTORY41_CAPTURE_DIGEST);
+  assert.equal(proofs[40].afterDigest, anchors.captureDigest);
   return proofs;
 }
 
@@ -110,7 +114,8 @@ async function assertInstallRoots(next, read) {
   }
 }
 
-export async function assertPackageTransition({ descriptor, repo, read = readFile }) {
+export async function assertPackageTransition({ descriptor, repo, read = readFile, anchors = HISTORY41_ANCHORS }) {
+  assert.deepEqual(Object.keys(anchors).sort(), ANCHOR_KEYS);
   assert.deepEqual(Object.keys(descriptor).sort(), ['freezeManifestPath', 'freezeManifestSha256', 'proofPath']);
   const freezeBytes = await read(descriptor.freezeManifestPath);
   assert.equal(sha256(freezeBytes), descriptor.freezeManifestSha256);
@@ -120,8 +125,8 @@ export async function assertPackageTransition({ descriptor, repo, read = readFil
   assert.equal(proof.kind, 'family-package-transition-boundary');
   assert.equal(proof.boundary, PACKAGE_TRANSITION_BOUNDARY);
   const { old, next, preserved } = proof;
-  assert.equal(old.composer, OLD_COMPOSER);
-  assert.equal(old.lock, OLD_LOCK);
+  assert.equal(old.composer, anchors.composer);
+  assert.equal(old.lock, anchors.lock);
   assert.equal(await lockHashAt(repo, old.source), old.lock, 'Historical lock bytes are not the recorded source lock');
   assert.equal(old.stage, 'notes-v1');
   assert.equal(next.stage, 'notes-v1');
@@ -135,9 +140,9 @@ export async function assertPackageTransition({ descriptor, repo, read = readFil
   assert.equal(old.historyLength, HISTORY41_LENGTH);
   const historyBytes = await read(old.historyPath);
   assert.equal(sha256(historyBytes), old.historySha256);
-  assert.equal(old.historySha256, HISTORY41_SHA256);
+  assert.equal(old.historySha256, anchors.historySha256);
   const paths = JSON.parse(historyBytes);
-  const proofs = await assertHistory41Proofs(paths, { read, nextComposer: next.composer });
+  const proofs = await assertHistory41Proofs(paths, { read, nextComposer: next.composer, anchors });
   for (const path of paths) assert.equal(typeof frozen[path], 'string', 'Unpinned history proof');
   const captureBytes = await read(old.capturePath);
   assert.equal(sha256(captureBytes), old.captureFileSha256);

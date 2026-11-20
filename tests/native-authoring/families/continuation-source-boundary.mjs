@@ -15,6 +15,9 @@ export const OPERATOR_BOUNDARY_LOCK = '6eb4d870674fde1c169eb8e00c8e1662499676aa7
 export const OPERATOR_BOUNDARY_COMPOSER = 'c5ffd410f74ba4b3aa003da068efeeae6e663c37';
 export const OPERATOR_BOUNDARY_HISTORY = '0ab9eeff4096985df3effc00ce6437699a175b402f22a80cb00b5b774cc6594b';
 export const OPERATOR_BOUNDARY_CAPTURE = 'd569d53788eb3164c4d3f33409b69a594cb99636a223f8ebc0716bc0122027a5';
+/** The recorded boundary's historical anchors. Only tests pass other anchors, to exercise the checks on synthetic git/evidence. */
+export const OPERATOR_BOUNDARY_ANCHORS = Object.freeze({ oldSource: OPERATOR_BOUNDARY_OLD, composer: OPERATOR_BOUNDARY_COMPOSER, lock: OPERATOR_BOUNDARY_LOCK, historySha256: OPERATOR_BOUNDARY_HISTORY, captureDigest: OPERATOR_BOUNDARY_CAPTURE });
+const ANCHOR_KEYS = Object.keys(OPERATOR_BOUNDARY_ANCHORS).sort();
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const allowed = path => path.startsWith('docs/') || path.startsWith('tests/native-authoring/');
 const restricted = path => /(^|\/)(package\.json|[^/]*lock[^/]*|[^/]*config[^/]*)$/i.test(path);
@@ -116,7 +119,8 @@ export async function assertOperatorSourceBoundary({ descriptor, repo, live, his
 }
 
 /** A past phase keeps the successor source sealed in its own intent. Current HEAD is not substituted. */
-export async function assertRecordedOperatorBoundary({ descriptor, repo, historical, provenanceSourceHead }) {
+export async function assertRecordedOperatorBoundary({ descriptor, repo, historical, provenanceSourceHead, anchors = OPERATOR_BOUNDARY_ANCHORS }) {
+  assert.deepEqual(Object.keys(anchors).sort(), ANCHOR_KEYS);
   assert.deepEqual(Object.keys(descriptor).sort(), ['freezeManifestPath', 'freezeManifestSha256', 'proofPath']);
   const freezeBytes = await readFile(descriptor.freezeManifestPath);
   assert.equal(sha256(freezeBytes), descriptor.freezeManifestSha256);
@@ -124,21 +128,21 @@ export async function assertRecordedOperatorBoundary({ descriptor, repo, histori
   for (const [path, hash] of Object.entries(frozen)) assert.equal(sha256(await readFile(path)), hash);
   const proof = JSON.parse(await readFile(descriptor.proofPath));
   assert.equal(proof.kind, 'family-continuation-source-boundary');
-  assert.equal(proof.oldSource, OPERATOR_BOUNDARY_OLD);
+  assert.equal(proof.oldSource, anchors.oldSource);
   assert.equal(proof.oldSource, historical.source.head);
   assert.equal(proof.source, provenanceSourceHead, 'Recorded successor source is not this phase provenance');
   assert.notEqual(proof.source, proof.oldSource);
-  assert.equal(proof.composer, OPERATOR_BOUNDARY_COMPOSER);
+  assert.equal(proof.composer, anchors.composer);
   assert.equal(proof.composer, historical.composer);
-  assert.equal(proof.lock, OPERATOR_BOUNDARY_LOCK);
-  assert.equal(sha256(await readFile(join(repo, 'pnpm-lock.yaml'))), OPERATOR_BOUNDARY_LOCK);
+  assert.equal(proof.lock, anchors.lock);
+  assert.equal(sha256(await readFile(join(repo, 'pnpm-lock.yaml'))), anchors.lock);
   const recorded = await sourceIdentityAt(repo, proof.source);
   assert.equal(recorded.hashes['pnpm-lock.yaml'], historical.source.hashes['pnpm-lock.yaml']);
   assert.equal(proof.historyLength, 27);
-  assert.equal(proof.historySha256, OPERATOR_BOUNDARY_HISTORY);
+  assert.equal(proof.historySha256, anchors.historySha256);
   assert.equal(sha256(await readFile(proof.historyPath)), proof.historySha256);
   assert.equal(JSON.parse(await readFile(proof.historyPath, 'utf8')).length, 27);
-  assert.equal(proof.captureDigest, OPERATOR_BOUNDARY_CAPTURE);
+  assert.equal(proof.captureDigest, anchors.captureDigest);
   assert.equal(JSON.parse(await readFile(proof.capturePath, 'utf8')).digest, proof.captureDigest);
   const changes = operatorSourceDelta(historical.source, recorded);
   assert.deepEqual(proof.changes, changes);
