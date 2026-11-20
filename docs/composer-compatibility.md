@@ -2235,6 +2235,10 @@ under `evidence/`; no deploy, remote D1 or inquiry delivery occurred.
 | Extra Content record lifecycle (zudo-composer#988) | create, inspect-present, UI delete (one `transact` at token 115, original 200), inspect-absent: all `CONTENT_LIFECYCLE_STEP_CAPTURE_VERIFIED` |
 | Human Remove (zudo-composer#978) | full: real **Remove component**, receipt ok, fresh-restart absence and `REMOVED_NODE_ABSENT_FROM_EXACT_BUILD`; negative: Remove disabled with reasons for a shared Mapping section and the root, forged removals `unsupported-scope`, 1074 canonical/receipt files unchanged |
 | Qualified reference queries (zudo-composer#980) | Authored through the Mapping UI in both families |
+| Six-route owner selection | All six routes `ROUTE_OWNER_SELECTION_VERIFIED`; matrix `ROUTE_MATRIX_ARTIFACTS_VERIFIED`; stage byte-identical |
+| Header label pair | Forward, restart, inverse, restart all verified; authored values restored |
+| Knowledge reference pair | Forward, restart, inverse, restart verified (two earlier restarts held on a network-idle harness defect, fixed in `1200f0c`; no write) |
+| Header href pair | NOT_RUN at S: no static route proof at a later digest ([#65](https://github.com/zudolab/pinsel/issues/65)); last passed at aa8 |
 
 Original failures stay recorded and are not relabeled. Four earlier FAQ attempts held
 on a harness reload race after exact writes; each was reconciled read-only and is kept
@@ -2243,5 +2247,5 @@ acknowledged Content writes were reconciled and continued only through the
 recovered-proof path. Harness fixes from this wave: navigation-window read excusal,
 overlapping workspace `open` reads, non-ASCII Results fragments, the copy reload fence,
 the phase08 recovery runner, the lifecycle runner and the Remove proofs. No Composer
-change was needed. Final stage capture `df26af687d11fff963f6bd2327cf4c0c71dbe4bb49da46ef7fe4bf67a33a332c`.
+change was needed. Final stage capture `a6dc5466b10ec238890bb8ab514345a9cc3577415ea15a00cb936eeba355207d`; authored values equal the earlier `df26af68…` state apart from metadata and tokens.
 
