@@ -11,7 +11,7 @@ export async function originalResponse(page, route, timeout = 180000, { readNavi
   const continued = route.continue();
   let timer;
   try {
-    const aborted = failed?.then(failure => { if (!readNavigation.active()) throw Error('Original read failed outside harness navigation; no further writes'); return { aborted: true, failure }; });
+    const aborted = failed?.then(failure => { if (!readNavigation.active()) throw Error('Original read failed outside harness navigation; no further writes'); if (failure?.errorText !== 'net::ERR_ABORTED') throw Error(`Original read failed during navigation with ${failure?.errorText}; no further writes`); return { aborted: true, failure }; });
     return await Promise.race([...(aborted ? [aborted] : []), (async () => {
       await continued;
       const response = await request.response();
