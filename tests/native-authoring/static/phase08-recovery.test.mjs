@@ -62,3 +62,7 @@ test('a recovered proof whose chain digests differ from its captures is refused'
   await assert.rejects(verifyRecoveredProofs({proofPaths:paths,proofs,recoveryFreezeManifests:{[f.proofPath]:f.freezePath},bytes:f.bytes}),/Recovered proof (before|after)Digest/);
  }
 });
+test('the recovery browser loads Playwright only from the tool worktree',async()=>{
+ const {readFile}=await import('node:fs/promises');const source=await readFile(new URL('./phase08-recovery-browser.mjs',import.meta.url),'utf8');
+ assert(!/createRequire|require\(/.test(source),'A second Playwright load from the checkout fails when tool and checkout differ');assert.match(source,/^import \{chromium,expect\} from '@playwright\/test';$/m);
+});

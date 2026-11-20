@@ -3,7 +3,8 @@ import {readFrozenBundle} from '../families/frozen-inputs.mjs';
 import assert from 'node:assert/strict';
 import {readFile,writeFile,open,mkdir} from 'node:fs/promises';
 import {join} from 'node:path';
-import {createRequire} from 'node:module';
+// One Playwright instance: routes.mjs already loads it from the tool worktree, which may differ from the checkout.
+import {chromium,expect} from '@playwright/test';
 import {originalResponse} from '../families/original-request.mjs';
 import {compositionDerivedReadGate} from '../families/composition-output.mjs';
 import {releaseLifecycle} from '../families/release-lifecycle.mjs';
@@ -17,7 +18,6 @@ const inputs=await readFrozenBundle(bundlePath,bundleHash);await assertFrozen(in
 const {snapshot,expected}=inputs;assert.deepEqual(JSON.parse(await readFile(join(artifacts,'before.json'),'utf8')),snapshot);
 const file=await open(join(artifacts,'events.ndjson'),'wx');let queue=Promise.resolve();
 const persist=event=>{queue=queue.then(async()=>{await file.writeFile(JSON.stringify({time:new Date().toISOString(),...event})+'\n');await file.sync();});return queue;};
-const {chromium,expect}=createRequire(join(checkout,'package.json'))('@playwright/test');
 await mkdir(join(artifacts,'profile'));
 const context=await chromium.launchPersistentContext(join(artifacts,'profile'),{headless:true,executablePath:process.env.NATIVE_ACCEPTANCE_CHROMIUM||chromium.executablePath(),viewport:{width:1600,height:1050}});
 const page=context.pages()[0],pending=new Set();let blocked,error,entryReads=0;
