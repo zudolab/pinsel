@@ -1,5 +1,5 @@
 import { createHash } from "node:crypto";
-import { lstat, mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, join, resolve, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
@@ -13,6 +13,7 @@ import { verifyImportedCourseContent } from "./migrate-course-identity";
 import { checkNativeMigrationSource } from "./check-native-migration-source";
 import { migrateNoteRoutes } from "./migrate-note-routes";
 import { nativePublicFiles, prepareNativeScripts } from "./prepare-native-public";
+import { withAbsentNativeDestinations } from "./native-initialization-preflight";
 
 const args = process.argv.slice(2).filter(arg => arg !== "--");
 const rootOption = args.indexOf("--source-root");
@@ -26,7 +27,7 @@ const candidate = migrateNoteRoutes(source, expectedDigest);
 // This migration does not pretend an empty initialized asset store preserves
 // managed Assets. The supplied rehearsal has none; nonempty stores need a
 // separately implemented public asset import before this migration can proceed.
-if (source.assets.snapshot.records.length || source.assets.snapshot.folders.length || source.assets.files.length || source.assets.lock.pins.length) throw new Error("Managed Assets require a supported staged import; source retained, no destination created.");
+if (source.assets.snapshot.records.length || source.assets.snapshot.folders.length || source.assets.files.length || source.assets.lock.pins.length || source.assets.snapshot.mutationToken !== "0".repeat(64) || source.assets.lock.mutationToken !== "0".repeat(64)) throw new Error("Managed Assets or non-pristine Asset history require a supported staged import; source retained, no destination created.");
 const workspaceRoot = resolve(fileURLToPath(new URL("../..", import.meta.url)));
 const sourceRoot = explicitSourceRoot ? resolve(explicitSourceRoot) : workspaceRoot;
 process.env.PINSEL_AUTHORING_STAGE = "course-identity-v1";
@@ -37,12 +38,9 @@ const target = await loadHostContext({ workspaceRoot });
 const publicRoot = dirname(target.composerConfig.paths.publicAssets);
 const evidencePath = join(workspaceRoot, ".native-note-routes-evidence.json");
 const snapshotPath = join(workspaceRoot, ".native-note-routes-snapshot.json");
-for (const destination of [target.composerConfig.paths.data, publicRoot, evidencePath, snapshotPath]) {
-  try {
-    await lstat(destination);
-    throw new Error(`Migration destination exists; preserve it and review recovery: ${destination}`);
-  } catch (error) { if ((error as NodeJS.ErrnoException).code !== "ENOENT") throw error; }
-}
+const otherDestinations = [target.composerConfig.paths.data, evidencePath, snapshotPath];
+// Early read-only refusal before any validation work; the write phase re-claims below.
+await withAbsentNativeDestinations([...otherDestinations, publicRoot], async () => undefined);
 if (target.composerConfig.paths.data === original.composerConfig.paths.data) throw new Error("Staging authority did not resolve separately; refusing migration");
 const packIdentity = await resolveAuthoringPackIdentity(target);
 const renderer = await resolveAuthoringRendererIdentity(target);
@@ -58,7 +56,12 @@ for (const file of source.publicFiles) {
 }
 // All candidate checks above precede destination creation. Initialization is
 // staged across stores, not atomic; failures retain partial staging for review.
-await mkdir(publicRoot);
+// The exclusive non-recursive mkdir claims this staging; a concurrent run fails here.
+try { await mkdir(publicRoot); } catch (error) {
+  if ((error as NodeJS.ErrnoException).code === "EEXIST") throw new Error(`Migration destination appeared after preflight; preserve it and review recovery: ${publicRoot}`);
+  throw error;
+}
+await withAbsentNativeDestinations(otherDestinations, async () => undefined);
 for (const file of source.publicFiles) {
   const path = resolve(publicRoot, file.fileName);
   const bytes = Buffer.from(file.base64, "base64");

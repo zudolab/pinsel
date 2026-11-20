@@ -37,7 +37,7 @@ export async function renderDocument(input: {
   } else {
     const normalize = (path: string) => path === "/" ? path : path.replace(/\/$/, "");
     const pages = input.project.providers.content.flatMap(provider => provider.entries).filter(entry => entry.modelId === "page-copy" && entry.lifecycle === "published" && normalize(String(entry.values["page-copy-route"])) === normalize(pathname));
-    if (pages.length !== 1) throw new Error(`Static route ${pathname} requires exactly one published page-copy metadata record`);
+    if (pages.length !== 1) throw new Error(`Static route ${pathname} has ${pages.length === 0 ? "no" : pages.length} published page-copy metadata records; exactly one is required. ${pages.length === 0 ? `In Content, create and publish a page-copy entry whose route is ${pathname} with a meta title and description` : `In Content, unpublish or reroute all but one page-copy entry for ${pathname}`}, then capture or build again. See docs/composer-note-migration.md#creating-a-static-page.`);
     const values = pages[0]!.values;
     const metaDescription = pathname === "/404.html" && values["page-copy-meta-description"] == null ? "" : values["page-copy-meta-description"];
     if (typeof values["page-copy-meta-title"] !== "string" || !values["page-copy-meta-title"].trim() || typeof metaDescription !== "string" || (pathname !== "/404.html" && !metaDescription.trim())) throw new Error(`Static route ${pathname} has incomplete metadata`);

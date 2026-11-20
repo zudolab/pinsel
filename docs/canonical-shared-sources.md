@@ -47,7 +47,10 @@ destination. It uses public initialization/capture, never reads private domain
 storage. It copies captured public bytes exactly without regenerating scripts.
 Managed Assets (including an empty store with non-pristine Asset history) require
 a supported importer and are refused before writes. The evidence directory parent
-must already exist; symlink-resolved paths cannot overlap the source host.
+must already exist; symlink-resolved paths cannot overlap the source host. Because
+its `snapshot.json` holds the full Content and base64 public files, the evidence
+directory is also refused inside the target host root, and inside any Git work tree
+unless Git ignores that path. Keep it outside both checkouts.
 
 Only the recognized historical Mapping identities and exact old query shapes are
 converted. Already canonical pins are retained. Custom queries, unrecognized

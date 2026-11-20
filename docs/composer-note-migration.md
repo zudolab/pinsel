@@ -104,7 +104,11 @@ its source reference; it does not detach the Composition or its shared mappings.
 
 Create exactly one published `page-copy` entry whose route matches the normalized
 new path, with explicit title and description. Missing/duplicate metadata fails the
-host preview/static render; the deliberate404 empty-description exception remains.
+host preview, `authoring:capture` and the static build on purpose, so a page is never
+published with guessed metadata. The error reads, for example, `Static route /about
+has no published page-copy metadata records; exactly one is required`, followed by
+the fix: publish one matching entry, or unpublish/reroute the duplicates, then
+capture or build again. The deliberate 404 empty-description exception remains.
 A new page may use local semantic components without copying an existing page's
 route-filtered Content mappings. Shared values stay with their original owners.
 

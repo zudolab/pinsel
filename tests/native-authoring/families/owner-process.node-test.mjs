@@ -33,6 +33,12 @@ test('child ack send callback precedes exit; duplicate stop shares close',async(
 test('child close rejection and wrong request never acknowledge closed',async()=>{
  for(const invalid of [false,true]){const p=fakeProc();const ctl=installNativeOwnerIpc({server:{close:async()=>{if(!invalid)throw Error('close rejected');}},...identity,proc:p});await ctl.ready();p.emit('message',{...identity,pid:invalid?9:p.pid,type:'stop'});await new Promise(r=>setImmediate(r));assert.deepEqual(p.exits,[1]);assert(!p.messages.some(x=>x.type==='closed'));}
 });
+test('malformed parent message logs a warning without secrets before fail-closed shutdown',async()=>{
+ const p=fakeProc();const log=[];p.stderr={write:x=>log.push(String(x))};let closed=false;const ctl=installNativeOwnerIpc({server:{close:async()=>{log.push('CLOSE');closed=true;}},...identity,proc:p});await ctl.ready();
+ p.emit('message',{...identity,pid:p.pid,type:'restart',extra:1});await new Promise(r=>setImmediate(r));
+ assert(closed);assert.deepEqual(p.exits,[1]);assert.match(log[0],/^Warning: malformed native owner IPC message \(type="restart" keys=extra,hostRoot,nonce,pid,port,protocol,type\)/);assert(log.indexOf('CLOSE')>0);assert(!log.join('').includes(identity.nonce));
+ const q=fakeProc();const qlog=[];q.stderr={write:x=>qlog.push(String(x))};installNativeOwnerIpc({server:{close:async()=>{}},...identity,proc:q});q.emit('message','stop');await new Promise(r=>setImmediate(r));assert.match(qlog[0],/value of type string/);assert.deepEqual(q.exits,[1]);
+});
 test('child disconnect drains close and exits1 without closed acknowledgement',async()=>{const p=fakeProc();let closed=false;installNativeOwnerIpc({server:{close:async()=>closed=true},...identity,proc:p});p.connected=false;p.emit('disconnect');await new Promise(r=>setImmediate(r));assert(closed);assert.deepEqual(p.exits,[1]);assert.equal(p.messages.length,0);});
 test('real installed Vite + public tsx: IPC close beyond15s avoids Vite SIGTERM exit race',async()=>{
  const modules=process.env.FAMILY_TEST_DEPENDENCIES;assert(modules);const require=createRequire(join(modules,'../package.json'));
