@@ -36,6 +36,10 @@ export function installNativeOwnerIpc({ server, nonce, port, hostRoot, proc = pr
   proc.on('message', message => {
     const valid = message && Object.keys(message).sort().join(',') === 'hostRoot,nonce,pid,port,protocol,type' &&
       message.type === 'stop' && Object.entries(identity).every(([key, value]) => message[key] === value);
+    if (!valid) {
+      const shape = message && typeof message === 'object' ? `type=${JSON.stringify(String(message.type))} keys=${Object.keys(message).sort().join(',')}` : `value of type ${typeof message}`;
+      proc.stderr.write(`Warning: malformed native owner IPC message (${shape}); shutting down the authoring server.\n`);
+    }
     void finish(valid ? undefined : Error('Unexpected native owner IPC request'));
   });
   proc.on('disconnect', () => { void finish(Error('Native owner IPC channel lost')); });

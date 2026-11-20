@@ -54,9 +54,9 @@ it("uses qualified Note identity and refuses missing or ambiguous static metadat
  const project = {providers:{content:[{id:"content-filesystem",entries:[{id:"uuid-note",modelId:"note",lifecycle:"published",values:{"note-title":"Actual Note","note-description":"Actual description","note-slug":"different-slug"}}]}]}} as unknown as SiteProject;
  const input={route:document,project,identity:{pathname:document.pathname,rendererId:"pinsel-zfb",rendererVersion:"native-v3"},targets:[]};
  expect(await renderDocument(input)).toContain("Actual Note - Pinsel Notes");
- await expect(renderDocument({...input,route:route([]),identity:{...input.identity,pathname:"/faq"}})).rejects.toThrow("exactly one");
+ await expect(renderDocument({...input,route:route([]),identity:{...input.identity,pathname:"/faq"}})).rejects.toThrow(/\/faq has no published page-copy metadata records; exactly one is required\. In Content, create and publish a page-copy entry whose route is \/faq/);
  const duplicate=structuredClone(metadata);duplicate.providers.content[0]!.entries.push(structuredClone(duplicate.providers.content[0]!.entries[0]!));
- await expect(renderDocument({...input,route:route([]),project:duplicate,identity:{...input.identity,pathname:"/faq"}})).rejects.toThrow("exactly one");
+ await expect(renderDocument({...input,route:route([]),project:duplicate,identity:{...input.identity,pathname:"/faq"}})).rejects.toThrow(/\/faq has 2 published page-copy metadata records; exactly one is required\. In Content, unpublish or reroute all but one/);
 });
 it("keeps slotted TOC accessible ownership and distinct stable identities", () => {
  const toc=(id:string)=>node(id,"pinsel.note-toc",{wide:false},{label:[node(`${id}-label`,"pinsel.toc-label",{text:"Shared contents"})],items:[]});
