@@ -37,11 +37,13 @@ variables which the operator must set from actual accepted evidence):
 node tests/native-authoring/families/verify-build.mjs "$CAPTURE" "$FAMILY" "$KIND" "$OUTPUT"
 # For moved, append the actual created capture and original destination fragment.
 node tests/native-authoring/families/verify-build.mjs "$MOVED_CAPTURE" "$FAMILY" "$KIND" "$MOVED_OUTPUT" "$CREATED_CAPTURE" "$OLD_FRAGMENT"
-bash /workspace/codex-settings/.portable-profile-home/.codex/scripts/heavy-guard.sh -- \
+bash "$HEAVY_GUARD" -- \
   node tests/native-authoring/families/static-visitor.mjs "$CAPTURE" "$FAMILY" "$KIND" "$OUTPUT" "$NEW_ARTIFACT_DIR" "$STATE"
 ```
 
-`STATE` is `created`, `moved` or `restored`. Static visitor starts its own loopback
+`STATE` is `created`, `moved` or `restored`. `HEAVY_GUARD` is your execution
+environment's shared heavy-test guard script (historical runs used a workstation
+path; no path is assumed here). Static visitor starts its own loopback
 server on an ephemeral port, serving only the captured built directory. It opens
 actual emitted HTML with scripts/CSS, clicks TOC/hash and FAQ disclosure, checks owned
 fields, loaded CSS rules and request/script failures, and records a screenshot and

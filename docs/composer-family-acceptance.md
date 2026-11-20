@@ -80,6 +80,11 @@ and never performs an automatic inverse, delete, publication retry or cleanup.
 Use only the successful proof's `afterCapture` for the next invocation and append
 its path to a new history file. Never insert a failed attempt or rewrite history.
 Unexpected writes, stale captures and unresolved responses stop progression.
+A pure Composition read (a snapshot, or a list/get carrying no generated output)
+that the browser cancels because the runner itself reloaded the page after that
+read was dispatched is journaled as `read-aborted-at-navigation` and does not hold
+the phase. Any other failed read, every write, and every generated-output
+continuation still latch as uncertain.
 
 The sequence creates parent and child Content, fills typed fields, publishes only
 that exact pair while retaining the active baseline and excluding unrelated drafts,

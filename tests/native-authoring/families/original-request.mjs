@@ -1,20 +1,26 @@
 import assert from 'node:assert/strict';
 /** Same original-browser transport as committed Content observer; no route.fetch/replay. */
-export async function originalResponse(page, route, timeout = 180000) {
+export async function originalResponse(page, route, timeout = 180000, { readNavigation } = {}) {
   const request = route.request(), url = new URL(request.url()), origin = new URL(page.url()).origin;
   assert.equal(url.origin, origin); assert.equal(request.headers().origin,origin);
   assert.equal(request.method(),'POST'); assert(!url.search && !url.hash && !url.username && !url.password);
+  // Only a caller-classified read may observe a browser-side abort, and only while
+  // the harness navigated after it was dispatched; anything else stays uncertain.
+  let onFailed;
+  const failed = readNavigation && typeof page.on === 'function' ? new Promise(resolve => { onFailed = r => { if (r === request) resolve(r.failure?.() ?? { errorText: 'unknown' }); }; page.on('requestfailed', onFailed); }) : null;
   const continued = route.continue();
   let timer;
   try {
-    return await Promise.race([(async () => {
+    const aborted = failed?.then(failure => { if (!readNavigation.active()) throw Error('Original read failed outside harness navigation; no further writes'); return { aborted: true, failure }; });
+    return await Promise.race([...(aborted ? [aborted] : []), (async () => {
       await continued;
       const response = await request.response();
+      if (!response && aborted) return aborted;
       assert(response && response.request() === request && response.url() === url.href && !request.redirectedFrom() && !request.redirectedTo());
       assert.equal(await response.finished(),null);
       return { status:response.status(), body:await response.json() };
     })(), new Promise((_,reject) => { timer=setTimeout(() => reject(Error('Original request outcome uncertain; no further writes')),timeout); })]);
-  } finally { clearTimeout(timer); }
+  } finally { clearTimeout(timer); if (onFailed) page.off?.('requestfailed', onFailed); }
 }
 /** All errors latch the phase. An uncertain original request is never retried. */
 export function requestGate({page,persist,validate,accept,timeout,decode=value=>value}) {
