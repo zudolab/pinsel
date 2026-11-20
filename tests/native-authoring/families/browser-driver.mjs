@@ -78,7 +78,7 @@ export async function familyUi(page,{base,snapshot,intent,persist,expect,setClos
  const target=domain==='workspace'?{ref:{providerId:'workspace',recordId:snapshot.workspaceId},record:{id:snapshot.workspaceId}}:domain==='content'?null:{ref:{providerId:domain==='compositions'?'files':'mapping-filesystem',recordId:result.id},record:result};
  const saved=async()=>{if(!readback)return;const owner=domain==='workspace'?getRecord(snapshot,'mappings',editorRef):result;await assertSelectedEditorSaved({page,expect,domain,ref:editorRef??target.ref,record:owner});if(intent.action?.treeRoot)await selectCanonicalRoot(page,expect,result);};
  await saved();await settleBrowserReads(page,composition,{persist,check:()=>{gate.check();workspaceRead.check();readback?.check();if(held)throw held;},boundary:'before-family-reload'});
- if(readback)readback.beginReload(target);composition.beginNavigation?.();const reloadResponse=await page.reload({waitUntil:'commit'});if(readback)readback.documentCommitted(reloadResponse);
+ if(readback)readback.beginReload(target);composition.beginNavigation?.();const reloadResponse=await page.reload({waitUntil:'commit'});composition.navigationCommitted?.();if(readback)readback.documentCommitted(reloadResponse);
  await settleBrowserReads(page,composition,{persist,check:()=>{gate.check();workspaceRead.check();readback?.check();if(held)throw held;},boundary:'after-family-reload'});
  if(readback)await expect.poll(()=>readback.verified,{timeout:180000}).toBe(true);await check();await saved();return{domain,record:result};
 }

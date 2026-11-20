@@ -11,8 +11,11 @@ export async function originalResponse(page, route, timeout = 180000, { readNavi
   const continued = route.continue();
   let timer;
   try {
+    // A committed reload replaces the document that issued the read; Chromium may
+    // drop such a routed request without requestfailed or a response.
+    const replaced = readNavigation?.replaced?.then(failure => ({ aborted: true, failure }));
     const aborted = failed?.then(failure => { if (!readNavigation.active()) throw Error('Original read failed outside harness navigation; no further writes'); if (failure?.errorText !== 'net::ERR_ABORTED') throw Error(`Original read failed during navigation with ${failure?.errorText}; no further writes`); return { aborted: true, failure }; });
-    return await Promise.race([...(aborted ? [aborted] : []), (async () => {
+    return await Promise.race([...(aborted ? [aborted] : []), ...(replaced ? [replaced] : []), (async () => {
       await continued;
       const response = await request.response();
       if (!response && aborted) return aborted;

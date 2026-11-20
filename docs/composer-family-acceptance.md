@@ -81,9 +81,12 @@ Use only the successful proof's `afterCapture` for the next invocation and appen
 its path to a new history file. Never insert a failed attempt or rewrite history.
 Unexpected writes, stale captures and unresolved responses stop progression.
 A pure Composition read (a snapshot, or a list/get carrying no generated output)
-that the browser cancels because the runner itself reloaded the page after that
-read was dispatched is journaled as `read-aborted-at-navigation` and does not hold
-the phase. Any other failed read, every write, and every generated-output
+that was issued before the runner's own reload is journaled as
+`read-aborted-at-navigation` and does not hold the phase: Chromium can drop such a
+routed request without a response or `requestfailed`, so once the reload commits the
+replaced document's pending or still-queued pure reads are released (queued ones
+are aborted before dispatch). `reload-race.browser.mjs` checks this in a real
+browser with the locked Chromium. Any other failed read, every write, and every generated-output
 continuation still latch as uncertain.
 
 The sequence creates parent and child Content, fills typed fields, publishes only
