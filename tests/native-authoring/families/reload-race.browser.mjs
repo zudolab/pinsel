@@ -65,6 +65,27 @@ try {
     results.push({ journalWindow: aborted[0].failure.errorText, sent: served - before });
     await page.close();
   }
+  // A read the old document issues after the runner began the reload but before it committed.
+  {
+    const page = await browser.newPage();
+    const events = [];
+    const gate = compositionAuthoringGate({ page, snapshot, persist: async event => { events.push(event); }, admit: () => { throw Error('no write expected'); }, accept: () => {}, navigationGraceMs: 6000 });
+    await page.route('**/__zudo_composer_file_provider', route => gate.handle(route));
+    await page.goto(base);
+    const started = Date.now();
+    gate.beginNavigation();
+    await page.evaluate(() => window.fire(1));
+    await new Promise(resolve => setTimeout(resolve, 200));
+    await page.reload({ waitUntil: 'commit' });
+    gate.navigationCommitted();
+    await gate.drain();
+    gate.assertSettled();
+    const aborted = events.filter(event => event.phase === 'read-aborted-at-navigation');
+    assert.deepEqual(aborted.map(event => event.failure?.errorText), ['document-replaced-during-navigation'], JSON.stringify(events.map(e => e.phase)));
+    assert(!events.some(event => event.phase === 'composition-held'));
+    results.push({ duringNavigation: aborted[0].failure.errorText, ms: Date.now() - started });
+    await page.close();
+  }
   // Control: a read failing with no runner navigation still latches.
   const page = await browser.newPage();
   const events = [];
