@@ -4,6 +4,9 @@ export async function originalResponse(page, route, timeout = 180000, { readNavi
   const request = route.request(), url = new URL(request.url()), origin = new URL(page.url()).origin;
   assert.equal(url.origin, origin); assert.equal(request.headers().origin,origin);
   assert.equal(request.method(),'POST'); assert(!url.search && !url.hash && !url.username && !url.password);
+  // Checked synchronously with continue(): a read released while it was being
+  // journaled is never sent for the replaced document.
+  if (readNavigation?.released?.()) { await route.abort().catch(() => {}); return { aborted: true, failure: { errorText: 'document-replaced-before-dispatch' }, dispatched: false }; }
   // Only a caller-classified read may observe a browser-side abort, and only while
   // the harness navigated after it was dispatched; anything else stays uncertain.
   let onFailed;

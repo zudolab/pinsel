@@ -43,6 +43,28 @@ try {
     results.push({ queued, aborted: aborted.map(event => event.failure?.errorText), ms: Date.now() - started });
     await page.close();
   }
+  // A reload that commits while the read's dispatch journal is still being written.
+  {
+    const page = await browser.newPage();
+    const events = [];
+    const slow = async event => { events.push(event); if (event.phase === 'composition-request-before-dispatch') await new Promise(resolve => setTimeout(resolve, 800)); };
+    const gate = compositionAuthoringGate({ page, snapshot, persist: slow, admit: () => { throw Error('no write expected'); }, accept: () => {} });
+    await page.route('**/__zudo_composer_file_provider', route => gate.handle(route));
+    await page.goto(base);
+    const before = served;
+    await page.evaluate(() => window.fire(1));
+    await new Promise(resolve => setTimeout(resolve, 200));
+    gate.beginNavigation();
+    await page.reload({ waitUntil: 'commit' });
+    gate.navigationCommitted();
+    await gate.drain();
+    gate.assertSettled();
+    const aborted = events.filter(event => event.phase === 'read-aborted-at-navigation');
+    assert.deepEqual(aborted.map(event => event.failure?.errorText), ['document-replaced-before-dispatch']);
+    assert.equal(served, before, 'a read released during its journal write is never sent');
+    results.push({ journalWindow: aborted[0].failure.errorText, sent: served - before });
+    await page.close();
+  }
   // Control: a read failing with no runner navigation still latches.
   const page = await browser.newPage();
   const events = [];
