@@ -219,6 +219,62 @@ Synthetic test fixtures validate this format; they do not constitute a completed
 installed recovery. Actual recovery and the full retained runner remain separate
 runtime acceptance requirements.
 
+### Phase08 read-only Content recovery runner
+
+`static/run-phase08-recovery.mjs` produces exactly that evidence for a portable
+`copy-create` attempt that held **after** its Content create and four draft saves
+were acknowledged (for example a lost Composition derived-read continuation). It
+never writes Content, Composition or Sitemap state and never replays the phase.
+The validator accepts both the pilot attempt layout and the portable `run-phase`
+layout, whose `execution.json` `bundleHash` binds `accepted-inputs.json`.
+
+Run it from a **dedicated tool worktree** at the reviewed commit; the freeze binds
+that worktree's recovery source bytes, so keep it unchanged until retained
+verification finishes. The consumer checkout (`--checkout`) must be the original
+attempt's clean checkout at the original head with the same installed Composer.
+
+```sh
+# 1. Offline: reconcile the held attempt, write committed-reconciliation.json beside it
+#    (additive, never overwritten) and a proposed freeze. No server, no stage access.
+node tests/native-authoring/static/run-phase08-recovery.mjs prepare \
+  --original /absolute/987-static/phase-08 --out /absolute/phase08-freeze
+# 2. Review every path in freeze.json, then run the read-only restart (guarded):
+bash $HOME/.claude/scripts/heavy-guard.sh -- node tests/native-authoring/static/run-phase08-recovery.mjs run \
+  --checkout /absolute/original-consumer-checkout --composer FULL_COMPOSER_SHA --stage notes-v1 --port 4198 \
+  --original /absolute/987-static/phase-08 --freeze /absolute/phase08-freeze/freeze.json \
+  --freeze-sha REVIEWED_SHA256 --artifacts /absolute/phase08-recovery
+```
+
+`prepare` refuses unless the original journal has one create, four paired 200
+saves, no refused/uncertain write, a real `held`, the exact `begin` intent and a
+capture delta of only that draft (`tokens.content` +5). `run` refuses a different
+freeze hash, any frozen byte drift, a different consumer head, Composer, stage or
+installed root, and a stage whose capture differs from the original after-capture.
+A fresh browser opens the qualified entry; every non-read request aborts and holds.
+It requires an exact paired `get-entry` loaded response equal to the reconciled
+record and all four field values, then a byte-equal full capture after owned
+shutdown. The runner self-checks with `verifyMetadataRecovery` before writing
+`recovered-phase-proof.json`, and prints its `recoveryFreezeManifests` mapping.
+
+#### Continuing phases 09–15 after a recovered phase08
+
+`prepare.mjs` and `run-phase.mjs` accept a recovered phase08 proof only when the
+config/intent carries its reviewed mapping, and they re-run the full validator
+(every byte is frozen into the child bundle). Add the mapping to the config:
+
+```json
+{"marker":"static-w4b-987","activeProofPath":"/absolute/active-readonly/proof.json",
+ "recoveryFreezeManifests":{"/absolute/phase08-recovery/recovered-phase-proof.json":"/absolute/phase08-freeze/freeze.json"}}
+```
+
+Append the recovered proof path as the eighth entry of the proof array and prepare
+phase09 from the recovered `afterCapture` (digest unchanged from the held
+attempt's after-capture). Then continue the ordinary loop for phases 09–15. The
+portable `verify-static.mjs` requires fifteen `STATIC_PHASE_CAPTURE_VERIFIED`
+proofs and therefore refuses this chain; verify the completed chain with the
+retained runner below, merging the same `recoveryFreezeManifests` map into its
+manifest. The original phase08 attempt remains FAIL.
+
 The distinct phase09 publication recovery status
 `COMMITTED_PUBLICATION_RECONCILED_AND_READONLY_PREVIEW_VERIFIED` uses the same
 explicit `recoveryFreezeManifests` mapping. Its adapter is restricted to phase09,
