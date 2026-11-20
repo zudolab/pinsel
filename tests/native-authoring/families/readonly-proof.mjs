@@ -5,6 +5,7 @@ import {validateBindingDiagnostic} from './binding-diagnostic.mjs';
 import assert from 'node:assert/strict';
 import {contentReadOperations} from '../content-browser-transport.mjs';
 import {compositionRead} from './composition-read.mjs';
+import{isFragmentId}from'./fragment-id.mjs';
 // Installed native transport: domain records are workspace-scoped; the workspace
 // registry and host Assets root are capability-scoped and send no workspace header.
 const providerReads = {
@@ -81,7 +82,7 @@ export function validateReadIntent(intent, snapshot) {
     assert(typeof intent.marker === 'string' && /^[a-z][a-z0-9-]{4,60}$/.test(intent.marker));
     assert(typeof intent.childText === 'string' && intent.childText);
     assert(typeof intent.present === 'boolean');
-    if (!intent.present) assert(typeof intent.oldFragment === 'string' && /^[a-z0-9-]+$/.test(intent.oldFragment));
+    if (!intent.present) assert(isFragmentId(intent.oldFragment));
   }
 }
 export function activeReadback(projectId) {

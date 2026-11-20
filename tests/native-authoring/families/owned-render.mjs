@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import {FAMILY} from './family-graph.mjs';
+import{isFragmentId}from'./fragment-id.mjs';
 const one = (xs, message) => { assert.equal(xs.length, 1, message); return xs[0]; };
 /** Values come from the accepted public capture, never descriptor display text. */
 export function ownedFamilyExpectation(snapshot, {kind, marker, childText, family}) {
@@ -26,7 +27,7 @@ export async function assertOwnedFamilyDOM(root, expected, {expect,moved=false,o
  const section=root.locator(`section[id="${expected.fragment}"]`);await expect(section).toHaveCount(1);
  await expect(section.locator('h2')).toHaveText(expected.heading);
  let destination=section;
- if(moved){assert(/^[a-z0-9-]+$/.test(oldFragment));destination=root.locator(`section[id="${oldFragment}"]`);await expect(destination).toHaveCount(1);await expect(section).not.toContainText(expected.childText);}
+ if(moved){assert(isFragmentId(oldFragment));destination=root.locator(`section[id="${oldFragment}"]`);await expect(destination).toHaveCount(1);await expect(section).not.toContainText(expected.childText);}
  if(expected.kind==='faq'){
   const summary=destination.locator('details > summary').filter({has:root.getByText(expected.childText,{exact:true})});await expect(summary).toHaveCount(1);
   const details=summary.locator('..');if(await details.getAttribute('open')===null)await summary.click();
