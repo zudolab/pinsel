@@ -34,9 +34,9 @@ reuse another state's artifact. Then run both checks (absolute paths shown as sh
 variables which the operator must set from actual accepted evidence):
 
 ```sh
-node tests/native-authoring/families/verify-build.mjs "$CAPTURE" "$FAMILY" "$KIND" "$OUTPUT"
+corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json tests/native-authoring/families/verify-build.mjs "$CAPTURE" "$FAMILY" "$KIND" "$OUTPUT"
 # For moved, append the actual created capture and original destination fragment.
-node tests/native-authoring/families/verify-build.mjs "$MOVED_CAPTURE" "$FAMILY" "$KIND" "$MOVED_OUTPUT" "$CREATED_CAPTURE" "$OLD_FRAGMENT"
+corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json tests/native-authoring/families/verify-build.mjs "$MOVED_CAPTURE" "$FAMILY" "$KIND" "$MOVED_OUTPUT" "$CREATED_CAPTURE" "$OLD_FRAGMENT"
 bash "$HEAVY_GUARD" -- \
   node tests/native-authoring/families/static-visitor.mjs "$CAPTURE" "$FAMILY" "$KIND" "$OUTPUT" "$NEW_ARTIFACT_DIR" "$STATE"
 ```
