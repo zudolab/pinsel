@@ -9,6 +9,7 @@ import { mkdir, mkdtemp, writeFile, access, realpath } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
+import { assertRemovalJournal, assertRemovedFromSnapshot } from './remove-proof.mjs';
 import { repoRoot, readJson, assertInstalledPin, assertRestored, verifyBuild, hashTree, contentOwner, scopeIdentity } from './support.mjs';
 const options = {};
 for (let i = 2; i < process.argv.length; i += 2) {
@@ -236,6 +237,28 @@ finally {
         }
         catch (error) {
             errors.push(`Final public capture/audit failed: ${error.stack ?? error}`);
+        }
+    }
+    // #978 follow-up: only after the supported inverse removed the inserted node and restoration was proven.
+    if (scopeVerified && before && scenario === 'full' && !errors.length && await exists(journalPath)) {
+        try {
+            const journal = await readJson(journalPath);
+            if (journal.removal) {
+                assertRemovalJournal(journal);
+                const priorName = `removal-before-restart-${Date.now()}.json`; await capture(priorName);
+                const prior = await readJson(join(run, priorName)); assertRemovedFromSnapshot(prior, journal);
+                await browser('removed-absence');
+                const afterName = `removal-after-restart-${Date.now()}.json`; await capture(afterName);
+                const after = await readJson(join(run, afterName)); assert.deepEqual(after, prior, 'Restart absence check changed public capture');
+                if (!await exists(join(repoRoot, 'packages/pinsel-content/.native-builds', after.digest, 'build-evidence.json')))
+                    await command(['pnpm', '--filter', '@pinsel/content', 'authoring:build', '--', join(run, afterName)]);
+                await command(['pnpm', 'exec', 'tsx', '--tsconfig', 'packages/pinsel-content/tsconfig.scripts.json', 'tests/native-authoring/verify-removal-build.mjs', join(run, afterName), journalPath, join(run, 'removal-build-proof.json')]);
+                const builtName = `removal-after-build-${Date.now()}.json`; await capture(builtName);
+                assert.deepEqual(await readJson(join(run, builtName)), after, 'Build changed public capture');
+            }
+        }
+        catch (error) {
+            errors.push(`Post-removal proof failed; removal itself is retained: ${error.stack ?? error}`);
         }
     }
     await writeFile(join(run, `result-${Date.now()}.json`), JSON.stringify({ scenario, restorationOnly: Boolean(options['--restore']), composer: options['--composer'], stage: options['--stage'], status: errors.length ? 'FAIL' : 'PASS', errors }, null, 2));

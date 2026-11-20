@@ -254,6 +254,15 @@ The full scenario:
    actual **Remove component** button with its current qualified target, then
    restores Content through the UI. Final public capture proves canonical values, references,
    assets and public files restored. Legitimate timestamps/history are retained.
+6. Post-removal proof (#978), only after step 5 succeeded with an original removal
+   receipt: capture, then a separate `removed-absence` browser process (fresh
+   server and profile) opens `/lessons/`, reloads, and requires the removed node
+   absent from preview targets and its saved texts absent from the rendered page.
+   A second capture must equal the first. The runner builds that capture with
+   `authoring:build` (an existing digest output is reused, never rebuilt), runs
+   `verify-removal-build.mjs` under tsx for the exact build plus HTML absence on
+   every route into `removal-build-proof.json`, and a post-build capture must be
+   unchanged. A failure here is reported without undoing the retained removal.
 
 Baseline routes are asserted as a set, so new authored routes are permitted. The
 historical exact 14-route proof remains separate; do not weaken historical fixtures
@@ -276,7 +285,14 @@ node tests/native-authoring/run.mjs \
 
 Negatives use actual browser approval/session requests. Shared field shadowing must
 return `unsupported-scope`; insertion into an undeclared local slot must return
-`component-invalid`. Authentication, missing-session or stale-revision failures do
+`component-invalid`. Invalid removal (#978) is checked twice. In the UI, the
+installed inspector always renders **Remove component**; for the shared Mapping
+section `lessons-consultation/section` and for the captured local root of `lessons`
+(`frame`) the button must be disabled and show the target's own refusal reason
+(the Mapping-shared message, and `Root components cannot be removed here.`).
+Then forged `remove` requests for both targets must return `unsupported-scope`.
+This workspace has no linked or global-template Composition on a page, so the
+global-sourced refusal reason is accepted by the validator but not exercised. Authentication, missing-session or stale-revision failures do
 not count. The before/after public captures and tokens must match. The explicitly
 supplied data-root hash audit additionally requires every canonical file and receipt
 set unchanged; it is supplemental evidence, never a source for assembling snapshots.

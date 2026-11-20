@@ -5,6 +5,7 @@ import { assertRecoveryRequest, assertRecoveryReceipt, assertRecoveryCleanup, as
 import { continueContentRequest, readBrowserContent, contentReadOperations } from './content-browser-transport.mjs';
 import { courseFields, proveHumanContentSave, assertHumanSaveRequest, assertHumanAttemptsVerified, createHumanSaveAdmission } from "./human-content-proof.mjs";
 import { runAssistantPhase } from './assistant-scenarios.mjs';
+import { assertRemoveRefused, localRootTarget, assertRemovedFromPreview, assertRemovedText, assertRemovalJournal } from './remove-proof.mjs';
 import { chromium } from '@playwright/test';
 import { join, isAbsolute } from 'node:path';
 import { repoRoot, assertInstalledPin, assertFreePort } from './support.mjs';
@@ -15,7 +16,7 @@ import { get } from 'node:http';
 const probe = url => new Promise((resolve, reject) => { const request = get(url, { headers: { Accept: 'text/html' }, timeout: 3000 }, response => { let body = ''; response.on('data', chunk => body += chunk); response.on('end', () => resolve({ status: response.statusCode, body: body.slice(0, 120) })); }); request.on('error', reject); request.on('timeout', () => request.destroy(new Error('HTTP readiness timeout'))); });
 const mode = process.argv[2];
 assert.match(process.env.PINSEL_AUTHORING_STAGE ?? '', /^[a-z0-9][a-z0-9-]+$/, 'Explicit staged authority required');
-assert(['inspect', 'stage', 'later', 'restore', 'recovery', 'recovery-restore', 'negative'].includes(mode) || mode.startsWith('assistant:'), 'Unknown browser phase');
+assert(['inspect', 'stage', 'later', 'restore', 'recovery', 'recovery-restore', 'negative', 'removed-absence'].includes(mode) || mode.startsWith('assistant:'), 'Unknown browser phase');
 const expected = process.env.EXPECTED_COMPOSER_SHA;
 assert.match(expected ?? '', /^[a-f0-9]{40}$/, 'Set exact expected immutable SHA');
 await assertInstalledPin(repoRoot, expected);
@@ -553,8 +554,40 @@ try {
         }
     }
 
+    if (mode === 'removed-absence') {
+        // Fresh server and profile after the restore removed the inserted node: absence across open and reload.
+        const journal = JSON.parse(await readFile(process.env.NATIVE_ACCEPTANCE_JOURNAL, 'utf8'));
+        assertRemovalJournal(journal);
+        for (const step of ['open', 'reload']) {
+            if (step === 'open') await open('/lessons/');
+            else { preview = undefined; await contentReads.navigate(() => page.reload()); await ready(); }
+            assertRemovedFromPreview(preview.targets, journal);
+            assertRemovedText(await frame().locator('body').innerText(), journal, `preview after ${step}`);
+            record('removed-node-absent', { step, nodeId: journal.node.nodeId, targets: preview.targets.length });
+        }
+        await shot('removed-node-absent-after-restart');
+    }
+    async function assertRemoveOffered(target, expectation) {
+        // Installed inspector always renders Remove; a refused target shows its reason and a disabled button.
+        const reason = assertRemoveRefused(target, expectation);
+        const region = page.getByRole('region', { name: 'Remove local component', exact: true });
+        await region.waitFor({ timeout: 180000 });
+        await region.getByText(`Owner: ${target.providerId}/${target.recordId}/${target.nodeId}`, { exact: true }).waitFor({ timeout: 180000 });
+        const button = region.getByRole('button', { name: 'Remove component', exact: true });
+        assert.equal(await button.count(), 1);
+        assert.equal(await button.isDisabled(), true, `Remove offered for ${expectation} target`);
+        await region.getByText(reason, { exact: true }).waitFor({ timeout: 180000 });
+        record('remove-refused-in-ui', { expectation, target: { providerId: target.providerId, recordId: target.recordId, nodeId: target.nodeId }, reason, disabled: true });
+    }
     if (mode === 'negative') {
-        const names = ['shared-field-shadow', 'invalid-local-slot', 'forged-owner', 'shared-reorder', 'child-without-placement', 'forged-slot', 'forged-placement'];
+        await open('/lessons/');
+        await assertRemoveOffered(await selectConsultation(), 'shared');
+        const root = localRootTarget(nativeReadSnapshot, preview.targets, 'lessons');
+        await frame().locator('[data-composer-target]').evaluateAll((elements, id) => { const el = elements.find(e => e.getAttribute('data-composer-target') === id); if (!el) throw Error('Missing rendered root target'); el.click(); }, root.renderedNodeId);
+        await page.getByRole('treeitem', { selected: true }).waitFor();
+        await assertRemoveOffered(root, 'root');
+        await shot('remove-refused-shared-and-root');
+        const names = ['shared-field-shadow', 'invalid-local-slot', 'forged-owner', 'shared-reorder', 'child-without-placement', 'forged-slot', 'forged-placement', 'forged-remove-shared', 'forged-remove-root'];
         for (const name of names) {
             await closeBrowser();
             await launch();
@@ -572,7 +605,9 @@ try {
                 'shared-reorder': [{ change: { kind: 'reorder', direction: 'up' } }, 'unsupported-scope'],
                 'child-without-placement': [{ target: coords(child) }, 'unsupported-scope'],
                 'forged-slot': [{ change: { kind: 'reorder-placement', direction: 'up', slotId: 'course' } }, 'invalid-request'],
-                'forged-placement': [{ change: { kind: 'reorder-placement', direction: 'up', placement: { ...section.placement, slotId: 'course' } } }, 'invalid-request']
+                'forged-placement': [{ change: { kind: 'reorder-placement', direction: 'up', placement: { ...section.placement, slotId: 'course' } } }, 'invalid-request'],
+                'forged-remove-shared': [{ change: { kind: 'remove' } }, 'unsupported-scope'],
+                'forged-remove-root': [{ target: coords(localRootTarget(nativeReadSnapshot, preview.targets, 'lessons')), change: { kind: 'remove' } }, 'unsupported-scope']
             };
             const [patch, code] = cases[name];
             let doneResolve;
