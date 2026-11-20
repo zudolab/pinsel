@@ -431,6 +431,45 @@ baseline visitor interactions, Header inclusion or authenticated inference. Thos
 remain separate acceptance scenarios. No inverse or cleanup follows automatically.
 The retained runner's installed runtime acceptance is NOT_RUN until executed.
 
+## Extra Content record lifecycle (#988)
+
+`tests/native-authoring/content-lifecycle/` proves one extra `page-copy` draft
+through the real installed Content UI: create and save fields, a read-only
+restart showing it present, deletion through the overflow menu **Delete entry…**
+and its **Delete entry?** confirm dialog, and a read-only restart proving absence.
+The installed controller deletes with one atomic `transact`
+(`{expectedMutationToken, operations:[{kind:"delete-entry",id}]}`) on
+`/__zudo_composer_content_provider`; the driver admits only that exact request at
+the captured Content token, journals it before dispatch and records the original
+200 response. Any other canonical request aborts and holds the step.
+
+Each step is one guarded run with an owned server, a fresh browser profile and
+full public captures before and after. The offline audit requires exact deltas:
+create = only the new draft and `tokens.content` + (create + acknowledged saves);
+present/absent restarts = byte-equal captures and a write-free journal (an exact
+`get-entry` loaded response, or a complete `scan-entries`/`page-entries` listing
+without the id); delete = only that entry removed and `tokens.content` + 1. All
+other tokens, providers, Assets, public files and identities stay equal. Requests
+settle before every navigation and reload. An uncertain outcome holds; there is no
+replay or inverse. Run it on an accepted capture whose chain is complete (for the
+static sequence, after phase15), because it advances the Content token.
+
+```sh
+echo '[]' > /absolute/lifecycle/proofs-0.json
+# repeat for N = 1..4, appending each successful proof.json to the next array
+corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json \
+  tests/native-authoring/content-lifecycle/prepare.mjs lifecycle-988 \
+  /absolute/accepted-capture.json /absolute/lifecycle/proofs-$((N-1)).json /absolute/lifecycle/intent-N.json
+bash $HOME/.claude/scripts/heavy-guard.sh -- corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json \
+  tests/native-authoring/content-lifecycle/run.mjs --composer FULL_COMPOSER_SHA --stage EXISTING_STAGE --port 4194 \
+  --intent /absolute/lifecycle/intent-N.json --artifacts /absolute/lifecycle/step-N
+```
+
+The accepted capture for step N+1 is step N's `afterCapture`. Steps are `create`,
+`inspect-present`, `delete`, `inspect-absent`; each writes
+`CONTENT_LIFECYCLE_STEP_CAPTURE_VERIFIED` only after its audit. A held step keeps
+`HELD.json`, its journal and both captures for explicit reconciliation.
+
 ## Results, FAQ, and singleton-shaped records
 
 A new Results year or FAQ group does not imply a new placement. Inspect the actual
