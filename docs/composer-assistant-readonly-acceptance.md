@@ -15,8 +15,7 @@ checkout, and install Playwright Chromium as described in
 [native acceptance](native-authoring-acceptance.md#prepare-a-reproducible-checkout).
 Follow its [fresh known-data bootstrap](native-authoring-acceptance.md#fresh-known-data-bootstrap-or-existing-saved-workspace)
 or the appropriate explicit staged migration first. The runner never initializes,
-reseeds, migrates or installs packages. It never operates on owner drafts or the
-legacy D1 store. Keep all other editors stopped and freeze source during the run.
+reseeds, migrates or installs packages. It never operates on owner drafts. Keep all other editors stopped and freeze source during the run.
 
 Use an explicitly named stage with the current model and known Pinsel semantics:
 Lessons Consultation price, Home's reference to that price, and Contact's

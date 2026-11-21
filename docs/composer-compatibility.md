@@ -121,8 +121,8 @@ prove awaited owner close or lease release; the exact phase22 interruption cause
 remains unknown. No automatic lease deletion or phase22 replay is permitted.
 
 Local repository gates at `3f145696f94a77d0d627cd8a5dbab32f1615b862` passed:
-997 unit tests (15 skipped), typechecks, site/editor/styleguide/Worker builds,
-local authentication and temporary-D1 snapshot rehearsal, strict14-route migration,
+997 unit tests (15 skipped), typechecks, site/styleguide builds,
+strict14-route migration,
 83 approved seed files,133 public plus4 art assets, and no-deployment checks.
 Browser tests passed124, with15 reference-only skips because no reference output
 was supplied. Missing generated outputs and a missing default Wrangler config path
@@ -682,7 +682,7 @@ remaining scenarios and required current-head integration gates.
 | Hosted renderer | `pinsel-zfb`, version `hosted-v1` |
 | Toolchain contract | Node `>=24 <25`; pnpm `11.5.2` |
 | Current content | 25 models / 246 committed baseline entries |
-| Current workspace authority | Hosted D1 head for legacy drafts; generated SiteProject for fixed structure |
+| Current workspace authority | Generated SiteProject for fixed structure (the Hosted D1 CMS has since been removed) |
 | New native workspace/schema | Not initialized; no adopted native capture identity yet |
 | Task / worker / branch | T0 / Pinsel documentation worker / `feat/full-composer-adoption` |
 | New adoption scenario acceptance | NOT_RUN; baseline inspection only |
@@ -2191,8 +2191,7 @@ Option B keeps the installed Composer pin `c5ffd410f74ba4b3aa003da068efeeae6e663
 
 ## Option B T1 package repin
 
-2026-11-20, Cloud manager. All four consumers (`apps/editor`,
-`apps/authoring-worker`, `packages/pinsel-content`, `packages/pinsel-ui`) now pin
+2026-11-20, Cloud manager. All consumers (`packages/pinsel-content`, `packages/pinsel-ui` and the since-removed Hosted apps) now pin
 distributed source S `e802741aaf51bae69b4db67ddc3d80494be61043`, attested upstream by
 E `9d43eb32fa7399c3618443a1aeffd3db64115cfd`. The component contract stays
 `c0b452da075b66757c60bd0d721a47062d4354d0`. Toolchain: Node 24, pnpm 11.5.2.

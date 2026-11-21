@@ -8,12 +8,12 @@ Every direct dependency is pinned in the workspace `package.json` files and reso
 
 Two distinct package-root commits of `Takazudo/zudo-composer` are consumed. Neither is a Pinsel commit, and neither is a `zudo-composer` repository `main` head; each is the root tree of an installable package.
 
-| Package | Manifest specifier (all four importers) | Lockfile tarball integrity | Identity |
+| Package | Manifest specifier (both importers) | Lockfile tarball integrity | Identity |
 | --- | --- | --- | --- |
 | `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#e802741aaf51bae69b4db67ddc3d80494be61043` | `sha512-sfp/3qZDqW7xKKsKHLjIaZGM3cwpMdEEvWaaioFWo0Z30IDNwl/tR7QXKkaqbesdPBAt0qY7+jgmCrxGhBWUfw==` | Distributed source S (2026-11-20, Option B T1): normal merge of the Composer outline-row fix `5a89ca2b` onto `ca5b4fe3` in #979, attested by `9d43eb32fa7399c3618443a1aeffd3db64115cfd`. Relative to the previous pin `c5ffd410`, the distributed change is the outline row and its stylesheet only. Frozen install into an empty store and dedupe passed; 781 installed files are byte/mode-identical to the attested 782-file pack, and the installed `package.json` is byte-identical to S's committed manifest (the pack rewrites `workspace:*` development specifiers). The previous `c5ffd410` pin and its historical acceptance remain recorded in the compatibility ledger. |
 | `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | `sha512-cGk7w+sB/cAKH90K93MH9jWlQtKcbjru9bQIFuNUIBZ13oC/qALeZyxNfmIaCPpQJknY6W8S73GLJ2eMn0gHVA==` | Contract package-root handoff commit (`package/component-contract-v1`), version 1.0.0. Unchanged since the first pin. |
 
-Importers: `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui`. Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<full-sha>`; there is no npm release of `zudo-composer`.
+Importers: `packages/pinsel-content`, `packages/pinsel-ui`. Both are installed only as `git+https://github.com/Takazudo/zudo-composer.git#<full-sha>`; there is no npm release of `zudo-composer`.
 
 ### Resolved identities
 
@@ -23,17 +23,14 @@ Importers: `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `p
 | `@types/node` | `^22.20.5` | 22.20.5 | `.` | `sha512-U2+DNr+wSjpsTS/wZGYHq7GcwfuSmKiKvoPvK22zwTlRhU91yOniN4qRR5KhIjvif7ysw/dz/hKmfDH0Ris4aA==` |
 | `happy-dom` | `20.14.6` | 20.14.6 | `.` | `sha512-5DDsf4QmEIlRL6NkCv/fxSjYHHkZceL/IaYQdJc2h3G7DRTEai++VTjbfL0LB9geW2VrA3+vrjF3Efx+OTtX0Q==` |
 | `typescript` | `^5.9.3` | 5.9.3 | `.` | `sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==` |
-| `vitest` | `4.1.11` | 4.1.11 | `.`, `apps/authoring-worker` | `sha512-fhACrNXUidIbGSBr5FlbuBkO7VWC1ZyLl0DO4CU2DrQoAPxX84Ysxs+HeGQpii5lZWV1Q4gBZTTu49mF+A6Edw==` |
-| `jose` | `6.2.12` | 6.2.12 | `apps/authoring-worker` | `sha512-9NiFmJEex0sy2Dk58j2UGBSHgUs2ypF9eZSu4L6vjOX3Dp96Sw1F3uL+H+D1sx02jZZdzUT0HgvCy59CuvXcWw==` |
-| `zod` | `^4.3.6` | 4.6.5 | `apps/authoring-worker`, `apps/styleguide`, `packages/pinsel-content` | `sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==` |
-| `@cloudflare/vitest-plugin` | `1.4.0` | 1.4.0 | `apps/authoring-worker` | `sha512-SgIhyhpVH+2MVSJxidG8gosqrpzF25IwKevQhPykwulTgAFe4s0Nkj71pNzqCkwV2+A4NKkHJP2ReyyRsoIxsg==` |
-| `wrangler` | `4.149.0` | 4.149.0 | `apps/authoring-worker` | `sha512-OzK7xmB5r5iLKb3cIT3783g13fe6T7xyeKu9LEdUyl+DKAM2KP/jkjnE0OUhyw+mB/XJM9ycjgF3MWm8PR9amg==` |
-| `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | 1.0.0 (git `c0b452da075b66757c60bd0d721a47062d4354d0`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-cGk7w+sB/cAKH90K93MH9jWlQtKcbjru9bQIFuNUIBZ13oC/qALeZyxNfmIaCPpQJknY6W8S73GLJ2eMn0gHVA==` |
-| `preact` | `^10.29.8` | 10.29.8 | `apps/authoring-worker` (dev, peer only), `apps/editor`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==` |
-| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#e802741aaf51bae69b4db67ddc3d80494be61043` | 0.0.0 (git `e802741aaf51bae69b4db67ddc3d80494be61043`) | `apps/authoring-worker`, `apps/editor`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-sfp/3qZDqW7xKKsKHLjIaZGM3cwpMdEEvWaaioFWo0Z30IDNwl/tR7QXKkaqbesdPBAt0qY7+jgmCrxGhBWUfw==` |
+| `vitest` | `4.1.11` | 4.1.11 | `.` | `sha512-fhACrNXUidIbGSBr5FlbuBkO7VWC1ZyLl0DO4CU2DrQoAPxX84Ysxs+HeGQpii5lZWV1Q4gBZTTu49mF+A6Edw==` |
+| `zod` | `^4.3.6` | 4.6.5 | `apps/styleguide`, `packages/pinsel-content` | `sha512-v5l/aFXZQeai4awLbOpSoHecE9UiMrnfx75tEXLjNonXVARxQ5mOeipTjROUchszUNCqnE+hqAMujRsRHsut2Q==` |
+| `wrangler` | `4.149.0` | 4.149.0 | `apps/site` | `sha512-OzK7xmB5r5iLKb3cIT3783g13fe6T7xyeKu9LEdUyl+DKAM2KP/jkjnE0OUhyw+mB/XJM9ycjgF3MWm8PR9amg==` |
+| `@zudo-composer/component-contract` | `git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0` | 1.0.0 (git `c0b452da075b66757c60bd0d721a47062d4354d0`) | `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-cGk7w+sB/cAKH90K93MH9jWlQtKcbjru9bQIFuNUIBZ13oC/qALeZyxNfmIaCPpQJknY6W8S73GLJ2eMn0gHVA==` |
+| `preact` | `^10.29.8` | 10.29.8 | `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-ej2aVZ+vZ8WO7tvlQWRM9N63A0KzF9q4mWJfDUHgYaIofWY9hu74QdnQrjoPMmZi2/nZ5gN0bJCQF49xQqx09Q==` |
+| `zudo-composer` | `git+https://github.com/Takazudo/zudo-composer.git#e802741aaf51bae69b4db67ddc3d80494be61043` | 0.0.0 (git `e802741aaf51bae69b4db67ddc3d80494be61043`) | `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-sfp/3qZDqW7xKKsKHLjIaZGM3cwpMdEEvWaaioFWo0Z30IDNwl/tR7QXKkaqbesdPBAt0qY7+jgmCrxGhBWUfw==` |
 | `tsx` | `4.23.15` | 4.23.15 | `.` | `sha512-Yiex1Ovn8z2xPpOWckIiysV1SSyRMY9BkLF++q0yKiDxCqRhosKfMg3janKkiLBwZ5c/YryloKwGZcrEmtwxKw==` |
-| `vite` | `^8.2.2` | 8.3.4 | `apps/editor` | `sha512-IftLE8phJhdNRIGNEV4JCCvfNScoZQVfcXaN8TQropWGJtOHcu+iAB9pHcuGvmEb/kddw0LBe/jS8ztdC6xdiQ==` |
-| `@takazudo/zfb` | `5.1.5` | 5.1.5 | `apps/authoring-worker`, `apps/site`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-V8czYQoiwa2N19gb9MwcgE0Re6TV5ea9yfIrL4casySOzkh8kM/TRKNL0I5Ix1T9LjyqBcaNP59v/PorJZnuTg==` |
+| `@takazudo/zfb` | `5.1.5` | 5.1.5 | `apps/site`, `apps/styleguide`, `packages/pinsel-content`, `packages/pinsel-ui` | `sha512-V8czYQoiwa2N19gb9MwcgE0Re6TV5ea9yfIrL4casySOzkh8kM/TRKNL0I5Ix1T9LjyqBcaNP59v/PorJZnuTg==` |
 | `@takazudo/zfb-runtime` | `5.1.5` | 5.1.5 | `apps/site`, `apps/styleguide` | `sha512-zKB8rhkxgvYa44vXtlxn8hR7fIir5wsCe+8C8NKWHHYkgb654yXD0+myiLPqkEQhtifvpn54PwUhCJBmcG6eiQ==` |
 | `@tailwindcss/browser` | `4.3.2` | 4.3.2 | `apps/styleguide` | `sha512-R6hewP9HHwLAY88bFkgAYFIQMRGi9bqx6sR1anI3IThTJtwhPlAm4aHIzDKrnJ8Ct4M3d5A9PCsah8Z5+EjLiQ==` |
 | `@takazudo/zdtp` | `0.9.0` | 0.9.0 | `apps/styleguide` | `sha512-8kXEoi+K82v7akI1jOzuBqnoy6P4z6tMB0dtd6N1nBxppogkIX0MhjiToFwyBye0QL9bQFwmzSG3/M3eYtCaHQ==` |
@@ -126,29 +123,8 @@ Validation for this migration: frozen pnpm 11.5.2 install and dedupe passed; all
 - `@takazudo/zudo-sg` is `0.5.4` (published 2026-10-13). Against 0.5.2: 0.5.3 lets a catalog root sit beneath a symlinked ancestor directory (a symlink at or below the root is still rejected) and raises the peer floors to zfb `^4.3.3` / zudo-doc `^6.1.1`; 0.5.4 raises the zfb floor to `^4.4.0`. The public API is unchanged. `sg:check` (story shims, registry and token manifest through their generators) and `build:sg` stay green with no regenerated output.
 - `@takazudo/zdtp@0.8.6` peers (`culori`, `preact`, `tailwind-merge 3.6.0`, `@tailwindcss/browser 4.3.2`) are declared explicitly in `apps/styleguide` because peers are not auto-installed.
 - `diff ^8`, `katex ^0.16` and `preact ^10` follow the zudo-doc and Composer peer ranges, not the newer majors on npm (`diff 9`, `katex 0.19`, `preact 11`).
-- `vite ^8.2.2` matches the `zudo-composer` dependency range, so the editor and Composer share one Vite. The editor builds with `contentEditorPlugins()` from `zudo-composer/vite` (Preact preset included), so `@preact/preset-vite` / `@babel/core` are no longer direct dependencies.
 - `tsx 4.23.15` (root devDependency) runs the content pipeline scripts (`packages/pinsel-content/src/site/*.ts`), which import the zudo-react TSX of `@pinsel/ui`; Node cannot run the extensionless TypeScript imports natively. The scripts pass `--tsconfig tsconfig.scripts.json` so tsx applies the zudo-react JSX settings to files outside the package.
-- `zudo-composer` and `@zudo-composer/component-contract` are declared by every package that imports them (`autoInstallPeers: false`): `packages/pinsel-ui` (pack manifest, route types), `packages/pinsel-content` (policy, authoring DSL, validators), `apps/editor` (editor mount), `apps/authoring-worker` (portable entries). `preact` is Composer's peer; the Worker declares it as a devDependency to satisfy the peer and `scripts/check-worker-bundle.mjs` proves the production bundle never imports it.
-- `@cloudflare/vitest-plugin 1.4.0` replaces the deprecated `@cloudflare/vitest-pool-workers`. It depends on `wrangler 4.149.0`, which is also the direct pin, so there is a single miniflare/workerd install.
+- `zudo-composer` and `@zudo-composer/component-contract` are declared by every package that imports them (`autoInstallPeers: false`): `packages/pinsel-ui` (pack manifest, route types) and `packages/pinsel-content` (policy, authoring DSL, validators). `preact` is Composer's peer.
 - `vitest 4.1.11` (V4 line) stays on the version zudo-sg and Composer test with. `5.x` is newer on npm.
 - `pnpm dedupe --check` is clean and runs in CI. Duplicate `@lezer/common` identities break the zudo-sg code panel (zudo-sg#963).
 - `happy-dom 20.14.6` matches the zudo-sg fixture; `21.x` (published 2026-10-11/12) is a new major and is not adopted yet.
-
-### Known Composer gaps
-
-> Historical (against the `547b532e…` content-editor mount). The host files named below (`editor-mount.tsx`, `localize.ts`, `groups.ts`) were removed when the editor moved to `zudo-composer/hosted-content/editor`; see [dogfooding](dogfooding.md) for the current editor.
-
-Reconciled by the final pin (#16) against Takazudo/zudo-composer#903. Closed upstream: `preview.sandbox` (the editor no longer adds the attribute and reloads the shell). Still open, recorded on draft PR Takazudo/zudo-composer#904 as follow-ups; none blocks Pinsel, each has a working Pinsel-side handling:
-
-| Gap | Pinsel handling |
-| --- | --- |
-| `ContentEditorPreviewOptions.route` names one route per mount | `apps/editor/src/editor-mount.tsx` remounts per route after a flush (refused while a conflict or failed save is open) |
-| Content route chrome (directory, navigator, entry form, conflict banner) is fixed English; `labels` cover only the mount shell | `apps/editor/src/localize.ts` rewrites exact chrome strings |
-| No directory/model grouping in the mount | `apps/editor/src/groups.ts` narrows the policy per group and remounts |
-| No conflict actions on `ContentEditorHandle` | host panel explains the in-form Use latest / Reapply buttons; reload remounts |
-| The mount shows raw export states (`exportStatus.state`) | `apps/editor/src/host.css` hides the mount's export chip; `publication.ts` shows Pinsel states |
-| Global-template collection attachments are not materialised (every page root is a site-frame) | each route composition carries its own `pinsel.site-frame` |
-| Single models cannot be attached | the five singletons are one-entry collections |
-| `list<text>` / `list<long-text>` fields cannot bind to component props | five fields are `long-text`, one item per line |
-| Collection conditions are static (no parent-relative filter) | per-year / per-group mappings are generated at assemble time |
-| Restricted UI has no create / reorder, no completeness check before Submit; no SQLite two-process backend, two-publication trace or ZFB/SG parity upstream | Pinsel edits existing entries only; D1 conformance, publication trace and ZFB parity are proven in Pinsel (`docs/authoring-worker.md`; the removed publication proof is in the git history of `docs/publication.md`) |

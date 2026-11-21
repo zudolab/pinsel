@@ -31,7 +31,7 @@ provider settings in the environment:
 PINSEL_AUTHORING_STAGE=notes-v1 pnpm dev
 ```
 
-Do not enable the legacy Hosted editor as a second writer. This command does not
+This command does not
 import owner data, authorize deployment or activate a production site.
 
 ## What the Assistant may propose

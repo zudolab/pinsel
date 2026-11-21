@@ -4,7 +4,7 @@ Pinsel configures Composer's trusted `contentValidation` hook independently of
 Assistant availability. The public host module is
 `@pinsel/content/content-validation`, identity `pinsel-content-values@1`.
 It reuses `checkFieldValue`: supported Note Markdown, internal/HTTPS links and
-approved school URLs. It does not reuse the legacy Hosted editor's fixed-record
+approved school URLs. It does not apply the removed Hosted editor's fixed-record
 or structural-edit permissions.
 
 Human writes and native Assistant proposals/Apply use the same server validator.
