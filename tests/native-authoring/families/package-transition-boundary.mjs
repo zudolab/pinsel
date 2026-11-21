@@ -24,7 +24,7 @@ export const OLD_LOCK = OPERATOR_BOUNDARY_LOCK;
 /** The history41 originals. Only tests pass other anchors, to exercise the checks on synthetic git/evidence. */
 export const HISTORY41_ANCHORS = Object.freeze({ historySha256: HISTORY41_SHA256, captureDigest: HISTORY41_CAPTURE_DIGEST, composer: OLD_COMPOSER, lock: OLD_LOCK });
 const ANCHOR_KEYS = Object.keys(HISTORY41_ANCHORS).sort();
-const CONSUMERS = ['apps/authoring-worker', 'apps/editor', 'packages/pinsel-content', 'packages/pinsel-ui'];
+const CONSUMERS = ['packages/pinsel-content', 'packages/pinsel-ui'];
 const IDENTITY_PATHS = new Set(['digest', 'componentPack.digest', 'componentPack.compiler', 'renderer.digest']);
 const RECOVERY_STATUS = {
   22: 'MAPPING_RECORD_EDIT_CAPTURE_RECOVERY_VERIFIED',

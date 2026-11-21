@@ -1,9 +1,7 @@
 // Public-output boundaries: apps/site/dist holds only the allowlisted entries,
 // carries no editor / styleguide / Composer chrome, and every page's only
 // scripts are the three visitor client entries; every same-site link and
-// fragment resolves (scripts/site/check-fragments.mjs). The editor bundle
-// carries no zudo-react; the Worker's production bundle is checked by
-// scripts/check-worker-bundle.mjs.
+// fragment resolves (scripts/site/check-fragments.mjs).
 // Usage: node scripts/check-boundaries.mjs
 import { readFile, readdir } from "node:fs/promises";
 import path from "node:path";
@@ -60,19 +58,8 @@ for (const file of siteFiles) {
 if (siteFiles.some((file) => file.includes("__zfb"))) failures.push("apps/site/dist ships __zfb/routes.json");
 if (topLevel.length > 0) failures.push(...(await checkFragments(siteDist)).map((issue) => `fragments: ${issue}`));
 
-const editorScripts = await files(path.join(repoRoot, "apps/editor/dist"), (name) => name.endsWith(".js"));
-if (editorScripts.length === 0) failures.push("apps/editor/dist has no scripts; run pnpm build:editor");
-const editorCode = (await Promise.all(editorScripts.map((file) => readFile(file, "utf8")))).join("\n");
-/** @type {[RegExp, string][]} */
-const editorForbidden = [[/zudo-react/, "zudo-react"], [/zudo-react\.description/, "zudo-react descriptions"], [/__vite-browser-external/, "a Node builtin stub"], [/["']node:[a-z]/, "a node: import"], [/zudo-composer\/src\//, "a private Composer source path"]];
-for (const [pattern, label] of editorForbidden) {
-  if (pattern.test(editorCode)) failures.push(`editor bundle contains ${label}`);
-}
-if (!/保存しました/.test(editorCode)) failures.push("editor bundle lacks the Japanese labels");
-if (!/hosted-content-editor/.test(editorCode + (await Promise.all((await files(path.join(repoRoot, "apps/editor/dist"), (name) => name.endsWith(".css"))).map((file) => readFile(file, "utf8")))).join(""))) failures.push("editor bundle lacks the Composer editor chrome");
-
 if (failures.length > 0) {
   console.error(`check-boundaries failed:\n${failures.map((line) => `  - ${line}`).join("\n")}`);
   process.exit(1);
 }
-console.log(`check-boundaries: public dist (${siteFiles.length} files) holds only allowlisted entries, the three visitor scripts and resolving links, with no editor/SG/Composer chrome; editor bundle (${editorScripts.length} files) has no zudo-react.`);
+console.log(`check-boundaries: public dist (${siteFiles.length} files) holds only allowlisted entries, the three visitor scripts and resolving links, with no editor/SG/Composer chrome.`);

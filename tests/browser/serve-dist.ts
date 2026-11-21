@@ -4,7 +4,8 @@ import type { Page } from "@playwright/test";
 
 // Serves the built public site (apps/site/dist) on a fake origin through
 // page.route, with the static-asset Worker's directory-index lookup.
-export const dist = path.resolve(import.meta.dirname, "../../apps/site/dist");
+export const repoRoot = path.resolve(import.meta.dirname, "../..");
+export const dist =path.resolve(import.meta.dirname, "../../apps/site/dist");
 export const ORIGIN = "http://pinsel.test";
 
 /** The 14 outputs and their files, in page-manifest order. */

@@ -1,6 +1,6 @@
 // `pnpm content:assemble`: content/entries + the structure manifest -> the
 // derived .site-project/site-project.json (canonical JSON) and baseline.json
-// (the baseline identity the Worker seeds and the editor is built for).
+// (the baseline identity of the assembled project).
 import { execFile } from "node:child_process";
 import { mkdir, writeFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";

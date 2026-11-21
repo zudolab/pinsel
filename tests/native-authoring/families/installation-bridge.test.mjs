@@ -1,7 +1,7 @@
 import {test} from 'vitest';
 import assert from 'node:assert/strict';
 import {familyInstallationProof,assertFamilyBridgeBoundary} from './installation-bridge.mjs';
-import {assertFourInstallEvidence,familyConsumers,auditHistoricalWrite} from './installation-history.mjs';
+import {assertInstallEvidence,familyConsumers,auditHistoricalWrite} from './installation-history.mjs';
 import {parseFamilyInstallationArgs} from './prepare-installation.mjs';
 const sha='a'.repeat(40),sha2='b'.repeat(40),digest='c'.repeat(64);
 function fixture(){
@@ -24,6 +24,6 @@ test('exact prefix boundary allows changed digest once and never rewrites histor
 test('boundary cannot skip prefix, reuse old digest or drift first resumed input',()=>{
  const f=fixture(),b={status:'FAMILY_INSTALLATION_BRIDGE_VERIFIED',boundary:12,beforeDigest:'old',afterDigest:'new',beforeCapture:'/old/11',originalHistory:f.chain.history};assert.throws(()=>assertFamilyBridgeBoundary(b,f.chain.history.slice(1),f.after));assert.throws(()=>assertFamilyBridgeBoundary(b,f.chain.history,f.before));assert.throws(()=>assertFamilyBridgeBoundary(b,[...f.chain.history,{beforeDigest:'wrong'}],f.after));
 });
-test('four installations require exact consumers and immutable manifest hashes',()=>{const f=fixture();assertFourInstallEvidence(f.installation.installed);f.installation.installed.installedRoots[3]=f.installation.installed.installedRoots[0];assert.throws(()=>assertFourInstallEvidence(f.installation.installed));});
+test('installations require exact consumers and immutable manifest hashes',()=>{const f=fixture();assertInstallEvidence(f.installation.installed);f.installation.installed.installedRoots[3]=f.installation.installed.installedRoots[0];assert.throws(()=>assertInstallEvidence(f.installation.installed));});
 test('preparation rejects incomplete flags, relative evidence, duplicate arguments',()=>{assert.throws(()=>parseFamilyInstallationArgs([]));assert.throws(()=>parseFamilyInstallationArgs(['--history','/x','--history','/y']));});
 test('historical phase with unresolved failure never becomes accepted through bridge',()=>{assert.throws(()=>auditHistoricalWrite({},{},{intent:{}},[{phase:'held'}]),/unresolved/);});

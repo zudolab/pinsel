@@ -69,12 +69,9 @@ export async function verify() {
     { root: paths.uiPublic, expected: publicFiles, exact: true, required: true },
     { root: paths.uiArt, expected: artFiles, exact: true, required: true },
     { root: paths.sitePublic, expected: publicFiles, exact: true, required: false },
-    // The worker bundle also carries editor output and its own manifest.
-    { root: paths.workerAssets, expected: publicFiles, exact: false, required: false },
   ];
   for (const tree of trees) {
-    // An empty optional tree is a placeholder (the worker vitest config creates
-    // dist-assets so its assets binding can start), not a stale staging copy.
+    // An empty optional tree is a placeholder, not a stale staging copy.
     if (!(await exists(tree.root)) || (!tree.required && (await readdir(tree.root)).length === 0)) {
       if (tree.required) problems.push(`missing ${path.relative(repoRoot, tree.root)}`);
       continue;

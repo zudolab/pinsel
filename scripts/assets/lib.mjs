@@ -9,8 +9,6 @@ export const paths = {
   uiPublic: path.join(repoRoot, "packages/pinsel-ui/public"),
   uiArt: path.join(repoRoot, "packages/pinsel-ui/src/art"),
   sitePublic: path.join(repoRoot, "apps/site/public"),
-  editorDist: path.join(repoRoot, "apps/editor/dist"),
-  workerAssets: path.join(repoRoot, "apps/authoring-worker/dist-assets"),
   approvedManifest: path.join(repoRoot, "tests/fixtures/approved-seed/asset-manifest.json"),
 };
 

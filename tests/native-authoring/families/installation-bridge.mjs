@@ -6,14 +6,14 @@ import {sourceIdentity} from '../header/provenance.mjs';
 import {assertInstalledPin} from './runtime-preflight.mjs';
 import {assertInstalledIdentities} from './installed-identity.mjs';
 import {assertInstallationOnly,resolveInstalledPublicIdentities,installationIdentityPaths} from '../static/final-installation-bridge.mjs';
-import {loadOriginalFamilyHistory,assertFourInstallEvidence} from './installation-history.mjs';
+import {loadOriginalFamilyHistory,assertInstallEvidence} from './installation-history.mjs';
 export async function currentFamilyInstallation(repo,composer,stage){
  process.env.PINSEL_AUTHORING_STAGE=stage;
- const source=await sourceIdentity(repo),installed=await assertInstalledPin(repo,composer);assertFourInstallEvidence(installed);
+ const source=await sourceIdentity(repo),installed=await assertInstalledPin(repo,composer);assertInstallEvidence(installed);
  return {source,installed,identities:await resolveInstalledPublicIdentities(repo),composer,stage};
 }
 export function familyInstallationProof({chain,before,after,installation,historyPath,configPath,afterPath,artifacts}){
- assert.equal(chain.history.length,12);assert.deepEqual(before,chain.snapshot);assert.notEqual(chain.originalComposer,installation.composer,'Actual new immutable package required');assert.equal(chain.stage,installation.stage);assertFourInstallEvidence(installation.installed);assertInstalledIdentities(after,installation.identities);
+ assert.equal(chain.history.length,12);assert.deepEqual(before,chain.snapshot);assert.notEqual(chain.originalComposer,installation.composer,'Actual new immutable package required');assert.equal(chain.stage,installation.stage);assertInstallEvidence(installation.installed);assertInstalledIdentities(after,installation.identities);
  const get=(o,p)=>p.split('.').reduce((v,k)=>v[k],o);const changes=installationIdentityPaths.filter(p=>get(before,p)!==get(after,p)).map(path=>({path,before:get(before,path),after:get(after,path)}));assertInstallationOnly(before,after,changes);
  return {schemaVersion:1,kind:'family-installation-only',boundary:12,historyPath,configPath,beforeCapture:chain.history.at(-1).afterCapture,afterCapture:afterPath,beforeDigest:before.digest,afterDigest:after.digest,changes,originalComposer:chain.originalComposer,composer:installation.composer,stage:installation.stage,source:installation.source.head,identitiesPath:artifacts+'/public-identities.json',provenancePath:artifacts+'/provenance.json',originalEvidence:chain.evidence};
 }

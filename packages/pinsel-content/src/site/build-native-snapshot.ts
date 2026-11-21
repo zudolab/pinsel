@@ -32,4 +32,4 @@ for (const route of compiled.build.routes) {
   await writeFile(target, html);
 }
 await writeFile(join(output, "build-evidence.json"), `${JSON.stringify({ snapshotDigest: snapshot.digest, workspaceId: snapshot.workspaceId, componentPack: snapshot.componentPack, renderer, routes: compiled.build.routes.map(route => route.pathname) }, null, 2)}\n`);
-console.log(`Built exact native snapshot to ${output}. Authoring stores and legacy D1 unchanged.`);
+console.log(`Built exact native snapshot to ${output}. Authoring stores unchanged.`);

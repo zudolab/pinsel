@@ -15,7 +15,7 @@ import { syntheticGit } from './fixtures/synthetic-git.mjs';
 // files, a generated capture and obviously fake digests. The historical history41 originals are only
 // checked by historical-evidence.test.mjs when PINSEL_HISTORICAL_EVIDENCE_ROOT is set.
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
-const consumers = ['apps/authoring-worker', 'apps/editor', 'packages/pinsel-content', 'packages/pinsel-ui'];
+const consumers = ['packages/pinsel-content', 'packages/pinsel-ui'];
 const OLD_LOCK_BYTES = 'synthetic-lock: old, not a pnpm lockfile\n';
 const SYNTHETIC_OLD_COMPOSER = 'feed'.repeat(10);
 const SYNTHETIC_CAPTURE_DIGEST = 'synthetic-history41-capture-digest';

@@ -30,62 +30,6 @@ importers:
         specifier: 4.1.11
         version: 4.1.11(@types/node@22.20.5)(esbuild@0.28.2)(happy-dom@20.14.6)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
 
-  apps/authoring-worker:
-    dependencies:
-      '@pinsel/content':
-        specifier: workspace:*
-        version: link:../../packages/pinsel-content
-      '@pinsel/ui':
-        specifier: workspace:*
-        version: link:../../packages/pinsel-ui
-      '@takazudo/zfb':
-        specifier: 5.1.5
-        version: 5.1.5
-      '@zudo-composer/component-contract':
-        specifier: git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0
-        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0
-      jose:
-        specifier: 6.2.12
-        version: 6.2.12
-      zod:
-        specifier: ^4.3.6
-        version: 4.6.5
-      zudo-composer:
-        specifier: git+https://github.com/Takazudo/zudo-composer.git#e802741aaf51bae69b4db67ddc3d80494be61043
-        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/e802741aaf51bae69b4db67ddc3d80494be61043(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1)
-    devDependencies:
-      '@cloudflare/vitest-plugin':
-        specifier: 1.4.0
-        version: 1.4.0(@types/node@22.20.5)(vitest@4.1.11(@types/node@22.20.5)(esbuild@0.28.2)(happy-dom@20.14.6)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))
-      preact:
-        specifier: ^10.29.8
-        version: 10.29.8
-      vitest:
-        specifier: 4.1.11
-        version: 4.1.11(@types/node@22.20.5)(esbuild@0.28.2)(happy-dom@20.14.6)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
-      wrangler:
-        specifier: 4.149.0
-        version: 4.149.0(@types/node@22.20.5)
-
-  apps/editor:
-    dependencies:
-      '@pinsel/content':
-        specifier: workspace:*
-        version: link:../../packages/pinsel-content
-      '@zudo-composer/component-contract':
-        specifier: git+https://github.com/Takazudo/zudo-composer.git#c0b452da075b66757c60bd0d721a47062d4354d0
-        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0
-      preact:
-        specifier: ^10.29.8
-        version: 10.29.8
-      zudo-composer:
-        specifier: git+https://github.com/Takazudo/zudo-composer.git#e802741aaf51bae69b4db67ddc3d80494be61043
-        version: https://codeload.github.com/Takazudo/zudo-composer/tar.gz/e802741aaf51bae69b4db67ddc3d80494be61043(@babel/core@7.29.7)(@types/node@22.20.5)(@zudo-composer/component-contract@https://codeload.github.com/Takazudo/zudo-composer/tar.gz/c0b452da075b66757c60bd0d721a47062d4354d0)(esbuild@0.28.2)(jiti@2.7.0)(preact@10.29.8)(tsx@4.23.15)(yaml@2.9.1)
-    devDependencies:
-      vite:
-        specifier: ^8.2.2
-        version: 8.3.4(@types/node@22.20.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
-
   apps/site:
     dependencies:
       '@pinsel/ui':
@@ -97,6 +41,10 @@ importers:
       '@takazudo/zfb-runtime':
         specifier: 5.1.5
         version: 5.1.5(@takazudo/zfb@5.1.5)
+    devDependencies:
+      wrangler:
+        specifier: 4.149.0
+        version: 4.149.0(@types/node@22.20.5)
 
   apps/styleguide:
     dependencies:
@@ -299,11 +247,6 @@ packages:
     peerDependenciesMeta:
       workerd:
         optional: true
-
-  '@cloudflare/vitest-plugin@1.4.0':
-    resolution: {integrity: sha512-SgIhyhpVH+2MVSJxidG8gosqrpzF25IwKevQhPykwulTgAFe4s0Nkj71pNzqCkwV2+A4NKkHJP2ReyyRsoIxsg==}
-    peerDependencies:
-      vitest: ^4.1.0 || ^5.0.0
 
   '@cloudflare/workerd-darwin-64@1.20261006.1':
     resolution: {integrity: sha512-lCX6avJO2It9AyDEYitjmOtJRVp/xmaW0TziyoLAnfxlzozyyRbSFfIIMMCiDx/sTP1++E4VLbV+7BHSD33f0Q==}
@@ -1355,9 +1298,6 @@ packages:
   chardet@2.2.0:
     resolution: {integrity: sha512-rddelWYNPRrXq6PtNEN2S3f6t9ILzvqaN5pVgi4kqt9jHQaXIial9PznB5iSPVlQSLNaaH22ItWz3EJtQ10+OA==}
 
-  cjs-module-lexer@1.2.3:
-    resolution: {integrity: sha512-0TNiGstbQmCFwt4akjjBg5pLRTSyj/PkWQ1ZoO2zntmg9yLqSRxwEa4iCfQLGjqhiqBfOJa7W/E8wfGrTDmlZQ==}
-
   cli-width@4.1.0:
     resolution: {integrity: sha512-ouuZd4/dm2Sw5Gmqy6bGyNNNe1qt9RpmxveLSO7KcgsTnU7RXfsw+/bukWGo1abgBiMAic068rclZsO4IWmmxQ==}
     engines: {node: '>= 12'}
@@ -1539,9 +1479,6 @@ packages:
   jiti@2.7.0:
     resolution: {integrity: sha512-AC/7JofJvZGrrneWNaEnJeOLUx+JlGt7tNa0wZiRPT4MY1wmfKjt2+6O2p2uz2+skll8OZZmJMNqeke7kKbNgQ==}
     hasBin: true
-
-  jose@6.2.12:
-    resolution: {integrity: sha512-9NiFmJEex0sy2Dk58j2UGBSHgUs2ypF9eZSu4L6vjOX3Dp96Sw1F3uL+H+D1sx02jZZdzUT0HgvCy59CuvXcWw==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -2371,20 +2308,6 @@ snapshots:
       unenv: 2.0.0-rc.24
     optionalDependencies:
       workerd: 1.20261006.1
-
-  '@cloudflare/vitest-plugin@1.4.0(@types/node@22.20.5)(vitest@4.1.11(@types/node@22.20.5)(esbuild@0.28.2)(happy-dom@20.14.6)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))':
-    dependencies:
-      cjs-module-lexer: 1.2.3
-      esbuild: 0.28.2
-      miniflare: 5.20261006.1-alpha(@types/node@22.20.5)
-      vitest: 4.1.11(@types/node@22.20.5)(esbuild@0.28.2)(happy-dom@20.14.6)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)
-      wrangler: 4.149.0(@types/node@22.20.5)
-      zod: 4.6.5
-    transitivePeerDependencies:
-      - '@cloudflare/workers-types'
-      - '@types/node'
-      - bufferutil
-      - utf-8-validate
 
   '@cloudflare/workerd-darwin-64@1.20261006.1':
     optional: true
@@ -3261,8 +3184,6 @@ snapshots:
 
   chardet@2.2.0: {}
 
-  cjs-module-lexer@1.2.3: {}
-
   cli-width@4.1.0: {}
 
   commander@15.0.0: {}
@@ -3439,8 +3360,6 @@ snapshots:
   is-hexadecimal@2.0.1: {}
 
   jiti@2.7.0: {}
-
-  jose@6.2.12: {}
 
   js-tokens@4.0.0: {}
 

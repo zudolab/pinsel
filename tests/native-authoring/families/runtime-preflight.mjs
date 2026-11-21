@@ -2,12 +2,12 @@
 import assert from 'node:assert/strict';import{readFile,realpath}from'node:fs/promises';import{createHash}from'node:crypto';import{createServer}from'node:net';import{join}from'node:path';const readJson=async p=>JSON.parse(await readFile(p,'utf8'));const sha256=b=>createHash('sha256').update(b).digest('hex');
 export async function assertInstalledPin(root, expected) {
     assert.match(expected ?? '', /^[a-f0-9]{40}$/, 'Expected immutable Composer SHA required');
-    for (const path of ['apps/editor', 'apps/authoring-worker', 'packages/pinsel-content', 'packages/pinsel-ui']) {
+    for (const path of ['packages/pinsel-content', 'packages/pinsel-ui']) {
         const manifest = await readJson(join(root, path, 'package.json'));
         assert.equal(manifest.dependencies['zudo-composer'], `git+https://github.com/Takazudo/zudo-composer.git#${expected}`, `Unexpected ${path} Composer pin`);
     }
     const installedRoots = [];
-    for (const path of ['apps/editor', 'apps/authoring-worker', 'packages/pinsel-content', 'packages/pinsel-ui']) {
+    for (const path of ['packages/pinsel-content', 'packages/pinsel-ui']) {
         const installedRoot = await realpath(join(root, path, 'node_modules/zudo-composer'));
         assert(installedRoot.includes('/node_modules/.pnpm/zudo-composer@'), 'Installed Composer is not an independent pnpm package');
         const manifest = await readJson(join(installedRoot, 'package.json'));

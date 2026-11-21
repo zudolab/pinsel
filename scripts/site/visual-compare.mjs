@@ -107,7 +107,7 @@ function diff(page, a, b) {
   );
 }
 
-const site = start("corepack", ["pnpm", "exec", "wrangler", "dev", "--config", "../site/wrangler.jsonc", "--port", String(sitePort), "--ip", "127.0.0.1", "--log-level", "warn"], path.join(repoRoot, "apps/authoring-worker"));
+const site = start("corepack", ["pnpm", "exec", "wrangler", "dev", "--config", "wrangler.jsonc", "--port", String(sitePort), "--ip", "127.0.0.1", "--log-level", "warn"], path.join(repoRoot, "apps/site"));
 const ref = start("python3", ["-m", "http.server", String(refPort), "--bind", "127.0.0.1", "--directory", path.resolve(reference)], repoRoot);
 const siteOrigin = `http://127.0.0.1:${sitePort}`;
 const refOrigin = `http://127.0.0.1:${refPort}`;

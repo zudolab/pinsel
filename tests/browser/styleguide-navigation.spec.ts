@@ -4,7 +4,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { expect, test } from "@playwright/test";
 import { serveRoot } from "./serve-dist";
-import { repoRoot } from "./local-worker";
+import { repoRoot } from "./serve-dist";
 
 const origin = "http://styleguide.test";
 const dist = path.join(repoRoot, "apps/styleguide/dist");

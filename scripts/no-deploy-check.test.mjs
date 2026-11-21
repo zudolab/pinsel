@@ -4,7 +4,7 @@ import { findDeployCommands, scan } from "./no-deploy-check.mjs";
 describe("findDeployCommands", () => {
   it.each([
     "wrangler deploy --dry-run --outdir .wrangler/dry-run",
-    "pnpm --filter @pinsel/authoring-worker dry-run",
+    "pnpm --filter @pinsel/site exec wrangler deploy --dry-run",
     "wrangler types --check",
     "wrangler versions upload",
   ])("allows %s", (command) => {

@@ -1,25 +1,22 @@
 import path from "node:path";
 import { existsSync } from "node:fs";
 import { expect, test, type Page } from "@playwright/test";
-import { repoRoot, startLocalWorker, type LocalWorker } from "./local-worker";
-import { ORIGIN, serve, serveRoot } from "./serve-dist";
+import { ORIGIN, repoRoot, serve, serveRoot } from "./serve-dist";
 
-// The responsive token overrides, observed through the real cascade on all
-// three render surfaces: the public site (apps/site/dist), the Worker preview
-// of a saved snapshot (`wrangler dev --env local`) and the styleguide
+// The responsive token overrides, observed through the real cascade on both
+// render surfaces: the public site (apps/site/dist) and the styleguide
 // component preview (apps/styleguide/dist). Each surface used to lose the
 // overrides when tokens.css / colors.css were imported unlayered. Expected
 // body values are the approved prototype's ($SEED/prototype/src/styles.css, seed
 // 2026-10-12): the @layer tokens defaults, overridden in @layer responsive at
 // max-width 70rem, 47.99rem and 23rem. With PINSEL_REFERENCE_DIST set, the
 // prototype dist is measured too. Header A additionally follows its container width.
-// Prerequisites: pnpm build:site && pnpm build:sg && pnpm build:editor && pnpm assets:assemble-worker.
+// Prerequisites: pnpm build:site && pnpm build:sg.
 
 const REFERENCE = process.env.PINSEL_REFERENCE_DIST;
 const REF_ORIGIN = "http://reference.test";
 const SG_ORIGIN = "http://styleguide.test";
 const sgDist = path.join(repoRoot, "apps/styleguide/dist");
-const port = Number(process.env.PINSEL_TOKEN_LAYERS_PORT ?? 8866);
 // Either side of 70rem (1120px) and 47.99rem (767.84px), plus desktop and phone.
 const WIDTHS = [1440, 1121, 1119, 769, 767, 390];
 const SG_HOME = "/components/preview/?slug=pages&variant=HomeHeroAndPricing";
@@ -110,38 +107,21 @@ function expectApproved({ tokens, layout }: { tokens: Measured; layout: Layout }
   expect(layout.container, `${surface} .container width at ${width}px in a ${layout.parent}px block`).toBeCloseTo(approvedContainer(width, layout.parent), 1);
 }
 
-let worker: LocalWorker;
-let previewUrl = "";
-
-test.beforeAll(async () => {
-  test.setTimeout(180_000);
+test.beforeAll(() => {
   if (!existsSync(path.join(sgDist, "components/preview/index.html"))) throw new Error("apps/styleguide/dist is missing: run pnpm build:sg");
-  worker = await startLocalWorker({ port, stateDir: "token-layers" });
-  const state = await (await fetch(`${worker.origin}/api/hosted/state`)).json();
-  const response = await fetch(`${worker.origin}/api/hosted/rpc`, { method: "POST", headers: { "content-type": "application/json", origin: worker.origin }, body: JSON.stringify({ method: "execute", argument: { kind: "capture-snapshot", operationKey: crypto.randomUUID(), expected: { draftRevision: state.draftRevision, baseline: state.baseline, definition: state.definition } } }) });
-  const result = await response.json();
-  expect(response.status, JSON.stringify(result)).toBe(200);
-  previewUrl = `${worker.origin}/preview/document?${new URLSearchParams({ snapshot: result.snapshot.id, digest: result.snapshot.digest, route: "/" })}`;
-
-});
-
-test.afterAll(async () => {
-  await worker?.stop();
 });
 
 for (const width of WIDTHS) {
-  test(`at ${width}px the site, the Worker preview and the styleguide preview resolve the approved responsive tokens`, async ({ page }) => {
+  test(`at ${width}px the site and the styleguide preview resolve the approved responsive tokens`, async ({ page }) => {
     await page.setViewportSize({ width, height: 900 });
     await serve(page);
     await serveRoot(page, SG_ORIGIN, sgDist);
     const surfaces = {
       site: await measure(page, `${ORIGIN}/`),
-      preview: await measure(page, previewUrl),
       styleguide: await measure(page, `${SG_ORIGIN}${SG_HOME}`),
     };
     console.log(`token-layers ${width}px ${JSON.stringify(surfaces)}`);
     for (const [surface, values] of Object.entries(surfaces)) expectApproved(values, width, surface);
-    expect(surfaces.preview, "Worker preview equals the site").toEqual(surfaces.site);
     const { headerMinBlock: styleguideHeader, ...styleguideBodyTokens } = surfaces.styleguide.tokens;
     const { headerMinBlock: siteHeader, ...siteBodyTokens } = surfaces.site.tokens;
     expect(styleguideBodyTokens, "styleguide body tokens equal the site").toEqual(siteBodyTokens);

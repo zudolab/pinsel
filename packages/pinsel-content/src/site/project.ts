@@ -1,7 +1,7 @@
-// `pnpm content:project [--snapshot <file>]`: compile the assembled project
+// `pnpm content:project`: compile the assembled project
 // (or a saved snapshot's project) with the Node release compiler and write the
 // derived route documents, page metadata and navigation the ZFB site renders.
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { TrustedComponentPack } from "@zudo-composer/component-contract";
@@ -85,20 +85,9 @@ export function navigationModule(projection: Projection, source: string): string
 }
 
 async function main(): Promise<void> {
-  const snapshotIndex = process.argv.indexOf("--snapshot");
-  let projectPath = SITE_PROJECT_PATH;
-  if (snapshotIndex !== -1) {
-    // A snapshot record from the authoring Worker: `{ snapshotId, project, … }`.
-    const snapshotFile = process.argv[snapshotIndex + 1];
-    if (!snapshotFile) throw new Error("--snapshot needs a file path");
-    const record = JSON.parse(await readFile(snapshotFile, "utf8")) as { snapshotId?: string; project?: unknown };
-    if (!record.project || typeof record.snapshotId !== "string") throw new Error(`${snapshotFile} is not a snapshot record`);
-    projectPath = join(SITE_PROJECT_DIR, `snapshot-${record.snapshotId}.json`);
-    await mkdir(SITE_PROJECT_DIR, { recursive: true });
-    await writeFile(projectPath, `${JSON.stringify(record.project)}\n`);
-  }
+  const projectPath = SITE_PROJECT_PATH;
   const projection = await projectSite(projectPath, structurePack());
-  const source = snapshotIndex === -1 ? "packages/pinsel-content/.site-project/site-project.json" : `snapshot ${projectPath}`;
+  const source = "packages/pinsel-content/.site-project/site-project.json";
   await mkdir(join(REPO_ROOT, "apps/site/data"), { recursive: true });
   await writeFile(PLAN_OUT, `${JSON.stringify({ projectSourceRevision: projection.projectSourceRevision, plan: projection.plan }, null, 2)}\n`);
   await writeFile(ROUTES_OUT, routesModule(projection, source));

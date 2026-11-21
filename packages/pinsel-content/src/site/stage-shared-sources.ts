@@ -56,7 +56,7 @@ await withAbsentNativeDestinations([target.composerConfig.paths.data, publicRoot
   const compiled = await compileAuthoringWorkspaceSnapshot({ snapshot: migrated, pack: target.pack, packIdentity, renderer });
   const sourceStillCurrent = await checkNativeMigrationSource(original, source);
   await writeFile(join(artifacts, "snapshot.json"), `${JSON.stringify(migrated, null, 2)}\n`, { flag: "wx" });
-  await writeFile(join(artifacts, "evidence.json"), `${JSON.stringify({ ...candidate.evidence, importedContent, sourceStillCurrent, targetDigest: migrated.digest, targetTokens: migrated.tokens, targetData: target.composerConfig.paths.data, targetPublic: publicRoot, routes: compiled.build.routes.map(route => route.pathname), authority: "NOT_SWITCHED; original store, history, releases and legacy D1 retained. Target starts separate store/history; no history is copied." }, null, 2)}\n`, { flag: "wx" });
+  await writeFile(join(artifacts, "evidence.json"), `${JSON.stringify({ ...candidate.evidence, importedContent, sourceStillCurrent, targetDigest: migrated.digest, targetTokens: migrated.tokens, targetData: target.composerConfig.paths.data, targetPublic: publicRoot, routes: compiled.build.routes.map(route => route.pathname), authority: "NOT_SWITCHED; original store, history and releases retained. Target starts separate store/history; no history is copied." }, null, 2)}\n`, { flag: "wx" });
   if (!sourceStillCurrent) throw new Error("Source changed during staging. Do not activate; retain both stores and recapture");
   console.log(`Staged canonical shared sources at ${migrated.digest}; authority NOT switched. Review evidence and exact production build before any activation.`);
 });

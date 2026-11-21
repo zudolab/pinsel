@@ -4,4 +4,3 @@ export * from "./richtext-policy";
 export * from "./invariants";
 export * from "./import-rules";
 export * from "./site/page-meta";
-export * from "./hosted-definition";
