@@ -72,7 +72,7 @@ const hashesAfter = new Map(migrated.publicFiles.map(file => [file.fileName, fil
 const publicChanges = [...new Set([...hashesBefore.keys(), ...hashesAfter.keys()])].filter(name => hashesBefore.get(name) !== hashesAfter.get(name)).map(fileName => ({ fileName, before: hashesBefore.get(fileName), after: hashesAfter.get(fileName) }));
 const evidence = { ...candidate.evidence, importedContent, sourceStillCurrent, targetCapture: migrated.digest, actualTargetPack: migrated.componentPack, actualTargetRenderer: migrated.renderer,
   targetData: target.composerConfig.paths.data, targetPublic: publicRoot, publicChanges, routes: compiled.build.routes.map(route => route.pathname),
-  activation: "NOT_SWITCHED. Start this known-data rehearsal explicitly with PINSEL_AUTHORING_STAGE=course-identity-v1 pnpm dev. Original store/history and legacy D1 remain unchanged.",
+  activation: "NOT_SWITCHED. Start this known-data rehearsal explicitly with PINSEL_AUTHORING_STAGE=course-identity-v1 pnpm dev. Original store/history remain unchanged.",
 };
 await writeFile(evidencePath, `${JSON.stringify(evidence, null, 2)}\n`, { flag: "wx" });
 // Capture/evidence live outside public shipping bytes and are never served.

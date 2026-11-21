@@ -13,4 +13,4 @@ const snapshot = await captureAuthoringWorkspace({
   publicFiles: await nativePublicFiles(host.workspaceRoot, dirname(host.composerConfig.paths.publicAssets)),
 });
 await writeFile(resolve(file), `${JSON.stringify(snapshot, null, 2)}\n`, { flag: "wx" });
-console.log(`Captured native workspace ${snapshot.workspaceId} at ${snapshot.digest}. No draft or legacy D1 writes.`);
+console.log(`Captured native workspace ${snapshot.workspaceId} at ${snapshot.digest}. No draft writes.`);

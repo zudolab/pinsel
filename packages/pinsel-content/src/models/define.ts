@@ -4,8 +4,8 @@ import type {
   ContentValueSchema,
 } from "zudo-composer/site-project";
 
-// Composer's authoring DSL (`zudo-composer/authoring`) is Node-only. The Worker
-// and the editor need the same model records, so this module rebuilds the DSL's
+// Composer's authoring DSL (`zudo-composer/authoring`) is Node-only. Browser-safe
+// consumers need the same model records, so this module rebuilds the DSL's
 // output shape without a runtime Composer import; the parity test asserts every
 // record equals `defineSite().model()` byte for byte.
 

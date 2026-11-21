@@ -161,7 +161,7 @@ def run_phase(b,index):
   if Path(out['journal']).exists():journal({'event':'stopped-process-observations','helpers':observations})
   for p in out.values():canonical_output(p)
   audit=read(b['installationAudit']);require(len(audit['installs'])==4,'Four installs required')
-  require({i['consumer']for i in audit['installs']}=={'apps/editor','apps/authoring-worker','packages/pinsel-content','packages/pinsel-ui'},'Installed consumer scope')
+  require({i['consumer']for i in audit['installs']}=={'packages/pinsel-content','packages/pinsel-ui'},'Installed consumer scope')
   for i in audit['installs']:
    target=(REPO/i['consumer']/'node_modules/zudo-composer').resolve(strict=True)
    require(str(target)==i['root'] and digest((target/'package.json').read_bytes())==i['manifestHash'],'Installed package changed')

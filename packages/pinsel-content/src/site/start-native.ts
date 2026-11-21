@@ -34,7 +34,7 @@ try {
     renderer: await resolveAuthoringRendererIdentity({ composerConfig: host.composerConfig }),
     publicFiles: await nativePublicFiles(workspaceRoot, dirname(host.composerConfig.paths.publicAssets)),
   });
-  console.log(`Opening saved native workspace ${snapshot.workspaceId}. Legacy D1 is untouched.`);
+  console.log(`Opening saved native workspace ${snapshot.workspaceId}.`);
 } catch (cause) {
   throw new Error(
     "Cannot open the existing native workspace. Preserve saved data and resolve the cause below. " +

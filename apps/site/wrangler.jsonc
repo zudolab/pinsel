@@ -1,5 +1,5 @@
 {
-  "$schema": "../authoring-worker/node_modules/wrangler/config-schema.json",
+  "$schema": "./node_modules/wrangler/config-schema.json",
   // The public site: static assets only (no `main`, no runtime adapter).
   "name": "pinsel-site",
   "compatibility_date": "2026-10-12",

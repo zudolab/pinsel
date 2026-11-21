@@ -12,10 +12,10 @@ import {auditOriginalCompositionReads} from '../header/saved-reference.mjs';
 import {releaseProof} from './release-proof.mjs';
 import {validateSavedMapping,mappingRecoverySequenceProof} from './mapping-recovery.mjs';
 const exec=promisify(execFile);
-export const familyConsumers=['apps/editor','apps/authoring-worker','packages/pinsel-content','packages/pinsel-ui'];
-export function assertFourInstallEvidence(installed){
+export const familyConsumers=['packages/pinsel-content','packages/pinsel-ui'];
+export function assertInstallEvidence(installed){
  assert.deepEqual(installed.installedRoots.map(x=>x.consumer).sort(),[...familyConsumers].sort());
- assert.equal(new Set(installed.installedRoots.map(x=>x.packageManifestSha256)).size,1,'Four installed manifests must agree');
+ assert.equal(new Set(installed.installedRoots.map(x=>x.packageManifestSha256)).size,1,'Installed manifests must agree');
  assert.match(installed.installedLockSha256,/^[a-f0-9]{64}$/);
  for(const x of installed.installedRoots){assert(x.installedRoot.includes('/node_modules/.pnpm/zudo-composer@'));assert.match(x.packageManifestSha256,/^[a-f0-9]{64}$/);}
 }
@@ -68,7 +68,7 @@ export async function loadOriginalFamilyHistory({historyPath,configPath,repo,byt
  const history=[],evidence=[];let previous,originalComposer,stage;
  for(let i=0;i<paths.length;i++){
   const proof=await json(paths[i]),dir=dirname(paths[i]),bundle=await json(join(dir,'accepted-inputs.json')),provenance=await json(join(dir,'runtime-provenance.json')),before=await json(join(dir,'before.json')),after=await json(proof.afterCapture);
-  assert.equal(provenance.sourceStatus,'');assert.match(provenance.sourceHead,/^[a-f0-9]{40}$/);assert.match(provenance.composer,/^[a-f0-9]{40}$/);assertFourInstallEvidence(provenance.installed);
+  assert.equal(provenance.sourceStatus,'');assert.match(provenance.sourceHead,/^[a-f0-9]{40}$/);assert.match(provenance.composer,/^[a-f0-9]{40}$/);assertInstallEvidence(provenance.installed);
   originalComposer??=provenance.composer;stage??=provenance.stage;assert.equal(provenance.composer,originalComposer);assert.equal(provenance.stage,stage);assert.equal(provenance.baselineDigest,before.digest);assert.deepEqual(bundle.snapshot,before);assert.equal(provenance.intentSha256,bundle.hashes[Object.keys(bundle.hashes).find(p=>bundle.hashes[p]===provenance.intentSha256)]);
   for(const [p,hash]of Object.entries(bundle.hashes))assert.equal(inputHash(await read(p)),hash,'Original phase input changed');
   for(const consumer of familyConsumers){const {stdout}=await exec('git',['show',`${provenance.sourceHead}:${consumer}/package.json`],{cwd:repo,encoding:'utf8'});assert.equal(JSON.parse(stdout).dependencies['zudo-composer'],`git+https://github.com/Takazudo/zudo-composer.git#${provenance.composer}`);}

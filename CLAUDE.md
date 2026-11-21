@@ -10,10 +10,6 @@ Do not reseed authored state or treat a source generator as its authority. Prese
 historical migration evidence, existing recovery guarantees and the no-deployment
 boundary. Owner-data cutover and new live-provider acceptance are separate holds.
 
-## Retained legacy Hosted Content migration
-
-The provisional old API/editor/publication design was replaced for persistent local dogfooding. See docs/dogfooding.md for that retained legacy runtime contract and tests; the full-adoption authority contract above governs the new native workspace. Old design-fixed test details below do not require restoring removed public APIs. Approved-seed/assets/user drafts stay preserved; no production deployment or delivery is enabled.
-
 # Pinsel — repository rules
 
 ## Ownership
@@ -27,11 +23,11 @@ The provisional old API/editor/publication design was replaced for persistent lo
 - No secrets in the repo or in CI. No real email or inquiry delivery.
 - **Composer is consumed only via git pins**: `git+https://github.com/Takazudo/zudo-composer.git#<full-sha>` plus its public exports (`zudo-composer/<subpath>`, `@zudo-composer/component-contract`). Never use `zudo-composer/src/...`, `file:`, `link:`, `workspace:` or sibling paths.
 - **Fixtures are immutable.** `tests/fixtures/approved-seed/` is a set of migration gates. Never edit, regenerate or weaken it, or the checks that read it. `pnpm check:approved-seed` hash-checks every file against `tests/approved-seed.sha256.json`.
-- **Assets are exact.** `packages/pinsel-ui/public/` and `packages/pinsel-ui/src/art/` are byte-exact copies of the approved seed. `pnpm assets:verify` must stay green. `apps/site/public/` and `apps/authoring-worker/dist-assets/` are generated: only `scripts/assets/sync.mjs` writes the first, and only `scripts/assets/assemble-worker.mjs` writes the second.
+- **Assets are exact.** `packages/pinsel-ui/public/` and `packages/pinsel-ui/src/art/` are byte-exact copies of the approved seed. `pnpm assets:verify` must stay green. `apps/site/public/` is generated: only `scripts/assets/sync.mjs` writes it.
 - **Public-output exclusions.** Never ship these in public output: `font-provenance.json`, anything from `tests/fixtures/`, the seed `provenance/` files, `content.json`, `expected-content.json`, `check-content.py`, `page-manifest.json`, `source-content/`, `dist/__zfb/routes.json`, or any review-only query/postMessage plumbing.
 - No Git LFS, no ZIP files, and no edits to `_old_pinsel` or `yuko-site`.
 
 ## Workspace
 
-- Package names are `@pinsel/<name>`. Apps match their directory (`--filter site`, `--filter authoring-worker`). The packages are `@pinsel/ui` (`packages/pinsel-ui`) and `@pinsel/content` (`packages/pinsel-content`).
+- Package names are `@pinsel/<name>`. Apps match their directory (`--filter site`). The packages are `@pinsel/ui` (`packages/pinsel-ui`) and `@pinsel/content` (`packages/pinsel-content`).
 - Heavy local runs (Playwright, long builds) go through `bash $HOME/.claude/scripts/heavy-guard.sh -- <command>`.

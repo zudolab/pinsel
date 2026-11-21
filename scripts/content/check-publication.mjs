@@ -2,7 +2,7 @@
 // entries through the route/DOM mapping table (packages/pinsel-content/src/
 // publication-map.ts), plus routes, fragments, art windows, asset paths, the
 // metadata policy and the protected fields recorded in content/baseline.json.
-// Usage: node scripts/content/check-publication.mjs --dist <dir> [--entries <content/entries dir> | --snapshot <snapshot record json>] [--baseline <file>]
+// Usage: node scripts/content/check-publication.mjs --dist <dir> [--entries <content/entries dir>] [--baseline <file>]
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
@@ -45,17 +45,9 @@ function argument(flag) {
 async function main() {
   const dist = argument("--dist");
   if (!dist) throw new Error("--dist <dir> is required");
-  const snapshot = argument("--snapshot");
-  let entries;
-  if (snapshot) {
-    const record = JSON.parse(await readFile(snapshot, "utf8"));
-    entries = record.project?.providers?.content?.find((/** @type {{ id: string }} */ provider) => provider.id === "content-filesystem")?.entries;
-    if (!Array.isArray(entries)) throw new Error(`${snapshot} carries no content-filesystem entries`);
-  } else {
-    const { readContentEntries } = await loadTs("site/entries.ts");
-    const entriesDir = argument("--entries");
-    entries = await readContentEntries(entriesDir ? path.resolve(entriesDir, "../..") : repoRoot);
-  }
+  const { readContentEntries } = await loadTs("site/entries.ts");
+  const entriesDir = argument("--entries");
+  const entries = await readContentEntries(entriesDir ? path.resolve(entriesDir, "../..") : repoRoot);
   const baseline = JSON.parse(await readFile(argument("--baseline") ?? path.join(repoRoot, "content/baseline.json"), "utf8"));
   const issues = await runPublicationCheck({ dist: path.resolve(dist), entries, baseline });
   if (issues.length > 0) {

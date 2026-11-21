@@ -15,7 +15,7 @@ export interface DefaultLayoutProps {
 const ROBOTS = siteConfig.indexing === "index" ? "index,follow" : "noindex,nofollow";
 
 // zfb appends the compiled stylesheet link to <head>; the body is the shared
-// renderer output, so the Worker preview and this layout differ only in <head>.
+// renderer output.
 // Every page (404 included) carries the same meta set: the publication gate
 // requires one metadata policy across all 14 outputs.
 export default function DefaultLayout(props: DefaultLayoutProps): Child {

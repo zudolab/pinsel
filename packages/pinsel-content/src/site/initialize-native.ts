@@ -24,7 +24,7 @@ await withAbsentNativeDestinations([composerConfig.paths.data, publicRoot, evide
   await createFilesystemAssetStore({ assetsStoreRoot: composerConfig.paths.assets });
   await writeFile(evidencePath, `${JSON.stringify({
     sharedSourceChanges, source: "committed-content-and-structure", ownerData: false, workspaceId: "pinsel", status: ready.status,
-    note: "Staged import; legacy D1 remains untouched. Cross-domain initialization is not atomic.",
+    note: "Staged import. Cross-domain initialization is not atomic.",
   }, null, 2)}\n`, { flag: "wx" });
-  console.log("Initialized staged native workspace pinsel from committed inputs. Legacy D1 authority unchanged.");
+  console.log("Initialized staged native workspace pinsel from committed inputs.");
 });

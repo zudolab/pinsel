@@ -5,9 +5,10 @@ Tracking: [parent #51](https://github.com/zudolab/pinsel/issues/51),
 content-only CMS scope of [historical #2](https://github.com/zudolab/pinsel/issues/2),
 not its data, rendering, asset, revision or delivery guarantees. Historical
 [PR #36](https://github.com/zudolab/pinsel/pull/36),
-[PR #37](https://github.com/zudolab/pinsel/pull/37), `content-model.md` and
-`dogfooding.md` remain evidence of the earlier model and runtime. Their restrictions
-on structural authoring are not requirements for this new phase.
+[PR #37](https://github.com/zudolab/pinsel/pull/37) and `content-model.md`
+remain evidence of the earlier model. Their restrictions on structural authoring
+are not requirements for this new phase. The earlier Hosted Content CMS
+(Worker, D1 and editor app) has been removed from the repository.
 
 ## Target and ownership
 
@@ -43,17 +44,16 @@ The fresh checkout had no pre-existing diffs or additional worktrees.
 | Content | `content/entries/<model>/<id>.json`: 246 committed records across 25 models; these are known seed-derived data, not the owner's current saved draft. Models live in `packages/pinsel-content/src/models/`. |
 | Structure | `packages/pinsel-content/src/site/structure.ts:buildPinselSite` creates compositions, Mapping records and Sitemap `main` with `defineSite`. `fragment()` creates many internal mapping compositions. |
 | Generation | `site/assemble.ts` combines committed entries and structure into `.site-project/site-project.json` and `baseline.json`; `site/project.ts` writes `apps/site/data/routes.generated.ts`, `navigation.generated.ts` and `plan.json`. These are generated baseline/build artifacts. |
-| Current editor | `apps/editor/src/main.tsx` mounts Hosted Content with record presentation, a flattened entry dropdown and model-based `guessRoute`. `createPinselHostedPolicy` permits fields only. |
+| Editor | The native Composer workspace started by `pnpm dev` (`packages/pinsel-content/src/site/start-native.ts`). |
 | Renderer | `packages/pinsel-ui/src/render/render-route-document.ts` renders real ZFB zudo-react components, injecting route and sibling position; validates properties, slots, accepted children, versions and linked template outlets. |
-| Assets | `packages/pinsel-ui/public/` and `src/art/` preserve approved bytes; sync scripts own generated site/Worker copies. |
-| Persistence | `apps/authoring-worker/src/storage/hosted-storage.ts` atomically commits D1 head/receipts/revisions/snapshots with version guards. Migrations 0004/0005 preserve legacy data and AI proposals. |
-| Recovery | `apps/editor/src/recovery.ts`, `main.tsx` and `note-ai.ts` preserve session checkpoints, receipt retries and guarded Undo. Malformed/unsupported checkpoints remain preserved. |
-| Static output | `site/build-snapshot.ts` verifies Hosted snapshot digest/definition and renders saved projections into `.dogfood/builds/<id>/`; it does not rewrite Content or D1. It is not yet a whole-native-workspace capture path. |
+| Assets | `packages/pinsel-ui/public/` and `src/art/` preserve approved bytes; the sync script owns the generated site copy. |
+| Persistence | Native Composer stores and history under `packages/pinsel-content/.native-authoring`. |
+| Static output | `authoring:capture` and `authoring:build` capture the saved native workspace and build an isolated public snapshot. |
 
 The 14 baseline outputs are `/`, `/lessons/`, `/about/`, `/results/`, `/voices/`,
 `/faq/`, `/notes/`, `/contact/`, `/404.html`, and `/notes/<slug>/` for
 `exam-schedule`, `free-tuition`, `german-language`, `online-exam`, `what-is-mappe`.
-Baseline route counts in `invariants.ts`, `project.ts` and `build-snapshot.ts` must
+Baseline route counts in `invariants.ts` and `project.ts` must
 remain historical proofs while supported new routes receive separate validation.
 
 ## First slice and normalization inventory
@@ -95,12 +95,11 @@ from that reviewed capture. Detect concurrent change and refuse or retry; do not
 assemble snapshots from unrelated private-file reads. Edit/save/restart/capture/build
 must reproduce the reviewed state without reseeding it.
 
-Actual cutover is held: no current owner D1 export or authorized reachable cutover
+Actual cutover is held: no current owner data export or authorized reachable cutover
 host was supplied. Known-data migration rehearsal is cloud-completable. For eventual
-cutover: rehearse, fence legacy writes, capture and verify final revision, import into
+cutover: rehearse, capture and verify final revision, import into
 staged state, validate content/references/rendering, then switch authority. On failure
-retain the old store and restore its authority. Preserve old D1/history/snapshots as
-read-only recovery material; never leave two active writers. This cloud task does
+retain the old store and restore its authority. Never leave two active writers. This cloud task does
 not switch the owner's active editor or authorize execution on another computer.
 
 ## Acceptance and retained checks
@@ -186,7 +185,7 @@ partial staged output that must be preserved for review. It stages committed
 Content and `buildPinselSite` structure under
 `packages/pinsel-content/.native-authoring`, prepares approved public assets and the
 same production visitor script sources under `.native-public`, and records
-`.native-import-evidence.json`. Neither command changes legacy D1 authority. Normal
+`.native-import-evidence.json`. Normal
 `pnpm dev`, `pnpm dev:dogfood` and the underlying `authoring:dev` open full native
 Composer. Startup uses public coherent capture to verify the existing saved workspace
 and prepared public files before listening on loopback port 4190. It refuses missing,
@@ -195,9 +194,7 @@ run `pnpm --filter @pinsel/content authoring:dev --port 4191 --strict-port`.
 Keep this staged authoring state
 for restart testing; do not delete it as disposable output after editing.
 
-The previous Hosted Content launcher remains explicitly available as
-`pnpm dev:legacy-hosted` for legacy recovery work. It retains its documented D1
-behavior; do not start it as an alternate writer during an actual authority cutover.
+The previous Hosted Content launcher has been removed.
 Changing the repository's normal command does not migrate owner data or switch an
 already running owner editor. The staged native workspace still contains committed
 known inputs until a separately authorized owner-data import is completed.

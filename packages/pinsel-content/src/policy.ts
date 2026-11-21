@@ -1,6 +1,6 @@
-import type { JsonValue, HostedPolicy, HostedProvider, ContentFieldDefinition, ContentModelRecord } from "zudo-composer/hosted-content";
+import type { JsonValue, ContentFieldDefinition, ContentModelRecord } from "zudo-composer/hosted-content";
 import { isAllowedSchoolUrl } from "./invariants";
-import { PINSEL_CONTENT_PROVIDER_ID, PINSEL_MODELS, fieldId, type PinselModelId } from "./models";
+import { PINSEL_MODELS, type PinselModelId } from "./models";
 import { checkNoteMarkdown, isAllowedLinkHref } from "./richtext-policy";
 export interface ContentMutationRefusal { ok: false; code: string; message: string; path: string }
 export interface EditableFieldSpec {
@@ -22,8 +22,7 @@ function allFieldsExcept(modelId: PinselModelId, ...excluded: string[]): string[
 }
 
 /** Historical import classification: operations preserve the protected-content
- * digest of the committed migration baseline. Runtime permissions are supplied
- * exclusively by createPinselHostedPolicy below (field editing only). */
+ * digest of the committed migration baseline; used by the import and publication checks. */
 export const PINSEL_EDITABLE_FIELDS: Readonly<Record<PinselModelId, EditableFieldSpec>> = {
   "site-copy": { fields: allFieldsExcept("site-copy", "brandWord", "brandSub"), operations: UPDATE_ONLY },
   "page-copy": { fields: allFieldsExcept("page-copy", "route", "order"), operations: UPDATE_ONLY },
@@ -52,16 +51,6 @@ export const PINSEL_EDITABLE_FIELDS: Readonly<Record<PinselModelId, EditableFiel
   "legal-row": { fields: allFieldsExcept("legal-row", "order"), operations: EVERY_OPERATION },
 };
 
-/** The exact field/entry permissions enforced by the service, also supplied to its editor.
- * Structural collection mutation is deliberately outside this dogfood migration.
- */
-export function createPinselHostedPolicy(providers: HostedProvider[]): HostedPolicy {
- return { models: providers.flatMap(provider => provider.models.map(model => ({
-  providerId: provider.providerId, modelId: model.id,
-  entryIds: provider.entries.filter(entry => entry.modelId === model.id).map(entry => entry.id),
-  fields: (PINSEL_EDITABLE_FIELDS[model.id as PinselModelId]?.fields ?? []).map(key => ({ fieldId: fieldId(model.id, key), replace: true })),
- }))), collections: [], assets: [] };
-}
 function refusal(code: ContentMutationRefusal["code"], message: string, path: string): ContentMutationRefusal {
   return { ok: false, code, message, path };
 }

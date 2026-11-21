@@ -22,9 +22,8 @@ const manifest = JSON.parse(await readFile(path.join(repoRoot, "tests/fixtures/a
 const illustrationSha = JSON.stringify(manifest).match(new RegExp(`"sitePath":"${ILLUSTRATION}"[^}]*?"sha256":"([0-9a-f]{64})"`))?.[1];
 if (!illustrationSha) throw new Error(`asset-manifest.json has no sha256 for ${ILLUSTRATION}`);
 
-// wrangler is a devDependency of the authoring Worker; the config path is what selects the public site.
-const child = spawn("corepack", ["pnpm", "exec", "wrangler", "dev", "--config", "../site/wrangler.jsonc", "--port", String(port), "--ip", "127.0.0.1", "--log-level", "warn"], {
-  cwd: path.join(repoRoot, "apps/authoring-worker"),
+const child = spawn("corepack", ["pnpm", "exec", "wrangler", "dev", "--config", "wrangler.jsonc", "--port", String(port), "--ip", "127.0.0.1", "--log-level", "warn"], {
+  cwd: path.join(repoRoot, "apps/site"),
   stdio: ["ignore", "pipe", "pipe"],
   env: { ...process.env, CI: "1", WRANGLER_SEND_METRICS: "false" },
 });

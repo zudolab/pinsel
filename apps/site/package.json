@@ -13,5 +13,8 @@
     "@pinsel/ui": "workspace:*",
     "@takazudo/zfb": "5.1.5",
     "@takazudo/zfb-runtime": "5.1.5"
+  },
+  "devDependencies": {
+    "wrangler": "4.149.0"
   }
 }

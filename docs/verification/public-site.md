@@ -16,7 +16,7 @@ Independent verification of the public site (`apps/site/dist`) against the appro
 | **Tokens outside their cascade layer.** `tokens.css` and `colors.css` are plain `:root` blocks, and `apps/site/styles/global.css` imported them unlayered. In the prototype they sit in `@layer tokens`. Unlayered rules beat every layer, so the `@layer responsive` overrides never applied: `--header-height` 5rem at ≤70rem and 4.75rem at ≤47.99rem, `--gutter` 1.5rem, `--space-section` 3.75rem, `--space-8` 3rem. At 1110px the header was 92px instead of 80px (`images/public-site-header-1110-before-fix.jpg`, site on top). The pixel diff was 6–13% from 1110px down. | `68c5c5b`: `@import "…tokens.css" layer(tokens)` (colors.css the same way). The built CSS now starts with `@layer tokens { :root … }`, and every pair is 0.00%. |
 | **axe `label-content-name-mismatch` (serious, WCAG 2.5.3) on all six pages.** Inherited from the prototype: the brand link had `aria-label="Pinsel トップページ"` and the motion toggle had `aria-label="装飾の動きと色の変化"`. Neither contains the visible text. | `3624008`: the brand's visible wordmark is now its name. The toggle's visible `動き ON/OFF` is its name, and its purpose moved to `aria-describedby` (a `hidden` span). axe now reports `[]` on all six pages. Content checker still 14/14. |
 
-The same unlayered-token import exists outside this lane: `apps/authoring-worker/scripts/generate-preview-styles.mjs` (Worker preview) and `apps/styleguide/src/styles/preview-entry.css`. I reported both to the manager.
+The same unlayered-token import existed in `apps/styleguide/src/styles/preview-entry.css`. I reported it to the manager.
 
 ## 1. Fresh clone → build → checkers: pass
 
@@ -34,7 +34,7 @@ zfb build (apps/site)                          exit=0  16 pages
 bash scripts/check-content.sh                  exit=0  pages 14, passed 14, metadataIssues 0
 check-publication --dist apps/site/dist        exit=0  246 entries / 14 routes
 check-public-output --dist apps/site/dist      exit=0  153 files, no repository-only material
-build:editor + check:boundaries                exit=0
+check:boundaries                exit=0
 site:check-fragments                           exit=0
 ```
 
@@ -91,7 +91,7 @@ Command:
 PINSEL_REFERENCE_DIST=$SEED/prototype/dist PINSEL_AXE=<axe-core 4.14.0>/axe.min.js pnpm exec playwright test
 ```
 
-Result: 83 passed. `tests/browser/public-site.spec.ts` is new. The existing `gate1-no-js`, `visitor-scripts` and `editor` specs also pass.
+Result: 83 passed. `tests/browser/public-site.spec.ts` is new. The existing `gate1-no-js` and `visitor-scripts` specs also pass.
 
 | Check | Evidence |
 | --- | --- |
@@ -111,7 +111,7 @@ Result: 83 passed. `tests/browser/public-site.spec.ts` is new. The existing `gat
 
 - axe runs from the pinned root devDependency `axe-core` 4.14.0 (asserted via `axe.version`), so the six axe checks always run, CI included. `PINSEL_AXE` is gone.
 - A named-by-visible-text check covers the brand links (header and footer: `Pinsel ART STUDY IN GERMANY`) and the motion toggle (name follows `動き ON` / `動き OFF`, description `装飾の動きと色の変化`).
-- `tests/browser/token-layers.spec.ts` measures the real cascade at 1440, 1121, 1119, 769, 767 and 390px on the three render surfaces: the public site, the Worker preview of a saved snapshot (`wrangler dev --env local`) and the styleguide component preview (`Pages: Home: hero + pricing`). It checks the resolved `--header-height`, `--gutter`, `--space-section` and `--space-8`, the `.site-header__inner` min-block-size, the header box, and the `#pricing` section's padding and `.container` width. Expected values are the approved prototype CSS (`@layer tokens` defaults with the `@layer responsive` overrides at 70rem / 47.99rem / 23rem). The three surfaces must agree. In the styleguide, the zudo-sg canvas pads the story by 16px per side, so at 390px the header gets 358px and wraps the motion toggle onto a second row. The header box is not compared there; the cascade values still are.
+- `tests/browser/token-layers.spec.ts` measures the real cascade at 1440, 1121, 1119, 769, 767 and 390px on the three render surfaces: the public site, the styleguide component preview (`Pages: Home: hero + pricing`). It checks the resolved `--header-height`, `--gutter`, `--space-section` and `--space-8`, the `.site-header__inner` min-block-size, the header box, and the `#pricing` section's padding and `.container` width. Expected values are the approved prototype CSS (`@layer tokens` defaults with the `@layer responsive` overrides at 70rem / 47.99rem / 23rem). The three surfaces must agree. In the styleguide, the zudo-sg canvas pads the story by 16px per side, so at 390px the header gets 358px and wraps the motion toggle onto a second row. The header box is not compared there; the cascade values still are.
 - Reference-only checks (they need `PINSEL_REFERENCE_DIST` and skip with that reason when it is absent, as in CI): the 14 no-JS copy-parity checks, and the token-layers check that measures the prototype dist itself. The zoom / text-size checks use the reference when it is served. Without it they use `PROTOTYPE_OVERFLOW`, which was measured from the reference (#26). No baseline is generated from the changed output.
 
 ## Post-merge integration (PR #27)
@@ -126,7 +126,6 @@ The original checkout's local-only commits were merged as-is (`5b95a24`, `325321
 | --- | --- |
 | `ae767f0` (with `68c5c5b`, `3624008`) | #17: token files in `layer(tokens)` on the site; brand and motion toggle named by their visible text; `tests/browser/public-site.spec.ts`; this report |
 | `3f31dc0` | styleguide preview nests the Pinsel stack in `pinsel.*` layers; `check-token-layers.mjs` |
-| `4b328fa`, `f28bbdb` | Worker preview wraps the inlined token files in `@layer tokens` |
 | `41d79d1` | `pnpm check:token-layers` in the root scripts and in CI after `build:sg` |
 
 ### Added in PR #27
@@ -135,7 +134,7 @@ The original checkout's local-only commits were merged as-is (`5b95a24`, `325321
 | --- | --- |
 | `5919ebb` | `axe-core` 4.14.0 as an exact root devDependency |
 | `b8c9c5e` | axe loads from the pinned package (`createRequire(…).resolve("axe-core/axe.min.js")`, version asserted). `PINSEL_AXE` is removed, so the six axe checks always run, CI included. Adds a visible-text name check |
-| `43917cb` | `tests/browser/token-layers.spec.ts`: the resolved cascade on the site, the Worker preview and the styleguide preview at 1440/1121/1119/769/767/390px, against the approved prototype values. It fails when any of the three layer fixes is removed (negative proof on #17) |
+| `43917cb` | `tests/browser/token-layers.spec.ts`: the resolved cascade on the site and the styleguide preview at 1440/1121/1119/769/767/390px, against the approved prototype values. It fails when any of the three layer fixes is removed (negative proof on #17) |
 | `9d003e3` | the zoom and text-size overflow checks fall back to the recorded prototype overflow (`PROTOTYPE_OVERFLOW`, #26) when no reference dist is served |
 | `64afe4f` | zfb family 4.4.0, zudo-sg 0.5.4 (`docs/dependencies.md`). The upstream impact assessment found no change to the public output |
 
@@ -162,13 +161,11 @@ The original checkout's local-only commits were merged as-is (`5b95a24`, `325321
   - `pnpm assets:sync`, `pnpm content:assemble`, `pnpm content:project` (14 routes), `pnpm content:check` (246 entries, 14 routes, equals the golden)
   - `pnpm build:site` (16 pages), then `pnpm check` — vitest 412 passed, 15 skipped
   - `pnpm sg:check`, `pnpm build:sg` (50 pages), `pnpm check:token-layers` (44 tokens layered in the styleguide preview and the site dist)
-  - `pnpm build:editor`, `pnpm assets:assemble-worker` (136 files), `pnpm assets:verify`, `pnpm check:boundaries`
-  - `pnpm worker:dry-run`, `pnpm worker:bundle:check` (no node:/vite/preact/local fixture/seed/fake provider), `pnpm worker:check-preview`, `pnpm worker:types:check`
+  - `pnpm assets:verify`, `pnpm check:boundaries`
   - `pnpm verify:external-install`
   - `check-publication.mjs --dist apps/site/dist` (246 entries, 14 routes), `check-public-output.mjs` (153 files)
   - `pnpm check:content` — strict historical checker 14/14 (0 missing files/copy, 0 record/link/shared/metadata issues)
   - `pnpm site:check-fragments`, `pnpm site:wrangler-dev` (6/6), `pnpm gate1:wrangler-dev` (29 steps)
-  - `node scripts/verify/worker-auth-probe.mjs` — 58/58 against the production entry with a local fixture JWKS
   - `pnpm test:browser` — 81 passed, 15 skipped. The 15 skips are the reference-only checks (no-JS copy parity on 14 routes and the prototype token measurement) with the reason "PINSEL_REFERENCE_DIST is not set"; axe-core 4.14.0 runs unconditionally.
   - `PINSEL_REFERENCE_DIST=<seed>/prototype/dist playwright test public-site.spec.ts token-layers.spec.ts` — 62 passed (reference-dependent checks against the verified approved prototype)
   - working tree clean afterwards

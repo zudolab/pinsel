@@ -1,6 +1,6 @@
 # Styleguide
 
-`apps/styleguide` is the developer catalog of `@pinsel/ui`: every component story and the approved design tokens. It is a local and CI-checked build only; it is never deployed and the public site and the authoring Worker do not include it.
+`apps/styleguide` is the developer catalog of `@pinsel/ui`: every component story and the approved design tokens. It is a local and CI-checked build only; it is never deployed and the public site does not include it.
 
 ## Run it
 
