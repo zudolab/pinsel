@@ -13,8 +13,8 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel integration | [PR61](https://github.com/zudolab/pinsel/pull/61) head carries the S repin and the S-acceptance harness fixes; see [Package S installed acceptance](#package-s-installed-acceptance--2026-11-20). |
-| Installed package / upstream attestation | Distributed source S `e802741aaf51bae69b4db67ddc3d80494be61043` / attestation E `9d43eb32fa7399c3618443a1aeffd3db64115cfd` (repinned 2026-11-20 from `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660`; see [Option B T1 package repin](#option-b-t1-package-repin)) |
+| Pinsel integration | CMS UX repin (2026-11-22); see [CMS UX repin acceptance](#cms-ux-repin-acceptance--2026-11-22). Previous: [PR61](https://github.com/zudolab/pinsel/pull/61), [Package S installed acceptance](#package-s-installed-acceptance--2026-11-20). |
+| Installed package / upstream attestation | Distributed source S `af064e5fadb3a6035522a0f8828ec3c1e8f3b344` / attestation E `1919889624894a19dd1b754db4306ee6c7cfda65` (repinned 2026-11-22 from `e802741aaf51bae69b4db67ddc3d80494be61043` / `9d43eb32fa7399c3618443a1aeffd3db64115cfd`; earlier repinned 2026-11-20 from `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660`; see [Option B T1 package repin](#option-b-t1-package-repin)) |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
@@ -23,6 +23,41 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 | Results / FAQ families | At S on a fresh `notes-v1` stage: FAQ family `fresh-s-faq5-1148` (43 phases) and Results family `fresh-s-res1-1320` (45 phases) complete, with created/moved/restored builds, visitor checks, acceptance manifests and two-child order. The historical history23/41 Results chain remains held without its originals. |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current c5 human, negative, response-loss recovery and static gates passed; seven current-pin Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
 | Holds | History41 continuation (originals unavailable); actual owner-data cutover (#57) and new authenticated-provider acceptance (#58, NOT_RUN). Deployment remains disabled. |
+
+## CMS UX repin acceptance — 2026-11-22
+
+Repinned both importers from S `e802741aaf51bae69b4db67ddc3d80494be61043` to S `af064e5fadb3a6035522a0f8828ec3c1e8f3b344` (attestation E
+`1919889624894a19dd1b754db4306ee6c7cfda65`). Upstream:
+[Takazudo/zudo-composer#992](https://github.com/Takazudo/zudo-composer/pull/992) styles the
+host-document page;
+[Takazudo/zudo-composer#993](https://github.com/Takazudo/zudo-composer/pull/993), merged as
+`bc0668a8472b2034a586683977d0716c4bb7f05f` with all 26 checks green, adds the navigation
+loading overlay, a quiet workspace-opening state, an authoring-busy bind and open retry,
+and bulk reads for the Overview, Mappings, Sitemaps and Review.
+
+Defects fixed, as observed in the Pinsel native workspace (165 Mappings, 179 Compositions,
+25 models):
+
+- Leaving `/composer?native=1` mid-coordination made every other route fail with "workspace
+  provider is unavailable / Confirm `pnpm dev` is running". Now 10/10 recover without user
+  action in 2–6s.
+- Overview took about 29s (each model was fetched twice, the second pass sequential). It
+  now settles in about 1.5s.
+- Mappings rows stayed on "Checking…" for 35s or longer (330 per-composition gets). Rows
+  now resolve in about 1.1s after navigation, with 0 per-record gets.
+- No navigation feedback. A zudo-doc-style scrim and spinner (120ms show delay) plus a
+  pending-link mark now clear in 0.6–1.6s on every sidebar route.
+- The unstyled page-authoring and workspace-opening screens are now styled.
+
+Real-Chrome evidence: 33 sidebar routes × light/dark = 66 loads, with no alerts, console
+errors, ≥400 provider responses or stuck states; a cold full load is ready in 3–6s.
+Interactions without lasting changes: Content entry editor and preview; Mapping deep-link
+editor, where a binding was added, saved and persisted, then removed and saved back to
+the original two bindings; Sitemap canvas (10 pages); page-authoring component selection
+→ inspector fields, and page switch. Frozen install and `pnpm dedupe --check` pass.
+
+Open upstream follow-ups (non-blocking): attachments capture-retry rounds and about 53
+per-asset reads on `/mapping`.
 
 ## Results phase23 saved-state reconciliation — 2026-11-18
 
