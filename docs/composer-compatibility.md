@@ -47,7 +47,7 @@ The test route was `/about/static-header-sequence-65-final/`.
 | Header forward and build | One original HTTP 200 save and a qualified readback for `content-filesystem/nav-link/nav-about`. Actual Browse navigation and its original document-preview response verified the destination and rendered title/heading. Exact build and production HTML passed at `1885d7e38376c95e4b1cc090c21bd49a6d827e232f9e390b95913238b6a42cee` (15 routes, 143 assets). |
 | Forward restart | Separate `families/run-readonly.mjs` server/browser verified the destination and left the forward capture unchanged. |
 | Header inverse and build | Prepared from the successful forward proof and capture. One original HTTP 200 save and readback restored `/about/` in Header and Footer. Exact build and production HTML passed at `d2430712b55812d16d4be75c964df02affaf110fed6bd9aa6e2b15235e32cf14` (15 routes, 143 assets). |
-| Inverse restart | Separate read-only server/browser verified the restoration and left the inverse capture unchanged. The actual Content token/generation advanced 10 → 11 → 12 across the two saves. |
+| Inverse restart | Separate read-only server/browser verified the restoration and left the inverse capture unchanged. The Content token advanced 10 → 11 → 12. The record generation advanced 1 → 11 → 12 across the two saves. |
 
 This used [#65's sequencing alternative](https://github.com/zudolab/pinsel/issues/65),
 with the forward intent bound to the unchanged proof immediately after the static
