@@ -29,6 +29,7 @@ export function createDraftSettlement() {
   return {
     hold,
     get held() { return held; },
+    get pending() { return active.size; },
     track(promise) {
       const tracked = Promise.resolve(promise).catch(error => { hold(error); throw error; });
       active.add(tracked);
