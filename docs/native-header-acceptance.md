@@ -1,6 +1,6 @@
 # Portable Header and Knowledge reference acceptance
 
-This is executable acceptance tooling, not another editor. **Installed runtime acceptance is NOT_RUN.** Pure tests do not prove the browser, actual production output, or inverse. Run after the static-page/cold-workspace handoff and final immutable package selection. Existing failed external-pilot evidence remains separate and retained.
+Run this acceptance tooling after the static-page/cold-workspace handoff and immutable package selection. The [2026-11-20 checkpoint](composer-compatibility.md#package-s-installed-acceptance--2026-11-20) records Header label and Knowledge forward/restart/inverse/restart passes at Composer `e802741aaf51bae69b4db67ddc3d80494be61043`. At that pin the href pair stayed **NOT_RUN** ([#65](https://github.com/zudolab/pinsel/issues/65)). The [earlier href cycle](composer-compatibility.md#historical-acceptance-checkpoint--aa8a096--package-62f014f4) and its retained failed forward and read-only recovery belong to Composer `62f014f4ae5acfa10ca551c116be6e3a909310fe`. See the [current ledger](composer-compatibility.md#current-candidate-at-a-glance) for active-pin coverage.
 
 The runner edits one existing published Content owner per phase. It never creates a link, Note, Composition or page; initializes a workspace; publishes; mutates D1; delivers an inquiry; or invokes a model. Header labels and hrefs are separate forward/inverse pairs. Knowledge changes only its qualified Note reference; its title and excerpt stay independent.
 
@@ -65,7 +65,7 @@ The runner stops its server, captures again, permits only the exact field plus p
 
 After success, use that proof's `afterCapture` as the next before snapshot. Prepare a new config with the same kind, owner selector (`currentHref` for Header, `ref` for Knowledge) and `forwardProofPath` pointing to the successful forward proof. The preparer derives the inverse field/value; it requires the exact accepted forward-after digest and current complete owner before-image. Use a new intent and artifact directory and the same runtime command. Header href inverse uses the now-current href as its owner selector. Knowledge inverse must still resolve its original published Note. Each inverse has its own public capture/build proof and retains legitimate history/generations; no raw file restore or broad metadata normalization is permitted.
 
-If a response or inverse is uncertain, retain every artifact and stop. Reconcile through supported public readback and the original journal before another write. Do not rerun the original phase or recreate records to make the suite pass. The runner does not implement a generic resume or assume a missing response means no commit. Owner-data cutover, deployment and authenticated-provider acceptance remain separate holds.
+If a response or inverse is uncertain, retain every artifact and stop. Reconcile through supported public readback and the original journal before another write. Do not rerun the original phase or recreate records to make the suite pass. The runner does not implement a generic resume or assume a missing response means no commit. Deployment remains disabled. Authenticated full-CMS Assistant acceptance remains held in #58.
 
 Pure checks (no browser/native writes):
 
@@ -102,8 +102,8 @@ must bind the exact accepted capture, workspace, pack and renderer identity. Aft
 shutdown, the complete public capture must remain identical before it writes
 `READ_ONLY_RESTART_VERIFIED` proof. Preserve screenshots and the request journal.
 Run this after forward and again after inverse when claiming full restart coverage;
-it neither reruns a write nor rebuilds the already accepted digest output. The
-standalone restart command remains installed-runtime NOT_RUN until executed.
+it neither reruns a write nor rebuilds the already accepted digest output. Record
+each actual restart result against its exact source, install and capture.
 
 Header and Knowledge field runners fence navigation with the shared bounded browser
 quiescence and Composition continuation-readiness checks before and after reload,

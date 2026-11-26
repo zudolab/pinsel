@@ -95,12 +95,11 @@ from that reviewed capture. Detect concurrent change and refuse or retry; do not
 assemble snapshots from unrelated private-file reads. Edit/save/restart/capture/build
 must reproduce the reviewed state without reseeding it.
 
-Actual cutover is held: no current owner data export or authorized reachable cutover
-host was supplied. Known-data migration rehearsal is cloud-completable. For eventual
-cutover: rehearse, capture and verify final revision, import into
-staged state, validate content/references/rendering, then switch authority. On failure
-retain the old store and restore its authority. Never leave two active writers. This cloud task does
-not switch the owner's active editor or authorize execution on another computer.
+The owner confirmed that all prior Pinsel content was dummy data. The owner-data
+import and cutover closed as moot in [#57](https://github.com/zudolab/pinsel/issues/57#issuecomment-7049273622).
+The original History41 continuation and its input issue [#62](https://github.com/zudolab/pinsel/issues/62)
+also closed as moot. Known-data rehearsals use a separate stage and preserve any
+existing native workspace and history.
 
 ## Acceptance and retained checks
 
@@ -121,9 +120,11 @@ following documented recipes without prior conversation context.
 Keep approved-seed hashes, exact asset checks, safe Markdown/URL/reference validation,
 public-output exclusions, auth and revision guarantees. Keep a dedicated historical
 14-route migration proof when replacing obsolete design-fixed runtime assertions.
-Current CI has frozen-install/dedupe, no-deploy, assets, assembly/projection, site,
-type/unit, styleguide/editor/Worker, authentication, snapshot rehearsal, browser and
-unconditional migration-baseline gates. Tests are not passed merely by being listed.
+Current CI runs frozen install and dedupe, approved-seed, no-deploy, asset,
+assembly/projection, site, type/unit, styleguide, boundary, browser and strict
+migration/content gates. PR #68 removed the legacy editor/Worker, authentication
+and Hosted Content publication rehearsal steps. The browser lane mainly covers
+the public site, styleguide and visitor behavior. Native acceptance has its own evidence.
 
 No deployment, package publication, remote D1 mutation, domain change, real inquiry
 or email delivery is authorized. Existing build/test automation may run; inspect
@@ -139,7 +140,7 @@ Historical Note AI real-CLI acceptance **passed** on 2026-11-08 at Pinsel
 It covered staged body/title edits, actual preview, Apply, restart/Undo and conflicting
 Undo refusal. Preserve that pass; earlier cloud NOT_RUN notes do not erase it.
 
-The new full-adoption real-provider acceptance is **NOT_RUN**. Historical success
+Authenticated full-CMS Assistant acceptance [#58](https://github.com/zudolab/pinsel/issues/58) is **NOT_RUN**. Historical success
 does not prove new ownership/structural operations or credentials in this cloud.
 Run only with supported credentials/configuration actually available here, preserving
 explicit model/effort/tier. A fake provider proves deterministic integration only.
@@ -150,7 +151,7 @@ The in-product Assistant must receive architectural rules, selection, ownership,
 references and generated capability grammar through its actual context/tool path.
 This Markdown file alone does not establish that behavior.
 
-## Staged native workspace recipe (implementation acceptance pending)
+## Staged native workspace recipe
 
 For an existing `0.2.0` / `native-v1` workspace, follow the
 [explicit course-identity migration recipe](composer-course-migration.md). The new
@@ -194,10 +195,8 @@ run `pnpm --filter @pinsel/content authoring:dev --port 4191 --strict-port`.
 Keep this staged authoring state
 for restart testing; do not delete it as disposable output after editing.
 
-The previous Hosted Content launcher has been removed.
-Changing the repository's normal command does not migrate owner data or switch an
-already running owner editor. The staged native workspace still contains committed
-known inputs until a separately authorized owner-data import is completed.
+PR #68 removed the Hosted Content launcher. A fresh native stage starts from
+committed known inputs. Subsequent saves belong to that stage.
 
 Open the displayed loopback URL, choose Sitemap `main`, Lessons and Consultation.
 Check the nested section, intro and shared course-price ownership. Save, stop the
@@ -213,8 +212,8 @@ and renderer identities, managed Assets and the explicit prepared public-file li
 Build verifies that capture and writes a new `.native-builds/<digest>` directory,
 using captured public asset/CSS/script bytes. Existing output is refused rather than
 overwritten. Reopen the server and confirm saved edits remain unchanged by capture
-and build. These commands are a recipe, not a recorded end-to-end pass; use the ledger
-for actual installed-acceptance results.
+and build. Use this capture/build pair to verify saved CMS output. `pnpm build:site`
+builds the committed baseline. See the ledger for installed acceptance at each revision.
 
 ## Native model guidance (description metadata only)
 

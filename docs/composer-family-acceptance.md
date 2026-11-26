@@ -2,9 +2,10 @@
 
 The repo-relative tooling in `tests/native-authoring/families/` prepares and checks
 Results-year and FAQ-group authoring through the installed Composer UI. It is an
-acceptance harness, not another authoring implementation. **The complete installed
-family scenario is NOT_RUN.** Pure tests and source review do not establish an
-installed package pass. See the compatibility ledger for actual evidence.
+acceptance harness. The [2026-11-20 checkpoint](composer-compatibility.md#package-s-installed-acceptance--2026-11-20)
+records complete family and follow-up runs at Composer
+`e802741aaf51bae69b4db67ddc3d80494be61043`. See the [current ledger](composer-compatibility.md#current-candidate-at-a-glance)
+for active-pin coverage.
 
 After creation/configuration, follow the [owned rendering, three-state membership,
 static visitor and two-child order recipe](native-family-followup-acceptance.md).
@@ -73,7 +74,7 @@ corepack pnpm exec node tests/native-authoring/families/run-phase.mjs \
 No default package, stage, port or artifact location is guessed. Before server/browser work, `runtime-provenance.json` records Git HEAD/status, harness
 source hashes, intent/baseline file hashes, selected pin/stage/port, and resolved
 installation evidence without environment values. The runner verifies
-all four installed consumer pins, compares a new public capture to the entire
+both active installed consumer pins, compares a new public capture to the entire
 reviewed capture, starts its own loopback server, performs one phase, stops that
 server, captures again, and audits the exact allowed delta. It preserves failures
 and never performs an automatic inverse, delete, publication retry or cleanup.
@@ -192,8 +193,8 @@ pnpm exec vitest run --config tests/native-authoring/families/vitest.config.ts
 
 Runtime selectors, full sequence, publication, restart, visitor interactions and
 exact build outputs still require installed acceptance and separate evidence at the
-exact package and Pinsel revisions. Actual owner-data cutover and new authenticated
-model-provider acceptance remain held independently.
+exact package and Pinsel revisions. Authenticated full-CMS Assistant acceptance
+remains held in #58.
 
 A lightweight installed identity-shape check (no capture, build or native-store operation) is available through `corepack pnpm exec tsx --tsconfig packages/pinsel-content/tsconfig.scripts.json tests/native-authoring/families/installed-identity-readcheck.mjs`. The public host identity omits `manifestDigest`; public snapshot compilation independently verifies that captured manifest digest.
 

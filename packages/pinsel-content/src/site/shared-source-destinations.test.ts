@@ -1,12 +1,12 @@
 import { execFileSync } from "node:child_process";
-import { mkdtemp, mkdir, readdir, rm, symlink, writeFile } from "node:fs/promises";
+import { mkdtemp, mkdir, readdir, realpath, rm, symlink, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { expect, it } from "vitest";
 import { resolveSharedSourceDestinations } from "./shared-source-destinations";
 
 it("resolves aliases before rejecting source/target/evidence overlap without creating output", async () => {
-  const root = await mkdtemp(join(tmpdir(), "pinsel-shared-boundary-"));
+  const root = await realpath(await mkdtemp(join(tmpdir(), "pinsel-shared-boundary-")));
   try {
     const source = join(root, "source"), target = join(root, "target");
     await mkdir(source); await mkdir(target); await mkdir(join(source, "nested"));
@@ -22,7 +22,7 @@ it("resolves aliases before rejecting source/target/evidence overlap without cre
 });
 
 it("refuses evidence inside the target host or an unignored Git work tree", async () => {
-  const root = await mkdtemp(join(tmpdir(), "pinsel-shared-evidence-"));
+  const root = await realpath(await mkdtemp(join(tmpdir(), "pinsel-shared-evidence-")));
   try {
     const source = join(root, "source"), repo = join(root, "repo"), target = join(repo, "packages", "content");
     await mkdir(source); await mkdir(target, { recursive: true });

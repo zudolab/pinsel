@@ -8,7 +8,8 @@ installed Composer, Pinsel's real renderer and one explicit native workspace.
 Shared values remain Content-owned; parents own arrangement and constrained slots.
 Do not reseed authored state or treat a source generator as its authority. Preserve
 historical migration evidence, existing recovery guarantees and the no-deployment
-boundary. Owner-data cutover and new live-provider acceptance are separate holds.
+boundary. The owner-data cutover closed as moot in #57. Authenticated full-CMS
+Assistant acceptance remains held in #58.
 
 # Pinsel — repository rules
 
