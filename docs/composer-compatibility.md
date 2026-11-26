@@ -13,17 +13,60 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel integration | [Native page-edit recovery](#native-page-edit-recovery--2026-11-26), tracked in [#74](https://github.com/zudolab/pinsel/issues/74). |
-| Installed package / upstream attestation | `0ec2e6949a72daca8619aa863989732763702e84` / `d984f098ecc7fd1ea3f91d0ed8770add67704c72`. Previous source `af064e5fadb3a6035522a0f8828ec3c1e8f3b344` is retained in [CMS UX repin acceptance](#cms-ux-repin-acceptance--2026-11-22). |
+| Pinsel integration | [Native page renderer verification latency](#native-page-renderer-verification-latency--2026-11-26), tracked in [Composer #1000](https://github.com/Takazudo/zudo-composer/issues/1000). |
+| Installed package / upstream attestation | `623c292e3215d7a846721a82781f68ad1424bb3c` / `fec041aef6aea40449386928c9500ba5e6726514`. Previous pin evidence is retained in [Native page-edit recovery](#native-page-edit-recovery--2026-11-26). |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
-| Current installed checks | Both importers passed frozen install and dedupe. The fresh Cloud Chrome recovery proof verified both a durable refusal and an already-committed Remove. Mac acceptance remains open. |
+| Current installed checks | Both importers passed frozen install and dedupe. Cloud Chrome verified the normal edit flow, the same controlled reopen refusal as stock, and the exact offline output. The macOS timing check remains open. |
 | CMS UX repin main CI | [Run 44952067731](https://github.com/zudolab/pinsel/actions/runs/44952067731) at `2da915832870b468ad567424a1aa27404bfdd847` passed all four jobs. Vitest: 1024 passed, 19 skipped. Playwright: 99 passed, 15 skipped, mainly public site, styleguide and visitor coverage. Full native-CMS acceptance remains open. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
 | Results / FAQ families | At Composer `e802741aaf51bae69b4db67ddc3d80494be61043` on a fresh `notes-v1` stage: FAQ family `fresh-s-faq5-1148` (43 phases) and Results family `fresh-s-res1-1320` (45 phases) complete, with created/moved/restored builds, visitor checks, acceptance manifests and two-child order. The original History41 continuation closed as moot. See [#56](https://github.com/zudolab/pinsel/issues/56#issuecomment-7046662921) and [#62](https://github.com/zudolab/pinsel/issues/62). |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. At Composer `c5ffd410f74ba4b3aa003da068efeeae6e663c37`, the human, negative, response-loss recovery and static gates passed. Seven fake-provider Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
 | Header href | [Sequencing acceptance](#header-href-sequencing-acceptance--2026-11-26) passed at Pinsel `06fec356e878252e6933e90971ece9463d479c0c` on historical Composer `af064e5fadb3a6035522a0f8828ec3c1e8f3b344`. |
 | Open acceptance | Broader installed adoption remains open in [#55](https://github.com/zudolab/pinsel/issues/55) and [#51](https://github.com/zudolab/pinsel/issues/51). Authenticated full-CMS Assistant ([#58](https://github.com/zudolab/pinsel/issues/58)) is **NOT_RUN**. The owner confirmed all prior content was dummy data and [#57](https://github.com/zudolab/pinsel/issues/57#issuecomment-7049273622) closed as moot. Deployment remains disabled. |
+
+## Native page renderer verification latency — 2026-11-26
+
+[Composer #1000](https://github.com/Takazudo/zudo-composer/issues/1000) and
+[PR #1001](https://github.com/Takazudo/zudo-composer/pull/1001) address a
+second fingerprint of the same renderer graph within native page reads and
+edits. In Cloud instrumentation the second traversal took 594–736 ms. The
+verified identity is used only within its request, after loading the request
+modules. The next request rechecks the graph. The installed package source is
+`623c292e3215d7a846721a82781f68ad1424bb3c`, attested at
+`fec041aef6aea40449386928c9500ba5e6726514`. The contract remains
+`c0b452da075b66757c60bd0d721a47062d4354d0`.
+
+A controlled Note-tab disconnect in the first preview's freeze round after a
+committed insert returned `409 browser-dirty` on both stock
+`0ec2e6949a72daca8619aa863989732763702e84` and the exact candidate package.
+The insert had replied HTTP 200 and left one durable receipt. A manual refresh
+showed the saved node without replaying the insert. Its inverse Remove left a
+second receipt. Captures verified other owners and all 143 public files were
+unchanged. The earlier spontaneous 409 response body was unavailable.
+
+The independently installed candidate completed nine normal insert, field
+save, and Remove operations in Cloud Chrome 156 on Node 24.13.1 and pnpm
+11.5.2. One-tab warm refresh was 5.35 s and Remove was 13.92 s to usable.
+With three tabs, warm refresh was 4.62 s. The Remove receipt file appeared at
+6.97 s, its HTTP 200 confirmed the commit at 7.00 s, and the page was usable
+at 18.99 s. The stock three-tab sample received HTTP 200 at 11.39 s and was
+usable at 29.56 s. These are individual observations with variable host work.
+The stopped capture `0ceb7e2638acfa2a5568db8ccdf94f33fb2c5d918aca019651f86be62199eda4`
+verified nine new unique receipts, 178 unrelated compositions, unchanged
+Content/Mapping/Sitemap, 14 built routes and 143 byte-exact public files.
+
+For the Mac timing check, use a new checkout, fresh known-data `notes-v1`, and
+fresh Chrome profile on a separate loopback origin. Follow the
+[native Chrome recipe](native-authoring-acceptance.md#concurrent-page-edit-recovery-in-native-chrome).
+Open Lessons through Main Sitemap. Time a warm refresh and one Remove alone,
+then repeat on a second marked Paragraph with the Mapping and Note tabs fully
+settled. Record click, request start, receipt time, next `document-preview`
+response, and **Saved snapshot rendered** separately. Preserve exact failure
+codes and the operation UUID when the response is uncertain. Compare stopped
+capture/build and verify the other owners. Keep existing Mac data separate.
+The Mac pre-commit delay and the separate [Mapping investigation #75](https://github.com/zudolab/pinsel/issues/75)
+remain open.
 
 ## Native page-edit recovery — 2026-11-26
 
@@ -33,7 +76,7 @@ and [Pinsel #74](https://github.com/zudolab/pinsel/issues/74) tracking the two b
 Composer merged as `e0520fe5d1b008b2194f01bad4bce4c0f178709f`. Its
 [reviewed PR checks](https://github.com/Takazudo/zudo-composer/actions/runs/45878780292)
 and [exact main CI](https://github.com/Takazudo/zudo-composer/actions/runs/45881918627)
-record the two verification boundaries. Pinsel consumes the exact attested package source `0ec2e6949a72daca8619aa863989732763702e84` with contract
+record the two verification boundaries. Pinsel #76 used the exact attested package source `0ec2e6949a72daca8619aa863989732763702e84` with contract
 `c0b452da075b66757c60bd0d721a47062d4354d0`.
 
 Pinsel baseline `c900077faa613b94b8aed3ced29db81b85231167` at `af064e5fadb3a6035522a0f8828ec3c1e8f3b344` reproduced
