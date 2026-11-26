@@ -164,6 +164,10 @@ records and release history; deletion/recovery requires its own explicit reviewe
 operation. Failed external pilot artifacts remain separate and must not be renamed
 as successful portable phases.
 
+For [#65's sequencing alternative](native-header-acceptance.md#header-href-immediately-after-static-acceptance),
+run Header href forward immediately from this exact proof and unchanged post-build
+capture. Further edits can advance the stage digest and invalidate that input.
+
 Pure checks, without a server or native writes:
 
 ```sh

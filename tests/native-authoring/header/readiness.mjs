@@ -7,3 +7,7 @@ export function createHeaderReadiness(page,{composition,settlement,persist,check
   await settlement.beforeAdvance();check();composition.check();composition.assertSettled();
  };
 }
+
+export function isHeaderHrefForward(intent){
+ return intent.field==='nav-link-href'&&intent.direction==='forward';
+}

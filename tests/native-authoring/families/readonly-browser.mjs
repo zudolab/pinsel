@@ -19,6 +19,7 @@ import {compositionDerivedReadGate} from './composition-output.mjs';
 import {releaseLifecycle} from './release-lifecycle.mjs';
 import {requiresCapturedHostPreview,classifyRead,closingReadAction,busyReadTracker,assertReadScope,validateReadIntent,activeReadback,assertPreviewIdentity,validateHeaderRestart} from './readonly-proof.mjs';
 import {verifySavedHeader,verifySavedKnowledge} from '../header/driver.mjs';
+import {isHeaderHrefForward} from '../header/readiness.mjs';
 import {verifyFamilyRendering} from './verify-render.mjs';
 const [bundlePath,bundleHash,artifacts,base] = process.argv.slice(2);
 const inputs=await readFrozenBundle(bundlePath,bundleHash);
@@ -113,9 +114,9 @@ try {
     let publicHistory,targetPreview;
     if(hrefReads){const ref=accepted.result.ref;await page.goto(`${base}/content?provider=${encodeURIComponent(ref.providerId)}&model=${encodeURIComponent(ref.modelId)}&entry=${encodeURIComponent(ref.recordId)}`);await expect.poll(()=>{try{hrefReads.finish();return true;}catch{return false;}},{timeout:180000}).toBe(true);publicHistory=hrefReads.finish();await expect(page.locator(`[data-history-entry="${ref.recordId}"] [data-revision-id="${publicHistory.history.revisions[0].id}"]`)).toHaveCount(1);await persist({phase:'saved-href-public-history-verified',publicHistory});}
     const options={base,snapshot,intent:accepted.intent,record:accepted.result.record,expect,shot,navigation:async boundary=>{
-      // The Note destination preview never reaches network idle, so every Knowledge restart settles its terminal reads explicitly.
-      if((boundary==='after-knowledge-preview'&&(recovered||accepted.intent.kind==='knowledge-reference'))||(recovered&&hrefReads&&boundary==='after-header-preview')){
-        if(hrefReads){assert([...previewPaths].some(path=>path.replace(/\/$/,'')===accepted.intent.value.replace(/\/$/,'')),'Exact Header target preview required');}else{
+      const headerDestination=boundary==='after-header-preview'&&isHeaderHrefForward(accepted.intent);
+      if((boundary==='after-knowledge-preview'&&(recovered||accepted.intent.kind==='knowledge-reference'))||headerDestination){
+        if(headerDestination){assert([...previewPaths].some(path=>path.replace(/\/$/,'')===accepted.intent.value.replace(/\/$/,'')),'Exact Header target preview required');}else{
         const note=snapshot.project.providers.content.find(p=>p.id===accepted.intent.value.providerId).entries.find(e=>e.id===accepted.intent.value.recordId&&e.modelId==='note');
         const target='/notes/'+note.values['note-slug'];assert([...previewPaths].some(path=>path.replace(/\/$/,'')===target),'Exact target preview response required');}
         return settleTerminalReads({fence:async()=>{terminalClosing=true;await persist({phase:'terminal-read-admission-fenced'});},status:()=>({pending:originalPending+composition.readiness.pending,challenges:composition.readiness.outstanding,busy:busyReads.outstanding,epoch:readEpoch}),check:()=>{lifecycle.requireOpen();composition.check();if(blocked)throw blocked;},drain:async()=>{await lane.drain();await composition.drain();composition.assertSettled();},persist,diagnostics:diagnostics.snapshot});

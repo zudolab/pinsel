@@ -1,6 +1,14 @@
 # Portable Header and Knowledge reference acceptance
 
-Run this acceptance tooling after the static-page/cold-workspace handoff and immutable package selection. The [2026-11-20 checkpoint](composer-compatibility.md#package-s-installed-acceptance--2026-11-20) records Header label and Knowledge forward/restart/inverse/restart passes at Composer `e802741aaf51bae69b4db67ddc3d80494be61043`. At that pin the href pair stayed **NOT_RUN** ([#65](https://github.com/zudolab/pinsel/issues/65)). The [earlier href cycle](composer-compatibility.md#historical-acceptance-checkpoint--aa8a096--package-62f014f4) and its retained failed forward and read-only recovery belong to Composer `62f014f4ae5acfa10ca551c116be6e3a909310fe`. See the [current ledger](composer-compatibility.md#current-candidate-at-a-glance) for active-pin coverage.
+The [2026-11-26 sequencing run](composer-compatibility.md#header-href-sequencing-acceptance--2026-11-26)
+verified Header href forward, exact build, restart, inverse, exact build and inverse
+restart on Composer `af064e5fadb3a6035522a0f8828ec3c1e8f3b344`.
+The [2026-11-20 checkpoint](composer-compatibility.md#package-s-installed-acceptance--2026-11-20)
+records Header label and Knowledge forward/restart/inverse/restart passes at Composer
+`e802741aaf51bae69b4db67ddc3d80494be61043`. The href pair stayed **NOT_RUN** at that pin.
+The [earlier href cycle](composer-compatibility.md#historical-acceptance-checkpoint--aa8a096--package-62f014f4)
+and its retained failed forward and read-only recovery belong to Composer
+`62f014f4ae5acfa10ca551c116be6e3a909310fe`.
 
 The runner edits one existing published Content owner per phase. It never creates a link, Note, Composition or page; initializes a workspace; publishes; mutates D1; delivers an inquiry; or invokes a model. Header labels and hrefs are separate forward/inverse pairs. Knowledge changes only its qualified Note reference; its title and excerpt stay independent.
 
@@ -28,7 +36,7 @@ For Knowledge, supply its existing exact qualified owner and an existing publish
 {"kind":"knowledge-reference","field":"knowledge-card-note","ref":{"providerId":"content-filesystem","modelId":"knowledge-card","recordId":"ACTUAL_EXISTING_ID"},"value":{"providerId":"content-filesystem","modelId":"note","recordId":"ACTUAL_PUBLISHED_NOTE_ID"}}
 ```
 
-The actual Mapping must bind the reference with `route-link`, while title/description remain independently bound. The qualified destination must compile to exactly one dynamic route. Build the before snapshot first for Knowledge or Header href phases:
+The actual Mapping must bind the reference with `route-link`, while title/description remain independently bound. The qualified destination must compile to exactly one dynamic route. Build the before snapshot first for Knowledge. Header href uses the exact build produced by the static sequence:
 
 ```sh
 PINSEL_AUTHORING_STAGE=notes-v1 corepack pnpm --filter @pinsel/content authoring:build -- /absolute/new-before.json
@@ -41,6 +49,30 @@ node tests/native-authoring/header/prepare.mjs /absolute/config.json /absolute/n
 ```
 
 Inspect the generated owner, exact field/value and before capture. Preparation writes only the exclusive intent file.
+
+### Header href immediately after static acceptance
+
+This uses [#65's sequencing alternative](https://github.com/zudolab/pinsel/issues/65).
+Use one clean committed source revision, one immutable install and one fresh
+known-data stage. Activate the reviewed first local baseline and verify its active
+identity through a separate read-only restart. Complete the fifteen
+[static-page phases](native-route-acceptance.md#portable-static-page-sequence),
+build their final capture with `authoring:build`, recapture without changes and run
+`tests/native-authoring/static/verify-static.mjs`.
+
+Use that exact post-build capture and its generated
+`COMPILED_AND_EXACT_BUILD_VERIFIED` proof as the Header forward inputs. Run Header
+forward next, before any other write advances the stage digest. After a successful
+forward, run the standalone read-only restart on its exact `afterCapture`. Prepare
+the explicit inverse from that successful forward proof and capture, then run the
+inverse and its own read-only restart. Each write verifies its exact snapshot build
+and production HTML. Preserve the original journals, captures and builds for every
+attempt.
+
+The strict Header digest check binds the static proof to the forward input.
+Refreshing a proof at an arbitrary later stage digest remains unsupported. On a
+hold, retain the attempt and reconcile the actual public readback before any
+further write.
 
 ## Run one phase
 
@@ -112,7 +144,12 @@ write dispatch also require Composition readiness; a pending read is awaited, no
 misclassified as a canonical write. Failures and unfinished derived-output
 challenges still hold the run. The restart verifier supplies the same navigation
 boundary and retains its original-response, busy-read and no-mutation guards.
-These source checks are not a new installed runtime acceptance result.
+After Header href forward verifies the exact destination response and iframe, the
+terminal check fences further writes and settles the original authoritative reads,
+outstanding derived Composition challenges and marked retries before close. The
+forward restart uses the read-only terminal fence after the same destination
+assertions. Pre-navigation readiness and exact digest, capture and build checks
+remain required.
 
 For an acknowledged Knowledge save followed by terminal preview timeout, use the
 [read-only saved-reference recovery recipe](native-knowledge-recovery.md). Preserve

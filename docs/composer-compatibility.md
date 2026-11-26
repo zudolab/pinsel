@@ -18,11 +18,51 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
 | Current installed checks | Both active consumers, `packages/pinsel-content` and `packages/pinsel-ui`, passed frozen install and dedupe. [PR #70](https://github.com/zudolab/pinsel/pull/70) records real Chrome smoke across 33 routes in light and dark, Content editing UI, Mapping save/reload/restoration, Sitemap and Inspector. |
-| Pinsel main CI | [Run 44952067731](https://github.com/zudolab/pinsel/actions/runs/44952067731) at `2da915832870b468ad567424a1aa27404bfdd847` passed all four jobs. Vitest: 1024 passed, 19 skipped. Playwright: 99 passed, 15 skipped, mainly public site, styleguide and visitor coverage. Full native-CMS acceptance remains open. |
+| CMS UX repin main CI | [Run 44952067731](https://github.com/zudolab/pinsel/actions/runs/44952067731) at `2da915832870b468ad567424a1aa27404bfdd847` passed all four jobs. Vitest: 1024 passed, 19 skipped. Playwright: 99 passed, 15 skipped, mainly public site, styleguide and visitor coverage. Full native-CMS acceptance remains open. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
 | Results / FAQ families | At Composer `e802741aaf51bae69b4db67ddc3d80494be61043` on a fresh `notes-v1` stage: FAQ family `fresh-s-faq5-1148` (43 phases) and Results family `fresh-s-res1-1320` (45 phases) complete, with created/moved/restored builds, visitor checks, acceptance manifests and two-child order. The original History41 continuation closed as moot. See [#56](https://github.com/zudolab/pinsel/issues/56#issuecomment-7046662921) and [#62](https://github.com/zudolab/pinsel/issues/62). |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. At Composer `c5ffd410f74ba4b3aa003da068efeeae6e663c37`, the human, negative, response-loss recovery and static gates passed. Seven fake-provider Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
-| Open acceptance | Header href sequencing ([#65](https://github.com/zudolab/pinsel/issues/65)) and authenticated full-CMS Assistant ([#58](https://github.com/zudolab/pinsel/issues/58), **NOT_RUN**). The owner confirmed all prior content was dummy data and [#57](https://github.com/zudolab/pinsel/issues/57#issuecomment-7049273622) closed as moot. Deployment remains disabled. |
+| Header href | [Sequencing acceptance](#header-href-sequencing-acceptance--2026-11-26) passed at Pinsel `06fec356e878252e6933e90971ece9463d479c0c` on the active Composer pin. |
+| Open acceptance | Broader installed adoption remains open in [#55](https://github.com/zudolab/pinsel/issues/55) and [#51](https://github.com/zudolab/pinsel/issues/51). Authenticated full-CMS Assistant ([#58](https://github.com/zudolab/pinsel/issues/58)) is **NOT_RUN**. The owner confirmed all prior content was dummy data and [#57](https://github.com/zudolab/pinsel/issues/57#issuecomment-7049273622) closed as moot. Deployment remains disabled. |
+
+## Header href sequencing acceptance — 2026-11-26
+
+The fresh, fixed source run used Pinsel `06fec356e878252e6933e90971ece9463d479c0c`,
+Composer `af064e5fadb3a6035522a0f8828ec3c1e8f3b344`, contract
+`c0b452da075b66757c60bd0d721a47062d4354d0`, Node 24.19.0, pnpm 11.5.2 and locked
+Chromium 1248. Frozen install, dedupe, approved seed, assets and no-deploy passed.
+All three stage destinations were absent before explicit `notes-v1` initialization.
+The first local activation used the exact reviewed 246 published identities. A
+separate active-identity restart reproduced the active revision/build and left
+capture `bc74357adb214ec36a797dfde85f806cb91efb079962c037a8f70047263eedf0` unchanged.
+
+All 15 `static/prepare.mjs` and `static/run-phase.mjs` phases passed. An exact
+`authoring:build`, unchanged `authoring:capture` and `static/verify-static.mjs`
+verified the qualified page, title, Section heading, 15 routes and 143 assets at
+`f10118643f64611432b5f271362ea2a87ca17ad3c79c63ee3fb60663dbc262af`.
+The test route was `/about/static-header-sequence-65-final/`.
+
+| Gate | Result |
+| --- | --- |
+| Header forward and build | One original HTTP 200 save and a qualified readback for `content-filesystem/nav-link/nav-about`. Actual Browse navigation and its original document-preview response verified the destination and rendered title/heading. Exact build and production HTML passed at `1885d7e38376c95e4b1cc090c21bd49a6d827e232f9e390b95913238b6a42cee` (15 routes, 143 assets). |
+| Forward restart | Separate `families/run-readonly.mjs` server/browser verified the destination and left the forward capture unchanged. |
+| Header inverse and build | Prepared from the successful forward proof and capture. One original HTTP 200 save and readback restored `/about/` in Header and Footer. Exact build and production HTML passed at `d2430712b55812d16d4be75c964df02affaf110fed6bd9aa6e2b15235e32cf14` (15 routes, 143 assets). |
+| Inverse restart | Separate read-only server/browser verified the restoration and left the inverse capture unchanged. The Content token advanced 10 → 11 → 12. The record generation advanced 1 → 11 → 12 across the two saves. |
+
+This used [#65's sequencing alternative](https://github.com/zudolab/pinsel/issues/65),
+with the forward intent bound to the unchanged proof immediately after the static
+chain. Arbitrary later-digest proof refresh remains unsupported. The run covers
+this exact Header href cycle and its static prerequisite.
+
+The first attempt at Pinsel `141cd4f80d141062fa634b7ab453bdacb0d7ef19` remains
+**FAIL**. All 15 static phases and their exact build passed there. The original
+Header save returned HTTP 200 and was reconciled by qualified readback and stopped
+capture `acc24364c1d9a76164a756236b9370a8a8df104867362c167314b67693a25047`.
+The browser timed out at the post-preview page-wide network-idle wait. That attempt
+produced no accepted forward build/restart or inverse proof. The runner fix
+settles authoritative reads after qualifying the destination. The passing run used
+a different fresh stage and retained the first stage and its original journal.
+See [PR #73](https://github.com/zudolab/pinsel/pull/73) for the verification record.
 
 ## CMS UX repin acceptance — 2026-11-22
 
