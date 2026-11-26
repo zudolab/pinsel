@@ -2,7 +2,7 @@
 
 This defines a separately sealed second installation transition. The commands below require manager-approved preparation and runtime evidence for
 each installation. The c5 rehearsal and phase13 pass are recorded in the
-[compatibility ledger](composer-compatibility.md#current-c5-installed-checkpoint--2026-11-17).
+[compatibility ledger](composer-compatibility.md#historical-c5-installed-checkpoint--2026-11-17).
 The first transition remains the sealed boundary12 descriptor and its original
 package/source identities. A second transition is allowed only after genuine
 `MAPPING_BINDING_RECOVERY_VERIFIED` evidence for saved Results phase12.

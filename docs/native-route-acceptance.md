@@ -5,8 +5,9 @@ This extends [the portable acceptance runner](native-authoring-acceptance.md) an
 exact fourteen-route build passed. Note/Course creation, local publication and the
 fifteen-route production visitor check passed with Composer `bc20ea554d5d8de92934c9bf4ec989229d23047e`;
 see the [pin-qualified compatibility ledger](composer-compatibility.md#first-native-publication-and-production-visitor-acceptance).
-Static-page, Knowledge-reference and family scenarios remain incomplete, and the
-current package's new value-policy acceptance is separate from that earlier pass.
+The [2026-11-20 checkpoint](composer-compatibility.md#package-s-installed-acceptance--2026-11-20)
+records later static-page, Knowledge-reference and family passes at Composer
+`e802741aaf51bae69b4db67ddc3d80494be61043`. See the [current ledger](composer-compatibility.md#current-candidate-at-a-glance) for the active pin and its coverage.
 `tests/native-authoring/routes.mjs` supplies UI helpers; it does not start a server,
 initialize a workspace, select authority, or constitute a completed live scenario.
 
@@ -76,7 +77,7 @@ to the site's explicitly authored navigation; edit the supported navigation reco
 when inclusion is intended. Check canonical/title/description, nested owner-qualified
 selection, a local semantic edit/save/reload, and a new exact static capture/build.
 
-## Portable static-page sequence (source tooling; runtime NOT_RUN)
+## Portable static-page sequence
 
 `tests/native-authoring/static/` implements the explicit static scenario above.
 It uses the installed public Composer compiler and the actual Pinsel component pack;
@@ -380,7 +381,7 @@ Generate provenance as `{source, installed, composer, stage}`, where `source` is
 actual `sourceIdentity(repoRoot)` result from `header/provenance.mjs`, and `installed`
 is the actual `assertInstalledPin(repoRoot, composer)` result from
 `families/runtime-preflight.mjs`. These must describe the clean committed checkout
-that will run acceptance, including all tracked source bytes, four installed roots
+that will run acceptance, including all tracked source bytes, both active installed roots
 and installed-lock identity. Do not substitute hashes from a sibling checkout.
 
 Freeze the bridge, both captures, identity JSON and provenance JSON in an absolute
@@ -477,8 +478,9 @@ Mapping selection and parent slot, create the Content record, and place/referenc
 it through the supported Mapping/Sitemap/Composition UI. Record whether the existing
 query automatically includes it or explicit pins/attachments are required. Verify
 its heading, ordered children and affected routes; do not substitute unrelated
-wrapper components. These live workflows are still pending. Historical model
-counts describe seed data, not an enforced maximum.
+wrapper components. See the [2026-11-20 checkpoint](composer-compatibility.md#package-s-installed-acceptance--2026-11-20)
+for the earlier live workflows and their exact pin. Historical model counts
+describe seed data, not an enforced maximum.
 
 A collection used as a singleton remains a collection unless its schema says
 otherwise. New Entry/duplicate may therefore be available. Rehearse duplicate

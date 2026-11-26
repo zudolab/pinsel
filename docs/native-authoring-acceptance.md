@@ -8,15 +8,19 @@ interruption/recovery PASS270s, and the complete seven-case fake-provider Assist
 run PASS3455s. These are historical, pin-qualified results—not completion of all
 T5/T6/T7 requirements or authenticated inference.
 
-The current package is `c5ffd410f74ba4b3aa003da068efeeae6e663c37`. At Pinsel
+See the [compatibility ledger](composer-compatibility.md#current-candidate-at-a-glance)
+for the current immutable pin and its recorded coverage. Historically, with Composer
+`c5ffd410f74ba4b3aa003da068efeeae6e663c37` at Pinsel
 `66865aeb1dab917057b1186c2a584855a662b19c`, full human acceptance passed1001s,
 seven semantic refusals passed277s, retained authored-static-page restart/build
 passed173s and its production visitor passed57s. The Results consumer at
 `25e49398e94728a7be2c062972b5fecbdc384c87` passed phases13/14 after the distinct
-phase12 recovery and sealed second installation transition. Current response-loss
-recovery, fake-provider Assistant reruns and the remaining Results/FAQ scenarios
-are still pending. See the [current compatibility checkpoint](composer-compatibility.md#current-c5-installed-checkpoint--2026-11-17)
-for identities, original failures, recovery qualifications and current progress.
+phase12 recovery and sealed second installation transition. See the
+[historical c5 checkpoint](composer-compatibility.md#historical-c5-installed-checkpoint--2026-11-17)
+for original failures and recovery qualifications. The later
+[2026-11-20 checkpoint](composer-compatibility.md#package-s-installed-acceptance--2026-11-20)
+records its own fresh-stage recovery, fake-provider Assistant and Results/FAQ passes
+at Composer `e802741aaf51bae69b4db67ddc3d80494be61043`.
 
 Use Node 24 and pnpm 11.5.2, an immutable Composer Git pin, and a **verified disposable
 stage containing known data**. Use the fresh-checkout bootstrap below, or follow
@@ -49,13 +53,13 @@ not new c5 browser runs or proof for every component.
 | Home | Full run renders shared Course changes on Home and Lessons; independent Header label cycle has forward/inverse/restart/build proofs under `docs-operator-0180/header-*`. | This does not establish selection of every Home component. Header href remains its separate recipe. |
 | Lessons / Consultation | Full run's `inspect-*` evidence matches rendered target, semantic tree and Inspector owner; local edits/insertion, shared Course values, reload/restart and restoration pass. | Parent arrangement and Content ownership have distinct proofs; no blanket permission to edit mapped values locally. |
 | About | Baseline build/visitor coverage; static phases13–15 reparent the new page under About and update/publish its metadata. The aa8 owner matrix selects the existing About breadcrumb. | Child reparenting and existing-page selection are separate proofs. |
-| Results | `docs-operator-0180/results-family/00-0014ca2` through `10` cover existing family preparation; phase11's separately recovered Mapping proof passed394s at `11-recovery-ca600a1/recovery-sequence-proof.json`; phase12 has its distinct saved-binding recovery, followed by c5 phases13/14 and history15. | Original phase11 failures remain failures. Completed placed-family selection/render/order/static proof is still pending the family sequence. |
+| Results | `docs-operator-0180/results-family/00-0014ca2` through `10` cover existing family preparation; phase11's separately recovered Mapping proof passed394s at `11-recovery-ca600a1/recovery-sequence-proof.json`; phase12 has its distinct saved-binding recovery, followed by c5 phases13/14 and history15. | Original phase11 failures remain failures. The historical c5 sequence did not complete the placed family. Later placed-family evidence belongs to the [2026-11-20 checkpoint](composer-compatibility.md#package-s-installed-acceptance--2026-11-20). |
 | Voices | Baseline exact build/static visitor; aa8 owner matrix verifies the page breadcrumb across preview, tree and Inspector. | One owner is verified; this does not establish every Voices component or a new c5 selection run. |
 | FAQ | Complete Assistant run selects detailed `faq-item/faq-exam-01` on `/faq/`, reviews the exact candidate, applies and undoes. | New-group/child membership and ordered-family acceptance remain separate. |
 | Notes / detail | Baseline index/detail rendering; complete Assistant run selects `note/exam-schedule` body on its detail route and applies/undoes. | This does not establish every index/detail component's selection. New Note publication evidence retains its separately recorded pin. |
 | Contact | Full run verifies shared option labels, stable Course links and query behavior. | Visitor behavior does not prove selection of every Contact-owned component. |
 | 404 | `/404.html` is included in baseline build/visitor evidence; the aa8 matrix verifies `not-found-block/block` selection. | One owner is verified; the matrix remains pin-qualified to aa8. |
-| Authored static page | Accepted phase01–15 chain under `t6-static-sequence-1/`, including separately recovered proofs where original attempts failed; actual create/Section/title/source/metadata/navigation/reparent/publication operations. | Phase09's exact build and `static09-production-visitor-1/proof.json` cover16routes/143assets. Final phase15 and subsequent retained installation runs have separate proofs. Current c5 `static15-retained-c5-1` / `static15-production-visitor-c5-1` verify16routes/143assets after the explicit closed Header-cycle transition; the earlier snapshot cannot stand in for that proof. |
+| Authored static page | Accepted phase01–15 chain under `t6-static-sequence-1/`, including separately recovered proofs where original attempts failed; actual create/Section/title/source/metadata/navigation/reparent/publication operations. | Phase09's exact build and `static09-production-visitor-1/proof.json` cover16routes/143assets. Final phase15 and subsequent retained installation runs have separate proofs. Historical c5 `static15-retained-c5-1` / `static15-production-visitor-c5-1` verify16routes/143assets after the explicit closed Header-cycle transition; the earlier snapshot cannot stand in for that proof. |
 
 The static chain's final accepted phase15 capture is
 `3777470221d254f0dea6134a30c4515e4647c2d1932542674359d85ef8fe22ab`.
@@ -82,7 +86,8 @@ pnpm exec playwright install chromium
 node --test tests/native-authoring/proof.test.mjs
 ```
 
-The runner checks all four consumer manifests and the lockfile for the supplied
+The runner checks both active consumer manifests (`packages/pinsel-content` and
+`packages/pinsel-ui`) and the lockfile for the supplied
 40-character Composer SHA. Use the exact installed pin from the ledger; do not use
 sibling source, a mutable branch or a copied package. Chromium uses Playwright's
 installed browser by default. If needed, set `NATIVE_ACCEPTANCE_CHROMIUM` to an

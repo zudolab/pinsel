@@ -2,9 +2,9 @@
 
 Website for Pinsel (online preparation classes for German art universities). It is built as static HTML with ZFB. Composer adoption is extending authoring from Content records to Sitemap pages, nested components and explicit shared ownership.
 
-**Status: native Composer adoption in progress; not deployed.** For an already staged native workspace, run `pnpm dev` (or `pnpm dev:dogfood`) and open **http://127.0.0.1:4190/composer?native=1**. Startup validates existing authority and refuses missing/incomplete state; it never initializes or reseeds. Known-input rehearsal initialization and exact capture/build commands are in [the adoption guide](docs/composer-adoption.md). Browser acceptance and owner-data cutover remain separate: committed seed inputs are not the owner's latest draft.
+**Status: native Composer adoption in progress; not deployed.** For an already staged native workspace, run `pnpm dev` (or `pnpm dev:dogfood`) and open **http://127.0.0.1:4190/composer?native=1**. Startup validates existing authority and refuses missing/incomplete state; it never initializes or reseeds. For a fresh checkout, initialize a known-data stage explicitly using [the adoption guide](docs/composer-adoption.md). The owner confirmed that prior prototype content was dummy data, and [#57](https://github.com/zudolab/pinsel/issues/57) closed without a cutover.
 
-Native AI acceptance is still in progress; publication/delivery remains disabled.
+Authenticated full-CMS Assistant acceptance is **NOT_RUN** ([#58](https://github.com/zudolab/pinsel/issues/58)). Delivery remains disabled. See the [compatibility ledger](docs/composer-compatibility.md#current-candidate-at-a-glance) for package-specific browser coverage.
 
 ## Stack
 
@@ -23,6 +23,7 @@ CI runs the baseline generators in this order (`.github/workflows/ci.yml`, job `
 | Command | What it does |
 | --- | --- |
 | `pnpm dev` / `pnpm dev:dogfood` | Validate and open the existing native Composer workspace without initialization |
+| `pnpm --filter @pinsel/content authoring:init` | Explicitly initialize a fresh stage from committed inputs after checking that all destinations are absent |
 | `pnpm --filter @pinsel/content authoring:capture -- <new-file>` | Capture saved native authority after stopping the editor |
 | `pnpm --filter @pinsel/content authoring:build -- <snapshot>` | Build only the captured native state into an isolated output directory |
 | `pnpm install --frozen-lockfile` / `pnpm dedupe --check` | Install the pinned workspace and confirm there are no duplicate identities |
@@ -31,7 +32,7 @@ CI runs the baseline generators in this order (`.github/workflows/ci.yml`, job `
 | `pnpm content:assemble` | Assemble `content/entries/**` and the structure into `.site-project/site-project.json` and `baseline.json` |
 | `pnpm content:project` | Compile the project (`compileStaticSite`) into the ZFB route data `apps/site/data/routes.generated.ts` |
 | `pnpm content:check` | Plan equals `tests/golden/routes.snapshot.json` (byte-exact while there is no `content/snapshot.json`, structure-only after that) |
-| `pnpm build:site` | `zfb build` of the public site into `apps/site/dist` |
+| `pnpm build:site` | Build the committed baseline into `apps/site/dist` |
 | `pnpm check` | `assets:verify` + `content:assemble` + `content:project` + `typecheck` + `test` (vitest) |
 | `pnpm sg:check` / `pnpm build:sg` | Check the generated story shims, registry and token manifest, then build the styleguide |
 | `pnpm check:token-layers` | Every design token in the built styleguide preview and site CSS is inside its cascade layer |

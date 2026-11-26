@@ -4,9 +4,9 @@ These are the decisions, identifiers and one-time actions needed before Pinsel c
 
 ## Current status
 
-- **Authoring is local only.** `pnpm dev` runs the native Composer workspace; see [Composer adoption](composer-adoption.md). Nothing is deployed, and no npm release or real email delivery exists.
-- **The publication/delivery path is stopped.** No delivery provider or scheduled delivery is wired in. Native snapshots are built only locally with `pnpm --filter @pinsel/content authoring:build`.
-- **Composer** is consumed through two distinct package-root git pins, `zudo-composer#13ed855a3268d91c114c3f5ee167d9ace9078d57` and `@zudo-composer/component-contract#c0b452da075b66757c60bd0d721a47062d4354d0`; see [dependencies](dependencies.md#current-state).
+- **Authoring is local only.** `pnpm dev` opens an existing native Composer workspace after explicit initialization; see [Composer adoption](composer-adoption.md). Nothing is deployed, and no npm release or real email delivery exists.
+- **The publication/delivery path is stopped.** No delivery provider or scheduled delivery is wired in. Verify saved CMS output locally with `authoring:capture` and `authoring:build` from `@pinsel/content`.
+- **Composer** and its component contract use immutable Git pins in `packages/pinsel-content` and `packages/pinsel-ui`. See the [current compatibility ledger](composer-compatibility.md#current-candidate-at-a-glance).
 
 ## Hosting and identity
 
@@ -34,7 +34,7 @@ The inputs below are decisions of the stopped publication design and become live
 
 ## Local acceptance still open
 
-- Native AI acceptance with a real provider is separate from this document; fake-provider success is not real CLI or model success.
+- Authenticated full-CMS Assistant acceptance is **NOT_RUN** ([#58](https://github.com/zudolab/pinsel/issues/58)).
 - Not live-tested: delivery, Workers Builds and contact delivery.
 
 ## Resolved

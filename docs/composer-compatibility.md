@@ -17,12 +17,12 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 | Installed package / upstream attestation | Distributed source S `af064e5fadb3a6035522a0f8828ec3c1e8f3b344` / attestation E `1919889624894a19dd1b754db4306ee6c7cfda65` (repinned 2026-11-22 from `e802741aaf51bae69b4db67ddc3d80494be61043` / `9d43eb32fa7399c3618443a1aeffd3db64115cfd`; earlier repinned 2026-11-20 from `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660`; see [Option B T1 package repin](#option-b-t1-package-repin)) |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
-| Current upstream checks | Public/CMS/full typecheck PASS128s; independent complete782-file repack; [current-head CI44118271141 PASS](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141) |
-| Current installed checks | Four immutable pins, frozen installation and dedupe pass. Public capture PASS13s;1275 raw files unchanged; only snapshot/pack/renderer digests change. Installed Mapping phase13 PASS260s and full human regression PASS1001s, both independently audited. |
+| Current installed checks | Both active consumers, `packages/pinsel-content` and `packages/pinsel-ui`, passed frozen install and dedupe. [PR #70](https://github.com/zudolab/pinsel/pull/70) records real Chrome smoke across 33 routes in light and dark, Content editing UI, Mapping save/reload/restoration, Sitemap and Inspector. |
+| Pinsel main CI | [Run 44952067731](https://github.com/zudolab/pinsel/actions/runs/44952067731) at `2da915832870b468ad567424a1aa27404bfdd847` passed all four jobs. Vitest: 1024 passed, 19 skipped. Playwright: 99 passed, 15 skipped, mainly public site, styleguide and visitor coverage. Full native-CMS acceptance remains open. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
-| Results / FAQ families | At S on a fresh `notes-v1` stage: FAQ family `fresh-s-faq5-1148` (43 phases) and Results family `fresh-s-res1-1320` (45 phases) complete, with created/moved/restored builds, visitor checks, acceptance manifests and two-child order. The historical history23/41 Results chain remains held without its originals. |
-| Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. Current c5 human, negative, response-loss recovery and static gates passed; seven current-pin Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
-| Holds | History41 continuation (originals unavailable); actual owner-data cutover (#57) and new authenticated-provider acceptance (#58, NOT_RUN). Deployment remains disabled. |
+| Results / FAQ families | At Composer `e802741aaf51bae69b4db67ddc3d80494be61043` on a fresh `notes-v1` stage: FAQ family `fresh-s-faq5-1148` (43 phases) and Results family `fresh-s-res1-1320` (45 phases) complete, with created/moved/restored builds, visitor checks, acceptance manifests and two-child order. The original History41 continuation closed as moot. See [#56](https://github.com/zudolab/pinsel/issues/56#issuecomment-7046662921) and [#62](https://github.com/zudolab/pinsel/issues/62). |
+| Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. At Composer `c5ffd410f74ba4b3aa003da068efeeae6e663c37`, the human, negative, response-loss recovery and static gates passed. Seven fake-provider Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
+| Open acceptance | Header href sequencing ([#65](https://github.com/zudolab/pinsel/issues/65)) and authenticated full-CMS Assistant ([#58](https://github.com/zudolab/pinsel/issues/58), **NOT_RUN**). The owner confirmed all prior content was dummy data and [#57](https://github.com/zudolab/pinsel/issues/57#issuecomment-7049273622) closed as moot. Deployment remains disabled. |
 
 ## CMS UX repin acceptance — 2026-11-22
 
@@ -173,7 +173,15 @@ new authenticated-provider acceptance remain separately held. Process cwd access
 can be unavailable after reconnect; retained PID/lease/port observations do not
 justify an exhaustive process-absence claim.
 
-## Current c5 installed checkpoint — 2026-11-17
+## Historical c5 installed checkpoint — 2026-11-17
+
+This checkpoint used Composer `c5ffd410f74ba4b3aa003da068efeeae6e663c37`.
+At this checkpoint, upstream public/CMS/full typecheck passed in 128s,
+an independent repack covered 782 files, and [upstream CI 44118271141](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141)
+passed at attestation `ca5b4fe3cbe568daeb1964622b9be07dd994e660`. The four
+then-active importers passed frozen installation and dedupe.
+Public capture passed in 13s with 1275 raw files unchanged. Only the snapshot,
+pack and renderer digests changed.
 
 The Results consumer at `25e49398e94728a7be2c062972b5fecbdc384c87` passed
 phase13 in260s after a separately sealed boundary13 installation transition.
@@ -1353,7 +1361,7 @@ all808 native plus143 public files were unchanged. Port4194 closed and the detac
 consumer remained clean. Evidence: `t6-cold-content-62f-1/OUTCOME.md` under the Cloud
 acceptance root. Whole-route creation and final Assistant gates remain pending.
 
-## Current acceptance checkpoint — aa8a096 / package 62f014f4
+## Historical acceptance checkpoint — aa8a096 / package 62f014f4
 
 This checkpoint records Pinsel `aa8a096970ea5efc24354c80a3ceb133660cbce3`,
 Composer package `62f014f4ae5acfa10ca551c116be6e3a909310fe`, unchanged contract
@@ -2251,8 +2259,9 @@ transition: the sealed history41 originals, the phase40-02/phase41-01 artifacts 
 the stopped native workspace are not available in this Cloud environment (the
 private 2026-11-18 archive ends at the phase23 era). The transition evidence,
 saved-state preservation proof and phases 41 toc-group through 44 toc-attach
-remain held until those originals are supplied; no history is reconstructed and
-no earlier acceptance is relabelled as an S run.
+were held at this checkpoint. No history was reconstructed and no earlier
+acceptance was relabelled as an S run. The owner later closed that continuation
+as moot ([#56](https://github.com/zudolab/pinsel/issues/56#issuecomment-7046662921)).
 
 ## Package S installed acceptance — 2026-11-20
 
