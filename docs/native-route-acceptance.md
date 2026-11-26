@@ -478,8 +478,9 @@ Mapping selection and parent slot, create the Content record, and place/referenc
 it through the supported Mapping/Sitemap/Composition UI. Record whether the existing
 query automatically includes it or explicit pins/attachments are required. Verify
 its heading, ordered children and affected routes; do not substitute unrelated
-wrapper components. These live workflows are still pending. Historical model
-counts describe seed data, not an enforced maximum.
+wrapper components. See the [2026-11-20 checkpoint](composer-compatibility.md#package-s-installed-acceptance--2026-11-20)
+for the earlier live workflows and their exact pin. Historical model counts
+describe seed data, not an enforced maximum.
 
 A collection used as a singleton remains a collection unless its schema says
 otherwise. New Entry/duplicate may therefore be available. Rehearse duplicate

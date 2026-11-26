@@ -178,7 +178,8 @@ justify an exhaustive process-absence claim.
 This checkpoint used Composer `c5ffd410f74ba4b3aa003da068efeeae6e663c37`.
 At this checkpoint, upstream public/CMS/full typecheck passed in 128s,
 an independent repack covered 782 files, and [upstream CI 44118271141](https://github.com/Takazudo/zudo-composer/actions/runs/44118271141)
-passed. The four then-active importers passed frozen installation and dedupe.
+passed at attestation `ca5b4fe3cbe568daeb1964622b9be07dd994e660`. The four
+then-active importers passed frozen installation and dedupe.
 Public capture passed in 13s with 1275 raw files unchanged. Only the snapshot,
 pack and renderer digests changed.
 
