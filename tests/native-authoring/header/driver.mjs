@@ -3,6 +3,8 @@ import {contentPreviewOperations,contentPreviewReadGate,isNativeRead} from '../n
 import {assertHeaderDestinationPreview,routePath} from './destination-preview.mjs';
 import {createHeaderReadiness,isHeaderHrefForward} from './readiness.mjs';
 import {settleTerminalReads} from './terminal-settlement.mjs';
+import {originalResponse} from '../families/original-request.mjs';
+import {assertReadScope,busyReadTracker,classifyRead} from '../families/readonly-proof.mjs';
 import {waitForCompositionReadiness} from '../static/composition-readiness.mjs';
 import {closeObserved} from './lifecycle.mjs';
 import assert from 'node:assert/strict';
@@ -16,27 +18,47 @@ import {createHeaderAdmission,assertContentBefore,proveContentAfter} from './dri
 export async function headerFieldUi(page,{base,snapshot,intent,persist,expect,setClose,setNavigation}){
  const nativeReads=contentPreviewReadGate({page,snapshot,persist});
  const admission=createHeaderAdmission(snapshot,intent),owner=admission.owner,settlement=createDraftSettlement();const model=snapshot.project.providers.content.find(p=>p.id===owner.ref.providerId).models.find(m=>m.id===owner.ref.modelId).document;const field=model.fields.find(f=>f.id===intent.field);assert(field);const fields={[field.label]:intent.value};if(intent.kind!=='knowledge-reference')contentFieldPlan(model,fields);else{assert.equal(field.kind,'reference');assert.deepEqual(field.target,{providerId:intent.value.providerId,recordId:intent.value.modelId});}let closing=false,result;const composition=compositionDerivedReadGate({page,snapshot,persist});
- let terminal=false,readEpoch=0;
+ let terminal=false,observeDestination=false,readEpoch=0;
+ const busyReads=busyReadTracker();
  const check=()=>{nativeReads.check();assert(!closing,'Header closing');};
  const navigation=createHeaderReadiness(page,{composition,settlement,persist,check});
- setNavigation(boundary=>{
-  if(boundary!=='after-header-preview'||!isHeaderHrefForward(intent))return navigation(boundary);
+ setNavigation(async boundary=>{
+  if(boundary!=='after-header-preview'||!isHeaderHrefForward(intent)){
+   await navigation(boundary);
+   if(boundary==='before-header-visitor-link'&&isHeaderHrefForward(intent))observeDestination=true;
+   return;
+  }
   return settleTerminalReads({
    fence:async()=>{terminal=true;await persist({phase:'terminal-header-write-fenced'});},
-   status:()=>({pending:settlement.pending+composition.readiness.pending+nativeReads.readiness.pending,challenges:composition.readiness.outstanding,busy:nativeReads.readiness.busy,epoch:readEpoch}),
+   status:()=>({pending:settlement.pending+composition.readiness.pending+nativeReads.readiness.pending,challenges:composition.readiness.outstanding,busy:nativeReads.readiness.busy+busyReads.outstanding,epoch:readEpoch}),
    check:()=>{check();composition.check();if(settlement.held)throw settlement.held;},
-   drain:async()=>{await settlement.beforeAdvance();await nativeReads.drain();await composition.drain();composition.assertSettled();},
+   drain:async()=>{await settlement.beforeAdvance();await nativeReads.drain();await composition.drain();busyReads.assertSettled();composition.assertSettled();},
    persist,diagnostics:()=>[],
   });
  });
  const fail=error=>{admission.hold(error);settlement.hold(error);};
- setClose(async context=>{closing=true;await closeObserved(context,{settlement,composition,reads:nativeReads,assertResult:()=>assert(result,'No proven Header write')});});
+ setClose(async context=>{closing=true;await closeObserved(context,{settlement,composition,reads:nativeReads,assertResult:()=>{busyReads.assertSettled();assert(result,'No proven Header write');}});});
  await page.route('**/__zudo*',route=>settlement.track((async()=>{
   const request=route.request(),path=new URL(request.url()).pathname;let input;try{input=request.postDataJSON();}catch{}const operation=request.headers()['x-zudo-composer-operation']??request.headers()['x-zudo-composer-asset-operation']??input?.operation??'';
   if(request.method()!=='GET')readEpoch++;
   if(path==='/__zudo_composer_file_provider')return composition.handle(route);
   if(path==='/__zudo-native-edit'&&contentPreviewOperations.has(input?.operation))return nativeReads.handle(route);
-  if(request.method()==='GET'||isProviderRead(path,operation)||(isNativeRead(path,input,snapshot.workspaceId)))return route.continue();
+  if(request.method()==='GET')return route.continue();
+  if(isProviderRead(path,operation)||isNativeRead(path,input,snapshot.workspaceId)){
+   if(!observeDestination)return route.continue();
+   try{
+    const headers=request.headers();
+    classifyRead(path,headers,input,snapshot.workspaceId);
+    await persist({phase:'header-destination-read-before-dispatch',path,operation,input});
+    const response=await originalResponse(page,route);
+    await persist({phase:'header-destination-read-response',path,operation,input,...response});
+    if(!busyReads.observe(path,headers,input,response,snapshot.workspaceId))assertReadScope(path,headers,response.body.result,snapshot.workspaceId);
+   }catch(error){
+    fail(error);await route.abort().catch(()=>{});
+    await persist({phase:'header-destination-read-held',path,operation,error:error.message});
+   }
+   return;
+  }
   let dispatched=false;
   try{assert(!terminal&&!closing&&!settlement.held);await waitForCompositionReadiness(composition);assert(!terminal&&!closing&&!settlement.held);nativeReads.check();composition.check();composition.assertSettled();assert.equal(path,'/__zudo_composer_content_provider');admission.admit(request,input);const current=await readBrowserContent(page,request,180000);assertContentBefore(snapshot,current);await persist({phase:'header-before-dispatch',ref:owner.ref,input,beforeToken:current.mutationToken});await waitForCompositionReadiness(composition);assert(!terminal&&!closing&&!settlement.held);nativeReads.check();composition.check();composition.assertSettled();dispatched=true;const response=await continueContentRequest(page,route,180000),body=await response.json();await persist({phase:'header-response',status:response.status(),body});assert.equal(response.status(),200);assert.equal(body.ok,true);const after=await readBrowserContent(page,request,180000);result=proveContentAfter(snapshot,owner,input,intent.field,intent.value,after);await persist({phase:'header-readback-verified',ref:owner.ref,record:result,token:after.mutationToken});}
   catch(error){fail(error);try{await persist({phase:dispatched?'header-uncertain':'header-refused',error:String(error),dispatched});}finally{await route.abort().catch(()=>{});}}
