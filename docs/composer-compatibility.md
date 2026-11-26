@@ -30,7 +30,10 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 [Composer PR #997](https://github.com/Takazudo/zudo-composer/pull/997) fixes the reload
 ordering and stale operation proof in the editor, with [Composer #996](https://github.com/Takazudo/zudo-composer/issues/996)
 and [Pinsel #74](https://github.com/zudolab/pinsel/issues/74) tracking the two boundaries.
-Pinsel consumes the exact attested package source `0ec2e6949a72daca8619aa863989732763702e84` with contract
+Composer merged as `e0520fe5d1b008b2194f01bad4bce4c0f178709f`. Its
+[reviewed PR checks](https://github.com/Takazudo/zudo-composer/actions/runs/45878780292)
+and [exact main CI](https://github.com/Takazudo/zudo-composer/actions/runs/45881918627)
+record the two verification boundaries. Pinsel consumes the exact attested package source `0ec2e6949a72daca8619aa863989732763702e84` with contract
 `c0b452da075b66757c60bd0d721a47062d4354d0`.
 
 Pinsel baseline `c900077faa613b94b8aed3ced29db81b85231167` at `af064e5fadb3a6035522a0f8828ec3c1e8f3b344` reproduced
