@@ -13,17 +13,60 @@ requires fresh installed acceptance; earlier passes do not automatically transfe
 
 | Identity or gate | Current recorded value |
 | --- | --- |
-| Pinsel integration | CMS UX repin (2026-11-22); see [CMS UX repin acceptance](#cms-ux-repin-acceptance--2026-11-22). Previous: [PR61](https://github.com/zudolab/pinsel/pull/61), [Package S installed acceptance](#package-s-installed-acceptance--2026-11-20). |
-| Installed package / upstream attestation | Distributed source S `af064e5fadb3a6035522a0f8828ec3c1e8f3b344` / attestation E `1919889624894a19dd1b754db4306ee6c7cfda65` (repinned 2026-11-22 from `e802741aaf51bae69b4db67ddc3d80494be61043` / `9d43eb32fa7399c3618443a1aeffd3db64115cfd`; earlier repinned 2026-11-20 from `c5ffd410f74ba4b3aa003da068efeeae6e663c37` / `ca5b4fe3cbe568daeb1964622b9be07dd994e660`; see [Option B T1 package repin](#option-b-t1-package-repin)) |
+| Pinsel integration | [Native page-edit recovery](#native-page-edit-recovery--2026-11-26), tracked in [#74](https://github.com/zudolab/pinsel/issues/74). |
+| Installed package / upstream attestation | `0ec2e6949a72daca8619aa863989732763702e84` / `d984f098ecc7fd1ea3f91d0ed8770add67704c72`. Previous source `af064e5fadb3a6035522a0f8828ec3c1e8f3b344` is retained in [CMS UX repin acceptance](#cms-ux-repin-acceptance--2026-11-22). |
 | Component contract | `c0b452da075b66757c60bd0d721a47062d4354d0` |
 | Workspace / renderer | `pinsel`, stage `notes-v1`, snapshot 1 / Composition 2, pack `pinsel@0.4.0`, `pinsel-zfb@native-v3` |
-| Current installed checks | Both active consumers, `packages/pinsel-content` and `packages/pinsel-ui`, passed frozen install and dedupe. [PR #70](https://github.com/zudolab/pinsel/pull/70) records real Chrome smoke across 33 routes in light and dark, Content editing UI, Mapping save/reload/restoration, Sitemap and Inspector. |
+| Current installed checks | Both importers passed frozen install and dedupe. The fresh Cloud Chrome recovery proof verified both a durable refusal and an already-committed Remove. Mac acceptance remains open. |
 | CMS UX repin main CI | [Run 44952067731](https://github.com/zudolab/pinsel/actions/runs/44952067731) at `2da915832870b468ad567424a1aa27404bfdd847` passed all four jobs. Vitest: 1024 passed, 19 skipped. Playwright: 99 passed, 15 skipped, mainly public site, styleguide and visitor coverage. Full native-CMS acceptance remains open. |
 | Previous aa8 installed evidence | Six-route owner-selection matrix complete; retained static preview/build PASS183s and visitor PASS54s; Header href forward saved then separate readonly recovery PASS285s, inverse PASS411s, restart PASS118s. Original failed forward remains FAIL. |
 | Results / FAQ families | At Composer `e802741aaf51bae69b4db67ddc3d80494be61043` on a fresh `notes-v1` stage: FAQ family `fresh-s-faq5-1148` (43 phases) and Results family `fresh-s-res1-1320` (45 phases) complete, with created/moved/restored builds, visitor checks, acceptance manifests and two-child order. The original History41 continuation closed as moot. See [#56](https://github.com/zudolab/pinsel/issues/56#issuecomment-7046662921) and [#62](https://github.com/zudolab/pinsel/issues/62). |
 | Historical full acceptance | At b434/5fe: human PASS969s; semantic refusals PASS256s; controlled recovery PASS270s; fake-provider Assistant seven-case PASS3455s. At Composer `c5ffd410f74ba4b3aa003da068efeeae6e663c37`, the human, negative, response-loss recovery and static gates passed. Seven fake-provider Assistant scenarios have qualified individual evidence, with interrupted suites and Local cleanup failure retained. |
-| Header href | [Sequencing acceptance](#header-href-sequencing-acceptance--2026-11-26) passed at Pinsel `06fec356e878252e6933e90971ece9463d479c0c` on the active Composer pin. |
+| Header href | [Sequencing acceptance](#header-href-sequencing-acceptance--2026-11-26) passed at Pinsel `06fec356e878252e6933e90971ece9463d479c0c` on historical Composer `af064e5fadb3a6035522a0f8828ec3c1e8f3b344`. |
 | Open acceptance | Broader installed adoption remains open in [#55](https://github.com/zudolab/pinsel/issues/55) and [#51](https://github.com/zudolab/pinsel/issues/51). Authenticated full-CMS Assistant ([#58](https://github.com/zudolab/pinsel/issues/58)) is **NOT_RUN**. The owner confirmed all prior content was dummy data and [#57](https://github.com/zudolab/pinsel/issues/57#issuecomment-7049273622) closed as moot. Deployment remains disabled. |
+
+## Native page-edit recovery — 2026-11-26
+
+[Composer PR #997](https://github.com/Takazudo/zudo-composer/pull/997) fixes the reload
+ordering and stale operation proof in the editor, with [Composer #996](https://github.com/Takazudo/zudo-composer/issues/996)
+and [Pinsel #74](https://github.com/zudolab/pinsel/issues/74) tracking the two boundaries.
+Composer merged as `e0520fe5d1b008b2194f01bad4bce4c0f178709f`. Its
+[reviewed PR checks](https://github.com/Takazudo/zudo-composer/actions/runs/45878780292)
+and [exact main CI](https://github.com/Takazudo/zudo-composer/actions/runs/45881918627)
+record the two verification boundaries. Pinsel consumes the exact attested package source `0ec2e6949a72daca8619aa863989732763702e84` with contract
+`c0b452da075b66757c60bd0d721a47062d4354d0`.
+
+Pinsel baseline `c900077faa613b94b8aed3ced29db81b85231167` at `af064e5fadb3a6035522a0f8828ec3c1e8f3b344` reproduced
+the original and recovered stale Remove for UUID `cbb5e7c2-af5e-4c09-8bbb-e22d5c3b4a90`.
+Both returned HTTP 409 `stale-plan`. Chromium reopened with recovery still pending
+and the Paragraph still present in stopped capture
+`2c98926d53ce61f5aecbe6a134f1b2e9a5cfe7edcc1f6c64b868936b7d85081b`.
+
+The fixed package ran in a separate fresh known-data `notes-v1` stage on Linux
+Chrome for Testing `156.0.8078.4`, Node `24.13.1` and pnpm `11.5.2`.
+A second tab saved the Course price while the original request was held. After
+server and browser restart, the exact original and recovered UUID
+`8706a0d3-12b7-44eb-995d-65c72966ebde` returned the same durable HTTP 409
+`document-edit-not-accepted` receipt. The pending control cleared and the
+Paragraph stayed present. The first run's browser harness stalled while inspecting
+storage during the intentional interruption. The guarded continuation reopened the
+same profile and verified the exact retained operation without another original Remove.
+
+A fresh Remove at the reviewed successor revision committed under
+`80418b34-5c85-48b0-abc1-9183e1ea8645`. Its intentionally withheld HTTP 200
+response and its recovery response matched exactly. The stopped stage contained
+one committed Remove receipt, one stale refusal and the original insertion receipt.
+All unrelated canonical records, assets and public bytes matched the fresh
+baseline. The saved Lessons record matched the one committed receipt. The Course edit
+advanced its generation once and appeared in built Home and Lessons HTML.
+The exact offline build at
+`71df732c5cdb792238a9cced3e19fe900d8217836006a343e40d0e10ae727a96`
+produced 14 routes and 143 public files.
+
+Use the [fresh Mac retest recipe](native-authoring-acceptance.md#concurrent-page-edit-recovery-in-native-chrome).
+Moya's existing Mac profile and stage are held for preservation. The separate
+[Mapping-opening investigation](https://github.com/zudolab/pinsel/issues/75)
+covers the coordination warning and the reported Mac workspace-open failure.
 
 ## Header href sequencing acceptance — 2026-11-26
 

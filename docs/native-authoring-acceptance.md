@@ -209,6 +209,36 @@ This manual exercise proves one representative local edit only. Run the full,
 negative, recovery and Assistant scenarios separately for their wider claims,
 including exact A after later B and byte-for-byte captured asset verification.
 
+## Concurrent page-edit recovery in native Chrome
+
+Use a separate fresh checkout, the exact package and contract in
+[Dependencies](dependencies.md), and a fresh Chrome profile. Verify all stage
+destinations are absent, then run the [known-data bootstrap](#fresh-known-data-bootstrap-or-existing-saved-workspace).
+Use a different loopback port from any retained session. A browser profile keeps
+its recovery data by origin, so leave the original profile, port and stage intact.
+
+1. Start the normal editor with
+   `PINSEL_AUTHORING_STAGE=notes-v1 pnpm dev --port 4191 --strict-port`.
+   Insert one local Paragraph under `files/lessons/frame`, in slot `main`. Enter
+   unique text and save it using the [saved-Paragraph recipe](#independent-manual-saved-paragraph-recipe).
+   Record its exact owner and reload to verify the saved text.
+2. Open the qualified Home pricing Mapping and a Note in separate tabs. Select
+   the recorded Paragraph and click **Remove component** once. Record the
+   original request UUID, HTTP status and result. For a controlled stale case,
+   intercept the original browser request before dispatch, let a second tab
+   finish a saved Course edit, then forward the original request bytes once.
+3. If an HTTP response is withheld or lost, reopen with the same disposable
+   profile, select **Recover pending save** once, and compare the retained request
+   and returned receipt to the original. A committed receipt leaves the original
+   Paragraph removed exactly once. A matching `document-edit-not-accepted`
+   receipt leaves it present and clears the pending control. Refresh the saved
+   page and select the same owner before a new Remove with a fresh UUID. If the
+   original outcome stays uncertain, preserve the retained request and stage.
+4. Stop the editor gracefully, run `authoring:capture` and `authoring:build`
+   with the same stage, and verify the recorded owner, exact receipt lineage,
+   saved Course/Note values, and generated Lessons HTML. Record any separate
+   Mapping-open failure with its actual request codes and timing.
+
 ## Full authoring and exact-snapshot scenario
 
 Use your execution environment's shared heavy-test guard around the following
